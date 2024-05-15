@@ -3,13 +3,16 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import VideoBanner from "@/components/VideoBanner";
 import "./globals.css";
+import HomeBanner2 from "@/components/HomeBanner2";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main>
+    <div className="w-full h-full overflow-hidden">
       <Header />
       <VideoBanner />
-      <HomeBanner />
-    </main>
+      <HomeBanner2 />
+      <Footer />
+    </div>
   );
 }

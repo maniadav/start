@@ -19,7 +19,7 @@ export const Header = () => {
   };
 
   return (
-    <div className="w-full h-auto flex justify-center">
+    <div className="w-full h-auto px-2 flex justify-center">
       <div
         className={`max-w-[600px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-3 px-8 transition-all`}
       >
@@ -64,7 +64,7 @@ export const Header = () => {
               <DropDown />
             </div>
           </div>
-          <div
+          {/* <div
             className="cursor-pointer rounded p-1 md:p-2 flex flex-row bg-black text-gray-400 items-center hover:bg-gray-800 hover:text-white"
             onClick={toggle}
           >
@@ -72,7 +72,7 @@ export const Header = () => {
               Menu
             </div>
             <CommonIcon icon="pepicons-pop:menu" />
-          </div>
+          </div> */}
         </div>
       </div>
       {/* side navigation bar */}
