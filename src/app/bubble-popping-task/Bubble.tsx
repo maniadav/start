@@ -133,7 +133,7 @@
 // };
 
 // export default Bubble;
-
+"use client"
 import { useEffect, useState } from "react";
 
 const Bubble = ({ color, onClick, bubbleSize = 100 }: any) => {

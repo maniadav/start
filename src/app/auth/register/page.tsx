@@ -25,20 +25,29 @@ interface FormDataType {
   address: string;
   profile: string;
 }
-export const formData: FormDataType = {
-  email: "",
-  username: "",
-  password: "",
-  firstName: "",
-  lastName: "",
-  mobile: "",
-  address: "",
-  profile: "",
-};
+// export const formData: FormDataType = {
+//   email: "",
+//   username: "",
+//   password: "",
+//   firstName: "",
+//   lastName: "",
+//   mobile: "",
+//   address: "",
+//   profile: "",
+// };
 
 const RegisterPage = () => {
   const [file, setFile] = useState<any>(null);
-  const [responseBody, setResponseBody] = useState<FormDataType>(formData);
+  const [responseBody, setResponseBody] = useState<FormDataType>({
+    email: "",
+    username: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    mobile: "",
+    address: "",
+    profile: "",
+  });
   const router = useRouter();
 
   const handleFileChange = (e: any) => {

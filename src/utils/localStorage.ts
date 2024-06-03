@@ -5,7 +5,7 @@
  */
 
 function getLocalStorageValue(key: string, parse = false) {
-    if ("localStorage" in window) {
+    if (typeof window !== 'undefined' && "localStorage" in window) {
         try {
             const storedValue = window.localStorage.getItem(key);
             if (!storedValue) {
@@ -26,7 +26,7 @@ function getLocalStorageValue(key: string, parse = false) {
 }
 
 function setLocalStorageValue<T>(key: string, value: T, serialize?: boolean) {
-    if ("localStorage" in window) {
+    if (typeof window !== 'undefined' && "localStorage" in window) {
         try {
             if (serialize) {
                 window.localStorage.setItem(key, JSON.stringify(value));
@@ -42,7 +42,7 @@ function setLocalStorageValue<T>(key: string, value: T, serialize?: boolean) {
 }
 
 function removeLocalStorageValue(key: string) {
-    if ("localStorage" in window) {
+    if (typeof window !== 'undefined' && "localStorage" in window) {
         window.localStorage.removeItem(key);
     }
 }

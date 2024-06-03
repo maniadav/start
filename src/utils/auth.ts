@@ -16,7 +16,7 @@ export function checkUserLoginStatus() {
 
 /**Utility to get vendorcode runtime */
 export function getVendorCode() {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window?.location.search);
     const paramCountryName = params.get('countryName');
     let countryName;
     if (paramCountryName) {

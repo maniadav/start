@@ -9,17 +9,16 @@ import { LOCALSTORAGE } from "@constants/storage.constant";
 import { API_ENDPOINT } from "@constants/api.constant";
 import Link from "next/link";
 
-interface FormDataType {
+interface LoginDataType {
   username: string;
   password: string;
 }
-export const formData: FormDataType = {
-  username: "",
-  password: "",
-};
 
 const LoginPage = () => {
-  const [responseBody, setResponseBody] = useState<FormDataType>(formData);
+  const [responseBody, setResponseBody] = useState<LoginDataType>({
+    username: "",
+    password: "",
+  });
   const router = useRouter();
 
   const onSubmitForm = () => {

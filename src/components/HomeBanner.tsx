@@ -43,7 +43,11 @@ const HomeBanner = () => {
             </div>
           </div>
           <div className="block w-full p-6 md:p-12">
-            <img src="/brain.png" className="w-full max-w-lg m-auto" />
+            <img
+              src="/brain.png"
+              className="w-full max-w-lg m-auto"
+              alt="hds"
+            />
           </div>
         </div>
       </div>
