@@ -6,12 +6,12 @@ const VideoBanner = () => {
       <div className="flex justify-center z-20 absolute w-auto min-w-full min-h-full max-w-none align-middle bg-white opacity-50"></div>
       <div className="flex justify-center z-30 absolute w-auto min-w-full min-h-full max-w-none align-middle">
         <div className="px-20 mr-auto place-self-center lg:col-span-7">
-          <h1 className="text-blue-900 max-w-2xl mb-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl xl:text-6xl ">
+          <h1 className="text-primary max-w-2xl mb-4 text-4xl font-extrabold leading-none tracking-tight md:text-5xl xl:text-6xl ">
             BrainTeaser
           </h1>
           <p className="max-w-2xl mb-6 font-light text-gray-900 lg:mb-8 md:text-lg lg:text-xl">
-            This free and open-source project built to analse performance of
-            kids with selected pyschological metrics
+            This free and open-source project is designed to analyze the
+            performance of children using selected psychological metrics.
           </p>
           <div className="space-y-4 sm:flex sm:space-y-0 sm:space-x-4">
             <a

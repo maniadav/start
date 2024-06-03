@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import CommonIcon from "./common/CommonIcon";
+import { TasksConstant } from "constants/tasks.constant";
 
 const SurveyTable = () => {
   return (
@@ -59,103 +60,105 @@ const SurveyTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.keys(SurveyData).map((items: string, i: number) => (
-                      <>
-                        <tr
-                          className={`${
-                            i % 2 == 0 ? "bg-gray-100" : "bg-white"
-                          } border-b`}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {SurveyData?.[items].title}
-                          </td>
-                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            {SurveyData[items].attempt1.length === 0 ? (
-                              SurveyData[items].noOfAttempt === 1 ? (
-                                <a
-                                  href={`${SurveyData[items].surveyLink}?attempt=${SurveyData[items].noOfAttempt}`}
-                                  className="cursor-pointer"
-                                >
-                                  <CommonIcon icon="icons8:plus" />
-                                </a>
+                    {Object.keys(TasksConstant).map(
+                      (items: string, i: number) => (
+                        <>
+                          <tr
+                            className={`${
+                              i % 2 == 0 ? "bg-gray-100" : "bg-white"
+                            } border-b`}
+                          >
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {TasksConstant?.[items].title}
+                            </td>
+                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                              {TasksConstant[items].attempt1.length === 0 ? (
+                                TasksConstant[items].noOfAttempt === 1 ? (
+                                  <a
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    className="cursor-pointer"
+                                  >
+                                    <CommonIcon icon="icons8:plus" />
+                                  </a>
+                                ) : (
+                                  "-"
+                                )
                               ) : (
-                                "-"
-                              )
-                            ) : (
-                              <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
-                                <svg
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="3"
-                                  className="w-3 h-3"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M20 6L9 17l-5-5"></path>
-                                </svg>
-                              </span>
-                            )}
-                          </td>
-                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            {SurveyData[items].attempt2.length === 0 ? (
-                              SurveyData[items].noOfAttempt === 2 ? (
-                                <a
-                                  href={`${SurveyData[items].surveyLink}?attempt=${SurveyData[items].noOfAttempt}`}
-                                  className="cursor-pointer"
-                                >
-                                  <CommonIcon icon="icons8:plus" />
-                                </a>
+                                <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
+                                  <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    className="w-3 h-3"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path d="M20 6L9 17l-5-5"></path>
+                                  </svg>
+                                </span>
+                              )}
+                            </td>
+                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                              {TasksConstant[items].attempt2.length === 0 ? (
+                                TasksConstant[items].noOfAttempt === 2 ? (
+                                  <a
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    className="cursor-pointer"
+                                  >
+                                    <CommonIcon icon="icons8:plus" />
+                                  </a>
+                                ) : (
+                                  "-"
+                                )
                               ) : (
-                                "-"
-                              )
-                            ) : (
-                              <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
-                                <svg
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="3"
-                                  className="w-3 h-3"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M20 6L9 17l-5-5"></path>
-                                </svg>
-                              </span>
-                            )}
-                          </td>{" "}
-                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                            {SurveyData[items].attempt3.length === 0 ? (
-                              SurveyData[items].noOfAttempt === 3 ? (
-                                <a
-                                  href={`${SurveyData[items].surveyLink}?attempt=${SurveyData[items].noOfAttempt}`}
-                                  className="cursor-pointer"
-                                >
-                                  <CommonIcon icon="icons8:plus" />
-                                </a>
+                                <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
+                                  <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    className="w-3 h-3"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path d="M20 6L9 17l-5-5"></path>
+                                  </svg>
+                                </span>
+                              )}
+                            </td>{" "}
+                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                              {TasksConstant[items].attempt3.length === 0 ? (
+                                TasksConstant[items].noOfAttempt === 3 ? (
+                                  <a
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    className="cursor-pointer"
+                                  >
+                                    <CommonIcon icon="icons8:plus" />
+                                  </a>
+                                ) : (
+                                  "-"
+                                )
                               ) : (
-                                "-"
-                              )
-                            ) : (
-                              <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
-                                <svg
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="3"
-                                  className="w-3 h-3"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M20 6L9 17l-5-5"></path>
-                                </svg>
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      </>
-                    ))}
+                                <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
+                                  <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    className="w-3 h-3"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path d="M20 6L9 17l-5-5"></path>
+                                  </svg>
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        </>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -190,38 +193,3 @@ const SurveyTable = () => {
 };
 
 export default SurveyTable;
-
-const SurveyData: any = {
-  motorFollowingTask: {
-    title: "Motor Following Task",
-    surveyLink: "motor-following-task",
-    noOfAttempt: 2,
-    attempt1: ["sduahsih"],
-    attempt2: [],
-    attempt3: [],
-  },
-  colouringTask: {
-    title: "Colouring Task",
-    surveyLink: "colouring-task",
-    noOfAttempt: 1,
-    attempt1: [],
-    attempt2: [],
-    attempt3: [],
-  },
-  bubblePoppingTask: {
-    title: "Bubble Popping Task",
-    surveyLink: "bubble-popping-task",
-    noOfAttempt: 1,
-    attempt1: [],
-    attempt2: [],
-    attempt3: [],
-  },
-  synchronyTask: {
-    title: "Synchrony Task",
-    surveyLink: "synchrony-task",
-    noOfAttempt: 1,
-    attempt1: [],
-    attempt2: [],
-    attempt3: [],
-  },
-};

@@ -1,5 +1,5 @@
-import SurveyTable from "@/components/SurveyTable";
-import { IconHome } from "@/components/common/Icons";
+import SurveyTable from "components/SurveyTable";
+import { IconHome } from "components/common/Icons";
 import Image from "next/image";
 
 const page = () => {

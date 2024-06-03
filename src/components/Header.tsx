@@ -1,19 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import CommonIcon from "./common/CommonIcon";
-// import { getLocalStorageValue } from "utils/localStorage";
-// import { LOCALSTORAGE } from "constants/storage.constant";
 import { NavSideBar2 } from "./NavSideBar";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { API_ENDPOINT } from "@constants/api.constant";
+import { useAuth } from "context/AuthContext";
+import Link from "next/link";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
-  const userData: any = [];
-  // getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true) || {};
+  const { user }: any = useAuth();
 
-  // let currentPath: any = useLocation();
-  const homePath = false; //currentPath.pathname === "/";
   const toggle = () => {
     setIsOpen(!isOpen);
   };
@@ -23,12 +21,12 @@ export const Header = () => {
       <div
         className={`max-w-[600px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-3 px-8 transition-all`}
       >
-        <a href="/" className="flex items-center">
+        <Link href="/" className="flex items-center">
           {/* <img src="/images/health-hub-logo.png" alt="logo" className="mr-3 h-6 sm:h-9" /> */}
           <span className="self-center text-lg md:text-xl font-semibold whitespace-nowrap dark:text-white">
             BrainTeaser
           </span>
-        </a>
+        </Link>
 
         <div className="flex items-center gap-2">
           {/* user profile */}
@@ -36,12 +34,12 @@ export const Header = () => {
             <div className="flex items-center cursor-pointer px-3 py-2 text-sm font-normal text-center">
               <div className="h-auto mx-2">
                 {/* <img
-                  src={userData?.profile || "/images/profile.png"}
+                  src={user?.profile || "/images/profile.png"}
                   alt="logo"
                   className="rounded-full h-6 w-6 object-cover"
                 /> */}
                 <Image
-                  src={userData?.profile || "/user.svg"}
+                  src={user?.profile || "/user.svg"}
                   alt="logo"
                   className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
                   width={32}
@@ -49,7 +47,7 @@ export const Header = () => {
                 ></Image>
               </div>
               <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {`Hi, ${userData?.firstName || userData?.username || "user"}`}
+                {`Hi, ${user?.firstName || "user"}`}
               </p>
               <span className="text-gray-500">
                 <CommonIcon
@@ -129,49 +127,14 @@ export const menuLink = [
   },
 ];
 
-export const ShowUserOptions = () => {
-  // const navigation = useNavigate();
-  return (
-    <div className="absolute top-16 border flex flex-col pt-1 bg-white text-black rounded-lg text-base text-left">
-      <button className="hover:border-l-2 hover:border-primary hover:bg-secondary hover:text-primary px-6 py-1  flex items-center space-x-2">
-        <span className="">
-          <CommonIcon icon="ph:user-bold" height={20} width={20} />
-        </span>
-        <span>Profile</span>
-      </button>
-      <button
-        className="hover:border-l-2 hover:border-primary hover:bg-secondary hover:text-primary px-6 py-1 flex items-center space-x-2"
-        // onClick={() => {
-        //   navigation("/profile-setting");
-        // }}
-      >
-        <span className="">
-          <CommonIcon icon="ion:settings-outline" height={20} width={20} />
-        </span>
-        <span>Settings</span>
-      </button>
-      <button
-        className="hover:border-l-2 hover:border-primary hover:bg-secondary hover:text-primary px-6 py-1 flex items-center space-x-2"
-        // onClick={() => {
-        //   localStorage.clear();
-        //   navigation("/login");
-        // }}
-      >
-        <span className="">
-          <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
-        </span>
-        <span> Logout</span>
-      </button>
-    </div>
-  );
-};
-
 export const DropDown = () => {
-  // const navigation = useNavigate();
+  const router = useRouter();
+  const { user } = useAuth();
+
   return (
     <div className="mr-20 absolute z-10 bg-white rounded-lg shadow w-44 dark:bg-gray-700">
       <div className="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <a
+        <Link
           href="/profile-setting#profile-update"
           className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
         >
@@ -179,18 +142,19 @@ export const DropDown = () => {
             <CommonIcon icon="ion:settings-outline" height={20} width={20} />
           </span>
           <span>Settings</span>
-        </a>
+        </Link>
         <button
           className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
-          // onClick={() => {
-          //   localStorage.clear();
-          //   navigation("/login");
-          // }}
+          onClick={() => {
+            localStorage.clear();
+            router.push(`${API_ENDPOINT.auth.login}`);
+          }}
         >
           <span className="">
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
-          <span> Logout</span>
+
+          <span> {user ? "Logout" : "Sign In"}</span>
         </button>
       </div>
     </div>

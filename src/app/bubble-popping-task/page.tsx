@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 import Bubble from "./Bubble";
 import Image from "next/image";
-import { CommonButton } from "@/components/common/CommonButton";
+import { CommonButton } from "components/common/CommonButton";
+import { TasksConstant } from "constants/tasks.constant";
 
 import { useSearchParams } from "next/navigation";
-import MessagePopup from "@/components/common/MessagePopup";
+import MessagePopup from "components/common/MessagePopup";
+import TaskHome from "components/TaskHome";
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const IndexPage = () => {
@@ -19,6 +21,7 @@ const IndexPage = () => {
   const searchParams = useSearchParams();
   const attempt = searchParams.get("attempt") || "0";
   const bubblePop = new Audio("bubble-pop.mp3");
+  const data = TasksConstant.bubblePoppingTask;
   const reAttemptUrl =
     parseInt(attempt) < 3
       ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`
@@ -115,19 +118,11 @@ const IndexPage = () => {
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">
-          <div className="w-full h-auto text-center text-3xl text-primary pt-12">
-            Bubble Popping Task
-          </div>
-          <div className="w-full h-auto p-5 flex justify-between text-gray-500">
-            <p>
-              Say to the child
-              <strong>{`"See I am going to touch these bubbles to pop them, here they go pop, pop, pop, now you play"`}</strong>
-            </p>
-            <CommonButton
-              labelText={"Start Survey"}
-              clicked={() => handleStartGame()}
-            />
-          </div>
+          <TaskHome
+            taskName={data.title}
+            taskMessage={data.taskMessage}
+            handleStartGame={() => handleStartGame()}
+          />
           <div className="relative w-screen h-screen overflow-hidden">
             <Image
               src="/ocean.jpg"

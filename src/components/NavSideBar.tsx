@@ -3,7 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 // import { useNavigate } from "react-router-dom";
 import CommonIcon from "./common/CommonIcon";
-import { sidebarMenu } from "@/constant/navigation.constant";
+import { sidebarMenu } from "constants/navigation.constant";
 
 const NavSideBar = () => {
   // const router = useNavigate();

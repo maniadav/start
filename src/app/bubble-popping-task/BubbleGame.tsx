@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Bubble from "./Bubble";
 import Image from "next/image";
-import { CommonButton } from "@/components/common/CommonButton";
+import { CommonButton } from "components/common/CommonButton";
 const colors = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const BubbleGame = () => {

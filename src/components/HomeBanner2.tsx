@@ -23,9 +23,9 @@ const HomeBanner = () => {
             </h1> */}
             <div className="h-6"></div>
             <p className="font-serif text-xl text-gray-400 md:pr-20">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam
-              autem, a recusandae vero praesentium qui impedit doloremque
-              molestias necessitatibus.
+              {`The project aims to provide comprehensive insights into various aspects of a
+            child's cognitive and emotional development by leveraging advanced
+            data analysis techniques.`}
             </p>
             <div className="h-8"></div>
             <div className="grid grid-cols-2 gap-4 pt-8 border-t border-gray-800">

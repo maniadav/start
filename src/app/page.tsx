@@ -1,10 +1,10 @@
-import HomeBanner from "@/components/HomeBanner";
+import HomeBanner from "components/HomeBanner";
 import Image from "next/image";
-import Header from "@/components/Header";
-import VideoBanner from "@/components/VideoBanner";
+import Header from "components/Header";
+import VideoBanner from "components/VideoBanner";
 import "./globals.css";
-import HomeBanner2 from "@/components/HomeBanner2";
-import Footer from "@/components/Footer";
+import HomeBanner2 from "components/HomeBanner2";
+import Footer from "components/Footer";
 
 export default function Home() {
   return (
