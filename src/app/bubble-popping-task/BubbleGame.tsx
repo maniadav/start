@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useState, useEffect } from "react";
 import Bubble from "./Bubble";
@@ -37,6 +38,7 @@ const BubbleGame = () => {
   //     );
   //     setPoppedBubbles((prevPoppedBubbles: any) => [...prevPoppedBubbles, id]);
   //   };
+
   const popBubble = (color: string) => {
     console.log(color);
     setBubbles((bubble) =>

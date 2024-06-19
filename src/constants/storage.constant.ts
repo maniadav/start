@@ -6,5 +6,5 @@ export const LOCALSTORAGE = {
   SELECTED_COUNTRY_NAME: "psychSelectedCountryName",
   SELECTED_VENDORCODE: "psychSelectedVendorCode",
   SELECTED_LANGUAGE: "psychSelectedLanguageFilter",
-  BASE_URL: "http://localhost:5500/api/v1"
+  BASE_URL: "https://x3qrf2-3000.csb.app/api/v1"
 };

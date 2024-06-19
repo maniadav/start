@@ -28,7 +28,7 @@ export function CommonButton({
       type={btnType}
       className={clsx(
         `${customClass} ${
-          textBtn && "bg-0 border-0"
+          textBtn && "w-full bg-0 border-0"
         } p-2 md:py-2.5 md:px-3 border border-solid rounded text-xs md:text-sm capitalize cursor-pointer inline-flex items-center transition ease-in-out delay-50`,
         `${
           bgWhite
@@ -49,7 +49,7 @@ export function CommonButton({
       disabled={isDisabled}
     >
       <span
-        className={`${!bgWhite ? "text-[#ffffff]" : "text-primary"}`}
+        className={`${!bgWhite ? "w-full text-[#ffffff]" : "text-primary"}`}
       ></span>
       <CommonIcon icon={btnIcon} width={16} height={16} />
       <span className={`${btnIcon && " ml-1 mt-0.5"}`}>{labelText}</span>

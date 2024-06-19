@@ -1,17 +1,19 @@
+"use client";
+
 import React from "react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { CommonButton } from "components/common/CommonButton";
 import SurveyTable from "components/SurveyTable";
 import MessagePopup from "components/common/MessagePopup";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 const colors = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const WheelGame = ({ sample = false }: any) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<any>(null);
-  const searchParams = useSearchParams();
-  const attempt = searchParams.get("attempt") || "0";
+  // const searchParams = useSearchParams();
+  const attempt ="0"// searchParams.get("attempt") || "0";
   const reAttemptUrl =
     parseInt(attempt) < 3
       ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`
