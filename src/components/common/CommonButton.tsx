@@ -1,7 +1,7 @@
 import CommonIcon from "./CommonIcon";
 import clsx from "clsx";
 interface buttonPropsType {
-  labelText: string;
+  labelText?: string;
   bgWhite?: boolean;
   hoverLightPink?: boolean;
   btnIcon?: any;
@@ -48,11 +48,10 @@ export function CommonButton({
       }}
       disabled={isDisabled}
     >
-      <span
-        className={`${!bgWhite ? "w-full text-[#ffffff]" : "text-primary"}`}
-      ></span>
-      <CommonIcon icon={btnIcon} width={16} height={16} />
-      <span className={`${btnIcon && " ml-1 mt-0.5"}`}>{labelText}</span>
+      <CommonIcon icon={btnIcon} width={26} height={26} />
+      {labelText && (
+        <span className={`${btnIcon && " ml-1 mt-0.5"}`}>{labelText}</span>
+      )}
     </button>
   );
 }

@@ -18,12 +18,6 @@ const SurveyTable = () => {
                         scope="col"
                         className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                       ></th>
-                      {/* <th
-                      scope="col"
-                      className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                    >
-                      Attempt 1
-                    </th> */}
                       <th
                         scope="col"
                         className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
@@ -71,7 +65,47 @@ const SurveyTable = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {TasksConstant?.[items].title}
                             </td>
-                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                            {Array.from({ length: 3 }, (_, index) => (
+                              <td
+                                key={index}
+                                className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap"
+                              >
+                                {index < TasksConstant[items].noOfAttempt ? (
+                                  <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
+                                    <svg
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="3"
+                                      className="w-3 h-3"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path d="M20 6L9 17l-5-5"></path>
+                                    </svg>
+                                  </span>
+                                ) : (
+                                  <>
+                                    {index ===
+                                    TasksConstant[items].noOfAttempt ? (
+                                      <a
+                                        href={`${
+                                          TasksConstant[items].surveyLink
+                                        }?attempt=${
+                                          TasksConstant[items].noOfAttempt + 1
+                                        }`}
+                                        className="cursor-pointer"
+                                      >
+                                        <CommonIcon icon="icons8:plus" />
+                                      </a>
+                                    ) : (
+                                      <>-</>
+                                    )}
+                                  </>
+                                )}
+                              </td>
+                            ))}
+                            {/* <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                               {TasksConstant[items].attempt1.length === 0 ? (
                                 TasksConstant[items].noOfAttempt === 1 ? (
                                   <a
@@ -154,7 +188,7 @@ const SurveyTable = () => {
                                   </svg>
                                 </span>
                               )}
-                            </td>
+                            </td> */}
                           </tr>
                         </>
                       )

@@ -1,18 +1,23 @@
-"use client";
 import React, { useRef, useState, useEffect, MouseEvent } from "react";
 import styles from "./ColouringGame.module.css";
+import { CommonButton } from "components/common/CommonButton";
 
 const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
+
+interface Coordinate {
+  x: number;
+  y: number;
+  color: string;
+}
 
 const ColouringGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState("#000000");
-  const [brushSize, setBrushSize] = useState(5);
-  const [drawingPoints, setDrawingPoints] = useState<
-    Array<{ x: number | null; y: number | null }>
-  >([]);
+  const [drawnCoordinates, setDrawnCoordinates] = useState<Coordinate[]>([]);
+
+  const brushSize = 10;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -20,23 +25,32 @@ const ColouringGame: React.FC = () => {
       const context = canvas.getContext("2d");
       if (context) {
         context.lineCap = "round";
-        context.strokeStyle = brushColor;
         context.lineWidth = brushSize;
         contextRef.current = context;
 
         // Load and draw the background image
         const backgroundImage = new Image();
-        backgroundImage.src = "/cat.jpg"; // Ensure this path is correct
+        backgroundImage.src = "/car.png"; // Ensure this path is correct
         backgroundImage.onload = () => {
           context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
         };
+
+        // Redraw existing paths
+        drawnCoordinates.forEach((coord) => {
+          context.strokeStyle = coord.color;
+          context.beginPath();
+          context.moveTo(coord.x, coord.y);
+          context.lineTo(coord.x + 1, coord.y + 1); // Dummy move to trigger stroke
+          context.stroke();
+        });
       }
     }
-  }, [brushColor, brushSize]);
+  }, []);
 
   const startDrawing = ({ nativeEvent }: MouseEvent<HTMLCanvasElement>) => {
     const { offsetX, offsetY } = nativeEvent;
     if (contextRef.current) {
+      contextRef.current.strokeStyle = brushColor;
       contextRef.current.beginPath();
       contextRef.current.moveTo(offsetX, offsetY);
       setIsDrawing(true);
@@ -47,7 +61,7 @@ const ColouringGame: React.FC = () => {
     if (contextRef.current) {
       contextRef.current.closePath();
       setIsDrawing(false);
-      setDrawingPoints((prev) => [...prev, { x: null, y: null }]);
+      // setDrawingPoints([]);
     }
   };
 
@@ -56,7 +70,10 @@ const ColouringGame: React.FC = () => {
     const { offsetX, offsetY } = nativeEvent;
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
-    setDrawingPoints((prev) => [...prev, { x: offsetX, y: offsetY }]);
+    setDrawnCoordinates([
+      ...drawnCoordinates,
+      { x: offsetX, y: offsetY, color: brushColor },
+    ]);
   };
 
   const saveImage = () => {
@@ -69,9 +86,46 @@ const ColouringGame: React.FC = () => {
     }
   };
 
+  const handleColorChange = (color: string) => {
+    setBrushColor(color);
+  };
+
+  useEffect(() => {
+    console.log(drawnCoordinates);
+  }, [drawnCoordinates]);
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <div className="w-full flex justify-center items-center">
+      {/* //       <div className="absolute h-full w-full flex justify-center items-center align-middle">
+//         <canvas
+//           ref={canvasRef}
+//           width={600}
+//           height={600}
+//           className={styles.canvas}
+//           onMouseDown={startDrawing}
+//           onMouseUp={finishDrawing}
+//           onMouseMove={draw}
+//         />
+//       </div>
+//       <div className="absolute h-full w-full flex justify-start items-center align-middle">
+//         <div className="flex flex-col items-center gap-4 pl-6">
+//           {colors.map((color) => (
+//             <button
+//               key={color}
+//               style={{ backgroundColor: color }}
+//               className="w-12 h-12 rounded-full border-2 shadow-md border-gray-600"
+//               onClick={() => handleColorChange(color)}
+//             />
+//           ))}
+//           <CommonButton
+//             clicked={saveImage}
+//             btnIcon={"fluent:save-image-20-filled"}
+//             customClass={"rounded-full bg-blue-700 p-4"}
+//           />
+//         </div>
+//       </div> */}
+
+      <div className="absolute h-full w-full flex justify-center items-center align-middle">
         <canvas
           ref={canvasRef}
           width={600}
@@ -82,19 +136,21 @@ const ColouringGame: React.FC = () => {
           onMouseMove={draw}
         />
       </div>
-      <div className={styles.controls}>
+      <div className="absolute flex flex-col gap-5 pl-20 pt-20">
         {colors.map((color) => (
           <button
             key={color}
             style={{ backgroundColor: color }}
-            className={styles.colorButton}
-            onClick={() => setBrushColor(color)}
+            className="w-8 h-8 rounded-full border shadow-md border-gray-600"
+            onClick={() => handleColorChange(color)}
           />
         ))}
-        <button onClick={() => setBrushSize(5)}>Small Brush</button>
-        <button onClick={() => setBrushSize(10)}>Medium Brush</button>
-        <button onClick={() => setBrushSize(20)}>Large Brush</button>
-        <button onClick={saveImage}>Save Image</button>
+
+        <CommonButton
+          clicked={saveImage}
+          btnIcon={"fluent:save-image-20-filled"}
+          customClass={"rounded-full"}
+        />
       </div>
     </div>
   );

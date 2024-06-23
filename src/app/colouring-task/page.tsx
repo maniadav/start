@@ -154,39 +154,12 @@ const IndexPage = () => {
   //   closeGame();
   // };
 
-  console.log({ surveyData });
+  // console.log({ surveyData });
 
   return (
     <>
       {survey ? (
         <div>
-          {/* <div className="relative w-screen h-screen overflow-hidden">
-            <Image
-              src="/ocean.jpg"
-              layout="fill"
-              objectFit="cover"
-              alt="ocean"
-            />
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-              wdwedw
-            </div>
-
-            <p className="absolute bottom-5 right-5">
-              Time elapsed:{" "}
-              {startTime
-                ? `${((Date.now() - startTime) / 1000).toFixed(2)} seconds`
-                : "Not started"}
-            </p>
-          </div>
-          <MessagePopup
-            showFilter={showPopup}
-            msg={
-              "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
-            }
-            attempt={attempt}
-            testName={"bubble popping"}
-            reAttemptUrl={reAttemptUrl}
-          /> */}
           <ColouringGame />
         </div>
       ) : (
@@ -199,7 +172,6 @@ const IndexPage = () => {
           <ColouringGame />
         </div>
       )}
-      <audio id="bubble-pop" src="bubble-pop.mp3" preload="auto"></audio>
     </>
   );
 };

@@ -1,18 +1,18 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Bubble from "./Bubble";
 import Image from "next/image";
 import { TasksConstant } from "constants/tasks.constant";
 import useAudio from "@hooks/useAudio";
 import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
-import { useRouter } from "next/navigation";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import { DowloadFile } from "@helper/downloader";
 import { setLocalStorageValue } from "@utils/localStorage";
 import { BubblePoppingData } from "@constants/survey.data.constant";
 import { BubblePoppingType } from "types/survey.types";
+import { timer } from "@utils/timer";
 
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 const IndexPage = () => {
@@ -20,13 +20,19 @@ const IndexPage = () => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [numberOfBubbles, setNumberOfBubbles] = useState<number>(5);
   const [bubbles, setBubbles] = useState<string[]>(colors);
-  const [poppedBubbles, setPoppedBubbles] = useState<any>([]);
-  const [startTime, setStartTime] = useState<any>(null);
+
+  const [alertShown, setAlertShown] = useState(false);
+  const [timerData, setTimerData] = useState<{
+    startTime: number;
+    endTime: number;
+    timeLimit: number;
+    isTimeOver: boolean;
+  } | null>(null);
   const [surveyData, setSurveyData] =
     useState<BubblePoppingType>(BubblePoppingData);
+
   const maxNumberOfBubble: number = 3;
   const searchParams = useSearchParams();
-  const router = useRouter();
   const attempt = searchParams.get("attempt") || "0";
   const bubblePop = useAudio("/bubble-pop.mp3");
   const data = TasksConstant.bubblePoppingTask;
@@ -34,27 +40,42 @@ const IndexPage = () => {
     parseInt(attempt) < 3
       ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`
       : null;
+  const timeLimit = 18000;
 
   // increase bubble number
   useEffect(() => {
     if (numberOfBubbles === maxNumberOfBubble + 1) {
+      handleStopTimer();
       closeGame();
     } else {
       setBubbles(colors.slice(0, numberOfBubbles));
     }
   }, [numberOfBubbles]);
 
+  useEffect(() => {
+    if (timerData?.isTimeOver && !alertShown) {
+      closeGame();
+      setAlertShown(true);
+    }
+  }, [alertShown, timerData]);
+
   // function to get the coordinates of click
   const pushEntry = (ballCoordEntry: any, mouseCoordEntry: any, color: any) => {
-    console.log(ballCoordEntry, mouseCoordEntry);
     setSurveyData((prevState: any) => ({
       ...prevState,
       [`attempt${attempt}`]: {
         ...prevState[`attempt${attempt}`],
-        ballCoord: [...prevState.attempt1.ballCoord, ballCoordEntry],
-        mouseCoord: [...prevState.attempt1.mouseCoord, mouseCoordEntry],
-        colors: [...prevState.attempt1.colors, color],
+        ballCoord: [
+          ...(prevState[`attempt${attempt}`]?.ballCoord || []),
+          ballCoordEntry,
+        ],
+        mouseCoord: [
+          ...(prevState[`attempt${attempt}`]?.mouseCoord || []),
+          mouseCoordEntry,
+        ],
+        colors: [...(prevState[`attempt${attempt}`]?.colors || []), color],
       },
+      noOfAttempt: `${attempt}`,
     }));
   };
 
@@ -76,50 +97,41 @@ const IndexPage = () => {
   };
 
   const handleStartGame = () => {
-    startTimer();
+    handleTimer();
+
     setSurvey(!survey);
-    const currentTime = Date.now();
     const width = window.screen.width;
     const height = window.screen.height;
     const device = navigator.userAgent;
 
-    setStartTime(currentTime);
     setSurveyData((prevState: any) => ({
       ...prevState,
       [`attempt${attempt}`]: {
         ...prevState[`attempt${attempt}`],
-        startTime: currentTime,
         screenHeight: height,
         screenWidth: width,
         deviceType: device,
       },
+      noOfAttempt: `${attempt}`,
     }));
     setNumberOfBubbles(1);
   };
 
   const closeGame = useCallback(() => {
     if (survey) {
-      console.log({ surveyData });
-
       setShowPopup(true);
-      const endTime = Date.now();
-      const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
-      // setSurveyData((prevState: any) => ({
-      //   ...prevState,
-      //   [`attempt${attempt}`]: {
-      //     ...prevState[`attempt${attempt}`],
-      //     timeTaken: timeTaken,
-      //   },
-      // }));
-
-      // setLocalStorageValue("BubblePoppingTask", surveyData, true);
+      const bubblesTotal: number =
+        (maxNumberOfBubble / 2) * (2 + (maxNumberOfBubble - 1));
       setSurveyData((prevState: any) => {
         const updatedSurveyData = {
           ...prevState,
           [`attempt${attempt}`]: {
             ...prevState[`attempt${attempt}`],
-            timeTaken: timeTaken,
-            endTime: endTime,
+            timeTaken: timerData?.timeLimit,
+            endTime: timerData?.endTime,
+            startTime: timerData?.startTime,
+            closedWithTimeout: timerData?.isTimeOver,
+            bubblesTotal,
           },
         };
 
@@ -129,45 +141,33 @@ const IndexPage = () => {
         return updatedSurveyData;
       });
     }
-  }, [survey, startTime]);
+  }, [survey, timerData, attempt]);
 
-  // timer of 3 min
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [alertShown, setAlertShown] = useState(false);
+  const stopTimerFuncRef = useRef<() => any>();
 
-  useEffect(() => {
-    let interval: string | number | NodeJS.Timeout | undefined;
+  const handleTimer = () => {
+    const { endTimePromise, stopTimer } = timer(timeLimit);
 
-    if (isRunning) {
-      interval = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
-      }, 1000); // Update elapsedTime every second
-    }
+    stopTimerFuncRef.current = stopTimer;
+
+    endTimePromise.then(setTimerData);
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
+      // Optional cleanup if necessary
+      stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
-  }, [isRunning]);
-
-  useEffect(() => {
-    if (elapsedTime >= 180 && !alertShown) {
-      closeGame();
-      setAlertShown(true);
-    }
-  }, [elapsedTime, alertShown, closeGame]);
-
-  const startTimer = () => {
-    setIsRunning(true);
   };
+
+  const handleStopTimer = useCallback(() => {
+    if (stopTimerFuncRef.current) {
+      const data = stopTimerFuncRef.current();
+      setTimerData(data);
+    }
+  }, []);
 
   const handleDownload = () => {
     DowloadFile(surveyData, "sample-data.json");
   };
-
-  console.log({ surveyData });
 
   return (
     <>
@@ -195,13 +195,6 @@ const IndexPage = () => {
                 ))}
               </div>
             </div>
-
-            <p className="absolute bottom-5 right-5">
-              Time elapsed:{" "}
-              {startTime
-                ? `${((Date.now() - startTime) / 1000).toFixed(2)} seconds`
-                : "Not started"}
-            </p>
           </div>
           <MessagePopup
             showFilter={showPopup}
