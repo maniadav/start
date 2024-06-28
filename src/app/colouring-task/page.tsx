@@ -36,7 +36,7 @@ const IndexPage = () => {
   const router = useRouter();
   const attempt = searchParams.get("attempt") || "0";
   const bubblePop = useAudio("/bubble-pop.mp3");
-  const data = TasksConstant.bubblePoppingTask;
+  const data = TasksConstant.BubblePoppingTask;
   const reAttemptUrl =
     parseInt(attempt) < 3
       ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`

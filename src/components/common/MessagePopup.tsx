@@ -6,7 +6,6 @@ interface msgPopUp {
   showFilter: boolean;
   onRequestClose?: any;
   msg: string;
-  attempt: string | null;
   testName: string;
   reAttemptUrl: string | null;
 }

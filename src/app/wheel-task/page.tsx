@@ -13,7 +13,7 @@ const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<any>(null);
 
-  const data = TasksConstant.wheelTask;
+  const data = TasksConstant.WheelTask;
 
   const handleStartGame = () => {
     setSurvey(!survey);

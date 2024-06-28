@@ -2,8 +2,11 @@
 import React from "react";
 import CommonIcon from "./common/CommonIcon";
 import { TasksConstant } from "constants/tasks.constant";
+import { useSurveyContext } from "context/SurveyContext";
 
 const SurveyTable = () => {
+  const { state } = useSurveyContext();
+
   return (
     <section className="text-gray-700 body-font overflow-hidden">
       <div className="container px-5 py-20 mx-auto flex flex-col ">
@@ -70,7 +73,7 @@ const SurveyTable = () => {
                                 key={index}
                                 className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap"
                               >
-                                {index < TasksConstant[items].noOfAttempt ? (
+                                {index < state?.[items]?.noOfAttempt ? (
                                   <span className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0">
                                     <svg
                                       fill="none"
@@ -86,13 +89,15 @@ const SurveyTable = () => {
                                   </span>
                                 ) : (
                                   <>
-                                    {index ===
-                                    TasksConstant[items].noOfAttempt ? (
+                                    {index === state?.[items]?.noOfAttempt ? (
                                       <a
                                         href={`${
                                           TasksConstant[items].surveyLink
                                         }?attempt=${
-                                          TasksConstant[items].noOfAttempt + 1
+                                          parseInt(
+                                            state?.[items]?.noOfAttempt,
+                                            10
+                                          ) + 1
                                         }`}
                                         className="cursor-pointer"
                                       >
@@ -107,9 +112,9 @@ const SurveyTable = () => {
                             ))}
                             {/* <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                               {TasksConstant[items].attempt1.length === 0 ? (
-                                TasksConstant[items].noOfAttempt === 1 ? (
+                                state?.[items]?.noOfAttempt === 1 ? (
                                   <a
-                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${state?.[items]?.noOfAttempt}`}
                                     className="cursor-pointer"
                                   >
                                     <CommonIcon icon="icons8:plus" />
@@ -135,9 +140,9 @@ const SurveyTable = () => {
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                               {TasksConstant[items].attempt2.length === 0 ? (
-                                TasksConstant[items].noOfAttempt === 2 ? (
+                                state?.[items]?.noOfAttempt === 2 ? (
                                   <a
-                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${state?.[items]?.noOfAttempt}`}
                                     className="cursor-pointer"
                                   >
                                     <CommonIcon icon="icons8:plus" />
@@ -163,9 +168,9 @@ const SurveyTable = () => {
                             </td>{" "}
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                               {TasksConstant[items].attempt3.length === 0 ? (
-                                TasksConstant[items].noOfAttempt === 3 ? (
+                                state?.[items]?.noOfAttempt === 3 ? (
                                   <a
-                                    href={`${TasksConstant[items].surveyLink}?attempt=${TasksConstant[items].noOfAttempt}`}
+                                    href={`${TasksConstant[items].surveyLink}?attempt=${state?.[items]?.noOfAttempt}`}
                                     className="cursor-pointer"
                                   >
                                     <CommonIcon icon="icons8:plus" />

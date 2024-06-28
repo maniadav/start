@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
-// import './styles.css';
+//  make sure screen is in landscape mode
 
 const GameWrapper = ({ children }: any) => {
   const [isLandscape, setIsLandscape] = useState(true);

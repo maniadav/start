@@ -52,7 +52,6 @@ const WheelGame = ({ sample = false }: any) => {
           msg={
             "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
           }
-          attempt={attempt}
           testName={"bubble popping"}
           reAttemptUrl={reAttemptUrl}
         />

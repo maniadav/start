@@ -18,9 +18,21 @@ export interface Attempt {
 export interface BubblePoppingType {
     assestment_id: string;
     noOfAttempt: number;
-    attempt1: Attempt;
+    attempt1: Partial<Attempt>;
     attempt2: Partial<Attempt>;
     attempt3: Partial<Attempt>;
     useID: string;
     surveyID: string;
 }
+
+export interface MotorFollowingType {
+    assestment_id: string;
+    noOfAttempt: number;
+    attempt1: Partial<Attempt>;
+    attempt2: Partial<Attempt>;
+    attempt3: Partial<Attempt>;
+    useID: string;
+    surveyID: string;
+}
+
+

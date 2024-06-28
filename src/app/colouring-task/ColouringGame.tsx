@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect, MouseEvent } from "react";
 import styles from "./ColouringGame.module.css";
 import { CommonButton } from "components/common/CommonButton";
+import MessagePopup from "components/common/MessagePopup";
+import { useSearchParams } from "next/navigation";
 
 const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
 
@@ -16,8 +18,14 @@ const ColouringGame: React.FC = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState("#000000");
   const [drawnCoordinates, setDrawnCoordinates] = useState<Coordinate[]>([]);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
+  const searchParams = useSearchParams();
+  const attemptString = searchParams.get("attempt") || "0";
+  const attempt = parseInt(attemptString);
   const brushSize = 10;
+  const reAttemptUrl =
+    attempt < 3 ? `colouring-task?attempt=${attempt + 1}` : null;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -76,7 +84,7 @@ const ColouringGame: React.FC = () => {
     ]);
   };
 
-  const saveImage = () => {
+  const handleCloseGame = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       const link = document.createElement("a");
@@ -84,6 +92,7 @@ const ColouringGame: React.FC = () => {
       link.href = canvas.toDataURL();
       link.click();
     }
+    setShowPopup(true);
   };
 
   const handleColorChange = (color: string) => {
@@ -147,11 +156,19 @@ const ColouringGame: React.FC = () => {
         ))}
 
         <CommonButton
-          clicked={saveImage}
+          clicked={handleCloseGame}
           btnIcon={"fluent:save-image-20-filled"}
           customClass={"rounded-full"}
         />
       </div>
+      <MessagePopup
+        showFilter={showPopup}
+        msg={
+          "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+        }
+        testName={"bubble popping"}
+        reAttemptUrl={reAttemptUrl}
+      />
     </div>
   );
 };
