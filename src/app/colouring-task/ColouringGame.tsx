@@ -95,45 +95,12 @@ const ColouringGame: React.FC = () => {
     setShowPopup(true);
   };
 
-  const handleColorChange = (color: string) => {
-    setBrushColor(color);
-  };
-
   useEffect(() => {
     console.log(drawnCoordinates);
   }, [drawnCoordinates]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      {/* //       <div className="absolute h-full w-full flex justify-center items-center align-middle">
-//         <canvas
-//           ref={canvasRef}
-//           width={600}
-//           height={600}
-//           className={styles.canvas}
-//           onMouseDown={startDrawing}
-//           onMouseUp={finishDrawing}
-//           onMouseMove={draw}
-//         />
-//       </div>
-//       <div className="absolute h-full w-full flex justify-start items-center align-middle">
-//         <div className="flex flex-col items-center gap-4 pl-6">
-//           {colors.map((color) => (
-//             <button
-//               key={color}
-//               style={{ backgroundColor: color }}
-//               className="w-12 h-12 rounded-full border-2 shadow-md border-gray-600"
-//               onClick={() => handleColorChange(color)}
-//             />
-//           ))}
-//           <CommonButton
-//             clicked={saveImage}
-//             btnIcon={"fluent:save-image-20-filled"}
-//             customClass={"rounded-full bg-blue-700 p-4"}
-//           />
-//         </div>
-//       </div> */}
-
       <div className="absolute h-full w-full flex justify-center items-center align-middle">
         <canvas
           ref={canvasRef}
@@ -146,15 +113,6 @@ const ColouringGame: React.FC = () => {
         />
       </div>
       <div className="absolute flex flex-col gap-5 pl-20 pt-20">
-        {colors.map((color) => (
-          <button
-            key={color}
-            style={{ backgroundColor: color }}
-            className="w-8 h-8 rounded-full border shadow-md border-gray-600"
-            onClick={() => handleColorChange(color)}
-          />
-        ))}
-
         <CommonButton
           clicked={handleCloseGame}
           btnIcon={"fluent:save-image-20-filled"}

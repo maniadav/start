@@ -18,7 +18,17 @@ const config: Config = {
       },
       colors: {
         primary: "#c4122f"
-      }
+      }, keyframes: {
+        moveImage: {
+          '0%, 100%': { transform: 'translateX(0) translateY(0)' },
+          '25%': { transform: 'translateX(-25vw) translateY(15vh)' },
+          '50%': { transform: 'translateX(-50vw) translateY(-30vh)' },
+          '75%': { transform: 'translateX(-75vw) translateY(15vh)' },
+        },
+      },
+      animation: {
+        moveImage: 'moveImage 5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
