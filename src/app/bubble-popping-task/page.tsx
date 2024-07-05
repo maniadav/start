@@ -8,10 +8,7 @@ import useAudio from "@hooks/useAudio";
 import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
-import { DowloadFile } from "@helper/downloader";
-import { setLocalStorageValue } from "@utils/localStorage";
-import { BubblePoppingData } from "@constants/survey.data.constant";
-import { Attempt, BubblePoppingType } from "types/survey.types";
+import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 
@@ -24,6 +21,9 @@ const IndexPage = () => {
   const [bubblesPopped, setBubblesPopped] = useState<number>(0);
   const { state, dispatch } = useSurveyContext();
   const [alertShown, setAlertShown] = useState(false);
+  const [ballOverlappingCoord, setBallOverlappingCoord] = useState<number[]>(
+    []
+  );
   const [timerData, setTimerData] = useState<{
     startTime: number;
     endTime: number;
@@ -97,6 +97,7 @@ const IndexPage = () => {
       bubble.filter((prevBubbles) => prevBubbles !== color)
     );
     if (bubbles.length - 1 === 0) {
+      setBallOverlappingCoord([]);
       setNumberOfBubbles((numberOfBubbles) => numberOfBubbles + 1);
     }
   };
@@ -115,6 +116,7 @@ const IndexPage = () => {
       screenWidth: width,
       deviceType: device,
     }));
+    setBallOverlappingCoord([]);
     setNumberOfBubbles(1);
   };
 
@@ -173,7 +175,7 @@ const IndexPage = () => {
   //   DowloadFile(surveyData, "sample-data.json");
   // };
 
-  // console.log({ timerData });
+  // console.log(surveyData.ballCoord);
   return (
     <>
       {survey ? (
@@ -193,6 +195,8 @@ const IndexPage = () => {
                     color={color}
                     onClick={handleBubblePop}
                     bubbleSize={100}
+                    // ballOverlappingCoord={ballOverlappingCoord}
+                    // setBallOverlappingCoord={setBallOverlappingCoord}
                   />
                 ))}
               </div>
@@ -229,6 +233,8 @@ const IndexPage = () => {
                     color={color}
                     onClick={handleBubblePop}
                     bubbleSize={100}
+                    // ballOverlappingCoord={ballOverlappingCoord}
+                    // setBallOverlappingCoord={setBallOverlappingCoord}
                   />
                 ))}
               </div>

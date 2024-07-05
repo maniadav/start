@@ -1,25 +1,73 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const Bubble = ({ color, onClick, bubbleSize = 100 }: any) => {
+interface BubbleProps {
+  color: string;
+  onClick: (
+    ballCoordString: string,
+    mouseCoordString: string,
+    color: string
+  ) => void;
+  bubbleSize?: number;
+}
+
+const Bubble = ({
+  color,
+  onClick,
+  bubbleSize = 100,
+  
+}: BubbleProps) => {
   const [screenWidth, setScreenWidth] = useState<number>(100);
   const [screenHeight, setScreenHeight] = useState<number>(100);
 
-  const y_coord = 1;
-  const [position, setPosition] = useState({
-    x: Math.random(),
-    y: Math.random(),
-  });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const x = Math.random() * (window.innerWidth - bubbleSize);
       const y = Math.random() * (window.innerHeight - bubbleSize);
+      // console.log(checkValidX(x));
       setPosition({ x, y });
       setScreenWidth(window.innerWidth);
       setScreenHeight(window.innerHeight);
     }
   }, []);
+
+  // require to avoid overlapping
+  // const checkValidX = (x: number) => {
+  //   if (ballOverlappingCoord.length === 0) {
+  //     return true;
+  //   }
+  //   return ballOverlappingCoord.every(
+  //     (item: number) => x < item - bubbleSize / 2 || x > item + bubbleSize / 2
+  //   );
+  // };
+
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     let x;
+  //     let iteration = 0;
+  //     const maxIterations = 5;
+
+  //     do {
+  //       x = Math.random() * (window.innerWidth - bubbleSize);
+  //       iteration++;
+  //       console.log(
+  //         { iteration, ballOverlappingCoord, x },
+  //         checkValidX(x),
+  //         !checkValidX(x) && iteration < maxIterations
+  //       );
+  //     } while (!checkValidX(x) && iteration < maxIterations);
+
+  //     const y = Math.random() * (window.innerHeight - bubbleSize);
+
+  //     setPosition({ x, y });
+  //     setBallOverlappingCoord((prev: number[]) => [...prev, x]);
+
+  //     setScreenWidth(window.innerWidth);
+  //     setScreenHeight(window.innerHeight);
+  //   }
+  // }, []);
 
   const [speed] = useState(Math.random() * 4 + 2); // Random speed between 1 and 5
 
@@ -76,6 +124,7 @@ const Bubble = ({ color, onClick, bubbleSize = 100 }: any) => {
     }
   }
 `;
+
 
   return (
     <div

@@ -158,9 +158,9 @@ const IndexPage = () => {
 
   return (
     <>
-      {/* {survey ? (
+      {survey ? (
         <div>
-          <MototFollowingTask />
+          <MototFollowingTask isSurvey={true} />
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">
@@ -170,10 +170,9 @@ const IndexPage = () => {
             handleStartGame={() => handleStartGame()}
           />
 
-          <MototFollowingTask isSample={true} />
+          <MototFollowingTask />
         </div>
-      )} */}
-      <MototFollowingTask />
+      )}
     </>
   );
 };
