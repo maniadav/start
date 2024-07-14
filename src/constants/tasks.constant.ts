@@ -3,7 +3,7 @@ export const TasksConstant: any = {
     title: "Motor Following Task",
     surveyLink: "motor-following-task",
     taskMessage:
-      "look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?",
+      "look at this ball moving. You need to drag your finger on screen and follow the bal movement. shall we stop it?",
 
   },
   BubblePoppingTask: {

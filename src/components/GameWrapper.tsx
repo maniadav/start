@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 const GameWrapper = ({ children }: any) => {
   const [isLandscape, setIsLandscape] = useState(true);
 
+  // check for portrait mode
   useEffect(() => {
     const handleOrientationChange = () => {
       if (window.innerWidth > window.innerHeight) {
@@ -22,12 +23,50 @@ const GameWrapper = ({ children }: any) => {
     };
   }, []);
 
+  // check for screen resize
+  const [initialWidth, setInitialWidth] = useState(0);
+  const [isWindowWide, setIsWindowWide] = useState(true);
+
+  useEffect(() => {
+    // Set the initial width when the component mounts
+    setInitialWidth(window.innerWidth);
+
+    // Function to check window size and set the state
+    const checkWindowSize = () => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth < initialWidth) {
+        setIsWindowWide(false);
+        console.log(false);
+      } else {
+        setIsWindowWide(true);
+        console.log(true);
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkWindowSize);
+
+    // Initial check
+    checkWindowSize();
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener("resize", checkWindowSize);
+  }, [initialWidth]);
+
   return (
     <div className="">
       {isLandscape ? (
-        <div className="landscape-content">{children}</div>
+        <>
+          {isWindowWide ? (
+            <div className="landscape-content">{children}</div>
+          ) : (
+            <div className="h-screen w-screen flex items-center align-middle justify-center text-base font-semibold text-red-500">
+              You are not advised to resize your screen!
+            </div>
+          )}
+        </>
       ) : (
-        <div className="portrait-message">
+        <div className="h-screen w-screen flex items-center align-middle justify-center text-base font-semibold text-red-500">
           Please rotate your device to landscape mode to continue.
         </div>
       )}

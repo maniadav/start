@@ -46,6 +46,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const newlineWidth = 3;
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
+  const amplitudes = 100 + attempt * 50; // change the size of ball path on each attempt
   const reAttemptUrl =
     attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
 
@@ -99,7 +100,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         const x = canvasElement.width;
         const y = canvasElement.height / 2;
         const c = "red";
-        balls.current.push(Ball(x, y, r, c, ctx));
+        balls.current.push(Ball(x, y, r, c, ctx, amplitudes));
       }
     },
     []
@@ -243,12 +244,13 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         touchCoordY: mouseCoordinatesY,
       };
 
-      dispatch({
-        type: "UPDATE_SURVEY_DATA",
-        attempt,
-        task: "MotorFollowingTask",
-        data: updatedSurveyData,
-      });
+      console.log({ updatedSurveyData });
+      // dispatch({
+      //   type: "UPDATE_SURVEY_DATA",
+      //   attempt,
+      //   task: "MotorFollowingTask",
+      //   data: updatedSurveyData,
+      // });
 
       return updatedSurveyData;
     });
