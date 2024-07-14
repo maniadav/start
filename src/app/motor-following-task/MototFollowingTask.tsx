@@ -10,13 +10,14 @@ import { useSearchParams } from "next/navigation";
 import { useSurveyContext } from "context/SurveyContext";
 import { timer } from "@utils/timer";
 import { trackTaskTime } from "@utils/trackTime";
-
+import Image from "next/image";
 interface Coordinate {
   x: number;
   y: number;
 }
 
 export default function MotorFollowingTask({ isSurvey = false }) {
+  const [isArrowVisible, setIsArrowVisible] = useState(true);
   const [surveyData, setSurveyData] = useState<any>(false);
   const [ballCoordinatesX, setBallCoordinatesX] = useState<string[]>([]);
   const [ballCoordinatesY, setBallCoordinatesY] = useState<string[]>([]);
@@ -62,6 +63,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     setIsDrawing(true);
     setCurrentPath([]);
     onInteractStart();
+    setIsArrowVisible(false); // Hide the arrow
   };
 
   const handleInteractEnd = () => {
@@ -91,10 +93,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     (canvasElement: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
       canvasElement.width = window.innerWidth;
       canvasElement.height = window.innerHeight;
-      canvasElement.style.backgroundImage = 'url("/motor_bg.jpg")';
-      canvasElement.style.backgroundSize = "cover";
-      canvasElement.style.backgroundPosition = "center";
-
       if (balls.current.length === 0) {
         const r = 25;
         const x = canvasElement.width;
@@ -116,6 +114,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
         const update = () => {
           ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          // drawArrow(ctx, 10, 30, 200, 150);
 
           mouseCoordinates.forEach((path) => {
             path.forEach((point, i) => {
@@ -230,7 +229,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     const timerData = trackTaskTime("end");
     saveImage();
     setShowPopup(true);
-    console.log({ timerData });
+    // console.log({ timerData });
     setSurveyData((prevState: any) => {
       const updatedSurveyData = {
         ...prevState,
@@ -244,13 +243,13 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         touchCoordY: mouseCoordinatesY,
       };
 
-      console.log({ updatedSurveyData });
-      // dispatch({
-      //   type: "UPDATE_SURVEY_DATA",
-      //   attempt,
-      //   task: "MotorFollowingTask",
-      //   data: updatedSurveyData,
-      // });
+      // console.log({ updatedSurveyData });
+      dispatch({
+        type: "UPDATE_SURVEY_DATA",
+        attempt,
+        task: "MotorFollowingTask",
+        data: updatedSurveyData,
+      });
 
       return updatedSurveyData;
     });
@@ -272,20 +271,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
-      <div className="w-screen h-screen overflow-hidden">
-        <canvas
-          id="canvas"
-          width={windowSize.width}
-          height={windowSize.height}
-          ref={canvasRef}
-          onMouseDown={handleInteractStart}
-          onMouseUp={handleInteractEnd}
-          onTouchStart={handleInteractStart}
-          onTouchEnd={handleInteractEnd}
-          className="cursor-pointer"
-        />
+      <div className="relative w-screen h-screen overflow-hidden">
         {isSurvey && (
-          <div>
+          <div className="absolute z-40">
             <div className="fixed top-4 right-4 flex flex-col space-y-2">
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -296,12 +284,41 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             </div>
             <MessagePopup
               showFilter={showPopup}
-              msg="You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task."
-              testName="bubble popping"
+              msg="You have completed the Motor Following Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task."
+              testName="motor follwoing"
               reAttemptUrl={reAttemptUrl}
             />
           </div>
         )}
+        <canvas
+          id="canvas"
+          width={windowSize.width}
+          height={windowSize.height}
+          ref={canvasRef}
+          onMouseDown={handleInteractStart}
+          onMouseUp={handleInteractEnd}
+          onTouchStart={handleInteractStart}
+          onTouchEnd={handleInteractEnd}
+          className="z-30 absolute top-0 left-0 w-full h-full cursor-pointer"
+        />
+        {isArrowVisible && (
+          <div
+            id="arrow-div"
+            className="z-10 absolute flex items-center top-0 left-0 w-full h-full bg-cover bg-center"
+          >
+            <Image
+              src={"/arrow.png"}
+              alt={"arrow"}
+              width={100}
+              height={100}
+              className="absolute rotate-45"
+            />
+          </div>
+        )}
+        <div
+          className="z-0 absolute top-0 left-0 w-full h-full bg-cover bg-center"
+          style={{ backgroundImage: `url('/motor_bg.jpg')` }}
+        ></div>
       </div>
     );
   }
