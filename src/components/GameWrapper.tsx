@@ -36,10 +36,8 @@ const GameWrapper = ({ children }: any) => {
       const currentWidth = window.innerWidth;
       if (currentWidth < initialWidth) {
         setIsWindowWide(false);
-        console.log(false);
       } else {
         setIsWindowWide(true);
-        console.log(true);
       }
     };
 
