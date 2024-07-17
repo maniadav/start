@@ -85,8 +85,8 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
 
     if (numberOfBubbles === maxNumberOfBubble + 1) {
       if (isSurvey) {
-        handleStopTimer();
-        closeGame();
+        const timeData = handleStopTimer();
+        closeGame(timeData);
       } else {
         alert("you may start the game!");
       }
@@ -164,38 +164,41 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const handleStopTimer = useCallback(() => {
     if (stopTimerFuncRef.current) {
       const data = stopTimerFuncRef.current();
-      setTimerData(data);
+      return data;
     }
   }, []);
 
-  const closeGame = useCallback(() => {
-    if (isSurvey) {
-      setShowPopup(true);
-      // console.log({ timerData });
-      const bubblesTotal: number =
-        (maxNumberOfBubble / 2) * (2 + (maxNumberOfBubble - 1));
-      setSurveyData((prevState: any) => {
-        const updatedSurveyData = {
-          ...prevState,
-          timeTaken: timerData?.timeLimit || "",
-          endTime: timerData?.endTime || "",
-          startTime: timerData?.startTime || "",
-          closedWithTimeout: timerData?.isTimeOver || false,
-          bubblesTotal,
-          bubblesPopped,
-        };
+  const closeGame = useCallback(
+    (timeData?: any) => {
+      if (isSurvey) {
+        setShowPopup(true);
+        console.log({ timeData });
+        const bubblesTotal: number =
+          (maxNumberOfBubble / 2) * (2 + (maxNumberOfBubble - 1));
+        setSurveyData((prevState: any) => {
+          const updatedSurveyData = {
+            ...prevState,
+            timeTaken: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
+            closedWithTimeout: timeData?.isTimeOver || false,
+            bubblesTotal,
+            bubblesPopped,
+          };
 
-        dispatch({
-          type: "UPDATE_SURVEY_DATA",
-          attempt,
-          task: "BubblePoppingTask",
-          data: updatedSurveyData,
+          dispatch({
+            type: "UPDATE_SURVEY_DATA",
+            attempt,
+            task: "BubblePoppingTask",
+            data: updatedSurveyData,
+          });
+
+          return updatedSurveyData;
         });
-
-        return updatedSurveyData;
-      });
-    }
-  }, [isSurvey, timerData, attempt, bubblesPopped]);
+      }
+    },
+    [isSurvey, timerData, attempt, bubblesPopped]
+  );
 
   const calculatePosition = (index: number) => {
     const min = index * positionRange + bubbleSize / 2;
