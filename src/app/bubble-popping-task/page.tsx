@@ -11,6 +11,7 @@ import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper 
 import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
+import useWindowSize from "@hooks/useWindowSize";
 
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 const IndexPage = () => {
@@ -19,8 +20,10 @@ const IndexPage = () => {
   const [numberOfBubbles, setNumberOfBubbles] = useState<number>(5);
   const [bubbles, setBubbles] = useState<string[]>(colors);
   const [bubblesPopped, setBubblesPopped] = useState<number>(0);
-  const { state, dispatch } = useSurveyContext();
   const [alertShown, setAlertShown] = useState(false);
+  const [positionRange, setPositionRange] = useState<number>(0);
+  const [screenHeight, setScreenHeight] = useState<number>(100);
+  const [screenWidth, setScreenWidth] = useState<number>(100);
   const [ballOverlappingCoord, setBallOverlappingCoord] = useState<number[]>(
     []
   );
@@ -48,6 +51,9 @@ const IndexPage = () => {
   });
 
   const maxNumberOfBubble: number = 6;
+  const bubbleSize: number = 100;
+  const { windowSize } = useWindowSize();
+  const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
@@ -56,6 +62,15 @@ const IndexPage = () => {
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
   const timeLimit = 1800000;
+
+  // screensize
+  useEffect(() => {
+    if (windowSize.width && windowSize.height) {
+      setScreenWidth(windowSize.width);
+      setScreenHeight(windowSize.height);
+      setPositionRange(windowSize.width / numberOfBubbles);
+    }
+  }, [windowSize]);
 
   // increase bubble number
   useEffect(() => {
@@ -175,7 +190,29 @@ const IndexPage = () => {
   //   DowloadFile(surveyData, "sample-data.json");
   // };
 
-  // console.log(surveyData.ballCoord);
+  // position of ballon screem to avoid overlapping
+  const calculatePosition = (index: number) => {
+    const min = index * positionRange + bubbleSize / 2;
+    const max =
+      index + 1 === numberOfBubbles
+        ? (index + 1) * positionRange - bubbleSize
+        : (index + 1) * positionRange - bubbleSize / 2;
+
+    let x = Math.random() * (max - min) + min;
+    const y = Math.random() * (screenHeight - bubbleSize / 2);
+
+    console.log(x + bubbleSize / 2, {
+      index,
+      max,
+      x,
+      screenWidth,
+      min,
+      numberOfBubbles,
+    });
+
+    return { x, y };
+  };
+
   return (
     <>
       {survey ? (
@@ -187,20 +224,24 @@ const IndexPage = () => {
               objectFit="cover"
               alt="ocean"
             />
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-              <div className="flex flex-wrap justify-center">
-                {bubbles.map((color: string) => (
-                  <Bubble
-                    key={color}
-                    color={color}
-                    onClick={handleBubblePop}
-                    bubbleSize={100}
-                    // ballOverlappingCoord={ballOverlappingCoord}
-                    // setBallOverlappingCoord={setBallOverlappingCoord}
-                  />
-                ))}
+
+            {positionRange && screenWidth && screenHeight && (
+              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                <div className="flex flex-wrap justify-center">
+                  {bubbles.map((color: string, index: number) => (
+                    <Bubble
+                      key={color}
+                      color={color}
+                      onClick={handleBubblePop}
+                      bubbleSize={bubbleSize}
+                      screenWidth={screenWidth}
+                      screenHeight={screenHeight}
+                      initialPosition={calculatePosition(index)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <MessagePopup
             showFilter={showPopup}
@@ -225,20 +266,23 @@ const IndexPage = () => {
               objectFit="cover"
               alt="ocean"
             />
-            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-              <div className="flex flex-wrap justify-center">
-                {bubbles.map((color: string) => (
-                  <Bubble
-                    key={color}
-                    color={color}
-                    onClick={handleBubblePop}
-                    bubbleSize={100}
-                    // ballOverlappingCoord={ballOverlappingCoord}
-                    // setBallOverlappingCoord={setBallOverlappingCoord}
-                  />
-                ))}
+            {positionRange && screenWidth && screenHeight && (
+              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                <div className="flex flex-wrap justify-center">
+                  {bubbles.map((color: string, index: number) => (
+                    <Bubble
+                      key={color}
+                      color={color}
+                      onClick={handleBubblePop}
+                      bubbleSize={bubbleSize}
+                      screenWidth={screenWidth}
+                      screenHeight={screenHeight}
+                      initialPosition={calculatePosition(index)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
