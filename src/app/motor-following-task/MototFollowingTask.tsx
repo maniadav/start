@@ -11,6 +11,7 @@ import { useSurveyContext } from "context/SurveyContext";
 import { timer } from "@utils/timer";
 import { trackTaskTime } from "@utils/trackTime";
 import Image from "next/image";
+import BallAnimation from "./BallAnimation";
 interface Coordinate {
   x: number;
   y: number;
@@ -19,6 +20,9 @@ interface Coordinate {
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
   const [surveyData, setSurveyData] = useState<any>(false);
+  const [allCoordinates, setAllCoordinated] = useState([
+    { time: 0, objX: 0, objY: 0, touchX: 0, touchY: 0 },
+  ]);
   const [ballCoordinatesX, setBallCoordinatesX] = useState<string[]>([]);
   const [ballCoordinatesY, setBallCoordinatesY] = useState<string[]>([]);
   const [mouseCoordinatesX, setMouseCoordinatesX] = useState<string[]>([]);
@@ -55,7 +59,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     if (!isDrawing || !currentPoint || !prevPoint) return;
 
     drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
-
+    console.log({ currentPath });
     setCurrentPath((prev) => [...prev, currentPoint]);
   }
 
@@ -140,16 +144,16 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             });
           });
 
-          balls.current.forEach((ball) => {
-            ball.animate();
-            if (ball.getIsMoving()) {
-              const { x, y } = ball.getPosition();
-              setBallCoordinatesX((prev) => [...prev, x.toFixed(2)]);
-              setBallCoordinatesY((prev) => [...prev, y.toFixed(2)]);
-            }
+          // balls.current.forEach((ball) => {
+          //   ball.animate();
+          //   if (ball.getIsMoving()) {
+          //     const { x, y } = ball.getPosition();
+          //     setBallCoordinatesX((prev) => [...prev, x.toFixed(2)]);
+          //     setBallCoordinatesY((prev) => [...prev, y.toFixed(2)]);
+          //   }
 
-            // setBallCoordinates((prev)=>[...prev, ball.getPosition()])
-          });
+          //   // setBallCoordinates((prev)=>[...prev, ball.getPosition()])
+          // });
 
           animationRef.current = requestAnimationFrame(update);
         };
@@ -269,6 +273,18 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
+  const handleAllCoordinateUpdate = (newCoordinates: any) => {
+    setAllCoordinated((prev) => [...prev, newCoordinates]);
+  };
+
+  // useEffect(() => {
+  //   console.log({ allCoordinates });
+  // }, [allCoordinates]);
+
+  // useEffect(() => {
+  //   console.log({ currentPath });
+  // }, [currentPath]);
+
   if (windowSize.height && windowSize.width !== undefined) {
     return (
       <div className="relative w-screen h-screen overflow-hidden">
@@ -299,8 +315,15 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           onMouseUp={handleInteractEnd}
           onTouchStart={handleInteractStart}
           onTouchEnd={handleInteractEnd}
-          className="z-30 absolute top-0 left-0 w-full h-full cursor-pointer"
+          className="z-40 absolute top-0 left-0 w-full h-full cursor-pointer"
         />
+        <div className="absolute w-screen h-screen z-30">
+          <BallAnimation
+            width={windowSize.width}
+            height={windowSize.height}
+            handleAllCoordinateUpdate={(e: any) => handleAllCoordinateUpdate(e)}
+          />
+        </div>
         {isArrowVisible && (
           <div
             id="arrow-div"
