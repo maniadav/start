@@ -1,10 +1,6 @@
 "use client";
 import { InitialSurveyState } from "@constants/survey.data.constant";
-import {
-  getLocalStorageValue,
-  setLocalStorageValue,
-} from "@utils/localStorage";
-// context/SurveyContext.tsx
+import { getLocalStorageValue } from "@utils/localStorage";
 import React, {
   createContext,
   useReducer,
@@ -12,17 +8,7 @@ import React, {
   useContext,
   useEffect,
 } from "react";
-import {
-  surveyReducer,
-  SurveyState,
-  Action,
-} from "reducer/serviceReducer";
-// import {
-//   surveyReducer,
-//   initialState,
-//   SurveyState,
-//   Action,
-// } from "reducers/surveyReducer";
+import { surveyReducer, SurveyState, Action } from "reducer/serviceReducer";
 
 interface SurveyContextProps {
   state: SurveyState;

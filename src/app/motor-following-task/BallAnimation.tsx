@@ -1,25 +1,26 @@
+"use client";
 import React, { useEffect, useRef } from "react";
+import { useMotorStateContext } from "./MotorStateProvider";
 
 interface SineWaveProps {
   width: number;
   height: number;
-  handleAllCoordinateUpdate: any;
 }
 
-const BallAnimation: React.FC<SineWaveProps> = ({
-  width,
-  height,
-  handleAllCoordinateUpdate,
-}) => {
+const BallAnimation: React.FC<SineWaveProps> = ({ width, height }) => {
   const pathRef = useRef<SVGPathElement>(null);
   const ballRef = useRef<SVGCircleElement>(null);
 
+  // context to handle ball and touch movement
+  const { setBallCoordinates } = useMotorStateContext();
+
+  // modify to update the ball path
   const sineWaveFunction = (x: number): number => {
     return 2 * Math.sin(x) + 1.5 * Math.sin(1.8 * x);
   };
 
   useEffect(() => {
-    const updateRate = 10; // animation rate set to 20 millisecond
+    const updateRate = 10; // animation rate
     if (!pathRef.current || !ballRef.current) return;
     const path = pathRef.current;
     const ball = ballRef.current;
@@ -33,13 +34,12 @@ const BallAnimation: React.FC<SineWaveProps> = ({
 
     path.setAttribute("d", pathData);
 
-    const duration = 20000;
+    const duration = 80000;
     let startTime: number | null = null;
 
     const animateBall = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
-      // console.log({ timestamp, elapsed, startTime });
       const progress = elapsed / duration;
 
       if (progress >= 1) {
@@ -55,14 +55,15 @@ const BallAnimation: React.FC<SineWaveProps> = ({
       ball.setAttribute("cx", point.x.toString());
       ball.setAttribute("cy", point.y.toString());
 
-      // Check to log at every 20 milliseconds
-      handleAllCoordinateUpdate({
-        time: `${elapsed.toFixed(2)}ms`,
-        objX: point.x.toFixed(2),
-        objY: point.y.toFixed(2),
-        touchX: 0,
-        touchY: 0,
-      });
+      // time is handled in parent since it varies here based on browser performance
+      setBallCoordinates((prevPoints: any[]) => [
+        ...(prevPoints || []),
+        {
+          // time: `${elapsed.toFixed(2)}ms`,
+          objX: point.x.toFixed(2),
+          objY: point.y.toFixed(2),
+        },
+      ]);
 
       requestAnimationFrame(animateBall);
       // didn't work, working at default rate only

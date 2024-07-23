@@ -4,7 +4,7 @@ import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import MototFollowingTask from "./MototFollowingTask";
-import BallCanvas from "./BallCanvas";
+import { MotorStateProvider } from "./MotorStateProvider";
 
 const IndexPage = () => {
   const data = TasksConstant.BubblePoppingTask;
@@ -27,7 +27,6 @@ const IndexPage = () => {
             taskMessage={data.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
-
           <MototFollowingTask />
         </div>
       )}
@@ -38,7 +37,9 @@ const IndexPage = () => {
 export default function Page() {
   return (
     <SuspenseWrapper>
-      <IndexPage />
+      <MotorStateProvider>
+        <IndexPage />
+      </MotorStateProvider>
     </SuspenseWrapper>
   );
 }

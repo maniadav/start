@@ -12,6 +12,7 @@ import { timer } from "@utils/timer";
 import { trackTaskTime } from "@utils/trackTime";
 import Image from "next/image";
 import BallAnimation from "./BallAnimation";
+import { useMotorStateContext } from "./MotorStateProvider";
 interface Coordinate {
   x: number;
   y: number;
@@ -25,8 +26,12 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   ]);
   const [ballCoordinatesX, setBallCoordinatesX] = useState<string[]>([]);
   const [ballCoordinatesY, setBallCoordinatesY] = useState<string[]>([]);
-  const [mouseCoordinatesX, setMouseCoordinatesX] = useState<string[]>([]);
-  const [mouseCoordinatesY, setMouseCoordinatesY] = useState<string[]>([]);
+  const [touchCoordinatesX, setTouchCoordinatesX] = useState<string[]>([]);
+  const [touchCoordinatesY, setTouchCoordinatesY] = useState<string[]>([]);
+  const [touchCoordinates, setTouchCoordinates] = useState<any>([
+    { time: "", touchX: "0", touchY: "0" },
+  ]);
+  const [timeVsCoordinates, setTimeVsCoordinates] = useState<string[]>([]);
   const [mouseCoordinates, setMouseCoordinates] = useState<Coordinate[][]>([]);
   const [currentPath, setCurrentPath] = useState<Coordinate[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -38,6 +43,18 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     timeLimit: number;
     isTimeOver: boolean;
   } | null>(null);
+  const { ballCoordinates } = useMotorStateContext();
+  const ballCoordinatesRef = useRef(ballCoordinates);
+  const touchCoordinatesRef = useRef(touchCoordinates);
+
+  // require for updated movement data
+  useEffect(() => {
+    ballCoordinatesRef.current = ballCoordinates;
+  }, [ballCoordinates]);
+
+  useEffect(() => {
+    touchCoordinatesRef.current = touchCoordinates;
+  }, [touchCoordinates]);
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
@@ -51,17 +68,49 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const newlineWidth = 3;
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
-  const amplitudes = 100 + attempt * 50; // change the size of ball path on each attempt
   const reAttemptUrl =
     attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
 
+  const currentDate = Date.now();
+
   function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
     if (!isDrawing || !currentPoint || !prevPoint) return;
-
+    const elapsed = Date.now() - currentDate;
     drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
-    console.log({ currentPath });
+
     setCurrentPath((prev) => [...prev, currentPoint]);
+    // touchCoordinates.push({time: elapsed, x: currentPoint})
+    setTouchCoordinates((prev: any) => [
+      ...prev,
+      { time: elapsed, touchX: currentPoint.x, touchY: currentPoint.y },
+    ]);
   }
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const elapsed = Date.now() - currentDate;
+      const lastTouch =
+        touchCoordinatesRef.current[touchCoordinatesRef.current.length - 1];
+      const lastBallPosition =
+        ballCoordinatesRef.current[ballCoordinatesRef.current.length - 1];
+      const { touchX, touchY } = lastTouch;
+      const { objX, objY } = lastBallPosition;
+
+      console.log({ elapsed, touchX, touchY, objX, objY });
+
+      // setBallCoordinatesX((prev) => [...(prev || []), touchX]);
+      // setBallCoordinatesX((prev) => [...(prev || []), touchY]);
+      // setTouchCoordinatesX((prev) => [...(prev || []), objX]);
+      // setTouchCoordinatesY((prev) => [...(prev || []), objY]);
+      // setTimeVsCoordinates((prev) => [...(prev || []), objY]);
+      setAllCoordinated((prev) => [
+        ...prev,
+        { time: elapsed, touchX, touchY, objX, objY },
+      ]);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleInteractStart = () => {
     setIsDrawing(true);
@@ -75,8 +124,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     setMouseCoordinates((prev) => [...prev, currentPath]);
     const xCoordinates = currentPath.map((coord) => coord.x.toFixed(2));
     const yCoordinates = currentPath.map((coord) => coord.y.toFixed(2));
-    setMouseCoordinatesX(xCoordinates);
-    setMouseCoordinatesY(yCoordinates);
+    setTouchCoordinatesX(xCoordinates);
+    setTouchCoordinatesY(yCoordinates);
   };
 
   const [timeResult, setTimeResult] = useState<{
@@ -97,13 +146,14 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     (canvasElement: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
       canvasElement.width = window.innerWidth;
       canvasElement.height = window.innerHeight;
-      if (balls.current.length === 0) {
-        const r = 25;
-        const x = canvasElement.width;
-        const y = canvasElement.height / 2;
-        const c = "red";
-        balls.current.push(Ball(x, y, r, c, ctx, amplitudes));
-      }
+      // ball in canvas
+      // if (balls.current.length === 0) {
+      //   const r = 25;
+      //   const x = canvasElement.width;
+      //   const y = canvasElement.height / 2;
+      //   const c = "red";
+      //   balls.current.push(Ball(x, y, r, c, ctx));
+      // }
     },
     []
   );
@@ -144,6 +194,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             });
           });
 
+          // uncomment to embed ball motion in canvas
           // balls.current.forEach((ball) => {
           //   ball.animate();
           //   if (ball.getIsMoving()) {
@@ -243,8 +294,10 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         closedWithTimeout: false,
         objCoordX: ballCoordinatesX,
         objCoordY: ballCoordinatesX,
-        touchCoordX: mouseCoordinatesX,
-        touchCoordY: mouseCoordinatesY,
+        touchCoordX: touchCoordinatesX,
+        touchCoordY: touchCoordinatesY,
+        timeInMS: timeVsCoordinates,
+        movementData: allCoordinates,
       };
 
       // console.log({ updatedSurveyData });
@@ -263,8 +316,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     attempt,
     ballCoordinatesX,
     ballCoordinatesY,
-    mouseCoordinatesX,
-    mouseCoordinatesY,
+    touchCoordinatesX,
+    touchCoordinatesY,
   ]);
 
   useEffect(() => {
@@ -273,23 +326,15 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
-  const handleAllCoordinateUpdate = (newCoordinates: any) => {
-    setAllCoordinated((prev) => [...prev, newCoordinates]);
-  };
-
-  // useEffect(() => {
-  //   console.log({ allCoordinates });
-  // }, [allCoordinates]);
-
-  // useEffect(() => {
-  //   console.log({ currentPath });
-  // }, [currentPath]);
+  // const handleAllCoordinateUpdate = (newCoordinates: any) => {
+  //   setAllCoordinated((prev) => [...prev, newCoordinates]);
+  // };
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
       <div className="relative w-screen h-screen overflow-hidden">
         {isSurvey && (
-          <div className="absolute z-40">
+          <div className="absolute z-50">
             <div className="fixed top-4 right-4 flex flex-col space-y-2">
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -321,7 +366,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           <BallAnimation
             width={windowSize.width}
             height={windowSize.height}
-            handleAllCoordinateUpdate={(e: any) => handleAllCoordinateUpdate(e)}
+            // handleAllCoordinateUpdate={(e: any) => handleAllCoordinateUpdate(e)}
           />
         </div>
         {isArrowVisible && (
