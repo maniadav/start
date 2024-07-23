@@ -12,11 +12,9 @@ import { timer } from "@utils/timer";
 import { trackTaskTime } from "@utils/trackTime";
 import Image from "next/image";
 import BallAnimation from "./BallAnimation";
-import { useMotorStateContext } from "./MotorStateProvider";
-interface Coordinate {
-  x: number;
-  y: number;
-}
+import { useMotorStateContext } from "@context/MotorStateContext";
+import { Coordinate } from "types/survey.types";
+import useAudio from "@hooks/useAudio";
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -24,18 +22,16 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [allCoordinates, setAllCoordinated] = useState([
     { time: 0, objX: 0, objY: 0, touchX: 0, touchY: 0 },
   ]);
-  const [ballCoordinatesX, setBallCoordinatesX] = useState<string[]>([]);
-  const [ballCoordinatesY, setBallCoordinatesY] = useState<string[]>([]);
   const [touchCoordinatesX, setTouchCoordinatesX] = useState<string[]>([]);
   const [touchCoordinatesY, setTouchCoordinatesY] = useState<string[]>([]);
-  const [touchCoordinates, setTouchCoordinates] = useState<any>([
-    { time: "", touchX: "0", touchY: "0" },
+  const [touchCoordinates, setTouchCoordinates] = useState<Coordinate[]>([
+    { x: 0, y: 0 },
   ]);
-  const [timeVsCoordinates, setTimeVsCoordinates] = useState<string[]>([]);
   const [mouseCoordinates, setMouseCoordinates] = useState<Coordinate[][]>([]);
   const [currentPath, setCurrentPath] = useState<Coordinate[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [caught, setCaught] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
     startTime: number;
@@ -43,9 +39,24 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     timeLimit: number;
     isTimeOver: boolean;
   } | null>(null);
+
+  const { canvasRef, onInteractStart } = useDraw(onDraw);
+  const { state, dispatch } = useSurveyContext();
+  const { windowSize } = useWindowSize();
+  const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
+  const bubblePop = useAudio("/audio/audio-caught.wav");
   const ballCoordinatesRef = useRef(ballCoordinates);
   const touchCoordinatesRef = useRef(touchCoordinates);
+  // const balls = useRef<any[]>([]);
+  const animationRef = useRef<number | null>(null);
+  const color = "#000000";
+  const newlineWidth = 3;
+  const attemptString = searchParams.get("attempt") || "0";
+  const attempt = parseInt(attemptString);
+  const reAttemptUrl =
+    attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
+  const currentDate = Date.now();
 
   // require for updated movement data
   useEffect(() => {
@@ -54,94 +65,57 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   useEffect(() => {
     touchCoordinatesRef.current = touchCoordinates;
+    // considering ball radius, 25, as buffer zone
+    if (
+      windowSize.width &&
+      ballCoordinates[ballCoordinates.length - 1].x - 25 <
+        touchCoordinates[touchCoordinates.length - 1].x &&
+      touchCoordinates[touchCoordinates.length - 1].x <
+        ballCoordinates[ballCoordinates.length - 1].x &&
+      ballCoordinates[ballCoordinates.length - 1].y - 25 <
+        touchCoordinates[touchCoordinates.length - 1].y &&
+      touchCoordinates[touchCoordinates.length - 1].y <
+        ballCoordinates[ballCoordinates.length - 1].y &&
+      windowSize.width - 25 < touchCoordinates[touchCoordinates.length - 1].x
+    ) {
+      bubblePop();
+      setCaught(true);
+    }
   }, [touchCoordinates]);
 
-  const { canvasRef, onInteractStart } = useDraw(onDraw);
-  const { state, dispatch } = useSurveyContext();
-  const { windowSize } = useWindowSize();
-  const searchParams = useSearchParams();
-
-  const balls = useRef<any[]>([]);
-  const animationRef = useRef<number | null>(null);
-
-  const color = "#000000";
-  const newlineWidth = 3;
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
-
-  const currentDate = Date.now();
-
-  function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
-    if (!isDrawing || !currentPoint || !prevPoint) return;
-    const elapsed = Date.now() - currentDate;
-    drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
-
-    setCurrentPath((prev) => [...prev, currentPoint]);
-    // touchCoordinates.push({time: elapsed, x: currentPoint})
-    setTouchCoordinates((prev: any) => [
-      ...prev,
-      { time: elapsed, touchX: currentPoint.x, touchY: currentPoint.y },
-    ]);
-  }
-
+  // update interval time to manipulate data record rate
   useEffect(() => {
     const intervalId = setInterval(() => {
+      // time will reset on caught change (fix it)
       const elapsed = Date.now() - currentDate;
+      if (caught || !isSurvey) {
+        setTimerData({
+          startTime: currentDate,
+          endTime: Date.now(),
+          timeLimit: elapsed,
+          isTimeOver: false,
+        });
+        clearInterval(intervalId);
+        return;
+      }
       const lastTouch =
         touchCoordinatesRef.current[touchCoordinatesRef.current.length - 1];
       const lastBallPosition =
         ballCoordinatesRef.current[ballCoordinatesRef.current.length - 1];
-      const { touchX, touchY } = lastTouch;
-      const { objX, objY } = lastBallPosition;
+      const { x: touchX, y: touchY } = lastTouch;
+      const { x: objX, y: objY } = lastBallPosition;
 
-      console.log({ elapsed, touchX, touchY, objX, objY });
+      // console.log({ time: elapsed, touchX, touchY, objX, objY });
 
-      // setBallCoordinatesX((prev) => [...(prev || []), touchX]);
-      // setBallCoordinatesX((prev) => [...(prev || []), touchY]);
-      // setTouchCoordinatesX((prev) => [...(prev || []), objX]);
-      // setTouchCoordinatesY((prev) => [...(prev || []), objY]);
-      // setTimeVsCoordinates((prev) => [...(prev || []), objY]);
       setAllCoordinated((prev) => [
         ...prev,
         { time: elapsed, touchX, touchY, objX, objY },
       ]);
-    }, 1000);
+    }, 100); // data records at 100ms
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [caught, isSurvey]);
 
-  const handleInteractStart = () => {
-    setIsDrawing(true);
-    setCurrentPath([]);
-    onInteractStart();
-    setIsArrowVisible(false); // Hide the arrow
-  };
-
-  const handleInteractEnd = () => {
-    setIsDrawing(false);
-    setMouseCoordinates((prev) => [...prev, currentPath]);
-    const xCoordinates = currentPath.map((coord) => coord.x.toFixed(2));
-    const yCoordinates = currentPath.map((coord) => coord.y.toFixed(2));
-    setTouchCoordinatesX(xCoordinates);
-    setTouchCoordinatesY(yCoordinates);
-  };
-
-  const [timeResult, setTimeResult] = useState<{
-    timeStart: string | null;
-    timeEnd: string | null;
-    timeTaken: string | null;
-  } | null>(null);
-
-  // const handleStart = () => {
-  //   trackTaskTime('start'); // Start tracking time
-  // };
-
-  const handleEnd = () => {
-    const result = trackTaskTime("end"); // End tracking time and get the result
-    // setTimeResult(result); // Store the result in state
-  };
   const initializeCanvas = useCallback(
     (canvasElement: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
       canvasElement.width = window.innerWidth;
@@ -220,6 +194,40 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     };
   }, [mouseCoordinates, currentPath, windowSize, initializeCanvas]);
 
+  function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
+    if (!isDrawing || !currentPoint || !prevPoint) return;
+    drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
+
+    setCurrentPath((prev) => [...prev, currentPoint]);
+    // touchCoordinates.push({time: elapsed, x: currentPoint})
+    setTouchCoordinates((prev: any) => [
+      ...prev,
+      { x: currentPoint.x, y: currentPoint.y },
+    ]);
+  }
+
+  const handleInteractStart = () => {
+    setIsDrawing(true);
+    setCurrentPath([]);
+    onInteractStart();
+    setIsArrowVisible(false); // Hide the arrow
+  };
+
+  const handleInteractEnd = () => {
+    setIsDrawing(false);
+    setMouseCoordinates((prev) => [...prev, currentPath]);
+    const xCoordinates = currentPath.map((coord) => coord.x.toFixed(2));
+    const yCoordinates = currentPath.map((coord) => coord.y.toFixed(2));
+    setTouchCoordinatesX(xCoordinates);
+    setTouchCoordinatesY(yCoordinates);
+  };
+
+  const [timeResult, setTimeResult] = useState<{
+    timeStart: string | null;
+    timeEnd: string | null;
+    timeTaken: string | null;
+  } | null>(null);
+
   const saveImage = () => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -227,10 +235,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ballCoordinatesX.forEach((x, index) => {
-          const y = ballCoordinatesY[index];
+        ballCoordinates.forEach((item: Coordinate) => {
           ctx.beginPath();
-          ctx.arc(parseFloat(x), parseFloat(y), 2, 0, Math.PI * 2);
+          ctx.arc(item.x, item.y, 2, 0, Math.PI * 2);
           ctx.fillStyle = "blue";
           ctx.fill();
         });
@@ -245,62 +252,33 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const handleStartGame = () => {
     // handleTimer();
     trackTaskTime("start"); // Start tracking time
-    const width = window.screen.width;
-    const height = window.screen.height;
-    const device = navigator.userAgent;
 
     setSurveyData((prevState: any) => ({
       ...prevState,
-      screenHeight: height,
-      screenWidth: width,
-      deviceType: device,
     }));
   };
 
-  const stopTimerFuncRef = useRef<() => any>();
-
-  const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(180000);
-
-    stopTimerFuncRef.current = stopTimer;
-
-    endTimePromise.then(setTimerData);
-
-    return () => {
-      // Optional cleanup if necessary
-      stopTimerFuncRef.current && stopTimerFuncRef.current();
-    };
-  };
-
-  const handleStopTimer = useCallback(() => {
-    if (stopTimerFuncRef.current) {
-      const data = stopTimerFuncRef.current();
-      return data;
-    }
-  }, []);
-
   const closeGame = useCallback(() => {
     // const timerData = handleStopTimer();
-    const timerData = trackTaskTime("end");
+    // const timerData = trackTaskTime("end");
+    const deviceType = navigator.userAgent;
     saveImage();
     setShowPopup(true);
     // console.log({ timerData });
     setSurveyData((prevState: any) => {
       const updatedSurveyData = {
         ...prevState,
-        timeTaken: timerData?.timeTaken || "",
+        timeTaken: timerData?.timeLimit || "",
         endTime: timerData?.endTime || "",
         startTime: timerData?.startTime || "",
         closedWithTimeout: false,
-        objCoordX: ballCoordinatesX,
-        objCoordY: ballCoordinatesX,
         touchCoordX: touchCoordinatesX,
         touchCoordY: touchCoordinatesY,
-        timeInMS: timeVsCoordinates,
         movementData: allCoordinates,
+        screenHeight: windowSize.height,
+        screenWidth: windowSize.width,
+        deviceType,
       };
-
-      // console.log({ updatedSurveyData });
       dispatch({
         type: "UPDATE_SURVEY_DATA",
         attempt,
@@ -310,15 +288,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
       return updatedSurveyData;
     });
-  }, [
-    isSurvey,
-    timerData,
-    attempt,
-    ballCoordinatesX,
-    ballCoordinatesY,
-    touchCoordinatesX,
-    touchCoordinatesY,
-  ]);
+  }, [isSurvey, timerData, attempt, touchCoordinatesX, touchCoordinatesY]);
 
   useEffect(() => {
     if (isSurvey) {

@@ -1,4 +1,5 @@
 "use client";
+import { Coordinate } from "types/survey.types";
 import React, {
   createContext,
   ReactNode,
@@ -13,15 +14,19 @@ interface MotorStateProps {
 }
 
 interface MotorStateContextProps {
-  currentUser: MotorStateProps | null;
-  setCurrentUser: Dispatch<SetStateAction<MotorStateProps | null>>;
+  ballCoordinates: Coordinate[];
+  mouseCoordinates: Coordinate[];
+  setBallCoordinates: Dispatch<SetStateAction<Coordinate[]>>;
+  setMouseCoordinates: Dispatch<SetStateAction<Coordinate[]>>;
 }
 
-const MotorStateContext = createContext<any | undefined>(undefined);
+const MotorStateContext = createContext<MotorStateContextProps | undefined>(
+  undefined
+);
 
 const MotorStateProvider = ({ children }: { children: ReactNode }) => {
-  const [ballCoordinates, setBallCoordinates] = useState([]);
-  const [mouseCoordinates, setMouseCoordinates] = useState([]);
+  const [ballCoordinates, setBallCoordinates] = useState([{ x: 0, y: 0 }]);
+  const [mouseCoordinates, setMouseCoordinates] = useState([{ x: 0, y: 0 }]);
 
   return (
     <MotorStateContext.Provider
@@ -40,9 +45,7 @@ const MotorStateProvider = ({ children }: { children: ReactNode }) => {
 const useMotorStateContext = () => {
   const context = useContext(MotorStateContext);
   if (!context) {
-    throw new Error(
-      "component not under context provider"
-    );
+    throw new Error("component not under context provider");
   }
   return context;
 };

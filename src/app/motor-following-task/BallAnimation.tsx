@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { useMotorStateContext } from "./MotorStateProvider";
+import { useMotorStateContext } from "@context/MotorStateContext";
+import { Coordinate } from "types/survey.types";
 
-interface SineWaveProps {
+interface BallAnimationProp {
   width: number;
   height: number;
 }
 
-const BallAnimation: React.FC<SineWaveProps> = ({ width, height }) => {
+const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
   const pathRef = useRef<SVGPathElement>(null);
   const ballRef = useRef<SVGCircleElement>(null);
 
@@ -20,7 +21,7 @@ const BallAnimation: React.FC<SineWaveProps> = ({ width, height }) => {
   };
 
   useEffect(() => {
-    const updateRate = 10; // animation rate
+    // const updateRate = 10; // animation rate
     if (!pathRef.current || !ballRef.current) return;
     const path = pathRef.current;
     const ball = ballRef.current;
@@ -56,12 +57,12 @@ const BallAnimation: React.FC<SineWaveProps> = ({ width, height }) => {
       ball.setAttribute("cy", point.y.toString());
 
       // time is handled in parent since it varies here based on browser performance
-      setBallCoordinates((prevPoints: any[]) => [
+      // frameAnimationTime = `${elapsed.toFixed(2)}ms`,
+      setBallCoordinates((prevPoints: Coordinate[]) => [
         ...(prevPoints || []),
         {
-          // time: `${elapsed.toFixed(2)}ms`,
-          objX: point.x.toFixed(2),
-          objY: point.y.toFixed(2),
+          x: Number(point.x.toFixed(2)),
+          y: Number(point.y.toFixed(2)),
         },
       ]);
 

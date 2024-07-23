@@ -4,7 +4,7 @@ import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import MototFollowingTask from "./MototFollowingTask";
-import { MotorStateProvider } from "./MotorStateProvider";
+import { MotorStateProvider } from "@context/MotorStateContext";
 
 const IndexPage = () => {
   const data = TasksConstant.BubblePoppingTask;

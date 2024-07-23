@@ -30,7 +30,8 @@
       "@middleware/*": ["middleware/*"],
       "@helper/*": ["helper/*"],
       "@assets/*": ["assets/*"],
-      "@constants/*": ["constants/*"]
+      "@constants/*": ["constants/*"],
+      "@context/*": ["context/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
