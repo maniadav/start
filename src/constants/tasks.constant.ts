@@ -12,6 +12,12 @@ export const TasksConstant: any = {
     taskMessage:
       "look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?",
   },
+  ButtonTask: {
+    title: "Button Task",
+    surveyLink: "button-task",
+    taskMessage:
+      "look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?",
+  },
   SynchronyTask: {
     title: "Synchrony Task",
     surveyLink: "synchrony-task",

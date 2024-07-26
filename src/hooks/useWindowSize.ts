@@ -9,6 +9,7 @@ export default function useWindowSize(): {
   windowSize: WindowSize;
   isMobile: boolean;
   isDesktop: boolean;
+  deviceType: string
 } {
   const [windowSize, setWindowSize] = useState<WindowSize>({
     width: undefined,
@@ -33,6 +34,7 @@ export default function useWindowSize(): {
     typeof windowSize?.width === "number" && windowSize?.width < 768;
   const isDesktop =
     typeof windowSize?.width === "number" && windowSize?.width >= 768;
+  const deviceType = navigator.userAgent;
 
-  return { windowSize, isMobile, isDesktop };
+  return { windowSize, isMobile, isDesktop, deviceType };
 }

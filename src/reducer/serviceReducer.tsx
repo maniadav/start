@@ -42,7 +42,7 @@ export const surveyReducer = (state: SurveyState, action: Action): any => {
           ...state[action.task],
           noOfAttempt: action.attempt,
           [`attempt${action.attempt}`]: {
-            ...state[action.task][`attempt${action.attempt}`],
+            ...state[action.task]?.[`attempt${action?.attempt}`],
             ...action.data,
           },
         },
