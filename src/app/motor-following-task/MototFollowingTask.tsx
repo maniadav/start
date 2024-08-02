@@ -336,7 +336,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           <BallAnimation
             width={windowSize.width}
             height={windowSize.height}
-            // handleAllCoordinateUpdate={(e: any) => handleAllCoordinateUpdate(e)}
+            attempt={attempt}
           />
         </div>
         {isArrowVisible && (

@@ -6,9 +6,14 @@ import { Coordinate } from "types/survey.types";
 interface BallAnimationProp {
   width: number;
   height: number;
+  attempt: number;
 }
 
-const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
+const BallAnimation: React.FC<BallAnimationProp> = ({
+  width,
+  height,
+  attempt,
+}) => {
   const pathRef = useRef<SVGPathElement>(null);
   const ballRef = useRef<SVGCircleElement>(null);
 
@@ -17,11 +22,11 @@ const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
 
   // modify to update the ball path
   const sineWaveFunction = (x: number): number => {
-    return 2 * Math.sin(x) + 1.5 * Math.sin(1.8 * x);
+    const frequency = 1 + attempt * 0.5;
+    return 1.5 * (Math.sin(frequency * x) + Math.sin(1.8 * x));
   };
 
   useEffect(() => {
-    // const updateRate = 10; // animation rate
     if (!pathRef.current || !ballRef.current) return;
     const path = pathRef.current;
     const ball = ballRef.current;
@@ -41,7 +46,11 @@ const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
     const animateBall = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
-      const progress = elapsed / duration;
+      const rawProgress = elapsed / duration;
+
+      // Ensure oscillating progress remains within bounds and moves forward
+      const oscillation = (Math.sin(rawProgress * 4 * Math.PI) + 1) / 8;
+      const progress = rawProgress + oscillation;
 
       if (progress >= 1) {
         const length = path.getTotalLength();
@@ -56,8 +65,6 @@ const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
       ball.setAttribute("cx", point.x.toString());
       ball.setAttribute("cy", point.y.toString());
 
-      // time is handled in parent since it varies here based on browser performance
-      // frameAnimationTime = `${elapsed.toFixed(2)}ms`,
       setBallCoordinates((prevPoints: Coordinate[]) => [
         ...(prevPoints || []),
         {
@@ -67,10 +74,6 @@ const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
       ]);
 
       requestAnimationFrame(animateBall);
-      // didn't work, working at default rate only
-      // setTimeout(() => {
-      //   requestAnimationFrame(animateBall);
-      // }, updateRate);
     };
 
     requestAnimationFrame(animateBall);
@@ -81,7 +84,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({ width, height }) => {
       <path
         ref={pathRef}
         id="sineWave"
-        // stroke="#3498db"
+        stroke="#3498db"
         strokeWidth="2"
         fill="transparent"
       />

@@ -7,11 +7,9 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 
-
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [bubblesPopped, setBubblesPopped] = useState<number>(0);
   const [alertShown, setAlertShown] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [videoSRC, setVideoSRC] = useState<string>();
@@ -38,7 +36,8 @@ const ButtonTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `button-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 1800000;
+  const timeLimit = 180000; // 3 minutes
+  const stopTimerFuncRef = useRef<() => any>();
 
   useEffect(() => {
     if (isSurvey) {
@@ -48,16 +47,13 @@ const ButtonTask = ({ isSurvey = false }) => {
   }, [isSurvey]);
 
   useEffect(() => {
-    if (buttonClicked.length >= 3) {
+    if (buttonClicked.length >= 8) {
       if (isSurvey) {
         const timer = setTimeout(() => {
           const timeData = handleStopTimer();
           closeGame(timeData);
         }, 3000);
-
         return () => clearTimeout(timer);
-      } else {
-        alert("you may start the game!");
       }
     }
   }, [buttonClicked]);
@@ -73,14 +69,12 @@ const ButtonTask = ({ isSurvey = false }) => {
     const timer = setTimeout(() => {
       setShowVideo(false);
     }, 5000);
-
     return () => clearTimeout(timer);
   }, [showVideo]);
 
   const handleStopTimer = useCallback(() => {
     if (stopTimerFuncRef.current) {
-      const data = stopTimerFuncRef.current();
-      return data;
+      return stopTimerFuncRef.current();
     }
   }, []);
 
@@ -88,32 +82,20 @@ const ButtonTask = ({ isSurvey = false }) => {
     if (isSurvey) {
       setButtonClicked((prev: string[]) => [...prev, color]);
     }
-    color === "red"
-      ? setVideoSRC("./video/girl.mp4")
-      : setVideoSRC("./video/pattern.mp4");
+    setVideoSRC(color === "red" ? "./video/girl.mp4" : "./video/pattern.mp4");
     setShowVideo(true);
   };
 
-  const handleStartGame = () => {
-    handleTimer();
-  };
-
-  const stopTimerFuncRef = useRef<() => any>();
-
-  const handleTimer = () => {
+  const handleStartGame = useCallback(() => {
     const { endTimePromise, stopTimer } = timer(timeLimit);
     stopTimerFuncRef.current = stopTimer;
     endTimePromise.then(setTimerData);
-    return () => {
-      stopTimerFuncRef.current && stopTimerFuncRef.current();
-    };
-  };
+  }, [timeLimit]);
 
   const closeGame = useCallback(
     (timeData?: any) => {
       if (isSurvey) {
         setShowPopup(true);
-        console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -138,11 +120,19 @@ const ButtonTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [buttonClicked, isSurvey, timerData, attempt, bubblesPopped]
+    [
+      buttonClicked,
+      isSurvey,
+      timerData,
+      attempt,
+      windowSize,
+      deviceType,
+      dispatch,
+    ]
   );
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen bg-slate-100 m-0">
       {showVideo ? (
         <div className="w-screen h-screen relative">
           <video
@@ -160,10 +150,8 @@ const ButtonTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={
-            "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
-          }
-          testName={"bubble popping"}
+          msg="You have completed the Button Task. Do you want to go back, make a new attempt, or start the next test?"
+          testName="Button popping"
           reAttemptUrl={reAttemptUrl}
         />
       )}

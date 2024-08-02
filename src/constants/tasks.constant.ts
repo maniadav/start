@@ -16,7 +16,7 @@ export const TasksConstant: any = {
     title: "Button Task",
     surveyLink: "button-task",
     taskMessage:
-      "look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?",
+      "There are two buttons, each of them contains a video. Show both videos to a child and press start once a child is ready.",
   },
   SynchronyTask: {
     title: "Synchrony Task",
