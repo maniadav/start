@@ -40,7 +40,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
 
     path.setAttribute("d", pathData);
 
-    const duration = 40000;
+    const duration = 60000;
     let startTime: number | null = null;
 
     const animateBall = (timestamp: number) => {

@@ -22,8 +22,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [allCoordinates, setAllCoordinated] = useState([
     { time: 0, objX: 0, objY: 0, touchX: 0, touchY: 0 },
   ]);
-  const [touchCoordinatesX, setTouchCoordinatesX] = useState<string[]>([]);
-  const [touchCoordinatesY, setTouchCoordinatesY] = useState<string[]>([]);
   const [touchCoordinates, setTouchCoordinates] = useState<Coordinate[]>([
     { x: 0, y: 0 },
   ]);
@@ -216,10 +214,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const handleInteractEnd = () => {
     setIsDrawing(false);
     setMouseCoordinates((prev) => [...prev, currentPath]);
-    const xCoordinates = currentPath.map((coord) => coord.x.toFixed(2));
-    const yCoordinates = currentPath.map((coord) => coord.y.toFixed(2));
-    setTouchCoordinatesX(xCoordinates);
-    setTouchCoordinatesY(yCoordinates);
   };
 
   const [timeResult, setTimeResult] = useState<{
@@ -272,8 +266,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         endTime: timerData?.endTime || "",
         startTime: timerData?.startTime || "",
         closedWithTimeout: false,
-        touchCoordX: touchCoordinatesX,
-        touchCoordY: touchCoordinatesY,
         movementData: allCoordinates,
         screenHeight: windowSize.height,
         screenWidth: windowSize.width,
@@ -288,7 +280,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
       return updatedSurveyData;
     });
-  }, [isSurvey, timerData, attempt, touchCoordinatesX, touchCoordinatesY]);
+  }, [isSurvey, timerData, attempt]);
 
   useEffect(() => {
     if (isSurvey) {
