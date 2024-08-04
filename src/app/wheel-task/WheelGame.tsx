@@ -1,31 +1,110 @@
 "use client";
-
-import React from "react";
-import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import { CommonButton } from "components/common/CommonButton";
-import SurveyTable from "components/SurveyTable";
 import MessagePopup from "components/common/MessagePopup";
-// import { useSearchParams } from "next/navigation";
-const colors = ["red", "green", "blue", "yellow", "purple", "orange"];
+import { timer } from "@utils/timer";
+import { useSurveyContext } from "context/SurveyContext";
+import useWindowSize from "@hooks/useWindowSize";
 
-const WheelGame = ({ sample = false }: any) => {
+const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<any>(null);
-  // const searchParams = useSearchParams();
-  const attempt ="0"// searchParams.get("attempt") || "0";
+  const [alertShown, setAlertShown] = useState(false);
+  const [timerData, setTimerData] = useState<{
+    startTime: number;
+    endTime: number;
+    timeLimit: number;
+    isTimeOver: boolean;
+  } | null>(null);
+  const [surveyData, setSurveyData] = useState<any>({});
+
+  const { windowSize } = useWindowSize();
+  const { state, dispatch } = useSurveyContext();
+  const searchParams = useSearchParams();
+  const attemptString = searchParams.get("attempt") || "0";
+  const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    parseInt(attempt) < 3
-      ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`
-      : null;
+    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
+  const timeLimit = 180000;
 
   useEffect(() => {
-    setStartTime(Date.now());
+    if (isSurvey) {
+      handleStartGame();
+    }
+  }, [isSurvey]);
+
+  useEffect(() => {
+    if (timerData?.isTimeOver && !alertShown) {
+      closeGame(timerData);
+      setAlertShown(true);
+    }
+  }, [alertShown, timerData]);
+
+  const handleStartGame = () => {
+    handleTimer();
+  };
+
+  const stopTimerFuncRef = useRef<() => any>();
+
+  const handleTimer = () => {
+    const { endTimePromise, stopTimer } = timer(timeLimit);
+
+    stopTimerFuncRef.current = stopTimer;
+
+    endTimePromise.then(setTimerData);
+
+    return () => {
+      // Optional cleanup if necessary
+      stopTimerFuncRef.current && stopTimerFuncRef.current();
+    };
+  };
+
+  const handleStopTimer = useCallback(() => {
+    if (stopTimerFuncRef.current) {
+      const data = stopTimerFuncRef.current();
+      return data;
+    }
   }, []);
 
+  const closeGame = useCallback(
+    (timeData?: any) => {
+      const deviceType = navigator.userAgent;
+      if (isSurvey) {
+        setShowPopup(true);
+        console.log({ timeData });
+        setSurveyData((prevState: any) => {
+          const updatedSurveyData = {
+            ...prevState,
+            timeTaken: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
+            closedWithTimeout: timeData?.isTimeOver || false,
+            screenHeight: windowSize.height,
+            screenWidth: windowSize.width,
+            deviceType,
+          };
+
+          dispatch({
+            type: "UPDATE_SURVEY_DATA",
+            attempt,
+            task: "WheelTask",
+            data: updatedSurveyData,
+          });
+
+          return updatedSurveyData;
+        });
+      }
+    },
+    [isSurvey, timerData, attempt]
+  );
+
   const handleCloseGame = () => {
-    setShowPopup(true);
-    console.log(`${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
+    if (isSurvey) {
+      const timeData = handleStopTimer();
+      closeGame(timeData);
+    } else {
+      alert("you may start the game!");
+    }
   };
 
   return (
@@ -46,7 +125,7 @@ const WheelGame = ({ sample = false }: any) => {
           onClick={handleCloseGame}
         ></button>
       </div>
-      {!sample && (
+      {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
           msg={
@@ -60,4 +139,4 @@ const WheelGame = ({ sample = false }: any) => {
   );
 };
 
-export default WheelGame;
+export default WheelTask;

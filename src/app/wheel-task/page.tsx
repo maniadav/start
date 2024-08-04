@@ -24,7 +24,7 @@ const IndexPage = () => {
     <>
       {survey ? (
         <div className="w-full h-full overflow-hidden">
-          <WheelGame />
+          <WheelGame isSurvey={true} />
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">
@@ -33,7 +33,7 @@ const IndexPage = () => {
             taskMessage={data.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
-          <WheelGame sample={true} />
+          <WheelGame />
         </div>
       )}
     </>
