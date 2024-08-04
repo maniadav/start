@@ -40,18 +40,19 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
 
     path.setAttribute("d", pathData);
 
-    const duration = 80000;
+    const duration = 40000;
     let startTime: number | null = null;
 
     const animateBall = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
+      // percentage of time when animation starts vs total time of animation
       const rawProgress = elapsed / duration;
 
-      // Ensure oscillating progress remains within bounds and moves forward
-      const oscillation = (Math.sin(rawProgress * 4 * Math.PI) + 1) / 8;
-      const progress = rawProgress + oscillation;
-
+      // Calculate the progress along the path with speed variation
+      const oscillation = Math.sin(rawProgress * Math.PI * 2); // Oscillate 2 times
+      const progress = rawProgress + 0.1 * Math.abs(oscillation);
+      // console.log({ rawProgress, progress, oscillation });
       if (progress >= 1) {
         const length = path.getTotalLength();
         const finalPoint = path.getPointAtLength(length);
@@ -61,7 +62,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
       }
 
       const length = path.getTotalLength();
-      const point = path.getPointAtLength(progress * length);
+      const point = path.getPointAtLength(Math.min(progress, 1) * length);
       ball.setAttribute("cx", point.x.toString());
       ball.setAttribute("cy", point.y.toString());
 
@@ -84,7 +85,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
       <path
         ref={pathRef}
         id="sineWave"
-        stroke="#3498db"
+        // stroke="#3498db"
         strokeWidth="2"
         fill="transparent"
       />
