@@ -6,8 +6,9 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
+import AudioRecorder from "@hooks/useAudioRecorder";
 
-const WheelTask = ({ isSurvey = false }) => {
+const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
@@ -87,7 +88,7 @@ const WheelTask = ({ isSurvey = false }) => {
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: "WheelTask",
+            task: "LanguageSamplingTask",
             data: updatedSurveyData,
           });
 
@@ -111,27 +112,29 @@ const WheelTask = ({ isSurvey = false }) => {
     <div className="relative w-screen h-screen overflow-hidden">
       <div className="relative h-screen w-full">
         <Image
-          src="/hallucination.gif"
+          src="/image/langaugesampling.png"
           layout="fill"
           objectFit="contain"
-          alt="ocean"
+          alt="langaugesampling.png"
           className="h-screen w-auto"
-        />
+        />{" "}
       </div>
 
-      <div className="absolute bottom-5 left-5">
+      {isSurvey && <AudioRecorder closeGame={handleCloseGame} />}
+      {/* 
+      <div className="absolute bottom-1 left-1/2">
         <button
-          className="border border-black shadow-lg rounded-full bg-primary w-12 h-12 px-2 py-1 "
+          className="border border-black shadow-lg rounded-full bg-primary w-16 h-16 px-2 py-1 "
           onClick={handleCloseGame}
         ></button>
-      </div>
+      </div> */}
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            "You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
           }
-          testName={"bubble popping"}
+          testName={"language Sampling task"}
           reAttemptUrl={reAttemptUrl}
         />
       )}
@@ -139,4 +142,4 @@ const WheelTask = ({ isSurvey = false }) => {
   );
 };
 
-export default WheelTask;
+export default LanguageSamplingTask;

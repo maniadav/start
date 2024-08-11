@@ -27,3 +27,13 @@ export function formatDate(inputDate: string) {
 
   return formattedDate;
 }
+
+export const numberToStringDate = (milliseconds: number) => {
+  const date = new Date(milliseconds);
+  const isDate = new Date(date.getTime());
+  const istDate = isDate.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour12: true,
+  });
+  return istDate;
+};

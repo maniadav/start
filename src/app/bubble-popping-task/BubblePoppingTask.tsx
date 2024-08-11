@@ -29,10 +29,11 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const [screenHeight, setScreenHeight] = useState<number>(100);
   const [screenWidth, setScreenWidth] = useState<number>(100);
   const [timerData, setTimerData] = useState<{
-    startTime: number;
-    endTime: number;
+    startTime: string;
+    endTime: string;
     timeLimit: number;
     isTimeOver: boolean;
+    timeTaken: number;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<Attempt>({
     closedWithTimeout: false,

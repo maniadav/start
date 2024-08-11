@@ -6,15 +6,16 @@ import { TasksConstant } from "constants/tasks.constant";
 import { useSearchParams } from "next/navigation";
 import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
-import LanguageSamplingTask from "./LanguageSamplingTask";
+import LanguageSamplingTask from "./DelayedGratificationTask";
 import SuspenseWrapper from "components/SuspenseWrapper";
+import DelayedGratificationTask from "./DelayedGratificationTask";
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<any>(null);
 
-  const data = TasksConstant.LanguageSamplingTask;
+  const data = TasksConstant.DelayedGratificationTask;
 
   const handleStartGame = () => {
     setSurvey(!survey);
@@ -25,7 +26,7 @@ const IndexPage = () => {
     <>
       {survey ? (
         <div className="w-full h-full overflow-hidden">
-          <LanguageSamplingTask isSurvey={true} />
+          <DelayedGratificationTask isSurvey={true} />
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">

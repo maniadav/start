@@ -6,8 +6,9 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
+import ProgressiveCircle from "./ProgrgessiveCircle";
 
-const WheelTask = ({ isSurvey = false }) => {
+const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
@@ -15,6 +16,7 @@ const WheelTask = ({ isSurvey = false }) => {
     endTime: string;
     timeLimit: number;
     isTimeOver: boolean;
+    timeTaken: number;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
 
@@ -24,8 +26,8 @@ const WheelTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000;
+    attempt < 3 ? `delayed-gratification-task?attempt=${attempt + 1}` : null;
+  const timeLimit = 30000;
 
   useEffect(() => {
     if (isSurvey) {
@@ -68,6 +70,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   const closeGame = useCallback(
     (timeData?: any) => {
+      console.log({ timeData });
       const deviceType = navigator.userAgent;
       if (isSurvey) {
         setShowPopup(true);
@@ -75,7 +78,8 @@ const WheelTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeLimit || "",
+            timeTaken: timeData.timeTaken,
+            timeLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
@@ -87,7 +91,7 @@ const WheelTask = ({ isSurvey = false }) => {
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: "WheelTask",
+            task: "DelayedGratificationTask",
             data: updatedSurveyData,
           });
 
@@ -109,29 +113,32 @@ const WheelTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <div className="relative h-screen w-full">
+      <div
+        className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
+        onClick={() => handleCloseGame()}
+      >
         <Image
-          src="/hallucination.gif"
-          layout="fill"
+          width={150}
+          height={150}
+          src="/gif/dance.gif"
           objectFit="contain"
-          alt="ocean"
-          className="h-screen w-auto"
+          alt="langaugesampling.png"
+          // className="w-auto w-auto"
         />
       </div>
-
-      <div className="absolute bottom-5 left-5">
-        <button
-          className="border border-black shadow-lg rounded-full bg-primary w-12 h-12 px-2 py-1 "
-          onClick={handleCloseGame}
-        ></button>
+      <div className="top-1/2 relative w-full flex justify-center align-middle items-center gap-20">
+        <div className="absolute">
+          <ProgressiveCircle />
+        </div>
       </div>
+
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            "You have completed the Delayed Gratification Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
           }
-          testName={"bubble popping"}
+          testName={"delayed gratification"}
           reAttemptUrl={reAttemptUrl}
         />
       )}
@@ -139,4 +146,4 @@ const WheelTask = ({ isSurvey = false }) => {
   );
 };
 
-export default WheelTask;
+export default DelayedGratificationTask;

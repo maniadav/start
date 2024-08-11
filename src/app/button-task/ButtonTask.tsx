@@ -14,8 +14,8 @@ const ButtonTask = ({ isSurvey = false }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [videoSRC, setVideoSRC] = useState<string>();
   const [timerData, setTimerData] = useState<{
-    startTime: number;
-    endTime: number;
+    startTime: string;
+    endTime: string;
     timeLimit: number;
     isTimeOver: boolean;
   } | null>(null);

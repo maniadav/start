@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
 import WheelGame from "./WheelGame";
+import SuspenseWrapper from "components/SuspenseWrapper";
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const IndexPage = () => {
@@ -40,4 +41,10 @@ const IndexPage = () => {
   );
 };
 
-export default IndexPage;
+export default function Page() {
+  return (
+    <SuspenseWrapper>
+      <IndexPage />
+    </SuspenseWrapper>
+  );
+}

@@ -1,13 +1,17 @@
+import { numberToStringDate } from "@helper/convert";
+
 // utils/timer.ts
 export interface TimerData {
   startTime: number;
   endTime: number;
   timeLimit: number;
   isTimeOver: boolean;
+  timeTaken: number;
 }
 
 export const timer = (timeLimit: number) => {
   const startTime = Date.now();
+  const startTimeIST = numberToStringDate(startTime);
 
   let timeoutId: NodeJS.Timeout;
 
@@ -19,25 +23,30 @@ export const timer = (timeLimit: number) => {
 
   const stopTimer = () => {
     clearTimeout(timeoutId);
-    const endTime = Date.now();
-    const isTimeOver = endTime - startTime >= timeLimit;
-    return { startTime, endTime, timeLimit, isTimeOver };
+    const endTimeNumber = Date.now();
+    const timeTaken = endTimeNumber - startTime;
+    const isTimeOver = timeTaken >= timeLimit;
+    const endTime = numberToStringDate(endTimeNumber);
+    return {
+      startTime: startTimeIST,
+      endTime,
+      timeLimit,
+      isTimeOver,
+      timeTaken,
+    };
   };
 
-  const setIST = (dateUTC: { getTime: () => number; getTimezoneOffset: () => number; }) => {
-    const utc = dateUTC.getTime() + (dateUTC.getTimezoneOffset() * 60000);
-    const newDate = new Date(utc + (3600000 * +5.5));
-    var ist = newDate.toLocaleString();
-    return ist
-  }
   return {
     endTimePromise: endTimePromise.then((end) => {
-      const isTimeOver = end - startTime >= timeLimit;
+      const timeTaken = end - startTime;
+      const isTimeOver = timeTaken >= timeLimit;
+      const endIST = numberToStringDate(end);
       return {
-        startTime,
-        endTime: end,
+        startTime: startTimeIST,
+        endTime: endIST,
         timeLimit,
         isTimeOver,
+        timeTaken,
       };
     }),
     stopTimer,

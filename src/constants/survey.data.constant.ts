@@ -36,8 +36,8 @@ export const SynchronyTask: any = {
   useID: "",
   surveyID: "",
 };
-export const LanuageSamplingTask: any = {
-  assestment_id: "LanuageSamplingTask",
+export const LanguageSamplingTask: any = {
+  assestment_id: "LanguageSamplingTask",
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
@@ -66,7 +66,7 @@ export const InitialSurveyState: any = {
     ...ButtonTaskData,
   },
   SynchronyTask: { ...SynchronyTask },
-  LanuageSamplingTask: { ...LanuageSamplingTask },
+  LanguageSamplingTask: { ...LanguageSamplingTask },
   WheelTask: {
     ...WheelTask,
   },
