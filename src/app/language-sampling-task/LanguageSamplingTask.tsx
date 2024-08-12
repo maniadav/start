@@ -18,8 +18,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
-
-  const { windowSize } = useWindowSize();
+  const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
@@ -69,7 +68,6 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
 
   const closeGame = useCallback(
     (timeData?: any) => {
-      const deviceType = navigator.userAgent;
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
@@ -121,7 +119,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       </div>
 
       {isSurvey && <AudioRecorder closeGame={handleCloseGame} />}
-      {/* 
+      {/*       
       <div className="absolute bottom-1 left-1/2">
         <button
           className="border border-black shadow-lg rounded-full bg-primary w-16 h-16 px-2 py-1 "

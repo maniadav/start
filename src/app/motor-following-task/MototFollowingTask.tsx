@@ -40,7 +40,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
-  const { windowSize } = useWindowSize();
+  const { windowSize, deviceType } = useWindowSize();
   const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
   const bubblePop = useAudio("/audio/audio-caught.wav");
@@ -255,7 +255,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const closeGame = useCallback(() => {
     // const timerData = handleStopTimer();
     // const timerData = trackTaskTime("end");
-    const deviceType = navigator.userAgent;
     saveImage();
     setShowPopup(true);
     // console.log({ timerData });

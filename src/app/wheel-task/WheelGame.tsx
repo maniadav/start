@@ -18,7 +18,7 @@ const WheelTask = ({ isSurvey = false }) => {
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
 
-  const { windowSize } = useWindowSize();
+  const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
@@ -68,7 +68,6 @@ const WheelTask = ({ isSurvey = false }) => {
 
   const closeGame = useCallback(
     (timeData?: any) => {
-      const deviceType = navigator.userAgent;
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });

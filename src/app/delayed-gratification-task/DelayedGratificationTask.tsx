@@ -20,7 +20,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
 
-  const { windowSize } = useWindowSize();
+  const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
@@ -71,7 +71,6 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     (timeData?: any) => {
       console.log({ timeData });
-      const deviceType = navigator.userAgent;
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
