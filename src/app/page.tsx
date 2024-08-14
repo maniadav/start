@@ -6,6 +6,7 @@ import "./globals.css";
 import HomeBanner2 from "components/HomeBanner2";
 import Footer from "components/Footer";
 import dotenv from "dotenv";
+import AboutUs from "./about/AboutUs";
 dotenv.config();
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
       <Header />
       <VideoBanner />
       <HomeBanner2 />
+      {/* <AboutUs/> */}
       <Footer />
     </div>
   );

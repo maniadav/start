@@ -27,7 +27,7 @@ export function CommonButton({
     <button
       type={btnType}
       className={clsx(
-        `${customClass} ${
+        `whitespace-nowrap ${customClass} ${
           textBtn && "w-full bg-0 border-0"
         } p-2 md:py-2.5 md:px-3 border border-solid rounded text-xs md:text-sm capitalize cursor-pointer inline-flex items-center transition ease-in-out delay-50`,
         `${
@@ -50,8 +50,13 @@ export function CommonButton({
     >
       <CommonIcon icon={btnIcon} width={26} height={26} />
       {labelText && (
-        <span className={`${btnIcon && " ml-1 mt-0.5"}`}>{labelText}</span>
+        <span className={`${btnIcon ? " ml-1 mt-0.5" : "no-wrap"}`}>
+          {labelText}
+        </span>
       )}
+      {/* <div className="whitespace-nowrap p-2 md:py-2.5 md:px-3 border border-solid rounded text-xs md:text-sm capitalize cursor-pointer inline-flex items-center transition ease-in-out delay-50 bg-primary text-white">
+      {labelText}
+      </div> */}
     </button>
   );
 }

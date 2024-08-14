@@ -11,6 +11,7 @@ import AudioRecorder from "@hooks/useAudioRecorder";
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
+  const [audioString, setAudioString] = useState();
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -67,19 +68,21 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any) => {
+    (timeData?: any, audioBlob?: any) => {
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeLimit || "",
+            timeTake: timeData.timeTaken,
+            timrLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
+            audio: audioBlob || "",
             deviceType,
           };
 
@@ -94,13 +97,14 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt]
+    [isSurvey, timerData, attempt, audioString]
   );
 
-  const handleCloseGame = () => {
+  const handleCloseGame = (data: string) => {
+    console.log(data);
     if (isSurvey) {
       const timeData = handleStopTimer();
-      closeGame(timeData);
+      closeGame(timeData, data);
     } else {
       alert("you may start the game!");
     }
@@ -115,17 +119,15 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
           objectFit="contain"
           alt="langaugesampling.png"
           className="h-screen w-auto"
-        />{" "}
+        />
       </div>
 
-      {isSurvey && <AudioRecorder closeGame={handleCloseGame} />}
-      {/*       
-      <div className="absolute bottom-1 left-1/2">
-        <button
-          className="border border-black shadow-lg rounded-full bg-primary w-16 h-16 px-2 py-1 "
-          onClick={handleCloseGame}
-        ></button>
-      </div> */}
+      {isSurvey && (
+        <div className="absolute bottom-12 right-1/2">
+          <AudioRecorder handleCloseGame={handleCloseGame} />
+        </div>
+      )}
+
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
