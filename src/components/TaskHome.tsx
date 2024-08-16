@@ -29,7 +29,7 @@ const TaskHome = ({
     //     />
     //   </div>
     // </div>
-    <div className="w-full h-auto bg-gradient-to-b from-black to-black">
+    <div className="w-full h-auto">
       <div className="container mx-auto overflow-hidden py-8 md:py-8">
         <div className="flex justify-between gap-12">
           <div className="flex flex-col justify-center ">
@@ -37,7 +37,7 @@ const TaskHome = ({
               {taskName}
             </h2>
             <div className="h-1 my-2 border-t border-gray-800"></div>
-            <p className="font-serif text-sm  md:text-base text-gray-400 md:pr-20">
+            <p className="font-serif text-sm  md:text-base text-gray-800 md:pr-20">
               Say to the child
               <strong className="">{`, "${taskMessage}"`}</strong>
             </p>

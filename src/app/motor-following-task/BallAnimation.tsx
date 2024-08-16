@@ -85,7 +85,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
       <path
         ref={pathRef}
         id="sineWave"
-        // stroke="#3498db"
+        stroke="#3498db"
         strokeWidth="2"
         fill="transparent"
       />

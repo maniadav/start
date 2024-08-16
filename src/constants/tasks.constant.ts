@@ -27,7 +27,7 @@ export const TasksConstant: any = {
     title: "Synchrony Task",
     surveyLink: "synchrony-task",
     taskMessage:
-      "look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?",
+      "Look at this child. He wants to drum with you. Listen to how he drums. Try to tap your drum at the same time as the child. Tap the drum with the character.",
   },
   LanguageSamplingTask: {
     title: "Lanuage Sampling Task",
@@ -48,4 +48,3 @@ export const TasksConstant: any = {
       "I would like to show you something on my tablet. Look at these videos.  Try to stay still and keep looking the screen",
   },
 };
-
