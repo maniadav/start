@@ -31,10 +31,16 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
     );
   };
 
-  // // Cubic easing function for the progress
+  // Cubic easing function for the progress
   const cubicEaseInOut = (t: number) => {
-    return 4 * t * t * t;
+    const frequency = 2; 
+    const amplitude = 0.5; 
+    
+    //starting slow and then speeding up and slowing down periodically
+    return (1 - Math.cos(t * Math.PI * frequency)) * amplitude + (1 - amplitude) * t;
   };
+  
+  
 
   useEffect(() => {
     if (!pathRef.current || !ballRef.current) return;
