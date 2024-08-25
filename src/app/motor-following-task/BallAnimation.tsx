@@ -23,7 +23,17 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
   // modify to update the ball path
   const sineWaveFunction = (x: number): number => {
     const frequency = 1 + attempt * 0.5;
-    return 1.5 * (Math.sin(frequency * x) + Math.sin(1.8 * x));
+    const wavelengthFactor = 0.3; // Increase wavelength (0 < wavelengthFactor < 1)
+    return (
+      1.5 *
+      (Math.sin(frequency * wavelengthFactor * x) +
+        Math.sin(1.8 * wavelengthFactor * x))
+    );
+  };
+
+  // // Cubic easing function for the progress
+  const cubicEaseInOut = (t: number) => {
+    return 4 * t * t * t;
   };
 
   useEffect(() => {
@@ -34,25 +44,23 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
     let pathData = `M 0 ${height / 2}`;
 
     for (let x = 0; x < width; x++) {
-      const y = height / 2 + 50 * sineWaveFunction(x * 0.02); // Adjust amplitude for visibility
+      const y = height / 2 + 100 * sineWaveFunction(x * 0.02); // Adjust amplitude for visibility
       pathData += ` L ${x} ${y}`;
     }
 
     path.setAttribute("d", pathData);
 
-    const duration = 60000;
+    const duration = 60000; // 1 min, ball movement time
     let startTime: number | null = null;
 
     const animateBall = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
-      // percentage of time when animation starts vs total time of animation
       const rawProgress = elapsed / duration;
 
-      // Calculate the progress along the path with speed variation
-      const oscillation = Math.sin(rawProgress * Math.PI * 2); // Oscillate 2 times
-      const progress = rawProgress + 0.1 * Math.abs(oscillation);
-      // console.log({ rawProgress, progress, oscillation });
+      // Apply cubic easing to the progress
+      const progress = cubicEaseInOut(rawProgress);
+
       if (progress >= 1) {
         const length = path.getTotalLength();
         const finalPoint = path.getPointAtLength(length);
@@ -85,7 +93,7 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
       <path
         ref={pathRef}
         id="sineWave"
-        stroke="#3498db"
+        // stroke="#3498db"
         strokeWidth="2"
         fill="transparent"
       />

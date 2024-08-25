@@ -109,7 +109,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         ...prev,
         { time: elapsed, touchX, touchY, objX, objY },
       ]);
-    }, 100); // data records at 100ms
+    }, 20); // data records at 20ms rate
 
     return () => clearInterval(intervalId);
   }, [caught, isSurvey]);

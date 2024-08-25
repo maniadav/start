@@ -2,12 +2,9 @@
 import { IconHome } from "components/common/Icons";
 import Image from "next/image";
 
-
-
 const aboutDetails = [
   {
     header: "Medical Research Council",
-    
     message:
       "It is a publicly funded government agency responsible for coordinating and funding medical research in the United Kingdom. Council funded the START project by Global Challenge Research Fund Foundation Award",
   },
@@ -53,9 +50,6 @@ const aboutDetails = [
   },
 ];
 
-
-
-
 import { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
@@ -70,7 +64,7 @@ const IndexPage = () => {
   };
 
   return (
-<div className="">
+    <div className="">
       <div className="h-full w-full md:h-screen">
         <div className="w-full mb-10 col-span-3 md:col-span-2">
           <div className=" mx-auto h-full sm:p-10">
