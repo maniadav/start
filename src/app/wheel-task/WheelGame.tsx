@@ -6,6 +6,7 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
+import useVideoRecorder from "@hooks/useVideoRecorder";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -19,6 +20,7 @@ const WheelTask = ({ isSurvey = false }) => {
   const [surveyData, setSurveyData] = useState<any>({});
 
   const { windowSize, deviceType } = useWindowSize();
+  const { startVidRecording, stopVidRecording } = useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
@@ -42,6 +44,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   const handleStartGame = () => {
     handleTimer();
+    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -67,20 +70,23 @@ const WheelTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any) => {
+    async (timeData?: any) => {
       if (isSurvey) {
+        const videoData = await stopVidRecording();
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeLimit || "",
+            timeLimit: timeData?.timeLimit || "",
+            timeTaken: timeData?.timeTaken || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
+            video: videoData,
           };
 
           dispatch({
@@ -108,6 +114,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {/* <VideoRecorder /> */}
       <div className="relative h-screen w-full">
         <Image
           src="/hallucination.gif"
@@ -120,7 +127,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
       <div className="absolute bottom-5 left-5">
         <button
-          className="border border-black shadow-lg rounded-full bg-primary w-12 h-12 px-2 py-1 "
+          className="border border-black shadow-lg rounded-full bg-primary w-16 h-16 px-2 py-1 animate-recPulse "
           onClick={handleCloseGame}
         ></button>
       </div>
