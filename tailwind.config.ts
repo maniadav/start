@@ -28,10 +28,39 @@ const config: Config = {
           "65%": { boxShadow: "0px 0px 5px 13px rgba(173,0,0,.3)" },
           "90%": { boxShadow: "0px 0px 5px 13px rgba(173,0,0,0)" },
         },
+
+        slideRed: {
+          "0%": {
+            left: "20%",
+          },
+          "25%": {
+            left: "50%",
+          },
+          "50%": {
+            left: "85%",
+          },
+          "100%": {
+            left: "20%",
+          },
+        },
+
+        slideBlue: {
+          "0%": {
+            right: "10%",
+          },
+          "50%": {
+            right: "60%",
+          },
+          "100%": {
+            right: "10%",
+          },
+        },
       },
       animation: {
         moveImage: "moveImage 5s ease-in-out infinite",
         recPulse: "recPulse 1.5s linear infinite",
+        redBall: "slideRed 3s linear infinite",
+        blueBall: "slideBlue 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite",
       },
     },
   },

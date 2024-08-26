@@ -11,11 +11,11 @@ const getRandomPosition = (min: number, max: number) =>
 export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
   const [positions, setPositions] = useState({
     blue: {
-      top: 50,
+      top: getRandomPosition(2, 8),
       right: (Math.floor(Math.random() * 3) + 1) * 10,
     },
     red: {
-      top: 50,
+      top: getRandomPosition(4, 8),
       left: (Math.floor(Math.random() * 3) + 1) * 10,
     },
   });
@@ -30,15 +30,15 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
 
       setPositions({
         blue: {
-          top: 50,
+          ...positions.blue,
           right: getRandomPosition(min, max),
         },
         red: {
-          top: 50,
+          ...positions.red,
           left: getRandomPosition(min, max),
         },
       });
-    }, 3000);
+    }, 6000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -47,7 +47,7 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
     <div>
       <div
         className={`${
-          animate ? "redBall" : ""
+          animate ? "animate-redBall" : ""
         } w-[200px] h-[200px] bg-red-800 shadow-2xl border-2 border-red-900 rounded-full absolute`}
         style={{
           top: `${positions.red.top}%`,
@@ -57,7 +57,7 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
       ></div>
       <div
         className={`${
-          animate ? "blueBall" : ""
+          animate ? "animate-blueBall" : ""
         } w-[200px] h-[200px] bg-blue-800 shadow-2xl border-2 border-blue-900 rounded-full absolute`}
         style={{
           top: `${positions.blue.top}%`,
@@ -65,40 +65,6 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
         }}
         onClick={() => handleButtonClick("blue")}
       ></div>
-
-      <style jsx>{`
-        @keyframes slideRed {
-          0% {
-            left: 10%;
-          }
-          50% {
-            left: 80%;
-          }
-          100% {
-            left: 10%;
-          }
-        }
-
-        @keyframes slideBlue {
-          0% {
-            right: 10%;
-          }
-          50% {
-            right: 80%;
-          }
-          100% {
-            right: 10%;
-          }
-        }
-
-        .redBall {
-          animation: slideRed 1s linear infinite;
-        }
-
-        .blueBall {
-          animation: slideBlue 1s linear infinite;
-        }
-      `}</style>
     </div>
   );
 };

@@ -62,7 +62,7 @@ const ButtonTask = ({ isSurvey = false }) => {
 
   useEffect(() => {
     if (timerData?.isTimeOver && !alertShown) {
-      closeGame();
+      closeGame(timerData);
       setAlertShown(true);
     }
   }, [alertShown, timerData]);
@@ -110,6 +110,8 @@ const ButtonTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType: deviceType,
+            redButton: "social",
+            blueButton: "non-social",
             closedMidWay,
           };
 
