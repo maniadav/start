@@ -7,6 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
+import CommonIcon from "components/common/CommonIcon";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -68,15 +69,15 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any, audioBlob?: any) => {
+    (timeData?: any, audioBlob?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTake: timeData.timeTaken,
-            timrLimit: timeData?.timeLimit || "",
+            timeTaken: timeData?.timeTaken || "",
+            timeLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
@@ -84,6 +85,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
             screenWidth: windowSize.width,
             audio: audioBlob || "",
             deviceType,
+            closedMidWay,
           };
 
           dispatch({
@@ -109,9 +111,21 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       alert("you may start the game!");
     }
   };
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, "", true);
+  };
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {isSurvey && (
+        <div
+          className="z-50 fixed right-4 top-4 p-3 cursor-pointer"
+          onClick={() => handleCloseMidWay()}
+        >
+          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
+        </div>
+      )}
       <div className="relative h-screen w-full">
         <Image
           src="/image/langaugesampling.png"
@@ -123,7 +137,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       </div>
 
       {isSurvey && (
-        <div className="absolute bottom-12 right-1/2">
+        <div className="fixed bottom-12 right-1/2">
           <AudioRecorder handleCloseGame={handleCloseGame} />
         </div>
       )}

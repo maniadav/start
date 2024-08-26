@@ -9,6 +9,7 @@ import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
+import CommonIcon from "components/common/CommonIcon";
 
 export const colors: string[] = [
   "red",
@@ -170,7 +171,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any) => {
+    (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
@@ -179,12 +180,14 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeLimit || "",
+            timeTaken: timeData?.timeTaken || "",
+            timeLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             bubblesTotal,
             bubblesPopped,
+            closedMidWay,
           };
 
           dispatch({
@@ -220,9 +223,22 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     return { x, y };
   };
 
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
+
   return (
     <>
       <div className="relative w-screen h-screen overflow-hidden">
+        {isSurvey && (
+          <div
+            className="z-50 fixed right-4 top-4 p-3 cursor-pointer"
+            onClick={() => handleCloseMidWay()}
+          >
+            <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
+          </div>
+        )}
         <Image src="/ocean.jpg" layout="fill" objectFit="cover" alt="ocean" />
         {positionRange && screenWidth && screenHeight && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">

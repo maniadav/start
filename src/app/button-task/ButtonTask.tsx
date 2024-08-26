@@ -6,6 +6,7 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
+import CommonIcon from "components/common/CommonIcon";
 
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
@@ -47,12 +48,13 @@ const ButtonTask = ({ isSurvey = false }) => {
   }, [isSurvey]);
 
   useEffect(() => {
-    if (buttonClicked.length >= 8) {
+    // total 8 click allowed
+    if (buttonClicked.length > 8) {
       if (isSurvey) {
         const timer = setTimeout(() => {
           const timeData = handleStopTimer();
           closeGame(timeData);
-        }, 3000);
+        }, 3000); // delay to allow last video play
         return () => clearTimeout(timer);
       }
     }
@@ -93,13 +95,14 @@ const ButtonTask = ({ isSurvey = false }) => {
   }, [timeLimit]);
 
   const closeGame = useCallback(
-    (timeData?: any) => {
+    (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         setShowPopup(true);
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeLimit || "",
+            timeTaken: timeData?.timeTaken || "",
+            timeLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
@@ -107,6 +110,7 @@ const ButtonTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType: deviceType,
+            closedMidWay,
           };
 
           dispatch({
@@ -120,21 +124,26 @@ const ButtonTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [
-      buttonClicked,
-      isSurvey,
-      timerData,
-      attempt,
-      windowSize,
-      deviceType,
-      dispatch,
-    ]
+    [buttonClicked, isSurvey, attempt, windowSize, deviceType, dispatch]
   );
+
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
 
   return (
     <div className="w-screen h-screen bg-slate-100 m-0">
+      {isSurvey && (
+        <div
+          className="fixed right-4 top-4 p-3 cursor-pointer"
+          onClick={() => handleCloseMidWay()}
+        >
+          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
+        </div>
+      )}
       {showVideo ? (
-        <div className="w-screen h-screen relative">
+        <div className="w-screen h-screen relative cursor-pointer">
           <video
             className="absolute top-0 left-0 w-full h-full object-cover"
             autoPlay

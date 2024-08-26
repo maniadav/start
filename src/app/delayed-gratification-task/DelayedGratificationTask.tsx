@@ -7,6 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import ProgressiveCircle from "./ProgrgessiveCircle";
+import CommonIcon from "components/common/CommonIcon";
 
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -69,7 +70,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any) => {
+    (timeData?: any, closedMidWay: boolean = false) => {
       console.log({ timeData });
       if (isSurvey) {
         setShowPopup(true);
@@ -77,7 +78,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData.timeTaken,
+            timeTaken: timeData?.timeTaken || "",
             timeLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
@@ -85,6 +86,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
+            closedMidWay,
           };
 
           dispatch({
@@ -110,8 +112,21 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
     }
   };
 
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {isSurvey && (
+        <div
+          className="z-50 fixed right-4 top-4 p-3 cursor-pointer"
+          onClick={() => handleCloseMidWay()}
+        >
+          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
+        </div>
+      )}
       <div
         className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
         onClick={() => handleCloseGame()}
