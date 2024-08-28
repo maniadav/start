@@ -8,6 +8,7 @@ import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
 import CommonIcon from "components/common/CommonIcon";
+import CloseGesture from "components/CloseGesture";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -118,14 +119,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      {isSurvey && (
-        <div
-          className="z-50 fixed right-4 top-4 p-3 cursor-pointer"
-          onClick={() => handleCloseMidWay()}
-        >
-          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
-        </div>
-      )}
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
           src="/image/langaugesampling.png"

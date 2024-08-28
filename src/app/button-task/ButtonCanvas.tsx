@@ -8,7 +8,7 @@ interface ButtonCanvasProps {
 export const getPosition = () => {
   const useFirstRange = Math.random() < 0.5;
   const [min, max] = useFirstRange ? [1, 4] : [6, 9];
-  const [minH, maxH] = useFirstRange ? [2, 4] : [6, 8];
+  const [minH, maxH] = useFirstRange ? [1, 3] : [5, 8];
 
   return {
     blue: {
@@ -50,11 +50,11 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
   });
 
   return (
-    <div className="w-screen h-screen relative">
+    <div className="z-40 w-screen h-screen relative overflow-hidden">
       <div
         className={`absolute ${
           animate ? "animate-redBall" : ""
-        } w-[180px] h-[180px] bg-red-800 shadow-2xl border-2 border-red-900 rounded-full absolute`}
+        } w-[150px] h-[150px] bg-red-800 shadow-2xl border-2 border-red-900 rounded-full absolute`}
         style={{
           bottom: `${positions.red.bottom}%`,
           left: `${positions.red.left}%`,
@@ -64,7 +64,7 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
       <div
         className={`${
           animate ? "animate-blueBall" : ""
-        } w-[180px] h-[180px] bg-blue-800 shadow-2xl border-2 border-blue-900 rounded-full absolute`}
+        } w-[150px] h-[150px] bg-blue-800 shadow-2xl border-2 border-blue-900 rounded-full absolute`}
         style={{
           top: `${positions.blue.top}%`,
           right: `${positions.blue.right}%`,

@@ -7,6 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
+import CloseGesture from "components/CloseGesture";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -70,7 +71,7 @@ const WheelTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    async (timeData?: any) => {
+    async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         const videoData = await stopVidRecording();
         setShowPopup(true);
@@ -87,6 +88,7 @@ const WheelTask = ({ isSurvey = false }) => {
             screenWidth: windowSize.width,
             deviceType,
             video: videoData,
+            closedMidWay,
           };
 
           dispatch({
@@ -111,10 +113,15 @@ const WheelTask = ({ isSurvey = false }) => {
       alert("you may start the game!");
     }
   };
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {/* <VideoRecorder /> */}
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
           src="/hallucination.gif"

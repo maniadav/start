@@ -8,6 +8,7 @@ import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import CommonIcon from "components/common/CommonIcon";
 import { getRandomVideo } from "./RandomVideo";
+import CloseGesture from "components/CloseGesture";
 
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
@@ -142,14 +143,7 @@ const ButtonTask = ({ isSurvey = false }) => {
 
   return (
     <div className="w-screen h-screen bg-slate-100 m-0">
-      {isSurvey && (
-        <div
-          className="fixed right-4 top-4 p-3 cursor-pointer"
-          onClick={() => handleCloseMidWay()}
-        >
-          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
-        </div>
-      )}
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       {showVideo ? (
         <div className="w-screen h-screen relative cursor-pointer">
           <video

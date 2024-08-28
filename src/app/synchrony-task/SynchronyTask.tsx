@@ -8,6 +8,7 @@ import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
 import DrumSVG from "app/synchrony-task/DrumSVG";
+import CloseGesture from "components/CloseGesture";
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -74,7 +75,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any, audioBlob?: any) => {
+    async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
@@ -88,7 +89,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
-            audio: audioBlob || "",
+            closedMidWay,
             deviceType,
           };
 
@@ -110,7 +111,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
     console.log(data);
     if (isSurvey) {
       const timeData = handleStopTimer();
-      closeGame(timeData, data);
+      closeGame(timeData);
     } else {
       alert("you may start the game!");
     }
@@ -155,8 +156,14 @@ const SynchronyTask = ({ isSurvey = false }) => {
     }
   }, [isClicked]);
 
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative w-full h-full flex flex-col justify-center items-center">
         {/* <DrumSVG stickPosition={drumStickPosition} /> */}
         <DrumSVG />
