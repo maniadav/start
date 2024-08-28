@@ -13,7 +13,7 @@ const ProgressiveCircle = ({ setCircleCompStatus }: any) => {
         }
         return prev + 1;
       });
-    }, 300); // 300ms interval to fill in 30 (300x100=300000ms) seconds
+    }, 600); // 600ms interval to fill in 60 (600x100=300000ms) seconds
 
     return () => clearInterval(interval);
   }, []);

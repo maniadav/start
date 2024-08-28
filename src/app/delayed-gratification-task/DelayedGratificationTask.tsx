@@ -7,7 +7,6 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import ProgressiveCircle from "./ProgrgessiveCircle";
-import CommonIcon from "components/common/CommonIcon";
 import Firework from "./FireWork";
 import CloseGesture from "components/CloseGesture";
 

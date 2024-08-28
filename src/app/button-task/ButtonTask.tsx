@@ -7,6 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import CommonIcon from "components/common/CommonIcon";
+import { getRandomVideo } from "./RandomVideo";
 
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
@@ -14,6 +15,8 @@ const ButtonTask = ({ isSurvey = false }) => {
   const [alertShown, setAlertShown] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [videoSRC, setVideoSRC] = useState<string>();
+  const [randomVideoObj, setRandomVideoObj] = useState<any>(getRandomVideo());
+
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -33,6 +36,7 @@ const ButtonTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
+  console.log({ randomVideoObj });
   const attemptString = searchParams.get("attempt") || "1";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
@@ -84,7 +88,9 @@ const ButtonTask = ({ isSurvey = false }) => {
     if (isSurvey) {
       setButtonClicked((prev: string[]) => [...prev, color]);
     }
-    setVideoSRC(color === "red" ? "./video/girl.mp4" : "./video/pattern.mp4");
+    setVideoSRC(
+      color === "red" ? randomVideoObj.red.video : randomVideoObj.blue.video
+    );
     setShowVideo(true);
   };
 
@@ -110,8 +116,8 @@ const ButtonTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType: deviceType,
-            redButton: "social",
-            blueButton: "non-social",
+            redButton: randomVideoObj.red.key,
+            blueButton: randomVideoObj.blue.key,
             closedMidWay,
           };
 
