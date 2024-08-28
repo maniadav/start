@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 
-const ProgressiveCircle = () => {
+const ProgressiveCircle = ({ setCircleCompStatus }: any) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
+          setCircleCompStatus(true);
           clearInterval(interval);
           return 100;
         }
         return prev + 1;
       });
-    }, 300); // 300ms interval to fill in 30 seconds
+    }, 300); // 300ms interval to fill in 30 (300x100=300000ms) seconds
 
     return () => clearInterval(interval);
   }, []);

@@ -7,7 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
-import DrumSVG from "components/svg/DrumSVG";
+import DrumSVG from "app/synchrony-task/DrumSVG";
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);

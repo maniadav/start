@@ -17,6 +17,7 @@ const TouchPressureComponent = () => {
   };
 
   const handleTouchMove = (e: any) => {
+    console.log(e);
     if (e.touches.length > 0) {
       const touch = e.touches[0];
       setPressure(touch.force || 0);

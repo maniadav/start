@@ -8,9 +8,13 @@ import { useSurveyContext } from "context/SurveyContext";
 import useWindowSize from "@hooks/useWindowSize";
 import ProgressiveCircle from "./ProgrgessiveCircle";
 import CommonIcon from "components/common/CommonIcon";
+import Firework from "./FireWork";
+import CloseGesture from "components/CloseGesture";
 
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [circleCompStatus, setCircleCompStatus] = useState<boolean>(false);
+  const [showFireWorks, setShowFireWorks] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
     startTime: string;
@@ -28,7 +32,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `delayed-gratification-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 30000;
+  const timeLimit = 180000;
 
   useEffect(() => {
     if (isSurvey) {
@@ -103,10 +107,28 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
     [isSurvey, timerData, attempt]
   );
 
+  // const handleCloseGame = () => {
+  //   if (isSurvey) {
+  //     setShowFireWorks(true);
+  //     const timeData = handleStopTimer();
+  //     closeGame(timeData);
+  //   } else {
+  //     alert("you may start the game!");
+  //   }
+  // };
   const handleCloseGame = () => {
     if (isSurvey) {
+      setShowFireWorks(true);
       const timeData = handleStopTimer();
-      closeGame(timeData);
+
+      // Add a 5-second delay for firework
+      if (circleCompStatus) {
+        setTimeout(() => {
+          closeGame(timeData);
+        }, 5000);
+      } else {
+        closeGame();
+      }
     } else {
       alert("you may start the game!");
     }
@@ -119,30 +141,30 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      {isSurvey && (
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
+      {circleCompStatus && showFireWorks ? (
+        <Firework />
+      ) : (
         <div
-          className="z-50 fixed right-4 top-4 p-3 cursor-pointer"
-          onClick={() => handleCloseMidWay()}
+          className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
+          onClick={() => handleCloseGame()}
         >
-          <CommonIcon icon="fluent-emoji-high-contrast:cross-mark" />
+          <Image
+            width={150}
+            height={150}
+            src="/gif/dance.gif"
+            objectFit="contain"
+            alt="langaugesampling.png"
+            // className="w-auto w-auto"
+          />
         </div>
       )}
-      <div
-        className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
-        onClick={() => handleCloseGame()}
-      >
-        <Image
-          width={150}
-          height={150}
-          src="/gif/dance.gif"
-          objectFit="contain"
-          alt="langaugesampling.png"
-          // className="w-auto w-auto"
-        />
-      </div>
+
       <div className="top-1/2 relative w-full flex justify-center align-middle items-center gap-20">
         <div className="absolute">
-          <ProgressiveCircle />
+          <ProgressiveCircle
+            setCircleCompStatus={(e: boolean) => setCircleCompStatus(e)}
+          />
         </div>
       </div>
 

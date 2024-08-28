@@ -69,21 +69,50 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 
-const DrumSVG = () => {
+const DrumSVG = (startTime: any) => {
+  // const [stickHit, setStickPosition] = useState(false);
+  // const [stickClickTimes, setStickClickTimes] = useState<string[]>([]);
+  // const startTime = Date.now();
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setStickPosition((prevPosition) => !prevPosition);
+  //     const currTime = Date.now();
+  //     const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
+  //     if (stickHit) {
+  //       setStickClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
+  //     }
+  //   }, 1000);
+
+  //   return () => clearInterval(interval); // Cleanup the interval on component unmount
+  // }, []);
+  // console.log(stickClickTimes);
+
+  // return (
   const [stickHit, setStickPosition] = useState(false);
   const [stickClickTimes, setStickClickTimes] = useState<string[]>([]);
-  const startTime = Date.now();
+  const stickHitRef = React.useRef(stickHit);
+
+  // Update the ref whenever stickHit changes
+  useEffect(() => {
+    stickHitRef.current = stickHit;
+  }, [stickHit]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setStickPosition((prevPosition) => !prevPosition);
       const currTime = Date.now();
       const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
-      setStickClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
-    }, 1000);
+
+      // Use the ref to get the latest value of stickHit
+      if (stickHitRef.current) {
+        setStickClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
+      }
+    }, 500);
 
     return () => clearInterval(interval); // Cleanup the interval on component unmount
-  }, []);
+  }, []); // No need to include stickHit in the dependency array
+
   console.log(stickClickTimes);
 
   return (
