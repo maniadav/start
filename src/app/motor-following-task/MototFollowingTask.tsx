@@ -7,12 +7,12 @@ import { drawLine } from "@utils/canva";
 import Ball from "./Ball";
 import MessagePopup from "components/common/MessagePopup";
 import { useSearchParams } from "next/navigation";
-import { useSurveyContext } from "context/SurveyContext";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 import { timer } from "@utils/timer";
 import { trackTaskTime } from "@utils/trackTime";
 import Image from "next/image";
 import BallAnimation from "./BallAnimation";
-import { useMotorStateContext } from "@context/MotorStateContext";
+import { useMotorStateContext } from "state/provider/MotorStateProvider";
 import { Coordinate } from "types/survey.types";
 import useAudio from "@hooks/useAudio";
 

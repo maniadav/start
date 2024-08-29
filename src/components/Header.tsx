@@ -5,7 +5,7 @@ import { NavSideBar2 } from "./NavSideBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API_ENDPOINT } from "@constants/api.constant";
-import { useAuth } from "context/AuthContext";
+import { useAuth } from "state/provider/AuthProvider";
 import Link from "next/link";
 
 export const Header = () => {

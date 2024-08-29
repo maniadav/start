@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { useMotorStateContext } from "@context/MotorStateContext";
+import { useMotorStateContext } from "state/provider/MotorStateProvider";
 import { Coordinate } from "types/survey.types";
 
 interface BallAnimationProp {
@@ -33,14 +33,14 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
 
   // Cubic easing function for the progress
   const cubicEaseInOut = (t: number) => {
-    const frequency = 2; 
-    const amplitude = 0.5; 
-    
+    const frequency = 2;
+    const amplitude = 0.5;
+
     //starting slow and then speeding up and slowing down periodically
-    return (1 - Math.cos(t * Math.PI * frequency)) * amplitude + (1 - amplitude) * t;
+    return (
+      (1 - Math.cos(t * Math.PI * frequency)) * amplitude + (1 - amplitude) * t
+    );
   };
-  
-  
 
   useEffect(() => {
     if (!pathRef.current || !ballRef.current) return;

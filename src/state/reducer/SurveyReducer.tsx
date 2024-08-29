@@ -1,4 +1,4 @@
-// reducers/surveyReducer.ts
+// reducers/SurveyReducer.ts
 export interface SurveyAttempt {
   closedWithTimeout?: boolean;
   timeTaken?: string;
@@ -29,7 +29,7 @@ export type Action =
       data: SurveyAttempt;
     };
 
-export const surveyReducer = (state: SurveyState, action: Action): any => {
+export const SurveyReducer = (state: SurveyState, action: Action): any => {
   // console.log("pinned dispatched", action);
   switch (action.type) {
     case "SET_SURVEY_DATA":

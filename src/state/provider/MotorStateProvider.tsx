@@ -1,28 +1,6 @@
 "use client";
-import { Coordinate } from "types/survey.types";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  SetStateAction,
-  Dispatch,
-  useState,
-} from "react";
-
-interface MotorStateProps {
-  name: string;
-}
-
-interface MotorStateContextProps {
-  ballCoordinates: Coordinate[];
-  mouseCoordinates: Coordinate[];
-  setBallCoordinates: Dispatch<SetStateAction<Coordinate[]>>;
-  setMouseCoordinates: Dispatch<SetStateAction<Coordinate[]>>;
-}
-
-const MotorStateContext = createContext<MotorStateContextProps | undefined>(
-  undefined
-);
+import React, { ReactNode, useContext, useState } from "react";
+import MotorStateContext from "state/context/MotorStateContext";
 
 const MotorStateProvider = ({ children }: { children: ReactNode }) => {
   const [ballCoordinates, setBallCoordinates] = useState([{ x: 0, y: 0 }]);

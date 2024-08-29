@@ -2,7 +2,7 @@
 import React from "react";
 import CommonIcon from "./common/CommonIcon";
 import { TasksConstant } from "constants/tasks.constant";
-import { useSurveyContext } from "context/SurveyContext";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();

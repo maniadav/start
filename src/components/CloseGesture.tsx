@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const CloseGesture = ({ handlePressAction }: any) => {
   const [firstButtonPressed, setFirstButtonPressed] = useState<
@@ -17,7 +17,6 @@ const CloseGesture = ({ handlePressAction }: any) => {
       }, 5000);
     }
   };
-  console.log({ firstButtonPressed });
 
   return (
     <div>

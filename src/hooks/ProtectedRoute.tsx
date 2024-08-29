@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "state/provider/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { API_ENDPOINT } from "@constants/api.constant"; // Adjust the import path as necessary

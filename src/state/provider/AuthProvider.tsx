@@ -1,20 +1,8 @@
 "use client";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
-import { useRouter } from "next/navigation";
+import React, { useContext, ReactNode } from "react";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
-
-interface AuthContextProps {
-  user: any;
-}
-
-const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+import AuthContext from "state/context/AuthContext";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);

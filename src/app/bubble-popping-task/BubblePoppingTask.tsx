@@ -7,7 +7,7 @@ import useAudio from "@hooks/useAudio";
 import MessagePopup from "components/common/MessagePopup";
 import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";
-import { useSurveyContext } from "context/SurveyContext";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import CommonIcon from "components/common/CommonIcon";
 import CloseGesture from "components/CloseGesture";

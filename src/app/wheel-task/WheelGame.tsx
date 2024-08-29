@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
-import { useSurveyContext } from "context/SurveyContext";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import CloseGesture from "components/CloseGesture";

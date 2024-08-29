@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "context/AuthContext";
-import ProtectedRoute from "context/ProtectedRoute";
-import { useEffect, useState } from "react";
+import { AuthProvider } from "state/provider/AuthProvider";
+import ProtectedRoute from "@hooks/ProtectedRoute";
 import GameWrapper from "components/GameWrapper";
-import { SurveyProvider } from "context/SurveyContext";
+import { SurveyProvider } from "state/provider/SurveytProvider";
 // require('dotenv').config()
 const inter = Inter({ subsets: ["latin"] });
 

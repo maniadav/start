@@ -1,25 +1,13 @@
 "use client";
 import { InitialSurveyState } from "@constants/survey.data.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
-import React, {
-  createContext,
-  useReducer,
-  ReactNode,
-  useContext,
-  useEffect,
-} from "react";
-import { surveyReducer, SurveyState, Action } from "reducer/serviceReducer";
-
-interface SurveyContextProps {
-  state: SurveyState;
-  dispatch: React.Dispatch<Action>;
-}
-
-const SurveyContext = createContext<SurveyContextProps | undefined>(undefined);
+import React, { useReducer, ReactNode, useContext, useEffect } from "react";
+import SurveyContext from "state/context/SurveyContext";
+import { SurveyReducer } from "state/reducer/SurveyReducer";
 
 const SurveyProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(
-    surveyReducer,
+    SurveyReducer,
     InitialSurveyState,
     (initial) => {
       // Load state from localStorage or fallback to initial state

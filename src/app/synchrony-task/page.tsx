@@ -8,6 +8,7 @@ import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
 import LanguageSamplingTask from "./SynchronyTask";
 import SuspenseWrapper from "components/SuspenseWrapper";
+import { SynchronyStateProvider } from "state/provider/SynchronyStateProvider";
 const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
 
 const IndexPage = () => {
@@ -44,7 +45,9 @@ const IndexPage = () => {
 export default function Page() {
   return (
     <SuspenseWrapper>
-      <IndexPage />
+      <SynchronyStateProvider>
+        <IndexPage />
+      </SynchronyStateProvider>
     </SuspenseWrapper>
   );
 }

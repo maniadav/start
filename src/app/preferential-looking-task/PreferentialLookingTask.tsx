@@ -1,17 +1,15 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
 import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
-import { useSurveyContext } from "context/SurveyContext";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
-import AudioRecorder from "@hooks/useAudioRecorder";
+import CloseGesture from "components/CloseGesture";
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
-  const [audioString, setAudioString] = useState();
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -68,21 +66,21 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any, audioBlob?: any) => {
+    (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTake: timeData.timeTaken,
+            timeTaken: timeData.timeTaken,
             timrLimit: timeData?.timeLimit || "",
             endTime: timeData?.endTime || "",
             startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
-            audio: audioBlob || "",
+            closedMidWay,
             deviceType,
           };
 
@@ -97,21 +95,27 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt, audioString]
+    [isSurvey, timerData, attempt]
   );
 
   const handleCloseGame = (data: string) => {
     console.log(data);
     if (isSurvey) {
       const timeData = handleStopTimer();
-      closeGame(timeData, data);
+      closeGame(timeData);
     } else {
       alert("you may start the game!");
     }
   };
 
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timeData, true);
+  };
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="w-screen h-screen relative bg-black">
         <video
           className="absolute top-0 left-0 w-full h-full object-fit"
