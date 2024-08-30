@@ -1,3 +1,4 @@
+import PreferentialLookingStateContext from "state/context/PreferentialLookingStateContext";
 import { BubblePoppingType, MotorFollowingType } from "types/survey.types";
 
 export const BubblePoppingData: BubblePoppingType = {
@@ -54,6 +55,15 @@ export const WheelTask: any = {
   useID: "",
   surveyID: "",
 };
+export const PreferentialLooking: any = {
+  assestment_id: "PreferentialLookingTask",
+  noOfAttempt: 0,
+  attempt1: {},
+  attempt2: {},
+  attempt3: {},
+  useID: "",
+  surveyID: "",
+};
 
 export const InitialSurveyState: any = {
   BubblePoppingTask: {
@@ -69,5 +79,8 @@ export const InitialSurveyState: any = {
   LanguageSamplingTask: { ...LanguageSamplingTask },
   WheelTask: {
     ...WheelTask,
+  },
+  PreferentialLooking: {
+    ...PreferentialLooking,
   },
 };

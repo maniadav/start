@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
-import LanguageSamplingTask from "./PreferentialLookingTask";
+import PreferentialLookingTask from "./PreferentialLookingTask";
 import SuspenseWrapper from "components/SuspenseWrapper";
+import PreferentialLookingStateContext from "state/context/PreferentialLookingStateContext";
+import { PreferentialLookingStateProvider } from "state/provider/PreferentialLookingStateProvider";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
@@ -18,7 +20,7 @@ const IndexPage = () => {
     <>
       {survey ? (
         <div className="w-full h-full overflow-hidden">
-          <LanguageSamplingTask isSurvey={true} />
+          <PreferentialLookingTask isSurvey={true} />
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">
@@ -27,7 +29,7 @@ const IndexPage = () => {
             taskMessage={data.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
-          <LanguageSamplingTask />
+          <PreferentialLookingTask />
         </div>
       )}
     </>
@@ -37,7 +39,9 @@ const IndexPage = () => {
 export default function Page() {
   return (
     <SuspenseWrapper>
-      <IndexPage />
+      <PreferentialLookingStateProvider>
+        <IndexPage />
+      </PreferentialLookingStateProvider>
     </SuspenseWrapper>
   );
 }

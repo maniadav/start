@@ -6,6 +6,8 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import CloseGesture from "components/CloseGesture";
+import WebGazer from "../gaze-training/WebGazer";
+import { usePreferentialLookingStateContext } from "state/provider/PreferentialLookingStateProvider";
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -23,8 +25,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 15000;
+    attempt < 3 ? `preferential-looking-task?attempt=${attempt + 1}` : null;
+  const timeLimit = 180000;
+  const { gazeData } = usePreferentialLookingStateContext();
 
   useEffect(() => {
     if (isSurvey) {
@@ -82,6 +85,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
             screenWidth: windowSize.width,
             closedMidWay,
             deviceType,
+            gazeData,
           };
 
           dispatch({
@@ -116,6 +120,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
+      <WebGazer isSurvey={isSurvey} />
       <div className="w-screen h-screen relative bg-black">
         <video
           className="absolute top-0 left-0 w-full h-full object-fit"
