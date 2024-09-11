@@ -11,6 +11,7 @@ import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider"
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [isGameAtive, setIsGameActive] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [startTime, setStartTime] = useState(0);
   const [timerData, setTimerData] = useState<{
@@ -29,7 +30,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000;
+  const timeLimit = 30000;
 
   useEffect(() => {
     if (isSurvey) {
@@ -46,6 +47,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
 
   const handleStartGame = () => {
     setStartTime(Date.now());
+    setIsGameActive(true);
     handleTimer();
   };
 
@@ -73,6 +75,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        setIsGameActive(false);
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
@@ -86,7 +89,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             drumPress: drumClickTimes,
-            stickClick,
+            stickHit: stickClick,
             closedMidWay,
             deviceType,
           };
@@ -102,7 +105,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt]
+    [isSurvey, timerData, attempt, stickClick, drumClickTimes]
   );
 
   const handleCloseGame = (data: string) => {
@@ -116,12 +119,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
   };
 
   const [isClicked, setIsClicked] = useState(false);
-  const [drumStickPosition, setDrumStickPosition] = useState(false); // For drumstick movement
-
-  // write animation useffect
-  // setStickClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
-  // const currTime = Date.now();
-  // const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
 
   const handleDrumPress = () => {
     setIsClicked(true);
@@ -145,11 +142,17 @@ const SynchronyTask = ({ isSurvey = false }) => {
     closeGame(timeData, true);
   };
 
+  // console.log(stickClick);
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative w-full h-full flex flex-col justify-center items-center">
-        <DrumSVG startTime={startTime} isSurvey={isSurvey} />
+        <DrumSVG
+          startTime={startTime}
+          isSurvey={isSurvey}
+          isGameActive={isGameAtive}
+        />
         <div className="w-full px-12 absolute bottom-0">
           <div
             className={`w-full h-52 ${
