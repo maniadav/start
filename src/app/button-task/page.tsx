@@ -1,9 +1,10 @@
-"use client";
-import { useState } from "react";
-import { TasksConstant } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
-import SuspenseWrapper from "components/SuspenseWrapper";
-import ButtonTask from "./ButtonTask";
+'use client';
+import { useState } from 'react';
+import { TasksConstant } from 'constants/tasks.constant';
+import TaskHome from 'components/TaskHome';
+import SuspenseWrapper from 'components/SuspenseWrapper';
+import ButtonTask from './ButtonTask';
+import FullScreenWrapper from 'components/FullScreenWrapper';
 
 const IndexPage = () => {
   const data = TasksConstant.ButtonTask;
@@ -17,7 +18,9 @@ const IndexPage = () => {
     <>
       {survey ? (
         <div>
-          <ButtonTask isSurvey={true} />
+          <FullScreenWrapper isFullScreen={survey}>
+            <ButtonTask isSurvey={true} />
+          </FullScreenWrapper>
         </div>
       ) : (
         <div className="w-full h-full overflow-hidden">

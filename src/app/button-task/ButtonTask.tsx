@@ -1,14 +1,14 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { ButtonCanvas } from "./ButtonCanvas";
-import MessagePopup from "components/common/MessagePopup";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import CommonIcon from "components/common/CommonIcon";
-import { getRandomVideo } from "./RandomVideo";
-import CloseGesture from "components/CloseGesture";
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { ButtonCanvas } from './ButtonCanvas';
+import MessagePopup from 'components/common/MessagePopup';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import CommonIcon from 'components/common/CommonIcon';
+import { getRandomVideo } from './RandomVideo';
+import CloseGesture from 'components/CloseGesture';
 
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
@@ -26,19 +26,19 @@ const ButtonTask = ({ isSurvey = false }) => {
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({
     closedWithTimeout: false,
-    timeTaken: "",
-    startTime: "",
-    endTime: "",
-    screenHeight: "",
-    screenWidth: "",
-    deviceType: "",
+    timeTaken: '',
+    startTime: '',
+    endTime: '',
+    screenHeight: '',
+    screenWidth: '',
+    deviceType: '',
   });
 
   const { windowSize, deviceType } = useWindowSize();
   const { dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   console.log({ randomVideoObj });
-  const attemptString = searchParams.get("attempt") || "1";
+  const attemptString = searchParams.get('attempt') || '1';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `button-task?attempt=${attempt + 1}` : null;
@@ -90,7 +90,7 @@ const ButtonTask = ({ isSurvey = false }) => {
       setButtonClicked((prev: string[]) => [...prev, color]);
     }
     setVideoSRC(
-      color === "red" ? randomVideoObj.red.video : randomVideoObj.blue.video
+      color === 'red' ? randomVideoObj.red.video : randomVideoObj.blue.video
     );
     setShowVideo(true);
   };
@@ -108,10 +108,10 @@ const ButtonTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeTaken || "",
-            timeLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timeTaken: timeData?.timeTaken || '',
+            timeLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             buttonClickedData: buttonClicked,
             screenHeight: windowSize.height,
@@ -123,9 +123,9 @@ const ButtonTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "ButtonTask",
+            task: 'ButtonTask',
             data: updatedSurveyData,
           });
 
