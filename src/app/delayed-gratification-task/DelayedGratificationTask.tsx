@@ -1,14 +1,14 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
-import MessagePopup from "components/common/MessagePopup";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import ProgressiveCircle from "./ProgrgessiveCircle";
-import Firework from "./FireWork";
-import CloseGesture from "components/CloseGesture";
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
+import MessagePopup from 'components/common/MessagePopup';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import ProgressiveCircle from './ProgrgessiveCircle';
+import Firework from './FireWork';
+import CloseGesture from 'components/CloseGesture';
 
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -27,7 +27,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `delayed-gratification-task?attempt=${attempt + 1}` : null;
@@ -81,10 +81,10 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeTaken || "",
-            timeLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timeTaken: timeData?.timeTaken || '',
+            timeLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -93,9 +93,9 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "DelayedGratificationTask",
+            task: 'DelayedGratificationTask',
             data: updatedSurveyData,
           });
 
@@ -129,7 +129,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         closeGame();
       }
     } else {
-      alert("you may start the game!");
+      alert('you may start the game!');
     }
   };
 
@@ -142,19 +142,26 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       {circleCompStatus && showFireWorks ? (
-        <Firework />
+        <div className="w-screen h-screen relative bg-black">
+          <video
+            className="absolute top-0 left-0 w-full h-full object-fit"
+            autoPlay
+          >
+            <source src="video/firework.mp4" type="video/mp4" />
+          </video>
+        </div>
       ) : (
         <div
           className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
           onClick={() => handleCloseGame()}
         >
           <Image
-            width={150}
-            height={150}
-            src="/gif/dance.gif"
+            width={600}
+            height={600}
+            src="/gif/star2.gif"
             objectFit="contain"
             alt="langaugesampling.png"
-            // className="w-auto w-auto"
+            className="border-b"
           />
         </div>
       )}
@@ -171,9 +178,9 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Delayed Gratification Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            'You have completed the Delayed Gratification Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
           }
-          testName={"delayed gratification"}
+          testName={'delayed gratification'}
           reAttemptUrl={reAttemptUrl}
         />
       )}

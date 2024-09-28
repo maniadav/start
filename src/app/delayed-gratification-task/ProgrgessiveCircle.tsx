@@ -26,7 +26,7 @@ const ProgressiveCircle = ({ setCircleCompStatus }: any) => {
           background: `conic-gradient(#941212 ${progress}%, #dedee2 ${progress}%)`,
         }}
       ></div>
-      <div className="w-44 h-44 bg-white rounded-full z-50 border border-gray-300"></div>
+      <div className="w-44 h-44 bg-gray-100 rounded-full z-50 border border-gray-300"></div>
     </div>
   );
 };

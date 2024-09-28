@@ -1,11 +1,12 @@
-"use client";
-import { useState } from "react";
-import { TasksConstant } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
-import LanguageSamplingTask from "./DelayedGratificationTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
-import DelayedGratificationTask from "./DelayedGratificationTask";
-const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
+'use client';
+import { useState } from 'react';
+import { TasksConstant } from 'constants/tasks.constant';
+import TaskHome from 'components/TaskHome';
+import LanguageSamplingTask from './DelayedGratificationTask';
+import SuspenseWrapper from 'components/SuspenseWrapper';
+import DelayedGratificationTask from './DelayedGratificationTask';
+import FullScreenWrapper from 'components/FullScreenWrapper';
+const colors: string[] = ['red', 'green', 'blue', 'yellow', 'purple', 'orange'];
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
@@ -21,9 +22,9 @@ const IndexPage = () => {
   return (
     <>
       {survey ? (
-        <div className="w-full h-full overflow-hidden">
+        <FullScreenWrapper isFullScreen={survey}>
           <DelayedGratificationTask isSurvey={true} />
-        </div>
+        </FullScreenWrapper>
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome
