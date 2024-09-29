@@ -1,18 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const useAudio = (src: string) => {
-  const [audio, setAudio] = useState<any>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined' && src) {
       const audioInstance = new Audio(src);
+      audioInstance.preload = 'auto'; // preload the audio to avoid delay
       setAudio(audioInstance);
     }
+
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+      }
+    };
   }, [src]);
 
-  const play = () => {
+  const play = async () => {
     if (audio) {
-      audio.play();
+      try {
+        await audio.play();
+      } catch (error) {
+        console.error('Failed to play the audio:', error);
+      }
     }
   };
 

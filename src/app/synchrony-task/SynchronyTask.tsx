@@ -8,6 +8,7 @@ import useWindowSize from "@hooks/useWindowSize";
 import DrumSVG from "app/synchrony-task/DrumSVG";
 import CloseGesture from "components/CloseGesture";
 import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
+import useAudio from "@hooks/useAudio";
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -30,7 +31,8 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 30000;
+  const timeLimit = 300000;
+  const bubblePop = useAudio("/audio/drum-hit.mp3");
 
   useEffect(() => {
     if (isSurvey) {
@@ -122,6 +124,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
 
   const handleDrumPress = () => {
     setIsClicked(true);
+    bubblePop()
     const currTime = Date.now();
     const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
     setDrumClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
