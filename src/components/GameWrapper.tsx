@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import React, { useEffect, useState } from 'react';
 //  make sure screen is in landscape mode
 
 const GameWrapper = ({ children }: any) => {
@@ -15,11 +15,11 @@ const GameWrapper = ({ children }: any) => {
       }
     };
 
-    window.addEventListener("resize", handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange);
     handleOrientationChange(); // Initial check
 
     return () => {
-      window.removeEventListener("resize", handleOrientationChange);
+      window.removeEventListener('resize', handleOrientationChange);
     };
   }, []);
 
@@ -42,13 +42,13 @@ const GameWrapper = ({ children }: any) => {
     };
 
     // Add event listener for window resize
-    window.addEventListener("resize", checkWindowSize);
+    window.addEventListener('resize', checkWindowSize);
 
     // Initial check
     checkWindowSize();
 
     // Cleanup event listener on component unmount
-    return () => window.removeEventListener("resize", checkWindowSize);
+    return () => window.removeEventListener('resize', checkWindowSize);
   }, [initialWidth]);
 
   return (
@@ -58,13 +58,13 @@ const GameWrapper = ({ children }: any) => {
           {isWindowWide ? (
             <div className="landscape-content">{children}</div>
           ) : (
-            <div className="h-screen w-screen flex items-center align-middle justify-center text-base font-semibold text-red-500">
+            <div className="h-screen w-screen flex items-center align-middle justify-center text-center text-base font-semibold text-red-500 p-4">
               You are not advised to resize your screen!
             </div>
           )}
         </>
       ) : (
-        <div className="h-screen w-screen flex items-center align-middle justify-center text-base font-semibold text-red-500">
+        <div className="h-screen w-screen flex items-center align-middle justify-center text-center text-base font-semibold text-red-500 p-4">
           Please rotate your device to landscape mode to continue.
         </div>
       )}
