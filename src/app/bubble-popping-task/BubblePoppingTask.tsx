@@ -1,24 +1,25 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import Bubble from "./Bubble";
-import Image from "next/image";
-import useAudio from "@hooks/useAudio";
-import MessagePopup from "components/common/MessagePopup";
-import { Attempt } from "types/survey.types";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import CommonIcon from "components/common/CommonIcon";
-import CloseGesture from "components/CloseGesture";
+'use client';
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import Bubble from './Bubble';
+import Image from 'next/image';
+import useAudio from '@hooks/useAudio';
+import MessagePopup from 'components/common/MessagePopup';
+import { Attempt } from 'types/survey.types';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import CommonIcon from 'components/common/CommonIcon';
+import CloseGesture from 'components/CloseGesture';
 
 export const colors: string[] = [
-  "red",
-  "green",
-  "blue",
-  "yellow",
-  "purple",
-  "orange",
+  'red',
+  'green',
+  'blue',
+  'yellow',
+  'purple',
+  'orange',
 ];
 
 const BubblePoppingTask = ({ isSurvey = false }) => {
@@ -39,25 +40,25 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   } | null>(null);
   const [surveyData, setSurveyData] = useState<Attempt>({
     closedWithTimeout: false,
-    timeTaken: "",
+    timeTaken: '',
     ballCoord: [],
     mouseCoord: [],
     colors: [],
-    bubblesPopped: "",
-    bubblesTotal: "",
-    startTime: "",
-    endTime: "",
-    screenHeight: "",
-    screenWidth: "",
-    deviceType: "",
+    bubblesPopped: '',
+    bubblesTotal: '',
+    startTime: '',
+    endTime: '',
+    screenHeight: '',
+    screenWidth: '',
+    deviceType: '',
   });
 
   const { windowSize } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
-  const bubblePop = useAudio("/audio/bubble-pop.mp3");
+  const bubblePop = useAudio('/audio/bubble-pop.mp3');
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
   const timeLimit = 1800000;
@@ -91,7 +92,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
         const timeData = handleStopTimer();
         closeGame(timeData);
       } else {
-        alert("you may start the game!");
+        alert('you may start the game!');
       }
     } else {
       setBubbles(colors.slice(0, numberOfBubbles));
@@ -181,10 +182,10 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeTaken || "",
-            timeLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timeTaken: timeData?.timeTaken || '',
+            timeLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             bubblesTotal,
             bubblesPopped,
@@ -192,9 +193,9 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "BubblePoppingTask",
+            task: 'BubblePoppingTask',
             data: updatedSurveyData,
           });
 
@@ -256,9 +257,9 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            'You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
           }
-          testName={"bubble popping"}
+          testName={'bubble popping'}
           reAttemptUrl={reAttemptUrl}
         />
       )}
