@@ -13,7 +13,7 @@ const Index = () => {
 
   return (
     <div className="w-screen h-screen">
-      <TouchPressureComponent />
+      {/* <TouchPressureComponent /> */}
       <video
         src={vidSRC}
         controls

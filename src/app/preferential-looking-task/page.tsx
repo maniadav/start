@@ -1,11 +1,13 @@
-"use client";
-import { useState } from "react";
-import { TasksConstant } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
-import PreferentialLookingTask from "./PreferentialLookingTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
-import PreferentialLookingStateContext from "state/context/PreferentialLookingStateContext";
-import { PreferentialLookingStateProvider } from "state/provider/PreferentialLookingStateProvider";
+'use client';
+import React from 'react';
+import { useState } from 'react';
+import { TasksConstant } from 'constants/tasks.constant';
+import TaskHome from 'components/TaskHome';
+import PreferentialLookingTask from './PreferentialLookingTask';
+import SuspenseWrapper from 'components/SuspenseWrapper';
+import PreferentialLookingStateContext from 'state/context/PreferentialLookingStateContext';
+import { PreferentialLookingStateProvider } from 'state/provider/PreferentialLookingStateProvider';
+import FullScreenWrapper from 'components/FullScreenWrapper';
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
@@ -19,9 +21,9 @@ const IndexPage = () => {
   return (
     <>
       {survey ? (
-        <div className="w-full h-full overflow-hidden">
-          <PreferentialLookingTask isSurvey={true} />
-        </div>
+        <FullScreenWrapper isFullScreen={survey}>
+          <PreferentialLookingTask isSurvey={survey} />
+        </FullScreenWrapper>
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome

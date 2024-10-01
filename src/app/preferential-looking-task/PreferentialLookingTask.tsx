@@ -1,13 +1,14 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import MessagePopup from "components/common/MessagePopup";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import CloseGesture from "components/CloseGesture";
-import WebGazer from "../gaze-training/WebGazer";
-import { usePreferentialLookingStateContext } from "state/provider/PreferentialLookingStateProvider";
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import MessagePopup from 'components/common/MessagePopup';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import CloseGesture from 'components/CloseGesture';
+import WebGazer from '../gaze-training/WebGazer';
+import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
+import useVideoRecorder from '@hooks/useVideoRecorder';
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -22,12 +23,13 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `preferential-looking-task?attempt=${attempt + 1}` : null;
   const timeLimit = 180000;
   const { gazeData } = usePreferentialLookingStateContext();
+  const { startVidRecording, stopVidRecording } = useVideoRecorder();
 
   useEffect(() => {
     if (isSurvey) {
@@ -44,6 +46,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
 
   const handleStartGame = () => {
     handleTimer();
+    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -69,29 +72,31 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   }, []);
 
   const closeGame = useCallback(
-    (timeData?: any, closedMidWay: boolean = false) => {
+    async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        const videoData = await stopVidRecording();
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
             timeTaken: timeData.timeTaken,
-            timrLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timrLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             closedMidWay,
             deviceType,
             gazeData,
+            vide: videoData,
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "PreferentialLookingTask",
+            task: 'PreferentialLookingTask',
             data: updatedSurveyData,
           });
 
@@ -108,7 +113,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
       const timeData = handleStopTimer();
       closeGame(timeData);
     } else {
-      alert("you may start the game!");
+      alert('you may start the game!');
     }
   };
 
@@ -120,7 +125,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
-      <WebGazer isSurvey={isSurvey} />
+      {/* <WebGazer isSurvey={isSurvey} /> */}
       <div className="w-screen h-screen relative bg-black">
         <video
           className="absolute top-0 left-0 w-full h-full object-fit"
@@ -135,9 +140,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            'You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
           }
-          testName={"language Sampling task"}
+          testName={'language Sampling task'}
           reAttemptUrl={reAttemptUrl}
         />
       )}
