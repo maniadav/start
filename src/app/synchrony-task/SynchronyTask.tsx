@@ -1,14 +1,14 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import MessagePopup from "components/common/MessagePopup";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import DrumSVG from "app/synchrony-task/DrumSVG";
-import CloseGesture from "components/CloseGesture";
-import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
-import useAudio from "@hooks/useAudio";
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import MessagePopup from 'components/common/MessagePopup';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import DrumSVG from 'app/synchrony-task/DrumSVG';
+import CloseGesture from 'components/CloseGesture';
+import { useSynchronyStateContext } from 'state/provider/SynchronyStateProvider';
+import useAudio from '@hooks/useAudio';
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -27,12 +27,12 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
   const timeLimit = 300000;
-  const bubblePop = useAudio("/audio/drum-hit.mp3");
+  const bubblePop = useAudio('/audio/drum-hit.mp3');
 
   useEffect(() => {
     if (isSurvey) {
@@ -84,9 +84,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
           const updatedSurveyData = {
             ...prevState,
             timeTaken: timeData.timeTaken,
-            timrLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timrLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -97,9 +97,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "SynchronyTask",
+            task: 'SynchronyTask',
             data: updatedSurveyData,
           });
 
@@ -116,7 +116,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
       const timeData = handleStopTimer();
       closeGame(timeData);
     } else {
-      alert("you may start the game!");
+      alert('you may start the game!');
     }
   };
 
@@ -124,7 +124,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
 
   const handleDrumPress = () => {
     setIsClicked(true);
-    bubblePop()
+    bubblePop();
     const currTime = Date.now();
     const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
     setDrumClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
@@ -145,7 +145,22 @@ const SynchronyTask = ({ isSurvey = false }) => {
     closeGame(timeData, true);
   };
 
-  // console.log(stickClick);
+  // useEffect(() => {
+  //   let timeoutId: NodeJS.Timeout;
+
+  //   const handleNoTouchDetected = () => {
+  //     if (!drumClickTimes.length) {
+  //       const timeData = handleStopTimer();
+  //       closeGame(timeData, true);
+  //     }
+  //   };
+
+  //   timeoutId = setTimeout(handleNoTouchDetected, 6000);
+
+  //   return () => {
+  //     clearTimeout(timeoutId);
+  //   };
+  // }, [startTime]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -159,9 +174,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
         <div className="w-full px-12 absolute bottom-0">
           <div
             className={`w-full h-52 ${
-              isClicked ? "bg-yellow-300" : "bg-gray-200"
+              isClicked ? 'bg-yellow-300' : 'bg-gray-200'
             } highlight:bg-gray-300 border-[10px] border-gray-400 rounded-t-lg cursor-pointer focus:ring`}
-            style={{ borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%" }}
+            style={{ borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%' }}
             onClick={handleDrumPress}
           ></div>
         </div>
@@ -170,9 +185,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
         <MessagePopup
           showFilter={showPopup}
           msg={
-            "You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+            'You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
           }
-          testName={"language Sampling task"}
+          testName={'language Sampling task'}
           reAttemptUrl={reAttemptUrl}
         />
       )}

@@ -47,7 +47,7 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
       const elapsedTimeInSeconds = parseFloat(
         ((currTime - startTime) / 1000).toFixed(2)
       );
-      console.log(elapsedTimeInSeconds);
+      // console.log(elapsedTimeInSeconds);
       if (isSurvey && isGameActive) {
         setStickClicks((prev: any) => [...prev, elapsedTimeInSeconds]);
       }
