@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
+import { useState, useEffect, useRef } from 'react';
+import { useSynchronyStateContext } from 'state/provider/SynchronyStateProvider';
 
 interface DrumInterface {
   startTime: number;
@@ -8,81 +8,58 @@ interface DrumInterface {
 }
 
 const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
-  // const [stickHit, setStickPosition] = useState(false);
-  // // const [stickClickTimes, setStickClickTimes] = useState<any[]>([]);
-  // const stickHitRef = React.useRef(stickHit);
-  // const { setStickClicks } = useSynchronyStateContext();
-
-  // useEffect(() => {
-  //   stickHitRef.current = stickHit;
-  // }, [stickHit]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setStickPosition((prevPosition) => !prevPosition);
-  //     const currTime = Date.now();
-  //     const elapsedTimeInSeconds = parseFloat(
-  //       ((currTime - startTime) / 1000).toFixed(2)
-  //     );
-
-  //     if (isSurvey && stickHitRef.current) {
-  //       setStickClicks((prev: any) => [...prev, elapsedTimeInSeconds]);
-  //     }
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [startTime]);
   const [stickHit, setStickPosition] = useState(true);
+  const [intervalIndex, setIntervalIndex] = useState(0); // Track current interval index
   const stickHitRef = useRef(stickHit);
   const { setStickClicks } = useSynchronyStateContext();
 
-  // Array of intervals in milliseconds
-  const intervals = [1000, 500, 1000]; // Define intervals here (in ms)
-  const [intervalIndex, setIntervalIndex] = useState(0); // Track current interval index
+  const intervals = [500, 1000]; // delay between subsequent hit will be 2x
+  const animatonFrameRateChange = 15000; // 15 sec
 
   useEffect(() => {
     stickHitRef.current = stickHit;
   }, [stickHit]);
 
+  // to update the timer
   useEffect(() => {
-    // Function to handle stick position toggle and record the click times
+    let intervalId: NodeJS.Timeout;
+
+    const handleStickMovement = () => {
+      setIntervalIndex((prevIndex) => {
+        const newIndex = prevIndex + 1 < intervals.length ? prevIndex + 1 : 0;
+        return newIndex;
+      });
+    };
+
+    intervalId = setInterval(handleStickMovement, animatonFrameRateChange);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [startTime]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     const handleStickMovement = () => {
       setStickPosition((prevPosition) => !prevPosition);
       const currTime = Date.now();
       const elapsedTimeInSeconds = parseFloat(
         ((currTime - startTime) / 1000).toFixed(2)
       );
-
-
-      if (isSurvey && stickHitRef.current && isGameActive) {
-        console.log(elapsedTimeInSeconds);
+      console.log(elapsedTimeInSeconds);
+      if (isSurvey && isGameActive) {
         setStickClicks((prev: any) => [...prev, elapsedTimeInSeconds]);
       }
     };
 
-    // Initial interval setup
-    let intervalId: NodeJS.Timeout;
+    // Set the interval based on the current hitTimer
+    intervalId = setInterval(handleStickMovement, intervals[intervalIndex]);
 
-    const changeInterval = () => {
-      intervalId = setInterval(handleStickMovement, intervals[intervalIndex]);
-
-      // Update the interval index every 15 seconds
-      const intervalChangeTimeout = setTimeout(() => {
-        setIntervalIndex((prevIndex) => (prevIndex + 1) % intervals.length); // Cycle through the intervals
-        clearInterval(intervalId); // Clear the existing interval before setting a new one
-        changeInterval(); // Recursively change interval
-      }, 15000); // 15 seconds interval change
-
-      return () => {
-        clearInterval(intervalId);
-        clearTimeout(intervalChangeTimeout);
-      };
+    return () => {
+      clearInterval(intervalId); // Clean up the interval on unmount or re-run
     };
-
-    const cleanup = changeInterval(); // Start the interval cycle
-
-    return cleanup; // Cleanup on component unmount
-  }, [intervalIndex, startTime, isSurvey]); // Dependencies
+  }, [intervalIndex, isSurvey, isGameActive, startTime]);
 
   return (
     <svg
@@ -118,14 +95,14 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
       {/* drum pad */}
       <path
         d="M32 36.4c14 0 25-3 27.6-7.1-2.5-4.4-13.9-7.6-27.6-7.6-13.6 0-25 3.3-27.6 7.6 2.5 4.1 13.5 7.1 27.6 7.1"
-        fill={stickHit ? "yellow" : "#fff"}
+        fill={stickHit ? 'yellow' : '#fff'}
       />
       {/* drum stick */}
       <path
         d="M46.5 23.4c-.6-.3-1.2-.5-1.7-.5L8.6 2c-.5-.2-1.9 2.1-1.4 2.4l36.7 20.2c.2.4.7.9 1.2 1.2 3.5 2 4.9-.4 1.4-2.4"
         fill="#d3976e"
         style={{
-          transform: stickHit ? "rotateZ(8deg)" : "rotateZ(350deg)",
+          transform: stickHit ? 'rotateZ(8deg)' : 'rotateZ(350deg)',
         }}
       />
       <path d="M3.9 53.3v3.8c0 1.5 5.6 1.5 5.6 0v-3.8z" fill="#b2c1c0" />
