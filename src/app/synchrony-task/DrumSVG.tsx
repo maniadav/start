@@ -13,7 +13,7 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
   const stickHitRef = useRef(stickHit);
   const { setStickClicks } = useSynchronyStateContext();
 
-  const intervals = [500, 1000]; // delay between subsequent hit will be 2x
+  const intervals = [600, 400]; // delay between subsequent hit will be 2x
   const animatonFrameRateChange = 15000; // 15 sec
 
   useEffect(() => {
@@ -63,8 +63,8 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
 
   return (
     <svg
-      width={250}
-      height={250}
+      width={450}
+      height={450}
       viewBox="0 0 64 64"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"

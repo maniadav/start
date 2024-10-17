@@ -1,14 +1,15 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import TimerComponent from "./TimerComponent";
-import TouchPressureComponent from "app/bubble-popping-task/TouchPressure";
-import { LOCALSTORAGE } from "@constants/storage.constant";
-import { getLocalStorageValue } from "@utils/localStorage";
+'use client';
+import React, { useEffect, useState } from 'react';
+import TimerComponent from './TimerComponent';
+import TouchPressureComponent from 'app/bubble-popping-task/TouchPressure';
+import { LOCALSTORAGE } from '@constants/storage.constant';
+import { getLocalStorageValue } from '@utils/localStorage';
+import { VideoProcessorComponent } from 'app/preferential-looking-task/VideoProcessorComponent';
 
 const Index = () => {
-  const [vidSRC, setVidSRC] = useState("");
+  const [vidSRC, setVidSRC] = useState('');
   useEffect(() => {
-    setVidSRC(getLocalStorageValue("recordedVideo"));
+    setVidSRC(getLocalStorageValue('recordedVideo'));
   }, []);
 
   return (
@@ -20,6 +21,7 @@ const Index = () => {
         className="w-full mt-4"
         // type="video/webm"
       />
+      <VideoProcessorComponent />
     </div>
   );
 };

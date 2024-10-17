@@ -165,13 +165,15 @@ const SynchronyTask = ({ isSurvey = false }) => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
-      <div className="relative w-full h-full flex flex-col justify-center items-center">
-        <DrumSVG
-          startTime={startTime}
-          isSurvey={isSurvey}
-          isGameActive={isGameAtive}
-        />
-        <div className="w-full px-12 absolute bottom-0">
+      <div className="relative w-full h-full flex flex-col justify-center items-center gap-4">
+        <div className="absolute top-24">
+          <DrumSVG
+            startTime={startTime}
+            isSurvey={isSurvey}
+            isGameActive={isGameAtive}
+          />
+        </div>
+        <div className="w-full px-12 absolute bottom-0 pt-20">
           <div
             className={`w-full h-52 ${
               isClicked ? 'bg-yellow-300' : 'bg-gray-200'

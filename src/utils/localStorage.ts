@@ -1,10 +1,4 @@
-/**
- * @function getLocalStorageValue
- * @param key {string} Key of LocalStorage Item
- * @returns {*}
- */
-
-function getLocalStorageValue(key: string, parse = false) {
+function getLocalStorageValue(key: string, parse = false): any {
   if (typeof window !== 'undefined' && 'localStorage' in window) {
     try {
       const storedValue = window.localStorage.getItem(key);

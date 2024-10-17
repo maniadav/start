@@ -9,6 +9,8 @@ import CloseGesture from 'components/CloseGesture';
 import WebGazer from '../gaze-training/WebGazer';
 import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
 import useVideoRecorder from '@hooks/useVideoRecorder';
+import useEyeFeatureExtractor from '@hooks/useEyeFeatureExtractor';
+import VideoDetection from './VideoDetection';
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -30,6 +32,27 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const timeLimit = 180000;
   const { gazeData } = usePreferentialLookingStateContext();
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
+  const { processVideo } = useEyeFeatureExtractor();
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoDuration, setVideoDuration] = useState<number>(180);
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      // Set up an event listener for when metadata is loaded
+      videoElement.onloadedmetadata = () => {
+        const durationInMilliseconds = videoElement.duration * 1000;
+        setVideoDuration(durationInMilliseconds);
+      };
+    }
+
+    return () => {
+      if (videoElement) {
+        videoElement.onloadedmetadata = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isSurvey) {
@@ -52,7 +75,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const stopTimerFuncRef = useRef<() => any>();
 
   const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(timeLimit);
+    const { endTimePromise, stopTimer } = timer(videoDuration);
 
     stopTimerFuncRef.current = stopTimer;
 
@@ -75,6 +98,10 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         const videoData = await stopVidRecording();
+        console.log(videoData);
+        const eyeBase64Zip = videoData
+          ? await processVideo(videoData || '')
+          : null;
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
@@ -90,7 +117,8 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
             closedMidWay,
             deviceType,
             gazeData,
-            vide: videoData,
+            video: videoData,
+            eyeExtractZip: eyeBase64Zip,
           };
 
           dispatch({
@@ -107,16 +135,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     [isSurvey, timerData, attempt]
   );
 
-  const handleCloseGame = (data: string) => {
-    console.log(data);
-    if (isSurvey) {
-      const timeData = handleStopTimer();
-      closeGame(timeData);
-    } else {
-      alert('you may start the game!');
-    }
-  };
-
   const handleCloseMidWay = () => {
     const timeData = handleStopTimer();
     closeGame(timeData, true);
@@ -126,8 +144,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       {/* <WebGazer isSurvey={isSurvey} /> */}
-      <div className="w-screen h-screen relative bg-black">
+      {/* <div className="w-screen h-screen relative bg-black">
         <video
+          ref={videoRef}
           className="absolute top-0 left-0 w-full h-full object-fit"
           autoPlay
           muted
@@ -145,7 +164,8 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           testName={'language Sampling task'}
           reAttemptUrl={reAttemptUrl}
         />
-      )}
+      )} */}
+      <VideoDetection />
     </div>
   );
 };
