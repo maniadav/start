@@ -3,7 +3,9 @@ const convertFileToBase64 = (file: File): Promise<string> => {
     const reader = new FileReader();
     reader.onloadend = () => {
       if (reader.result) {
-        resolve(reader.result as string);
+        const result = reader.result as string;
+        const base64Data = result.split(',')[1];
+        resolve(base64Data);
       } else {
         reject('Failed to convert file to base64');
       }

@@ -3,6 +3,7 @@ import useEyeFeatureExtractor from '@hooks/useEyeFeatureExtractor';
 import { getIndexedDBValue, setIndexedDBValue } from '@utils/indexDB';
 import { getLocalStorageValue } from '@utils/localStorage';
 import { useState } from 'react';
+import ZipToBase64 from './EyesBase64';
 
 export function VideoProcessorComponent() {
   const { processVideo, processing } = useEyeFeatureExtractor();
@@ -69,6 +70,7 @@ export function VideoProcessorComponent() {
         Download Data
       </button>
       {/* <div>Progress: {progress.toFixed(2)}%</div> */}
+      <ZipToBase64 />
     </div>
   );
 }

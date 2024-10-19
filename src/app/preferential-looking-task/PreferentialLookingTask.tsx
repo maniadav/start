@@ -10,7 +10,7 @@ import WebGazer from '../gaze-training/WebGazer';
 import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
 import useVideoRecorder from '@hooks/useVideoRecorder';
 import useEyeFeatureExtractor from '@hooks/useEyeFeatureExtractor';
-import VideoDetection from './VideoDetection';
+import VidProcessingPopup from 'components/common/VidProcessingPopup';
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const { processVideo } = useEyeFeatureExtractor();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoDuration, setVideoDuration] = useState<number>(180);
+  const [videoDuration, setVideoDuration] = useState<number>(timeLimit);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -144,7 +144,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       {/* <WebGazer isSurvey={isSurvey} /> */}
-      {/* <div className="w-screen h-screen relative bg-black">
+      <div className="w-screen h-screen relative bg-black">
         <video
           ref={videoRef}
           className="absolute top-0 left-0 w-full h-full object-fit"
@@ -156,16 +156,12 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
       </div>
 
       {isSurvey && (
-        <MessagePopup
-          showFilter={showPopup}
-          msg={
-            'You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
-          }
-          testName={'language Sampling task'}
+        <VidProcessingPopup
+          showFilter={true}
+          onProcessComplete={setShowPopup}
           reAttemptUrl={reAttemptUrl}
         />
-      )} */}
-      <VideoDetection />
+      )}
     </div>
   );
 };
