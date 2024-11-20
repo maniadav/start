@@ -2,6 +2,7 @@
 import VideoDetection from 'app/preferential-looking-task/VideoDetection';
 import { PopupModal2 } from './PopupModal';
 import { useRouter } from 'next/navigation';
+import GazeDetection from 'app/preferential-looking-task/GazeDetection';
 
 interface msgPopUp {
   showFilter: boolean;
@@ -19,7 +20,7 @@ const VidProcessingPopup = ({ showFilter, reAttemptUrl }: msgPopUp) => {
         <div className="relative p-4 w-full max-w-xl max-h-full">
           <div className="relative bg-white rounded-lg shadow ">
             <div className="p-4 md:p-5 space-y-4">
-              <VideoDetection reAttemptUrl={reAttemptUrl} />
+              <GazeDetection reAttemptUrl={reAttemptUrl} />
             </div>
           </div>
         </div>
