@@ -20,7 +20,10 @@ const VidProcessingPopup = ({ showFilter, reAttemptUrl }: msgPopUp) => {
         <div className="relative p-4 w-full max-w-xl max-h-full">
           <div className="relative bg-white rounded-lg shadow ">
             <div className="p-4 md:p-5 space-y-4">
-              <GazeDetection reAttemptUrl={reAttemptUrl} />
+              <GazeDetection
+                reAttemptUrl={reAttemptUrl}
+                showFilter={showFilter}
+              />
             </div>
           </div>
         </div>

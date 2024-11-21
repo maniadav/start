@@ -6,7 +6,6 @@ import { timer } from '@utils/timer';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
 import useWindowSize from '@hooks/useWindowSize';
 import CloseGesture from 'components/CloseGesture';
-import WebGazer from '../gaze-training/WebGazer';
 import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
 import useVideoRecorder from '@hooks/useVideoRecorder';
 import useEyeFeatureExtractor from '@hooks/useEyeFeatureExtractor';
@@ -98,12 +97,11 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         const videoData = await stopVidRecording();
-        console.log(videoData);
-        const eyeBase64Zip = videoData
-          ? await processVideo(videoData || '')
-          : null;
-        setShowPopup(true);
-        console.log({ timeData });
+
+        setShowPopup((prev) => {
+          console.log('Current state:', prev);
+          return !prev;
+        });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -118,7 +116,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
             deviceType,
             gazeData,
             video: videoData,
-            eyeExtractZip: eyeBase64Zip,
           };
 
           dispatch({
@@ -132,7 +129,8 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt]
+
+    [isSurvey, timerData, attempt, showPopup]
   );
 
   const handleCloseMidWay = () => {
@@ -143,7 +141,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
-      {/* <WebGazer isSurvey={isSurvey} /> */}
       <div className="w-screen h-screen relative bg-black">
         <video
           ref={videoRef}
@@ -157,7 +154,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
 
       {isSurvey && (
         <VidProcessingPopup
-          showFilter={true}
+          showFilter={showPopup}
           onProcessComplete={setShowPopup}
           reAttemptUrl={reAttemptUrl}
         />
