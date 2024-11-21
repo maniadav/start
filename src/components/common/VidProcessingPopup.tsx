@@ -5,13 +5,19 @@ import { useRouter } from 'next/navigation';
 import GazeDetection from 'app/preferential-looking-task/GazeDetection';
 
 interface msgPopUp {
+  attempt: number;
+  taskID: string;
   showFilter: boolean;
   onRequestClose?: any;
   onProcessComplete: any;
-
   reAttemptUrl: string | null;
 }
-const VidProcessingPopup = ({ showFilter, reAttemptUrl }: msgPopUp) => {
+const VidProcessingPopup = ({
+  showFilter,
+  reAttemptUrl,
+  taskID,
+  attempt,
+}: msgPopUp) => {
   const router = useRouter();
   console.log({ showFilter });
   return (
@@ -23,6 +29,8 @@ const VidProcessingPopup = ({ showFilter, reAttemptUrl }: msgPopUp) => {
               <GazeDetection
                 reAttemptUrl={reAttemptUrl}
                 showFilter={showFilter}
+                attempt={attempt}
+                taskID={taskID}
               />
             </div>
           </div>

@@ -99,7 +99,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         const videoData = await stopVidRecording();
 
         setShowPopup((prev) => {
-          console.log('Current state:', prev);
           return !prev;
         });
         setSurveyData((prevState: any) => {
@@ -157,6 +156,8 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           showFilter={showPopup}
           onProcessComplete={setShowPopup}
           reAttemptUrl={reAttemptUrl}
+          attempt={attempt}
+          taskID={'PreferentialLookingTask'}
         />
       )}
     </div>

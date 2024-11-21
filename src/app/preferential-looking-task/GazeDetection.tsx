@@ -9,6 +9,7 @@ import { getIndexedDBValue } from '@utils/indexDB';
 import { convertBase64ToFile } from '@helper/binaryConvertion';
 import { useRouter } from 'next/navigation';
 import { determineGazeDirection } from '@utils/gaze.utils';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
 
 // Define types for results and gaze data
 type GazeResult = {
@@ -19,15 +20,26 @@ type GazeResult = {
 type BlendShapeData = {
   [key: string]: number;
 };
+type gazeDetectionInterface = {
+  reAttemptUrl: string | null;
+  showFilter: boolean;
+  attempt: number;
+  taskID: string;
+};
 
-const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
+const GazeDetection = ({
+  reAttemptUrl,
+  showFilter,
+  attempt,
+  taskID,
+}: gazeDetectionInterface) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const directionElementRef = useRef<HTMLParagraphElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [gazeResults, setGazeResults] = useState<GazeResult[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
-
+  const [msg, setMsg] = useState<string>('');
+  const { state, dispatch } = useSurveyContext();
   const FPS = 30;
   let faceLandmarker: any;
   let drawingUtils: any;
@@ -43,6 +55,7 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
 
   // model
   const createFaceLandmarker = async () => {
+    setMsg('loading mediapipe model for gaze detection..');
     const filesetResolver = await FilesetResolver.forVisionTasks(
       'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm'
     );
@@ -63,6 +76,7 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
 
   // load video data
   const fetchVideoFromDB = async () => {
+    setMsg('fetching video data..');
     try {
       const videoBase64: string =
         (await getIndexedDBValue('testing', 'videoBase64')) || '';
@@ -83,8 +97,7 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
 
   // process gaze
   const processVideo = async () => {
-    if (!videoRef.current || !canvasRef.current || !directionElementRef.current)
-      return;
+    if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvasElement = canvasRef.current;
     const canvasCtx = canvasElement.getContext('2d')!;
@@ -142,7 +155,18 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
         if (!video.paused && !video.ended) {
           requestAnimationFrame(processFrame);
         } else {
-          downloadJSON(gazeResults, 'gaze_results.json');
+          const updatedSurveyData = {
+            ...state[taskID][`attempt${attempt}`],
+            gazeData: gazeResults || {},
+          };
+          console.log(updatedSurveyData, attempt);
+          dispatch({
+            type: 'UPDATE_SURVEY_DATA',
+            attempt,
+            task: taskID,
+            data: updatedSurveyData,
+          });
+          setIsProcessing(false);
         }
       } catch (error) {
         console.error(
@@ -180,29 +204,24 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
     );
 
     const gaze = determineGazeDirection(eyeData);
-    // console.log({ gaze, eyeData });
-    if (directionElementRef.current)
-      directionElementRef.current.textContent = `Looking ${gaze}`;
+    setMsg(`Looking ${gaze}`);
     return gaze;
   };
 
-  //
-  const downloadJSON = (data: GazeResult[], filename: string) => {
-    console.log({ gazeResults });
-    setIsProcessing(false);
-    if (directionElementRef.current)
-      directionElementRef.current.textContent = `Downloaded`;
-
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
+  // const downloadJSON = (data: GazeResult[], filename: string) => {
+  //   console.log({ gazeResults });
+  //   setIsProcessing(false);
+  //   setMsg(`Processing is done`);
+  //   const json = JSON.stringify(data, null, 2);
+  //   const blob = new Blob([json], { type: 'application/json' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = filename;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  // };
 
   return (
     <div className="w-full flex flex-col gap-2 items-center justify-center">
@@ -227,12 +246,8 @@ const GazeDetection = ({ reAttemptUrl, showFilter }: any) => {
         </div>
       </div>
       {isProcessing && (
-        <p
-          id="eye-direction"
-          className="text-center text-gray-400 text-base"
-          ref={directionElementRef}
-        >
-          Looking ...
+        <p id="eye-direction" className="text-center text-gray-400 text-base">
+          {msg}
         </p>
       )}
       <div className="w-full h-[300px] max-w-2xl m-auto flex flex-col items-center relative">
