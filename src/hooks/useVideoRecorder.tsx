@@ -7,7 +7,6 @@ const useVideoRecorder = () => {
   const videoChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-
   const startVidRecording = async () => {
     try {
       const userStream = await navigator.mediaDevices.getUserMedia({
@@ -30,41 +29,11 @@ const useVideoRecorder = () => {
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing media devices.', error);
+      alert('Camera access is required for this task');
+      window.location.reload();
     }
   };
 
-  // const stopVidRecording = (): Promise<string | null> => {
-  //   return new Promise((resolve) => {
-  //     if (mediaRecorderRef.current) {
-  //       mediaRecorderRef.current.stop();
-
-  //       mediaRecorderRef.current.onstop = () => {
-  //         const blob = new Blob(videoChunksRef.current, { type: 'video/webm' });
-  //         const reader = new FileReader();
-
-  //         reader.onloadend = () => {
-  //           const base64data = reader.result as string;
-  //           localStorage.setItem('videoBase64', base64data);
-  //           setIndexedDBValue('testing', 'videoBase64', base64data);
-  //           videoChunksRef.current = [];
-  //           setIsRecording(false);
-
-  //           // Revoke camera access
-  //           if (stream) {
-  //             stream.getTracks().forEach((track) => track.stop());
-  //             setStream(null);
-  //           }
-
-  //           resolve(base64data);
-  //         };
-
-  //         reader.readAsDataURL(blob);
-  //       };
-  //     } else {
-  //       resolve(null);
-  //     }
-  //   });
-  // };
   const stopVidRecording = (): Promise<string | null> => {
     return new Promise((resolve) => {
       if (mediaRecorderRef.current) {
@@ -74,13 +43,14 @@ const useVideoRecorder = () => {
           const blob = new Blob(videoChunksRef.current, { type: 'video/webm' });
 
           try {
-            // Use the convertFileToBase64 helper to convert the blob to base64
+            // Convert video blob to Base64
             const file = new File([blob], 'video.webm', { type: 'video/webm' });
             const base64data = await convertFileToBase64(file);
 
-            // Save the base64 string to local storage and IndexedDB
+            // Save Base64 data to local storage and IndexedDB
             localStorage.setItem('videoBase64', base64data);
             setIndexedDBValue('testing', 'videoBase64', base64data);
+
             videoChunksRef.current = [];
             setIsRecording(false);
 

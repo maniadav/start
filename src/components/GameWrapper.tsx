@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import ErrorComponent from './common/ErrorComponent';
 //  make sure screen is in landscape mode
 
 const GameWrapper = ({ children }: any) => {
@@ -56,17 +57,25 @@ const GameWrapper = ({ children }: any) => {
       {isLandscape ? (
         <>
           {isWindowWide ? (
-            <div className="landscape-content">{children}</div>
+            <div className="w-full overflow-hidden m-0">{children}</div>
           ) : (
-            <div className="h-screen w-screen flex items-center align-middle justify-center text-center text-base font-semibold text-red-500 p-4">
-              You are not advised to resize your screen!
-            </div>
+            <ErrorComponent
+              imageUrl={'/image/restrict.jpg'}
+              title={'Uh-oh! Something went off-screen...'}
+              subTitle={
+                'It looks like resizing the window caused this issue. Please restore the screen to its recommended size or visit the homepage to continue exploring.'
+              }
+            />
           )}
         </>
       ) : (
-        <div className="h-screen w-screen flex items-center align-middle justify-center text-center text-base font-semibold text-red-500 p-4">
-          Please rotate your device to landscape mode to continue.
-        </div>
+        <ErrorComponent
+          imageUrl={'/image/sadcat.png'}
+          title={"Oops! Looks like your device dimensions aren't compatible"}
+          subTitle={
+            'Please rotate your device to portrait mode to continue using the application.'
+          }
+        />
       )}
     </div>
   );
