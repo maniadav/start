@@ -1,12 +1,13 @@
-"use client";
-import { useReducer, useState } from "react";
-import CommonIcon from "./common/CommonIcon";
-import { NavSideBar2 } from "./NavSideBar";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { API_ENDPOINT } from "@constants/api.constant";
-import { useAuth } from "state/provider/AuthProvider";
-import Link from "next/link";
+'use client';
+import { useReducer, useState } from 'react';
+import CommonIcon from './common/CommonIcon';
+import { NavSideBar2 } from './NavSideBar';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { API_ENDPOINT } from '@constants/api.constant';
+import { useAuth } from 'state/provider/AuthProvider';
+import Link from 'next/link';
+import LanguageToggle from './LanguageToggle';
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +40,7 @@ export const Header = () => {
                   className="rounded-full h-6 w-6 object-cover"
                 /> */}
                 <Image
-                  src={user?.profile || "/user.svg"}
+                  src={user?.profile || '/user.svg'}
                   alt="logo"
                   className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
                   width={32}
@@ -47,7 +48,7 @@ export const Header = () => {
                 ></Image>
               </div>
               <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {`Hi, ${user?.firstName || "user"}`}
+                {`Hi, ${user?.firstName || 'user'}`}
               </p>
               <span className="text-gray-500">
                 <CommonIcon
@@ -62,6 +63,7 @@ export const Header = () => {
               <DropDown />
             </div>
           </div>
+          <LanguageToggle />
           {/* <div
             className="cursor-pointer rounded p-1 md:p-2 flex flex-row bg-black text-gray-400 items-center hover:bg-gray-800 hover:text-white"
             onClick={toggle}
@@ -106,24 +108,24 @@ export const Header = () => {
 
 export const menuLink = [
   {
-    label: "Home",
-    slug: "/",
+    label: 'Home',
+    slug: '/',
   },
   {
-    label: "Blog",
-    slug: "/blog",
+    label: 'Blog',
+    slug: '/blog',
   },
   {
-    label: "Alfaaz-e-Sukhan",
-    slug: "/poem",
+    label: 'Alfaaz-e-Sukhan',
+    slug: '/poem',
   },
   {
-    label: "Photography",
-    slug: "/photography",
+    label: 'Photography',
+    slug: '/photography',
   },
   {
-    label: "About",
-    slug: "/about",
+    label: 'About',
+    slug: '/about',
   },
 ];
 
@@ -154,7 +156,7 @@ export const DropDown = () => {
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
 
-          <span> {user ? "Logout" : "Sign In"}</span>
+          <span> {user ? 'Logout' : 'Sign In'}</span>
         </button>
       </div>
     </div>
