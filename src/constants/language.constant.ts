@@ -202,6 +202,12 @@ export const englishContent = {
       },
     ],
   },
+  banner: {
+    shortText: 'Simple and easy',
+    title: 'Made for childs brain testing!!',
+    desc: "The project aims to provide comprehensive insights into various aspects of a child's cognitive and emotional development by leveraging advanced data analysis techniques.",
+    quesText: 'Are You Ready?',
+  },
 };
 
 export const hindiContent = {
@@ -419,5 +425,11 @@ export const hindiContent = {
       message:
         'भाषा बदलने के लिए, मुख्य पेज के ऊपरी दाईं ओर बने "मेनू" आइकन को दबाएं। नए पेज पर आपको भाषा चुनने ...',
     },
+  },
+  banner: {
+    shortText: 'सरल और आसान',
+    title: 'बच्चों के मस्तिष्क परीक्षण के लिए बनाया गया!!',
+    desc: 'यह परियोजना उन्नत डेटा विश्लेषण तकनीकों का उपयोग करके बच्चे के संज्ञानात्मक और भावनात्मक विकास के विभिन्न पहलुओं पर व्यापक जानकारी प्रदान करने का लक्ष्य रखती है।',
+    quesText: 'क्या आप तैयार हैं?',
   },
 };
