@@ -8,14 +8,14 @@ import {
 import { getIndexedDBValue } from '@utils/indexDB';
 import { convertBase64ToFile } from '@helper/binaryConvertion';
 import { useRouter } from 'next/navigation';
-import { determineGazeDirection } from '@utils/mediapipe.utils';
+import { calculateDepth } from '@utils/mediapipe.utils';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
 import { IndexDB_Storage } from '@constants/storage.constant';
 
 // Define types for results and gaze data
 type GazeResult = {
   timestamp: number;
-  gazeDirection: string;
+  distance: number;
 };
 
 type BlendShapeData = {
@@ -62,18 +62,23 @@ const DepthEstimation = ({
     try {
       const filesetResolver = await FilesetResolver.forVisionTasks(cdn_file);
 
-      faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(filesetResolver, {
-        baseOptions: {
-          modelAssetPath:
-            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
-          delegate: 'GPU',
-        },
-        outputFaceBlendshapes: true,
-        runningMode: 'VIDEO',
-        numFaces: 1,
-      });
+      faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(
+        filesetResolver,
+        {
+          baseOptions: {
+            modelAssetPath:
+              'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+            delegate: 'GPU',
+          },
+          outputFaceBlendshapes: true,
+          runningMode: 'VIDEO',
+          numFaces: 1,
+        }
+      );
 
-      drawingUtilsRef.current = new DrawingUtils(canvasRef.current?.getContext('2d')!);
+      drawingUtilsRef.current = new DrawingUtils(
+        canvasRef.current?.getContext('2d')!
+      );
     } catch (error) {
       setMsg('error loading model');
       console.error(error);
@@ -127,104 +132,89 @@ const DepthEstimation = ({
     let lastTimestamp = -1;
 
     const processFrame = async (timestamp: number) => {
-      // try {
-      if (timestamp - lastTimestamp < 1000 / FPS) {
-        requestAnimationFrame(processFrame);
-        return;
-      }
-      lastTimestamp = timestamp;
+      try {
+        if (timestamp - lastTimestamp < 1000 / FPS) {
+          requestAnimationFrame(processFrame);
+          return;
+        }
+        lastTimestamp = timestamp;
 
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-      const startTimeMs = performance.now();
+        const startTimeMs = performance.now();
 
-      if (
-        !faceLandmarkerRef.current ||
-        typeof faceLandmarkerRef.current.detectForVideo !== 'function'
-      ) {
-        throw new Error('faceLandmarkerRef.current model is unavailable');
-      }
-
-      const results = await faceLandmarkerRef.current.detectForVideo(video, startTimeMs);
-      console.log(results);
-      if (results?.faceLandmarks && drawingUtilsRef.current) {
-        for (const landmarks of results.faceLandmarks) {
-          drawingUtilsRef.current.drawConnectors(
-            landmarks,
-            FaceLandmarker.FACE_LANDMARKS_TESSELATION,
-            { color: '#C0C0C070', lineWidth: 1 }
-          );
+        if (
+          !faceLandmarkerRef.current ||
+          typeof faceLandmarkerRef.current.detectForVideo !== 'function'
+        ) {
+          throw new Error('faceLandmarkerRef.current model is unavailable');
         }
 
-        const gazeDirection = detectGazeDirection(results.faceBlendshapes);
-        console.log(gazeDirection);
-        gazeResults.push({
-          timestamp: parseFloat(video.currentTime.toFixed(3)),
-          gazeDirection,
-        });
-      }
-      // progress
-      const progressPercentage = (video.currentTime / video.duration) * 100;
-      setProgress(progressPercentage);
+        const results = await faceLandmarkerRef.current.detectForVideo(
+          video,
+          startTimeMs
+        );
+        // console.log(results);
+        if (results?.faceLandmarks && drawingUtilsRef.current) {
+          for (const landmarks of results.faceLandmarks) {
+            drawingUtilsRef.current.drawConnectors(
+              landmarks,
+              FaceLandmarker.FACE_LANDMARKS_TESSELATION,
+              { color: '#C0C0C070', lineWidth: 1 }
+            );
+          }
 
-      if (!video.paused && !video.ended) {
-        requestAnimationFrame(processFrame);
-      } else {
-        // console.log(state);
-        // const updatedSurveyData = {
-        //   ...state[taskID][`attempt${attempt}`],
-        //   gazeData: gazeResults || {},
-        // };
-        // console.log(updatedSurveyData, attempt);
-        // dispatch({
-        //   type: 'UPDATE_SURVEY_DATA',
-        //   attempt,
-        //   task: taskID,
-        //   data: updatedSurveyData,
-        // });
-        console.log({ gazeResults });
-        setMsg('saving data');
+          const landmarks = results.faceLandmarks[0];
+          const leftEye = landmarks?.[33];
+          const rightEye = landmarks?.[263];
+
+          // Use the utility function to calculate depth
+          const distance = calculateDepth({
+            leftEye,
+            rightEye,
+          });
+
+          // console.log(`Depth (Distance to Camera): ${distance.toFixed(2)} cm`);
+          setMsg(`Estimated Distance: ${distance.toFixed(2)} cm`);
+
+          gazeResults.push({
+            timestamp: parseFloat(video.currentTime.toFixed(3)),
+            distance,
+          });
+        }
+        // progress
+        const progressPercentage = (video.currentTime / video.duration) * 100;
+        setProgress(progressPercentage);
+
+        if (!video.paused && !video.ended) {
+          requestAnimationFrame(processFrame);
+        } else {
+          // console.log(state);
+          const updatedSurveyData = {
+            ...state[taskID][`attempt${attempt}`],
+            gazeData: gazeResults || {},
+          };
+          dispatch({
+            type: 'UPDATE_SURVEY_DATA',
+            attempt,
+            task: taskID,
+            data: updatedSurveyData,
+          });
+          setMsg('saving data');
+          setIsProcessing(false);
+        }
+      } catch (error) {
+        setMsg('Something went wrong while processing the video:');
+        console.error(
+          'Something went wrong while processing the video:',
+          error
+        );
         setIsProcessing(false);
       }
-      // } catch (error) {
-      //   setMsg('Something went wrong while processing the video:');
-      //   console.error(
-      //     'Something went wrong while processing the video:',
-      //     error
-      //   );
-      //   setIsProcessing(false);
-      // }
     };
 
     setIsProcessing(true); // Mark processing as started
     requestAnimationFrame(processFrame);
-  };
-
-  // left and right logic
-  const detectGazeDirection = (blendShapesData: any) => {
-    if (!blendShapesData || !blendShapesData.length) return 'No eye detected';
-
-    const blendShapes = blendShapesData[0].categories;
-    const eyeKeys = [
-      'eyeLookInLeft',
-      'eyeLookInRight',
-      'eyeLookOutLeft',
-      'eyeLookOutRight',
-    ];
-
-    const eyeData: BlendShapeData = blendShapes.reduce(
-      (acc: BlendShapeData, { categoryName, score }: any) => {
-        if (eyeKeys.includes(categoryName)) {
-          acc[categoryName] = score;
-        }
-        return acc;
-      },
-      {}
-    );
-
-    const gaze = determineGazeDirection(eyeData);
-    setMsg(`Looking ${gaze}`);
-    return gaze;
   };
 
   return (

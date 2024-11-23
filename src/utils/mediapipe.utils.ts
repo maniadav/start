@@ -59,21 +59,20 @@ type Landmark = { x: number; y: number; z: number };
 type DepthEstimationParams = {
   leftEye: Landmark;
   rightEye: Landmark;
-  realFaceWidth: number; // in cm
-  focalLength: number; // in pixels
 };
 
 // calculate depth
 export const calculateDepth = ({
   leftEye,
   rightEye,
-  realFaceWidth,
-  focalLength,
 }: DepthEstimationParams): number => {
   if (!leftEye || !rightEye) {
-    throw new Error('Missing eye landmarks for depth estimation');
+    return 0;
+    // throw new Error('Missing eye landmarks for depth estimation');
   }
 
+  const realFaceWidth = 14; // average face width in cm
+  const focalLength = 500; // estimated/calibrated focal length in pixels
   // Calculate perceived width (distance between eyes in pixels)
   const perceivedWidth = Math.sqrt(
     Math.pow(leftEye.x - rightEye.x, 2) + Math.pow(leftEye.y - rightEye.y, 2)

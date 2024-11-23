@@ -9,6 +9,7 @@ import useVideoRecorder from '@hooks/useVideoRecorder';
 import CloseGesture from 'components/CloseGesture';
 import DepthEstimation from './DepthEstimation';
 import PopupModal from 'components/common/PopupModal';
+import { TasksConstant } from '@constants/tasks.constant';
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -20,15 +21,15 @@ const WheelTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
-
   const { windowSize, deviceType } = useWindowSize();
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
+  const taskConstant = TasksConstant.WheelTask;
   const reAttemptUrl =
-    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${taskConstant.surveyLink}?attempt=${attempt + 1}` : null;
   const timeLimit = 180000;
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   const handleStartGame = () => {
     handleTimer();
-    startVidRecording();
+    // startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -74,9 +75,8 @@ const WheelTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        const videoData = await stopVidRecording();
+        // const videoData = await stopVidRecording();
         setShowPopup(true);
-        console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -88,14 +88,12 @@ const WheelTask = ({ isSurvey = false }) => {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
-            video: videoData,
             closedMidWay,
           };
-
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: 'WheelTask',
+            task: taskConstant.id,
             data: updatedSurveyData,
           });
 
@@ -103,7 +101,7 @@ const WheelTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt]
+    [isSurvey, timerData, attempt, windowSize, deviceType]
   );
 
   const handleCloseGame = () => {
@@ -121,7 +119,6 @@ const WheelTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      {/* <VideoRecorder /> */}
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
@@ -145,7 +142,7 @@ const WheelTask = ({ isSurvey = false }) => {
             showFilter={showPopup}
             reAttemptUrl={reAttemptUrl}
             attempt={attempt}
-            taskID={'PreferentialLookingTask'}
+            taskID={taskConstant.id}
           />
         </PopupModal>
       )}

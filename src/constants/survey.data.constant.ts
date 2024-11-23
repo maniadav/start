@@ -1,68 +1,68 @@
-import PreferentialLookingStateContext from "state/context/PreferentialLookingStateContext";
-import { BubblePoppingType, MotorFollowingType } from "types/survey.types";
+import PreferentialLookingStateContext from 'state/context/PreferentialLookingStateContext';
+import { BubblePoppingType, MotorFollowingType } from 'types/survey.types';
 
 export const BubblePoppingData: BubblePoppingType = {
-  assestment_id: "BubblePoppingTask",
+  assestment_id: 'BubblePoppingTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const MotorFollowingData: MotorFollowingType = {
-  assestment_id: "MotorFollowingTask",
+  assestment_id: 'MotorFollowingTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const ButtonTaskData: MotorFollowingType = {
-  assestment_id: "ButtonTask",
+  assestment_id: 'ButtonTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const SynchronyTask: any = {
-  assestment_id: "SynchronyTask",
+  assestment_id: 'SynchronyTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const LanguageSamplingTask: any = {
-  assestment_id: "LanguageSamplingTask",
+  assestment_id: 'LanguageSamplingTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const WheelTask: any = {
-  assestment_id: "WheelTask",
+  assestment_id: 'WheelTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 export const PreferentialLooking: any = {
-  assestment_id: "PreferentialLookingTask",
+  assestment_id: 'PreferentialLookingTask',
   noOfAttempt: 0,
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  useID: "",
-  surveyID: "",
+  useID: '',
+  surveyID: '',
 };
 
 export const InitialSurveyState: any = {
