@@ -12,5 +12,8 @@ export const LOCALSTORAGE = {
 
 export const IndexDB_Storage = {
   surveyDB: 'survey',
+  surveyData: 'surveyData',
+  useData: 'user',
+  tempVideo: 'tempVideo',
   temporaryDB: 'temporary',
 };

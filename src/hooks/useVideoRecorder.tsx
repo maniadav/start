@@ -1,3 +1,4 @@
+import { IndexDB_Storage } from '@constants/storage.constant';
 import { convertFileToBase64 } from '@helper/binaryConvertion';
 import { setIndexedDBValue } from '@utils/indexDB';
 import { useRef, useState } from 'react';
@@ -47,9 +48,11 @@ const useVideoRecorder = () => {
             const file = new File([blob], 'video.webm', { type: 'video/webm' });
             const base64data = await convertFileToBase64(file);
 
-            // Save Base64 data to local storage and IndexedDB
-            localStorage.setItem('videoBase64', base64data);
-            setIndexedDBValue('testing', 'videoBase64', base64data);
+            await setIndexedDBValue(
+              IndexDB_Storage.temporaryDB,
+              IndexDB_Storage.tempVideo,
+              base64data
+            );
 
             videoChunksRef.current = [];
             setIsRecording(false);

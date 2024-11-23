@@ -22,7 +22,7 @@ const SurveyProvider = ({ children }: { children: ReactNode }) => {
       try {
         const persistedState = await getIndexedDBValue(
           IndexDB_Storage.surveyDB,
-          'surveyData'
+          IndexDB_Storage.surveyData
         );
         if (persistedState && !isStateLoaded) {
           dispatch({
@@ -48,7 +48,7 @@ const SurveyProvider = ({ children }: { children: ReactNode }) => {
         try {
           await setIndexedDBValue(
             IndexDB_Storage.surveyDB,
-            'surveyData',
+            IndexDB_Storage.surveyData,
             state
           );
         } catch (error) {

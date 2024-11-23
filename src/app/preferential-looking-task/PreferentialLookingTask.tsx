@@ -1,14 +1,12 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import MessagePopup from 'components/common/MessagePopup';
 import { timer } from '@utils/timer';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
 import useWindowSize from '@hooks/useWindowSize';
 import CloseGesture from 'components/CloseGesture';
 import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
 import useVideoRecorder from '@hooks/useVideoRecorder';
-import useEyeFeatureExtractor from '@hooks/useEyeFeatureExtractor';
 import VidProcessingPopup from 'components/common/VidProcessingPopup';
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
@@ -31,7 +29,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const timeLimit = 180000;
   const { gazeData } = usePreferentialLookingStateContext();
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
-  const { processVideo } = useEyeFeatureExtractor();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoDuration, setVideoDuration] = useState<number>(timeLimit);

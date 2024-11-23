@@ -8,8 +8,9 @@ import {
 import { getIndexedDBValue } from '@utils/indexDB';
 import { convertBase64ToFile } from '@helper/binaryConvertion';
 import { useRouter } from 'next/navigation';
-import { determineGazeDirection } from '@utils/gaze.utils';
+import { determineGazeDirection } from '@utils/mediapipe.utils';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
+import { IndexDB_Storage } from '@constants/storage.constant';
 
 // Define types for results and gaze data
 type GazeResult = {
@@ -78,8 +79,10 @@ const GazeDetection = ({
   const fetchVideoFromDB = async () => {
     setMsg('fetching video data..');
     try {
-      const videoBase64: string =
-        (await getIndexedDBValue('testing', 'videoBase64')) || '';
+      const videoBase64: string | null = await getIndexedDBValue(
+        IndexDB_Storage.temporaryDB,
+        IndexDB_Storage.tempVideo
+      );
       if (videoBase64) {
         const videoBlob = convertBase64ToFile(videoBase64, 'video/webm');
         const videoURL = URL.createObjectURL(videoBlob);
@@ -89,6 +92,10 @@ const GazeDetection = ({
             processVideo();
           });
         }
+      } else {
+        setMsg(
+          `couldn't retrive  key ${IndexDB_Storage.tempVideo} from ${IndexDB_Storage.temporaryDB} database. `
+        );
       }
     } catch (error) {
       console.error('Error fetching video from IndexedDB:', error);

@@ -1,26 +1,56 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TimerComponent from './TimerComponent';
 import TouchPressureComponent from 'app/bubble-popping-task/TouchPressure';
-import { LOCALSTORAGE } from '@constants/storage.constant';
+import { IndexDB_Storage, LOCALSTORAGE } from '@constants/storage.constant';
 import { getLocalStorageValue } from '@utils/localStorage';
 import { VideoProcessorComponent } from 'app/preferential-looking-task/VideoProcessorComponent';
+import PopupModal from 'components/common/PopupModal';
+import DepthEstimation from 'app/wheel-task/DepthEstimation';
+import { getIndexedDBValue } from '@utils/indexDB';
+import { convertBase64ToFile } from '@helper/binaryConvertion';
 
 const Page = () => {
-  // const [vidSRC, setVidSRC] = useState('');
-  // useEffect(() => {
-  //   setVidSRC(getLocalStorageValue('recordedVideo'));
-  // }, []);
+  const [vidSRC, setVidSRC] = useState('');
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const fetchVideoFromDB = async () => {
+      try {
+        const videoBase64: string | null = await getIndexedDBValue(
+          IndexDB_Storage.temporaryDB,
+          IndexDB_Storage.tempVideo
+        );
+        if (videoBase64) {
+          const videoBlob = convertBase64ToFile(videoBase64, 'video/webm');
+          const videoURL = URL.createObjectURL(videoBlob);
+          setVidSRC(videoURL);
+        }
+      } catch (error) {
+        console.error('Error fetching video from IndexedDB:', error);
+      }
+    };
+    fetchVideoFromDB();
+  }, []);
 
   return (
     <div className="w-screen h-screen">
       {/* <TouchPressureComponent /> */}
       {/* <video
+        className="h-full w-full rounded-lg bg-gray-800"
+        id="webcam"
         src={vidSRC}
-        controls
-        className="w-full mt-4"
-        // type="video/webm"
-      /> */}
+        autoPlay
+        playsInline
+      ></video> */}
+      <PopupModal show={true}>
+        <DepthEstimation
+          showFilter={true}
+          reAttemptUrl={'reAttemptUrl'}
+          attempt={0}
+          taskID={'PreferentialLookingTask'}
+        />
+      </PopupModal>
     </div>
   );
 };

@@ -1,13 +1,14 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
-import MessagePopup from "components/common/MessagePopup";
-import { timer } from "@utils/timer";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import useVideoRecorder from "@hooks/useVideoRecorder";
-import CloseGesture from "components/CloseGesture";
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
+import { timer } from '@utils/timer';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import useWindowSize from '@hooks/useWindowSize';
+import useVideoRecorder from '@hooks/useVideoRecorder';
+import CloseGesture from 'components/CloseGesture';
+import DepthEstimation from './DepthEstimation';
+import PopupModal from 'components/common/PopupModal';
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -24,7 +25,7 @@ const WheelTask = ({ isSurvey = false }) => {
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
@@ -79,10 +80,10 @@ const WheelTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeLimit: timeData?.timeLimit || "",
-            timeTaken: timeData?.timeTaken || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
+            timeLimit: timeData?.timeLimit || '',
+            timeTaken: timeData?.timeTaken || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -92,9 +93,9 @@ const WheelTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: "UPDATE_SURVEY_DATA",
+            type: 'UPDATE_SURVEY_DATA',
             attempt,
-            task: "WheelTask",
+            task: 'WheelTask',
             data: updatedSurveyData,
           });
 
@@ -110,7 +111,7 @@ const WheelTask = ({ isSurvey = false }) => {
       const timeData = handleStopTimer();
       closeGame(timeData);
     } else {
-      alert("you may start the game!");
+      alert('you may start the game!');
     }
   };
   const handleCloseMidWay = () => {
@@ -139,14 +140,14 @@ const WheelTask = ({ isSurvey = false }) => {
         ></button>
       </div>
       {isSurvey && (
-        <MessagePopup
-          showFilter={showPopup}
-          msg={
-            "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
-          }
-          testName={"bubble popping"}
-          reAttemptUrl={reAttemptUrl}
-        />
+        <PopupModal show={showPopup}>
+          <DepthEstimation
+            showFilter={showPopup}
+            reAttemptUrl={reAttemptUrl}
+            attempt={attempt}
+            taskID={'PreferentialLookingTask'}
+          />
+        </PopupModal>
       )}
     </div>
   );

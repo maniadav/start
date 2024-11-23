@@ -1,5 +1,4 @@
 'use client';
-import VideoDetection from 'app/preferential-looking-task/VideoDetection';
 import { PopupModal2 } from './PopupModal';
 import { useRouter } from 'next/navigation';
 import GazeDetection from 'app/preferential-looking-task/GazeDetection';
