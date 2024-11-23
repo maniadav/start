@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 const SurveyTable = () => {
   const { state } = useSurveyContext();
   const router = useRouter();
+  // console.log({ state });
   return (
     <section className="text-gray-700 body-font overflow-hidden">
       <div className="container px-5 py-20 mx-auto flex flex-col ">
@@ -61,7 +62,7 @@ const SurveyTable = () => {
                     {Object.keys(TasksConstant).map(
                       (items: string, i: number) => (
                         <tr
-                          key={TasksConstant.id}
+                          key={TasksConstant?.[items].id}
                           className={`${
                             i % 2 == 0 ? 'bg-gray-100' : 'bg-white'
                           } border-b`}
@@ -69,48 +70,50 @@ const SurveyTable = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {TasksConstant?.[items].title}
                           </td>
-                          {Array.from({ length: 3 }, (_, index) => (
-                            <td
-                              key={`${TasksConstant.id}${index}`}
-                              className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap"
-                            >
-                              {index < state?.[items]?.noOfAttempt ? (
-                                <button
-                                  className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0 cursor-not-allowed"
-                                  disabled={true}
-                                >
-                                  <TickedIcon />
-                                </button>
-                              ) : index === state?.[items]?.noOfAttempt ||
-                                (state?.[items]?.noOfAttempt === undefined &&
-                                  index === 0) ? (
-                                <button
-                                  onClick={() =>
-                                    router.push(
-                                      `${
-                                        TasksConstant[items].surveyLink
-                                      }?attempt=${
-                                        parseInt(
-                                          state?.[items]?.noOfAttempt || 0,
-                                          10
-                                        ) + 1
-                                      }`
-                                    )
-                                  }
-                                  className="cursor-pointer"
-                                >
-                                  <PlusIcon />
-                                </button>
-                              ) : (
-                                <button
-                                  disabled={true}
-                                  className="cursor-not-allowed"
-                                >
-                                  -
-                                </button>
-                              )}
-                            </td>
-                          ))}
+                          {Array.from({ length: 3 }, (_, index) => {
+                            return (
+                              <td
+                                key={`${TasksConstant?.[items].id}${index}`}
+                                className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap"
+                              >
+                                {index < state?.[items]?.noOfAttempt ? (
+                                  <button
+                                    className="w-5 h-5 inline-flex items-center justify-center bg-gray-500 text-white rounded-full flex-shrink-0 cursor-not-allowed"
+                                    disabled={true}
+                                  >
+                                    <TickedIcon />
+                                  </button>
+                                ) : index === state?.[items]?.noOfAttempt ||
+                                  (state?.[items]?.noOfAttempt === undefined &&
+                                    index === 0) ? (
+                                  <button
+                                    onClick={() =>
+                                      router.push(
+                                        `${
+                                          TasksConstant[items].surveyLink
+                                        }?attempt=${
+                                          parseInt(
+                                            state?.[items]?.noOfAttempt || 0,
+                                            10
+                                          ) + 1
+                                        }`
+                                      )
+                                    }
+                                    className="cursor-pointer"
+                                  >
+                                    <PlusIcon />
+                                  </button>
+                                ) : (
+                                  <button
+                                    disabled={true}
+                                    className="cursor-not-allowed"
+                                  >
+                                    -
+                                  </button>
+                                )}
+                              </td>
+                            );
+                          })}
                         </tr>
                       )
                     )}

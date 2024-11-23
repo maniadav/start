@@ -19,23 +19,23 @@ function openDatabase(
 }
 
 async function setIndexedDBValue<T>(dbName: string, key: string, value: T) {
-  console.log({ dbName, key, value });
+  // console.log({ dbName, key, value });
   try {
     const db = await openDatabase(dbName);
     const tx = db.transaction('data', 'readwrite');
     const store = tx.objectStore('data');
     const request = store.put(value, key);
 
-    request.onsuccess = () => {
-      console.log(`Successfully saved data with key ${key} in ${dbName}.`);
-    };
+    // request.onsuccess = () => {
+    //   console.log(`Successfully saved data with key ${key} in ${dbName}.`);
+    // };
 
-    request.onerror = (event) => {
-      console.error(`Error saving value with key ${key} in ${dbName}:`, event);
-    };
+    // request.onerror = (event) => {
+    //   console.error(`Error saving value with key ${key} in ${dbName}:`, event);
+    // };
 
     tx.oncomplete = () => {
-      console.log(`Transaction completed, closing database: ${dbName}`);
+      // console.log(`Successfully retrived data with key ${key} in ${dbName}.`);
       db.close();
     };
 
@@ -62,8 +62,8 @@ async function getIndexedDBValue<T>(
 
       request.onsuccess = () => {
         const result = request.result;
+        // console.log({ result });
         // resolve(parse && result ? JSON.parse(result) : result);
-
         resolve(result);
         db.close();
       };

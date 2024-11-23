@@ -39,11 +39,12 @@ const page = () => {
         </div>
         <div className="flex justify-end col-span-3 md:col-span-1">
           <Image
-            src="/block.jpg"
-            width={1000}
-            height={1000}
+            src="/survey.jpg"
+            width={400}
+            height={500}
             className="w-full h-full object-cover"
             alt="brain image"
+            priority
           />
         </div>
       </div>

@@ -9,3 +9,8 @@ export const LOCALSTORAGE = {
   BASE_URL: 'https://x3qrf2-3000.csb.app/api/v1',
   SURVEY_DATA: 'surveyData',
 };
+
+export const IndexDB_Storage = {
+  surveyDB: 'survey',
+  temporaryDB: 'temporary',
+};

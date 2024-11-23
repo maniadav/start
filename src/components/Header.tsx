@@ -20,7 +20,7 @@ export const Header = () => {
   return (
     <div className="w-full h-auto px-2 flex justify-center">
       <div
-        className={`max-w-[600px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-3 px-8 transition-all`}
+        className={`max-w-[700px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-1 px-8 transition-all`}
       >
         <Link href="/" className="flex items-center">
           {/* <img src="/images/health-hub-logo.png" alt="logo" className="mr-3 h-6 sm:h-9" /> */}
