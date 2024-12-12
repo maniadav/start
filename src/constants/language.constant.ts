@@ -1,6 +1,9 @@
 export const englishContent = {
   language: 'eng',
   app_name: 'Start',
+  app_desc: `Empowering non-specialist health workers in low-resource settings
+            with START (Screening Tools for Autism Risk using Technology): A mobile, open-source platform for early autism risk
+            detection and comprehensive neurodevelopmental assessment`,
   buttons: {
     allow: 'Allow',
     cancel: 'Cancel',
@@ -212,7 +215,8 @@ export const englishContent = {
 
 export const hindiContent = {
   language: 'हिंदी',
-  app_name: 'शुरू करें',
+  app_name: 'स्टार्ट',
+  app_desc: `कम संसाधन वाले क्षेत्रों में गैर-विशेषज्ञ स्वास्थ्यकर्मियों को सक्षम बनाना START (स्क्रीनिंग टूल्स फॉर ऑटिज़्म रिस्क यूज़िंग टेक्नोलॉजी) के साथ: प्रारंभिक ऑटिज़्म जोखिम पहचान और व्यापक न्यूरोडेवलपमेंटल मूल्यांकन के लिए एक मोबाइल, ओपन-सोर्स प्लेटफ़ॉर्म।`,
   buttons: {
     allow: 'आगे बढ़ें',
     cancel: 'रद्द करें',

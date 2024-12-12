@@ -11,7 +11,7 @@ import LanguageContext from 'state/context/LanguageContext';
 const getContentByLanguage = (language: string) =>
   language === 'en' ? englishContent : hindiContent;
 
-const LanguageProvider = ({ children }: { children: ReactNode }) => {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<string>('en');
   const [languageContent, setLanguageContent] = useState<any>(
     getContentByLanguage('en')
@@ -46,12 +46,10 @@ const LanguageProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const useLanguageProvider = () => {
+export const useLanguageProvider = () => {
   const context = useContext(LanguageContext);
   if (!context) {
     throw new Error('useLanguageProvider must be used within LanguageProvider');
   }
   return context;
 };
-
-export { LanguageProvider, useLanguageProvider };

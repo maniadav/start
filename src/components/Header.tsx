@@ -25,7 +25,7 @@ export const Header = () => {
         <Link href="/" className="flex items-center">
           {/* <img src="/images/health-hub-logo.png" alt="logo" className="mr-3 h-6 sm:h-9" /> */}
           <span className="self-center text-lg md:text-xl font-semibold whitespace-nowrap dark:text-white">
-            BrainTeaser
+            START
           </span>
         </Link>
 

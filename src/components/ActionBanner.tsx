@@ -4,7 +4,7 @@ import { IconSurvey } from './common/Icons';
 import Image from 'next/image';
 import { useLanguageProvider } from 'state/provider/LanguageProvider';
 
-const HomeBanner = () => {
+const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
   return (
     <div className="w-full h-auto bg-gradient-to-b from-gray-900 to-black">
@@ -62,4 +62,4 @@ const HomeBanner = () => {
   );
 };
 
-export default HomeBanner;
+export default ActionBanner;
