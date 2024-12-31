@@ -1,44 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# START Project
 
-## Getting Started
+The START project aims to develop a mobile, modular, open-source platform for early detection of autism risk by non-specialist health workers in low-resource settings.
 
-First, run the development server:
+## Field Study Results
+Results from the field study in India using the app are available:
+- [Autism Risk Detection in Low-Resource Settings](https://journals.sagepub.com/doi/10.1177/13623613231182801)
+- [Individual Component Results 1](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0265587)
+- [Individual Component Results 2](https://arxiv.org/abs/2111.04064)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The code for the START app is available for free on GitHub: [START Repository](https://github.com/Manishyadav514/START).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Overview
+The initial phase of the project was supported by the [Medical Research Council UK](http://www.mrc.ac.uk) Global Challenge Research Fund and focused on India. The START platform uses a combination of parent reports and direct child assessments to detect autism risk in children aged 2-5 years. The tablet-based assessment includes several small tests, questionnaires, and observations, briefly described [here](/overview).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Integration with STREAM
+START is now part of the [STREAM platform](https://research.reading.ac.uk/stream), which assesses different domains of neurodevelopment in children between the ages of 0 and 6 years in India and Malawi.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-
-Tasks:
-Motor Following Task
-Colouring Task
-Bubble Popping Task
-Synchrony Task
-Language Sampling Task
