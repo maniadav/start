@@ -32,7 +32,18 @@ export const determineGazeDirection = (data: BlendShapeData) => {
   ) {
     return 'No eye detected';
   }
-
+  // console.log(
+  //   {
+  //     eyeLookInLeft,
+  //     eyeLookInRight,
+  //     eyeLookOutLeft,
+  //     eyeLookOutRight,
+  //   },
+  //   eyeLookInRight > eyeLookInLeft,
+  //   eyeLookOutLeft > eyeLookOutRight,
+  //   eyeLookInRight > eyeLookInLeft && eyeLookOutLeft > eyeLookOutRight,
+  //   eyeLookInLeft > eyeLookInRight && eyeLookOutRight > eyeLookOutLeft
+  // );
   const centerThreshold = 0.2;
 
   if (eyeLookInRight > eyeLookInLeft && eyeLookOutLeft > eyeLookOutRight) {
@@ -46,7 +57,7 @@ export const determineGazeDirection = (data: BlendShapeData) => {
     Math.abs(eyeLookInLeft - eyeLookInRight) < centerThreshold &&
     Math.abs(eyeLookOutLeft - eyeLookOutRight) < centerThreshold
   ) {
-    return 'Center';
+    return 'Left';
   } else {
     return 'Uncertain';
   }
@@ -60,6 +71,46 @@ type DepthEstimationParams = {
   leftEye: Landmark;
   rightEye: Landmark;
 };
+
+export function getGazeDirection(landmarks: any) {
+  if (
+    !landmarks?.[468] ||
+    !landmarks?.[473] ||
+    !landmarks?.[33] ||
+    !landmarks?.[263]
+  ) {
+    return 'Invalid landmarks';
+  }
+
+  // Extract coordinates
+  const leftIris = landmarks[468]; // Left iris center
+  const rightIris = landmarks[473]; // Right iris center
+  const leftEyeCorner = landmarks[33]; // Left corner of the left eye
+  const rightEyeCorner = landmarks[263]; // Right corner of the right eye
+
+  // Helper function to calculate Euclidean distance
+  function euclideanDistance(
+    point1: { x: number; y: number },
+    point2: { x: number; y: number }
+  ) {
+    const dx = point1.x - point2.x;
+    const dy = point1.y - point2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  // Calculate distances
+  const leftDistance = euclideanDistance(leftIris, leftEyeCorner);
+  const rightDistance = euclideanDistance(rightIris, rightEyeCorner);
+
+  // Determine gaze direction
+  if (leftDistance > rightDistance) {
+    return 'Right'; // Face is looking right
+  } else if (rightDistance > leftDistance) {
+    return 'Left'; // Face is looking left
+  } else {
+    return 'Center'; // Face is looking straight
+  }
+}
 
 // calculate depth
 export const calculateDepth = ({
@@ -78,13 +129,13 @@ export const calculateDepth = ({
     Math.pow(leftEye.x - rightEye.x, 2) + Math.pow(leftEye.y - rightEye.y, 2)
   );
 
-  if (perceivedWidth === 0) {
-    console.log('Invalid perceived width, cannot calculate depth');
-    return 0;
-  }
+  // if (perceivedWidth === 0) {
+  //   console.log('Invalid perceived width, cannot calculate depth');
+  //   return 0;
+  // }
 
   // depth (distance from the camera)
-  const distanceInCm = (realFaceWidth * focalLength) / perceivedWidth;
+  // const distanceInCm = (realFaceWidth * focalLength) / perceivedWidth;
 
-  return distanceInCm; // distance in cm
+  return perceivedWidth; // distance in cm
 };

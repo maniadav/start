@@ -5,8 +5,8 @@ const CloseGesture = ({ handlePressAction }: any) => {
     null | 'top' | 'bottom'
   >(null);
 
+  // idea is to close the game if two buttons are pressed in a time frmae of 5 sec
   const handleButtonPress = (button: 'top' | 'bottom') => {
-    // console.log({ button });
     if (firstButtonPressed && firstButtonPressed !== button) {
       console.log('close action will handle');
       handlePressAction();

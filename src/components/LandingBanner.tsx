@@ -17,7 +17,7 @@ const LandingBanner = () => {
           </p>
           <div className="space-y-4 sm:flex sm:space-y-0 sm:space-x-4">
             <a
-              href="https://github.com/Manishyadav514/psych_app"
+              href="https://github.com/Manishyadav514/START"
               target="_blank"
               className="inline-flex items-center justify-center w-full px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-gray-800"
             >

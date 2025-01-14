@@ -4,6 +4,8 @@ import { TasksConstant } from 'constants/tasks.constant';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
 import { PlusIcon, TickedIcon } from './common/svg';
 import { useRouter } from 'next/navigation';
+import { FaDownload } from 'react-icons/fa6';
+import DataDownloadButton from './DataDownloadButton';
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();
@@ -19,6 +21,10 @@ const SurveyTable = () => {
                 <table className="min-w-full">
                   <thead className="bg-white border-b">
                     <tr>
+                      <th
+                        scope="col"
+                        className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                      ></th>
                       <th
                         scope="col"
                         className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
@@ -69,6 +75,11 @@ const SurveyTable = () => {
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {TasksConstant?.[items].title}
+                          </td>
+                          <td className="">
+                            <DataDownloadButton
+                              id={TasksConstant?.[items].id}
+                            />
                           </td>
                           {Array.from({ length: 3 }, (_, index) => {
                             return (

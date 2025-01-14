@@ -55,7 +55,7 @@ export const WheelTask: any = {
   useID: '',
   surveyID: '',
 };
-export const PreferentialLooking: any = {
+export const PreferentialLookingTask: any = {
   assestment_id: 'PreferentialLookingTask',
   noOfAttempt: 0,
   attempt1: {},
@@ -80,7 +80,7 @@ export const InitialSurveyState: any = {
   WheelTask: {
     ...WheelTask,
   },
-  PreferentialLooking: {
-    ...PreferentialLooking,
+  PreferentialLookingTask: {
+    ...PreferentialLookingTask,
   },
 };

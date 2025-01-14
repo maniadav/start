@@ -38,6 +38,7 @@ const DepthEstimation = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [gazeResults, setGazeResults] = useState<GazeResult[]>([]);
+  const [gazeTest] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>('');
   const { state, dispatch } = useSurveyContext();
@@ -165,8 +166,9 @@ const DepthEstimation = ({
           }
 
           const landmarks = results.faceLandmarks[0];
-          const leftEye = landmarks?.[33];
-          const rightEye = landmarks?.[263];
+          // check mediapipe_face_landmark_fullsize in public/model
+          const leftEye = landmarks?.[33]; // coordinates of left corner of left eye
+          const rightEye = landmarks?.[263]; // coordinates of right corner of right eye
 
           // Use the utility function to calculate depth
           const distance = calculateDepth({
@@ -175,7 +177,7 @@ const DepthEstimation = ({
           });
 
           // console.log(`Depth (Distance to Camera): ${distance.toFixed(2)} cm`);
-          setMsg(`Estimated Distance: ${distance.toFixed(2)} cm`);
+          setMsg(`Distance bw eyes: ${distance.toFixed(2)} cm`);
 
           gazeResults.push({
             timestamp: parseFloat(video.currentTime.toFixed(3)),
@@ -189,11 +191,12 @@ const DepthEstimation = ({
         if (!video.paused && !video.ended) {
           requestAnimationFrame(processFrame);
         } else {
-          // console.log(state);
+          // downloadJSON(gazeResults, 'gaze depth');
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
             gazeData: gazeResults || {},
           };
+
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
             attempt,
@@ -216,6 +219,18 @@ const DepthEstimation = ({
     setIsProcessing(true); // Mark processing as started
     requestAnimationFrame(processFrame);
   };
+
+  // const downloadJSON = (data: GazeResult[], filename: string) => {
+  //   const json = JSON.stringify(data, null, 2);
+  //   const blob = new Blob([json], { type: 'application/json' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = filename;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  // };
 
   return (
     <div className="w-full h-full bg-gray-800 flex items-center justify-center align-middle">

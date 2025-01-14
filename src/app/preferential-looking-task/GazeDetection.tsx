@@ -8,7 +8,10 @@ import {
 import { getIndexedDBValue } from '@utils/indexDB';
 import { convertBase64ToFile } from '@helper/binaryConvertion';
 import { useRouter } from 'next/navigation';
-import { determineGazeDirection } from '@utils/mediapipe.utils';
+import {
+  determineGazeDirection,
+  getGazeDirection,
+} from '@utils/mediapipe.utils';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
 import { IndexDB_Storage } from '@constants/storage.constant';
 
@@ -38,6 +41,7 @@ const GazeDetection = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [gazeResults, setGazeResults] = useState<GazeResult[]>([]);
+  const [gazeResultss] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>('');
   const { state, dispatch } = useSurveyContext();
@@ -87,15 +91,14 @@ const GazeDetection = ({
         const videoBlob = convertBase64ToFile(videoBase64, 'video/webm');
         const videoURL = URL.createObjectURL(videoBlob);
         if (videoRef.current) {
+
           videoRef.current.src = videoURL;
           videoRef.current.addEventListener('loadeddata', () => {
             processVideo();
           });
         }
       } else {
-        setMsg(
-          `couldn't retrive  key ${IndexDB_Storage.tempVideo} from ${IndexDB_Storage.temporaryDB} database. `
-        );
+        setMsg(`video data not found in IndexedDB. Please re-record the test.`);
       }
     } catch (error) {
       console.error('Error fetching video from IndexedDB:', error);
@@ -148,11 +151,16 @@ const GazeDetection = ({
             );
           }
 
-          const gazeDirection = detectGazeDirection(results.faceBlendshapes);
-          console.log(gazeDirection);
+          const landmarks = results.faceLandmarks[0];
+
+          const side = getGazeDirection(landmarks);
+          setMsg(`Looking ${side}`);
+          // const gazeDirection = detectGazeDirection(results.faceBlendshapes);
+
+          gazeResultss.push(side);
           gazeResults.push({
             timestamp: parseFloat(video.currentTime.toFixed(3)),
-            gazeDirection,
+            gazeDirection: side,
           });
         }
         // progress
@@ -166,7 +174,7 @@ const GazeDetection = ({
             ...state[taskID][`attempt${attempt}`],
             gazeData: gazeResults || {},
           };
-          console.log(updatedSurveyData, attempt);
+          downloadJSON(gazeResultss, 'gaze-survey');
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
             attempt,
@@ -189,46 +197,43 @@ const GazeDetection = ({
   };
 
   // left and right logic
-  const detectGazeDirection = (blendShapesData: any) => {
-    if (!blendShapesData || !blendShapesData.length) return 'No eye detected';
+  // const detectGazeDirection = (blendShapesData: any) => {
+  //   if (!blendShapesData || !blendShapesData.length) return 'No eye detected';
 
-    const blendShapes = blendShapesData[0].categories;
-    const eyeKeys = [
-      'eyeLookInLeft',
-      'eyeLookInRight',
-      'eyeLookOutLeft',
-      'eyeLookOutRight',
-    ];
+  //   const blendShapes = blendShapesData[0].categories;
+  //   const eyeKeys = [
+  //     'eyeLookInLeft',
+  //     'eyeLookInRight',
+  //     'eyeLookOutLeft',
+  //     'eyeLookOutRight',
+  //   ];
 
-    const eyeData: BlendShapeData = blendShapes.reduce(
-      (acc: BlendShapeData, { categoryName, score }: any) => {
-        if (eyeKeys.includes(categoryName)) {
-          acc[categoryName] = score;
-        }
-        return acc;
-      },
-      {}
-    );
+  //   const eyeData: BlendShapeData = blendShapes.reduce(
+  //     (acc: BlendShapeData, { categoryName, score }: any) => {
+  //       if (eyeKeys.includes(categoryName)) {
+  //         acc[categoryName] = score;
+  //       }
+  //       return acc;
+  //     },
+  //     {}
+  //   );
 
-    const gaze = determineGazeDirection(eyeData);
-    setMsg(`Looking ${gaze}`);
-    return gaze;
-  };
-
-  // const downloadJSON = (data: GazeResult[], filename: string) => {
-  //   console.log({ gazeResults });
-  //   setIsProcessing(false);
-  //   setMsg(`Processing is done`);
-  //   const json = JSON.stringify(data, null, 2);
-  //   const blob = new Blob([json], { type: 'application/json' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = filename;
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   document.body.removeChild(a);
+  //   const gaze = determineGazeDirection(eyeData);
+  //   setMsg(`Looking ${gaze}`);
+  //   return gaze;
   // };
+
+  const downloadJSON = (data: any[], filename: string) => {
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
   return (
     <div className="w-full flex flex-col gap-2 items-center justify-center">

@@ -1,45 +1,4 @@
-// import { useState, useEffect } from "react";
-
-// interface WindowSize {
-//   width: number | undefined;
-//   height: number | undefined;
-// }
-
-// export default function useWindowSize(): {
-//   windowSize: WindowSize;
-//   isMobile: boolean;
-//   isDesktop: boolean;
-//   deviceType: string;
-// } {
-//   const [windowSize, setWindowSize] = useState<WindowSize>({
-//     width: undefined,
-//     height: undefined,
-//   });
-
-//   useEffect(() => {
-//     const handleResize = () => {
-//       setWindowSize({
-//         width: window.innerWidth,
-//         height: window.innerHeight,
-//       });
-//     };
-
-//     window.addEventListener("resize", handleResize);
-//     handleResize();
-
-//     return () => window.removeEventListener("resize", handleResize);
-//   }, []);
-
-//   const isMobile =
-//     typeof windowSize?.width === "number" && windowSize?.width < 768;
-//   const isDesktop =
-//     typeof windowSize?.width === "number" && windowSize?.width >= 768;
-//   const deviceType = navigator.userAgent;
-
-//   return { windowSize, isMobile, isDesktop, deviceType };
-// }
-
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 interface WindowSize {
   width: number | undefined;
@@ -68,20 +27,20 @@ export default function useWindowSize(): {
     };
 
     // Only access navigator if it's defined (i.e., in the browser)
-    if (typeof navigator !== "undefined") {
+    if (typeof navigator !== 'undefined') {
       setDeviceType(navigator.userAgent);
     }
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     handleResize();
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const isMobile =
-    typeof windowSize?.width === "number" && windowSize?.width < 768;
+    typeof windowSize?.width === 'number' && windowSize?.width < 768;
   const isDesktop =
-    typeof windowSize?.width === "number" && windowSize?.width >= 768;
+    typeof windowSize?.width === 'number' && windowSize?.width >= 768;
 
   return { windowSize, isMobile, isDesktop, deviceType };
 }

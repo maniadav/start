@@ -11,7 +11,7 @@ export const TasksConstant: any = {
     title: 'Bubble Popping Task',
     surveyLink: 'bubble-popping-task',
     taskMessage:
-      'look at this wheel moving. you can look at it for as long as you want. if you want to stop it just press this red button. shall we stop it?',
+      'See I am going to touch these bubbles to pop them, here they go pop, pop, pop. Now it is your turn to pop the bubbles. Shall we start?',
   },
   ButtonTask: {
     id: 'ButtonTask',

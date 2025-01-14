@@ -47,7 +47,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   const handleStartGame = () => {
     handleTimer();
-    // startVidRecording();
+    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -75,7 +75,7 @@ const WheelTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        // const videoData = await stopVidRecording();
+        const videoData = await stopVidRecording();
         setShowPopup(true);
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {

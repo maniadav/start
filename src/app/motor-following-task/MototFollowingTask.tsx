@@ -1,20 +1,21 @@
-"use client";
+'use client';
 
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import useDraw from "@hooks/useDraw";
-import useWindowSize from "@hooks/useWindowSize";
-import { drawLine } from "@utils/canva";
-import Ball from "./Ball";
-import MessagePopup from "components/common/MessagePopup";
-import { useSearchParams } from "next/navigation";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import { timer } from "@utils/timer";
-import { trackTaskTime } from "@utils/trackTime";
-import Image from "next/image";
-import BallAnimation from "./BallAnimation";
-import { useMotorStateContext } from "state/provider/MotorStateProvider";
-import { Coordinate } from "types/survey.types";
-import useAudio from "@hooks/useAudio";
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import useDraw from '@hooks/useDraw';
+import useWindowSize from '@hooks/useWindowSize';
+import { drawLine } from '@utils/canva';
+import Ball from './Ball';
+import MessagePopup from 'components/common/MessagePopup';
+import { useSearchParams } from 'next/navigation';
+import { useSurveyContext } from 'state/provider/SurveytProvider';
+import { timer } from '@utils/timer';
+import { trackTaskTime } from '@utils/trackTime';
+import Image from 'next/image';
+import BallAnimation from './BallAnimation';
+import { useMotorStateContext } from 'state/provider/MotorStateProvider';
+import { Coordinate } from 'types/survey.types';
+import useAudio from '@hooks/useAudio';
+import CloseGesture from 'components/CloseGesture';
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -43,19 +44,19 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const { windowSize, deviceType } = useWindowSize();
   const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
-  const bubblePop = useAudio("/audio/audio-caught.wav");
+  const bubblePop = useAudio('/audio/audio-caught.wav');
   const ballCoordinatesRef = useRef(ballCoordinates);
   const touchCoordinatesRef = useRef(touchCoordinates);
   // const balls = useRef<any[]>([]);
   const animationRef = useRef<number | null>(null);
-  const color = "#000000";
+  const color = '#000000';
   const newlineWidth = 3;
-  const attemptString = searchParams.get("attempt") || "0";
+  const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
   const currentDate = Date.now();
-
+  const stopTimerFuncRef = useRef<() => any>();
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;
@@ -134,7 +135,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     const canvasElement = canvasRef.current;
 
     if (canvasElement) {
-      const ctx = canvasElement.getContext("2d");
+      const ctx = canvasElement.getContext('2d');
       if (ctx) {
         initializeCanvas(canvasElement, ctx);
 
@@ -227,17 +228,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     if (canvas) {
       // Plot the ball coordinates as points
 
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         ballCoordinates.forEach((item: Coordinate) => {
           ctx.beginPath();
           ctx.arc(item.x, item.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = "blue";
+          ctx.fillStyle = 'blue';
           ctx.fill();
         });
       }
-      const link = document.createElement("a");
-      link.download = "drawing.png";
+      const link = document.createElement('a');
+      link.download = 'drawing.png';
       link.href = canvas.toDataURL();
       link.click();
     }
@@ -245,41 +246,49 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const handleStartGame = () => {
     // handleTimer();
-    trackTaskTime("start"); // Start tracking time
+    trackTaskTime('start'); // Start tracking time
 
     setSurveyData((prevState: any) => ({
       ...prevState,
     }));
   };
 
-  const closeGame = useCallback(() => {
-    // const timerData = handleStopTimer();
-    // const timerData = trackTaskTime("end");
-    saveImage();
-    setShowPopup(true);
-    // console.log({ timerData });
-    setSurveyData((prevState: any) => {
-      const updatedSurveyData = {
-        ...prevState,
-        timeTaken: timerData?.timeLimit || "",
-        endTime: timerData?.endTime || "",
-        startTime: timerData?.startTime || "",
-        closedWithTimeout: false,
-        movementData: allCoordinates,
-        screenHeight: windowSize.height,
-        screenWidth: windowSize.width,
-        deviceType,
-      };
-      dispatch({
-        type: "UPDATE_SURVEY_DATA",
-        attempt,
-        task: "MotorFollowingTask",
-        data: updatedSurveyData,
-      });
+  const closeGame = useCallback(
+    async (timeData?: any, closedMidWay: boolean = false) => {
+      if (isSurvey) {
+        saveImage();
+        setShowPopup((prev) => {
+          return !prev;
+        });
 
-      return updatedSurveyData;
-    });
-  }, [isSurvey, timerData, attempt]);
+        setSurveyData((prevState: any) => {
+          const updatedSurveyData = {
+            ...prevState,
+            timeTaken: timeData.timeTaken,
+            timrLimit: timeData?.timeLimit || '',
+            endTime: timeData?.endTime || '',
+            startTime: timeData?.startTime || '',
+            closedWithTimeout: timeData?.isTimeOver || false,
+            movementData: allCoordinates,
+            screenHeight: windowSize.height,
+            screenWidth: windowSize.width,
+            deviceType,
+            closedMidWay
+          };
+          dispatch({
+            type: 'UPDATE_SURVEY_DATA',
+            attempt,
+            task: 'MotorFollowingTask',
+            data: updatedSurveyData,
+          });
+
+          return updatedSurveyData;
+        });
+      }
+    },
+
+    [isSurvey, timerData, attempt, showPopup]
+  );
 
   useEffect(() => {
     if (isSurvey) {
@@ -287,13 +296,22 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
-  // const handleAllCoordinateUpdate = (newCoordinates: any) => {
-  //   setAllCoordinated((prev) => [...prev, newCoordinates]);
-  // };
+  const handleStopTimer = useCallback(() => {
+    if (stopTimerFuncRef.current) {
+      const data = stopTimerFuncRef.current();
+      return data;
+    }
+  }, []);
+
+  const handleCloseMidWay = () => {
+    const timeData = handleStopTimer();
+    closeGame(timerData, true);
+  };
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
       <div className="relative w-screen h-screen overflow-hidden">
+        {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
         {isSurvey && (
           <div className="absolute z-50">
             <div className="fixed top-4 right-4 flex flex-col space-y-2">
@@ -336,8 +354,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             className="z-10 absolute flex items-center top-0 left-0 w-full h-full bg-cover bg-center"
           >
             <Image
-              src={"/arrow.png"}
-              alt={"arrow"}
+              src={'/arrow.png'}
+              alt={'arrow'}
               width={100}
               height={100}
               className="absolute rotate-45"
