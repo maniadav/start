@@ -26,7 +26,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `preferential-looking-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 10000; // 30 seconds, considering video lenngth
+  const timeLimit = 30000; // 30 seconds, considering video lenngth
   const { gazeData } = usePreferentialLookingStateContext();
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
 
