@@ -1,8 +1,14 @@
-import SurveyTable from "components/SurveyTable";
-import { IconHome } from "components/common/Icons";
-import Image from "next/image";
+'use client';
+import { LOCALSTORAGE } from '@constants/storage.constant';
+import { getLocalStorageValue } from '@utils/localStorage';
+import SurveyTable from 'components/SurveyTable';
+import { IconHome } from 'components/common/Icons';
+import Image from 'next/image';
 
 const page = () => {
+  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  console.log(user);
+
   return (
     <div className="">
       <div className="grid md:grid-cols-3 h-full md:h-screen">
@@ -25,10 +31,8 @@ const page = () => {
                 </h1>
                 <div className="w-20 h-2 bg-primary my-4"></div>
                 <p className="text-xl mb-10">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Recusandae maiores neque eaque ea odit placeat, tenetur illum
-                  distinctio nulla voluptatum a corrupti beatae tempora aperiam
-                  quia id aliquam possimus aut.
+                  Perform a series of structured tasks designed to identify
+                  early signs of autism in children aged 2-5 years.
                 </p>
                 <button className="bg-primary text-white text-2xl font-medium px-4 py-2 rounded shadow">
                   Learn More
@@ -70,19 +74,31 @@ const page = () => {
               <div className="flex justify-center items-start flex-col p-5 ">
                 <div className="flex flex-row gap-2 items-center align-middle">
                   <h3 className="text-base md:text-lg font-semibold">
+                    User Name:
+                  </h3>
+                  <p className="capitalize text-xs md:text-sm">
+                    {user?.childName}
+                  </p>
+                </div>{' '}
+                <div className="flex flex-row gap-2 items-center align-middle">
+                  <h3 className="text-base md:text-lg font-semibold">
                     User ID:
                   </h3>
-                  <p className="text-xs md:text-sm">ABds32</p>
+                  <p className="capitalize text-xs md:text-sm">
+                    {user?.childID}
+                  </p>
                 </div>
                 <div className="flex flex-row gap-2 items-center align-middle">
-                  <h3 className="text-base md:text-lg font-semibold">Age</h3>
-                  <p className="text-xs md:text-sm">4 years 3 months</p>
+                  <h3 className="text-base md:text-lg font-semibold">DOB:</h3>
+                  <p className="text-xs md:text-sm">{user?.childDOB}</p>
                 </div>
-                <div className="flex flex-row gap-2 items-center align-middle">
+                <div className="capitalize flex flex-row gap-2 items-center align-middle">
                   <h3 className="text-base md:text-lg font-semibold">
                     Gender:
                   </h3>
-                  <p className="text-xs md:text-sm">Male</p>
+                  <p className="capitalize text-xs md:text-sm">
+                    {user?.childGender}
+                  </p>
                 </div>
               </div>
               <div className="bg-sky-500 p-0.5 rounded-b-lg"></div>

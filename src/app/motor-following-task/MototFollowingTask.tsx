@@ -273,7 +273,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
-            closedMidWay
+            closedMidWay,
           };
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
@@ -305,7 +305,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const handleCloseMidWay = () => {
     const timeData = handleStopTimer();
-    closeGame(timerData, true);
+    closeGame(timeData, true);
   };
 
   if (windowSize.height && windowSize.width !== undefined) {

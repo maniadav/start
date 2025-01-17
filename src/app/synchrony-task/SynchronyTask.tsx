@@ -110,16 +110,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
     [isSurvey, timerData, attempt, stickClick, drumClickTimes]
   );
 
-  const handleCloseGame = (data: string) => {
-    console.log(data);
-    if (isSurvey) {
-      const timeData = handleStopTimer();
-      closeGame(timeData);
-    } else {
-      alert('you may start the game!');
-    }
-  };
-
   const [isClicked, setIsClicked] = useState(false);
 
   const handleDrumPress = () => {
@@ -144,23 +134,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
     const timeData = handleStopTimer();
     closeGame(timeData, true);
   };
-
-  // useEffect(() => {
-  //   let timeoutId: NodeJS.Timeout;
-
-  //   const handleNoTouchDetected = () => {
-  //     if (!drumClickTimes.length) {
-  //       const timeData = handleStopTimer();
-  //       closeGame(timeData, true);
-  //     }
-  //   };
-
-  //   timeoutId = setTimeout(handleNoTouchDetected, 6000);
-
-  //   return () => {
-  //     clearTimeout(timeoutId);
-  //   };
-  // }, [startTime]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -187,9 +160,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
         <MessagePopup
           showFilter={showPopup}
           msg={
-            'You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
+            'You have completed the Synchrony Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
           }
-          testName={'language Sampling task'}
+          testName={'Synchrony task'}
           reAttemptUrl={reAttemptUrl}
         />
       )}

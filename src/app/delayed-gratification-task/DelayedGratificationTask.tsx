@@ -106,15 +106,6 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
     [isSurvey, timerData, attempt]
   );
 
-  // const handleCloseGame = () => {
-  //   if (isSurvey) {
-  //     setShowFireWorks(true);
-  //     const timeData = handleStopTimer();
-  //     closeGame(timeData);
-  //   } else {
-  //     alert("you may start the game!");
-  //   }
-  // };
   const handleCloseGame = () => {
     if (isSurvey) {
       setShowFireWorks(true);
@@ -126,7 +117,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           closeGame(timeData);
         }, 5000);
       } else {
-        closeGame();
+        closeGame(timeData);
       }
     } else {
       alert('you may start the game!');

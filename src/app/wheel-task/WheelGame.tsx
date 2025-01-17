@@ -30,7 +30,7 @@ const WheelTask = ({ isSurvey = false }) => {
   const taskConstant = TasksConstant.WheelTask;
   const reAttemptUrl =
     attempt < 3 ? `${taskConstant.surveyLink}?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000;
+  const timeLimit = 180000; // 3 min
 
   useEffect(() => {
     if (isSurvey) {

@@ -1,22 +1,18 @@
 
 <resources>
     <string name="app_name">शुरू करें</string>
-
     <!-- Buttons -->
     <string name="button_allow">आगे बढ़ें</string>
     <string name="button_cancel">रद्द करेंद</string>
     <string name="button_login">साइन इन करें</string> 
     <string name="button_open_settings">सेटिंग्स खोलें</string>
-
     <!-- Hints -->
     <string name="hint_username">यूजर नेम</string>
     <string name="hint_password">पासवर्ड</string>
-
     <!-- Permissions -->
     <string name="dialog_permission_error_title">अनुमतियां</string>
     <string name="dialog_permission_error_message">कृपया सभी अनुमतियों को पास करें उनके बिना ऐप काम नहीं कर सकताा</string>
     <string name="dialog_permission_denied_error_message">ऐप आपकी अनुमति के बिना काम नहीं कर सकता। कृपया सेटिंग खोलें और सभी आवश्यक अनुमतियों को पास करें ।</string>
-
     <!-- Screen Titles -->
     <string name="action_bar_my_surveys_title">मेरे सर्वे</string>
     <string name="action_bar_add_child">नए बच्चे का प्रोफाइल जोड़ें</string>
@@ -39,17 +35,14 @@
     <string name="menu_navigation_log_out">लॉग आउट</string>
     <string name="menu_navigation_english">En</string>
     <string name="menu_navigation_hindi">हिंदी</string>
-
     <!-- TextView Static Text -->
     <string name="text_male">पुरुष</string>
     <string name="text_female">स्त्री </string>
     <string name="text_parent">माता-पिता</string>
     <string name="text_guardian">अभिभावक</string>
-
     <!-- Success messages -->
     <string name="success_message_password_valid">पासवर्ड मान्य है</string>
     <string name="success_message_password_changed">पासवर्ड बदल दिया गया है।</string>
-
     <!-- Error messages -->
     <string name="error_message_login_failed_title">लॉग-इन सफल नहीं हो सका</string>
     <string name="error_message_login_failed">यूजर नेम (उपयोगकर्ता नाम) और / या पासवर्ड गलत है। कृपया उन्हें  ठीक करें और दुबारा कोशिश करें ।</string>
@@ -64,7 +57,6 @@
     <string name="error_message_error">गलती</string>
     <string name="error_message_upload_general">सर्वेक्षण अपलोड करने में असमर्थ कृपया अपने इंटरनेट कनेक्शन की जाँच करें</string>
     <string name="error_message_upload_internet_connection">सर्वे अपलोड नहीं हो पा रहा| कृपया अपने इंटरनेट कनेक्शन की जाँच करें</string>
-
     <!-- Consent -->
     <string name="consent_dialog_header_text">सहमति पत्र (कंसेंट फॉर्म)</string>
     <string name="consent_sign_dialog_header_text">माता - पिता / अभिभावक के हस्ताक्षर</string>

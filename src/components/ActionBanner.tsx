@@ -3,9 +3,20 @@ import React from 'react';
 import { IconSurvey } from './common/Icons';
 import Image from 'next/image';
 import { useLanguageProvider } from 'state/provider/LanguageProvider';
+import { LOCALSTORAGE } from '@constants/storage.constant';
+import { getLocalStorageValue } from '@utils/localStorage';
+import { API_ENDPOINT } from '@constants/api.constant';
+import { useRouter } from 'next/navigation';
 
 const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
+  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const router = useRouter();
+  const handleSurvey = () => {
+    user?.childID
+      ? router.push(API_ENDPOINT.page.survey)
+      : router.push(API_ENDPOINT.auth.login);
+  };
   return (
     <div className="w-full h-auto bg-gradient-to-b from-gray-900 to-black">
       <div className="container mx-auto overflow-hidden p-8 md:p-10 lg:p-12 ">
@@ -33,13 +44,13 @@ const ActionBanner = () => {
                   {languageContent.banner.quesText}
                 </p>
                 <div className="h-4"></div>
-                <a
-                  href="/survey"
+                <button
+                  onClick={() => handleSurvey()}
                   className="flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary"
                 >
                   <IconSurvey width="1.5" height="1.5" />
                   <p>{languageContent.buttons.startSurvey}</p>
-                </a>
+                </button>
               </div>
             </div>
           </div>

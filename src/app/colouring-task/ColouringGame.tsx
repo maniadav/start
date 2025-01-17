@@ -122,9 +122,9 @@ const ColouringGame: React.FC = () => {
       <MessagePopup
         showFilter={showPopup}
         msg={
-          "You have completed the Bubble Popping Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
+          "You have completed the Couring Game Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
         }
-        testName={"bubble popping"}
+        testName={"Colouring Game"}
         reAttemptUrl={reAttemptUrl}
       />
     </div>

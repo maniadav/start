@@ -8,10 +8,12 @@ import { API_ENDPOINT } from '@constants/api.constant';
 import { useAuth } from 'state/provider/AuthProvider';
 import Link from 'next/link';
 import LanguageToggle from './LanguageToggle';
+import { getLocalStorageValue } from '@utils/localStorage';
+import { LOCALSTORAGE } from '@constants/storage.constant';
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user }: any = useAuth();
+  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -23,7 +25,6 @@ export const Header = () => {
         className={`max-w-[700px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-1 px-8 transition-all`}
       >
         <Link href="/" className="flex items-center">
-          {/* <img src="/images/health-hub-logo.png" alt="logo" className="mr-3 h-6 sm:h-9" /> */}
           <span className="self-center text-lg md:text-xl font-semibold whitespace-nowrap dark:text-white">
             START
           </span>
@@ -48,7 +49,7 @@ export const Header = () => {
                 ></Image>
               </div>
               <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {`Hi, ${user?.firstName || 'user'}`}
+                {`Hi, ${user?.childName || 'user'}`}
               </p>
               <span className="text-gray-500">
                 <CommonIcon

@@ -1,5 +1,5 @@
 export const LOCALSTORAGE = {
-  LOGGED_IN_USER: 'psychAppUser',
+  LOGGED_IN_USER: 'start_user',
   MFA_ACCESS_TOKEN: 'x-secure-token',
   MFA_REFRESH_TOKEN: 'x-refresh-token',
   SELECTED_COUNTRY: 'psychSelectedCountry',

@@ -91,7 +91,6 @@ const GazeDetection = ({
         const videoBlob = convertBase64ToFile(videoBase64, 'video/webm');
         const videoURL = URL.createObjectURL(videoBlob);
         if (videoRef.current) {
-
           videoRef.current.src = videoURL;
           videoRef.current.addEventListener('loadeddata', () => {
             processVideo();
@@ -290,11 +289,14 @@ const GazeDetection = ({
         >
           Go to Dashboard
         </button>
-
         {reAttemptUrl && (
           <button
             disabled={isProcessing}
-            onClick={() => router.push(reAttemptUrl)}
+            onClick={() => {
+              if (!isProcessing && window.location) {
+                window.location.href = reAttemptUrl;
+              }
+            }}
             className={`${
               isProcessing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
             } ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}

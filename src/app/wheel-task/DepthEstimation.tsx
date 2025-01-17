@@ -296,7 +296,11 @@ const DepthEstimation = ({
           {reAttemptUrl && (
             <button
               disabled={isProcessing}
-              onClick={() => router.push(reAttemptUrl)}
+              onClick={() => {
+                if (!isProcessing && window.location) {
+                  window.location.href = reAttemptUrl;
+                }
+              }}
               className={`${
                 isProcessing
                   ? 'cursor-not-allowed opacity-50'
