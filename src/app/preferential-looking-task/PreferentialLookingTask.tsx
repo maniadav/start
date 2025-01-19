@@ -100,7 +100,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData.timeTaken,
             timrLimit: timeData?.timeLimit || '',
             endTime: timeData?.endTime || '',
             startTime: timeData?.startTime || '',

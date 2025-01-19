@@ -5,10 +5,10 @@ import useDraw from '@hooks/useDraw';
 import useWindowSize from '@hooks/useWindowSize';
 import { drawLine } from '@utils/canva';
 import Ball from './Ball';
+import { timer } from '@utils/timer';
 import MessagePopup from 'components/common/MessagePopup';
 import { useSearchParams } from 'next/navigation';
 import { useSurveyContext } from 'state/provider/SurveytProvider';
-import { timer } from '@utils/timer';
 import { trackTaskTime } from '@utils/trackTime';
 import Image from 'next/image';
 import BallAnimation from './BallAnimation';
@@ -20,9 +20,13 @@ import CloseGesture from 'components/CloseGesture';
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
   const [surveyData, setSurveyData] = useState<any>(false);
-  const [allCoordinates, setAllCoordinated] = useState([
-    { time: 0, objX: 0, objY: 0, touchX: 0, touchY: 0 },
-  ]);
+
+  const [time, setTime] = useState<number[]>([0]);
+  const [objX, setObjX] = useState<number[]>([0]);
+  const [touchX, setTouchX] = useState<number[]>([0]);
+  const [objY, setObjY] = useState<number[]>([0]);
+  const [touchY, setTouchY] = useState<number[]>([0]);
+
   const [touchCoordinates, setTouchCoordinates] = useState<Coordinate[]>([
     { x: 0, y: 0 },
   ]);
@@ -33,8 +37,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [caught, setCaught] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
-    startTime: number;
-    endTime: number;
+    startTime: string;
+    endTime: string;
     timeLimit: number;
     isTimeOver: boolean;
   } | null>(null);
@@ -88,12 +92,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       // time will reset on caught change (fix it)
       const elapsed = Date.now() - currentDate;
       if (caught || !isSurvey) {
-        setTimerData({
-          startTime: currentDate,
-          endTime: Date.now(),
-          timeLimit: elapsed,
-          isTimeOver: false,
-        });
+        const timeData = handleStopTimer();
+        closeGame(timeData, true);
         clearInterval(intervalId);
         return;
       }
@@ -106,10 +106,11 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
       // console.log({ time: elapsed, touchX, touchY, objX, objY });
 
-      setAllCoordinated((prev) => [
-        ...prev,
-        { time: elapsed, touchX, touchY, objX, objY },
-      ]);
+      setTouchX((prev: number[]) => [...prev, touchX]);
+      setTouchY((prev: number[]) => [...prev, touchY]);
+      setTime((prev: number[]) => [...prev, elapsed]);
+      setObjX((prev: number[]) => [...prev, objX]);
+      setObjY((prev: number[]) => [...prev, objY]);
     }, 20); // data records at 20ms rate
 
     return () => clearInterval(intervalId);
@@ -244,8 +245,28 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   };
 
+  const handleTimer = () => {
+    const { endTimePromise, stopTimer } = timer(180000);
+
+    stopTimerFuncRef.current = stopTimer;
+
+    endTimePromise.then(setTimerData);
+
+    return () => {
+      // Optional cleanup if necessary
+      stopTimerFuncRef.current && stopTimerFuncRef.current();
+    };
+  };
+
+  const handleStopTimer = useCallback(() => {
+    if (stopTimerFuncRef.current) {
+      const data = stopTimerFuncRef.current();
+      return data;
+    }
+  }, []);
+
   const handleStartGame = () => {
-    // handleTimer();
+    handleTimer();
     trackTaskTime('start'); // Start tracking time
 
     setSurveyData((prevState: any) => ({
@@ -269,7 +290,10 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             endTime: timeData?.endTime || '',
             startTime: timeData?.startTime || '',
             closedWithTimeout: timeData?.isTimeOver || false,
-            movementData: allCoordinates,
+            touchX,
+            touchY,
+            objX,
+            objY,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
@@ -287,19 +311,12 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       }
     },
 
-    [isSurvey, timerData, attempt, showPopup]
+    [isSurvey, timerData, attempt, showPopup, touchX, touchY, objX, objY]
   );
 
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
-    }
-  }, []);
-
-  const handleStopTimer = useCallback(() => {
-    if (stopTimerFuncRef.current) {
-      const data = stopTimerFuncRef.current();
-      return data;
     }
   }, []);
 

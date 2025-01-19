@@ -70,23 +70,29 @@ function downloadDictionaryAsFiles(
   jsonLink.download = `${fileName}.json`;
   jsonLink.click();
 }
-function jsonToCsv(jsonData, fileName = 'data.csv') {
+
+function jsonToCsv(jsonData: any, fileName: string = 'data.csv') {
   // Initialize headers and rows
-  const headers = new Set(); // To store unique column headers
-  const rows = []; // To store the rows of data
+  const headers = new Set<string>(); // To store unique column headers
+  const rows: Record<string, any>[] = []; // To store the rows of data
 
   // Recursive function to process the JSON object
-  function processKey(key, value) {
-    if (typeof value === 'string') {
-      // If value is a string, add it as a single column
+  function processKey(key: string, value: any) {
+    if (
+      typeof value === 'string' ||
+      value === null ||
+      value === undefined ||
+      value === 0
+    ) {
+      // Add as a single column
       if (!rows[0]) rows[0] = {};
       rows[0][key] = value;
       headers.add(key);
     } else if (Array.isArray(value)) {
-      // If value is an array of strings, populate them vertically
-      headers.add(key); // Add the key as a header
+      // Populate them vertically
+      headers.add(key); // Key as a header
       value.forEach((val, index) => {
-        if (!rows[index]) rows[index] = {}; // Ensure row exists
+        if (!rows[index]) rows[index] = {};
         rows[index][key] = val;
       });
     } else if (typeof value === 'object' && value !== null) {
@@ -103,7 +109,7 @@ function jsonToCsv(jsonData, fileName = 'data.csv') {
   });
 
   // Generate CSV content
-  const headerList = Array.from(headers); // Convert headers to a sorted list
+  const headerList = Array.from(headers); // Convert headers to a list (not sorted)
   const csvContent = [
     headerList.join(','), // Header row
     ...rows.map((row) =>
