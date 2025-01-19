@@ -1,5 +1,5 @@
-"use client";
-import { createContext, SetStateAction, Dispatch } from "react";
+'use client';
+import { createContext, SetStateAction, Dispatch } from 'react';
 
 interface PreferentialLookingStateInterface {
   gazeData: any[] | undefined;

@@ -37,8 +37,8 @@ const DepthEstimation = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
-  const [gazeResults, setGazeResults] = useState<GazeResult[]>([]);
-  const [gazeTest] = useState<string[]>([]);
+  const [gazeDistance, setGazeDistance] = useState<number[]>([]);
+  const [gazeTiming, setGazeTiming] = useState<number[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>('');
   const { state, dispatch } = useSurveyContext();
@@ -171,18 +171,17 @@ const DepthEstimation = ({
           const rightEye = landmarks?.[263]; // coordinates of right corner of right eye
 
           // Use the utility function to calculate depth
-          const distance = calculateDepth({
-            leftEye,
-            rightEye,
-          });
+          const distance =
+            calculateDepth({
+              leftEye,
+              rightEye,
+            }) || 0;
 
-          // console.log(`Depth (Distance to Camera): ${distance.toFixed(2)} cm`);
-          setMsg(`Distance bw eyes: ${distance.toFixed(2)} cm`);
-
-          gazeResults.push({
-            timestamp: parseFloat(video.currentTime.toFixed(3)),
-            distance,
-          });
+          setMsg(`Perceived distance bw eyes: ${distance.toFixed(2)} cm`);
+          const timestamp: number =
+            parseFloat(video.currentTime.toFixed(3)) || 0;
+          gazeTiming.push(timestamp);
+          gazeDistance.push(distance);
         }
         // progress
         const progressPercentage = (video.currentTime / video.duration) * 100;
@@ -194,7 +193,8 @@ const DepthEstimation = ({
           // downloadJSON(gazeResults, 'gaze depth');
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
-            gazeData: gazeResults || {},
+            gazeDistance,
+            gazeTiming,
           };
 
           dispatch({

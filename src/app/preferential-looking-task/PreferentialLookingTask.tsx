@@ -27,7 +27,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const reAttemptUrl =
     attempt < 3 ? `preferential-looking-task?attempt=${attempt + 1}` : null;
   const timeLimit = 30000; // 30 seconds, considering video lenngth
-  const { gazeData } = usePreferentialLookingStateContext();
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -110,8 +109,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
             screenWidth: windowSize.width,
             closedMidWay,
             deviceType,
-            gazeData,
-            // video: videoData,
           };
 
           dispatch({

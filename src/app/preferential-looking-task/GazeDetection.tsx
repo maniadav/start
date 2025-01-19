@@ -39,11 +39,13 @@ const GazeDetection = ({
 }: gazeDetectionInterface) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const [progress, setProgress] = useState(0);
-  const [gazeResults, setGazeResults] = useState<GazeResult[]>([]);
-  const [gazeResultss] = useState<string[]>([]);
+  const [gazeDirection] = useState<string[]>([]);
+  const [gazeTiming] = useState<number[]>([]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>('');
+
   const { state, dispatch } = useSurveyContext();
   const FPS = 30;
   let faceLandmarker: any;
@@ -151,16 +153,13 @@ const GazeDetection = ({
           }
 
           const landmarks = results.faceLandmarks[0];
-
           const side = getGazeDirection(landmarks);
           setMsg(`Looking ${side}`);
-          // const gazeDirection = detectGazeDirection(results.faceBlendshapes);
+          const timestamp: number =
+            parseFloat(video.currentTime.toFixed(3)) || 0;
 
-          gazeResultss.push(side);
-          gazeResults.push({
-            timestamp: parseFloat(video.currentTime.toFixed(3)),
-            gazeDirection: side,
-          });
+          gazeTiming.push(timestamp);
+          gazeDirection.push(side);
         }
         // progress
         const progressPercentage = (video.currentTime / video.duration) * 100;
@@ -171,9 +170,10 @@ const GazeDetection = ({
         } else {
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
-            gazeData: gazeResults || {},
+            gazeTiming,
+            gazeDirection,
           };
-          downloadJSON(gazeResultss, 'gaze-survey');
+          // downloadJSON(gazeDirection, 'gaze-direction data');
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
             attempt,
@@ -191,48 +191,21 @@ const GazeDetection = ({
       }
     };
 
-    setIsProcessing(true); // Mark processing as started
+    setIsProcessing(true);
     requestAnimationFrame(processFrame);
   };
 
-  // left and right logic
-  // const detectGazeDirection = (blendShapesData: any) => {
-  //   if (!blendShapesData || !blendShapesData.length) return 'No eye detected';
-
-  //   const blendShapes = blendShapesData[0].categories;
-  //   const eyeKeys = [
-  //     'eyeLookInLeft',
-  //     'eyeLookInRight',
-  //     'eyeLookOutLeft',
-  //     'eyeLookOutRight',
-  //   ];
-
-  //   const eyeData: BlendShapeData = blendShapes.reduce(
-  //     (acc: BlendShapeData, { categoryName, score }: any) => {
-  //       if (eyeKeys.includes(categoryName)) {
-  //         acc[categoryName] = score;
-  //       }
-  //       return acc;
-  //     },
-  //     {}
-  //   );
-
-  //   const gaze = determineGazeDirection(eyeData);
-  //   setMsg(`Looking ${gaze}`);
-  //   return gaze;
+  // const downloadJSON = (data: any[], filename: string) => {
+  //   const json = JSON.stringify(data, null, 2);
+  //   const blob = new Blob([json], { type: 'application/json' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = filename;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
   // };
-
-  const downloadJSON = (data: any[], filename: string) => {
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
 
   return (
     <div className="w-full flex flex-col gap-2 items-center justify-center">

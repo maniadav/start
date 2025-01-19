@@ -112,30 +112,18 @@ export function getGazeDirection(landmarks: any) {
   }
 }
 
-// calculate depth
+// distance of user from screen is estimated using the distance between eyeys in each frame.
 export const calculateDepth = ({
   leftEye,
   rightEye,
 }: DepthEstimationParams): number => {
   if (!leftEye || !rightEye) {
     return 0;
-    // throw new Error('Missing eye landmarks for depth estimation');
   }
 
-  const realFaceWidth = 14; // average face width in cm
-  const focalLength = 500; // estimated/calibrated focal length in pixels
-  // Calculate perceived width (distance between eyes in pixels)
   const perceivedWidth = Math.sqrt(
     Math.pow(leftEye.x - rightEye.x, 2) + Math.pow(leftEye.y - rightEye.y, 2)
   );
-
-  // if (perceivedWidth === 0) {
-  //   console.log('Invalid perceived width, cannot calculate depth');
-  //   return 0;
-  // }
-
-  // depth (distance from the camera)
-  // const distanceInCm = (realFaceWidth * focalLength) / perceivedWidth;
 
   return perceivedWidth; // distance in cm
 };
