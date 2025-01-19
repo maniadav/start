@@ -224,11 +224,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     timeTaken: string | null;
   } | null>(null);
 
-  const saveImage = () => {
+  const saveImage = (): string | undefined => {
     const canvas = canvasRef.current;
     if (canvas) {
-      // Plot the ball coordinates as points
-
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ballCoordinates.forEach((item: Coordinate) => {
@@ -238,11 +236,18 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           ctx.fill();
         });
       }
+
+      const imageData = canvas.toDataURL('image/png');
+
       const link = document.createElement('a');
       link.download = 'drawing.png';
-      link.href = canvas.toDataURL();
+      link.href = imageData;
       link.click();
+
+      // return Base64 image data
+      return imageData;
     }
+    return undefined;
   };
 
   const handleTimer = () => {
@@ -277,7 +282,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        saveImage();
+        const image = saveImage();
         setShowPopup((prev) => {
           return !prev;
         });
@@ -298,6 +303,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             screenWidth: windowSize.width,
             deviceType,
             closedMidWay,
+            // image,
           };
           dispatch({
             type: 'UPDATE_SURVEY_DATA',
