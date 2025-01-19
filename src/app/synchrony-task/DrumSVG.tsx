@@ -11,7 +11,7 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
   const [stickHit, setStickPosition] = useState(true);
   const [intervalIndex, setIntervalIndex] = useState(0); // Track current interval index
   const stickHitRef = useRef(stickHit);
-  const { setStickClicks } = useSynchronyStateContext();
+  const { drumClicks, setStickClicks, setDrumHit } = useSynchronyStateContext();
 
   const intervals = [600, 400]; // delay between subsequent hit will be 2x
   const animatonFrameRateChange = 15000; // 15 sec
@@ -47,9 +47,12 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
       const elapsedTimeInSeconds = parseFloat(
         ((currTime - startTime) / 1000).toFixed(2)
       );
-      // console.log(elapsedTimeInSeconds);
       if (isSurvey && isGameActive) {
         setStickClicks((prev: any) => [...prev, elapsedTimeInSeconds]);
+        setDrumHit((prev: any) => [
+          ...prev,
+          drumClicks[drumClicks.length - 1] || 0,
+        ]);
       }
     };
 
@@ -59,7 +62,7 @@ const DrumSVG = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
     return () => {
       clearInterval(intervalId); // Clean up the interval on unmount or re-run
     };
-  }, [intervalIndex, isSurvey, isGameActive, startTime]);
+  }, [intervalIndex, isSurvey, isGameActive, startTime, drumClicks]);
 
   return (
     <svg

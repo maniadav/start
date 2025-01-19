@@ -70,7 +70,6 @@ function downloadDictionaryAsFiles(
   jsonLink.download = `${fileName}.json`;
   jsonLink.click();
 }
-
 function jsonToCsv(jsonData: any, fileName: string = 'data.csv') {
   // Initialize headers and rows
   const headers = new Set<string>(); // To store unique column headers
@@ -113,8 +112,14 @@ function jsonToCsv(jsonData: any, fileName: string = 'data.csv') {
   const csvContent = [
     headerList.join(','), // Header row
     ...rows.map((row) =>
-      headerList.map((header) => `"${row[header] || ''}"`).join(',')
-    ), // Data rows
+      headerList
+        .map((header) =>
+          row[header] === undefined || row[header] === null
+            ? '""'
+            : `"${row[header]}"`
+        )
+        .join(',')
+    ),
   ].join('\n');
 
   // Create and download the CSV file

@@ -77,20 +77,22 @@ const page = () => {
                     User Name:
                   </h3>
                   <p className="capitalize text-xs md:text-sm">
-                    {user?.childName}
+                    {user?.childName || 'User'}
                   </p>
-                </div>{' '}
+                </div>
                 <div className="flex flex-row gap-2 items-center align-middle">
                   <h3 className="text-base md:text-lg font-semibold">
                     User ID:
                   </h3>
                   <p className="capitalize text-xs md:text-sm">
-                    {user?.childID}
+                    {user?.childID ?? '1232'}
                   </p>
                 </div>
                 <div className="flex flex-row gap-2 items-center align-middle">
                   <h3 className="text-base md:text-lg font-semibold">DOB:</h3>
-                  <p className="text-xs md:text-sm">{user?.childDOB}</p>
+                  <p className="text-xs md:text-sm">
+                    {user?.childDOB || '23/23/25'}
+                  </p>
                 </div>
                 <div className="capitalize flex flex-row gap-2 items-center align-middle">
                   <h3 className="text-base md:text-lg font-semibold">

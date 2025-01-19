@@ -8,7 +8,7 @@ import useWindowSize from '@hooks/useWindowSize';
 import DrumSVG from 'app/synchrony-task/DrumSVG';
 import CloseGesture from 'components/CloseGesture';
 import { useSynchronyStateContext } from 'state/provider/SynchronyStateProvider';
-import useAudio from '@hooks/useAudio';
+import DrumPatch from './DrumPatch';
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -22,17 +22,16 @@ const SynchronyTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
-  const [drumClickTimes, setDrumClickTimes] = useState<string[]>([]);
-  const { stickClick } = useSynchronyStateContext();
+  const { stickClick, drumHit } = useSynchronyStateContext();
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
+  const stopTimerFuncRef = useRef<() => any>();
   const attemptString = searchParams.get('attempt') || '0';
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
-  const timeLimit = 300000;
-  const bubblePop = useAudio('/audio/drum-hit.mp3');
+    attempt < 3 ? `synchrony-task?attempt=${attempt + 1}` : null;
+  const timeLimit = 30000;
 
   useEffect(() => {
     if (isSurvey) {
@@ -52,8 +51,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
     setIsGameActive(true);
     handleTimer();
   };
-
-  const stopTimerFuncRef = useRef<() => any>();
 
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(timeLimit);
@@ -79,7 +76,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
       if (isSurvey) {
         setIsGameActive(false);
         setShowPopup(true);
-        console.log({ timeData });
+        
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -90,7 +87,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
-            drumPress: drumClickTimes,
+            drumPress: drumHit,
             stickHit: stickClick,
             closedMidWay,
             deviceType,
@@ -107,28 +104,8 @@ const SynchronyTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt, stickClick, drumClickTimes]
+    [isSurvey, timerData, attempt, stickClick, drumHit]
   );
-
-  const [isClicked, setIsClicked] = useState(false);
-
-  const handleDrumPress = () => {
-    setIsClicked(true);
-    bubblePop();
-    const currTime = Date.now();
-    const elapsedTimeInSeconds = ((currTime - startTime) / 1000).toFixed(2);
-    setDrumClickTimes((prev) => [...prev, elapsedTimeInSeconds]);
-  };
-
-  useEffect(() => {
-    if (isClicked) {
-      const timer = setTimeout(() => {
-        setIsClicked(false);
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isClicked]);
 
   const handleCloseMidWay = () => {
     const timeData = handleStopTimer();
@@ -147,13 +124,11 @@ const SynchronyTask = ({ isSurvey = false }) => {
           />
         </div>
         <div className="w-full px-12 absolute bottom-0 pt-20">
-          <div
-            className={`w-full h-52 ${
-              isClicked ? 'bg-yellow-300' : 'bg-gray-200'
-            } highlight:bg-gray-300 border-[10px] border-gray-400 rounded-t-lg cursor-pointer focus:ring`}
-            style={{ borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%' }}
-            onClick={handleDrumPress}
-          ></div>
+          <DrumPatch
+            startTime={startTime}
+            isSurvey={isSurvey}
+            isGameActive={isGameAtive}
+          />
         </div>
       </div>
       {isSurvey && (

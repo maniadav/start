@@ -1,15 +1,22 @@
-"use client";
-import { createContext, SetStateAction, Dispatch } from "react";
+'use client';
+import { createContext, SetStateAction, Dispatch } from 'react';
 
 interface MotorStateContextProps {
-  drumClicks: string[] | undefined;
-  stickClick: string[] | undefined;
-  setDrumClicks: Dispatch<SetStateAction<string[] | undefined>>;
-  setStickClicks: Dispatch<SetStateAction<string[] | undefined>>;
+  drumClicks: number[];
+  stickClick: number[];
+  drumHit: number[];
+  setDrumHit: Dispatch<SetStateAction<number[]>>;
+  setDrumClicks: Dispatch<SetStateAction<number[]>>;
+  setStickClicks: Dispatch<SetStateAction<number[]>>;
 }
 
-const SynchronyStateContext = createContext<MotorStateContextProps | undefined>(
-  undefined
-);
+const SynchronyStateContext = createContext<MotorStateContextProps>({
+  drumClicks: [],
+  stickClick: [],
+  drumHit: [],
+  setDrumHit: () => {},
+  setDrumClicks: () => {},
+  setStickClicks: () => {},
+});
 
 export default SynchronyStateContext;
