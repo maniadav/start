@@ -79,6 +79,8 @@ function jsonToCsv(jsonData: any, fileName: string = 'data.csv') {
   function processKey(key: string, value: any) {
     if (
       typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean' ||
       value === null ||
       value === undefined ||
       value === 0
