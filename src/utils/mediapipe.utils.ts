@@ -30,7 +30,7 @@ export const determineGazeDirection = (data: BlendShapeData) => {
     eyeLookOutLeft === undefined ||
     eyeLookOutRight === undefined
   ) {
-    return 'No eye detected';
+    return "No eye detected";
   }
   // console.log(
   //   {
@@ -47,19 +47,19 @@ export const determineGazeDirection = (data: BlendShapeData) => {
   const centerThreshold = 0.2;
 
   if (eyeLookInRight > eyeLookInLeft && eyeLookOutLeft > eyeLookOutRight) {
-    return 'Right';
+    return "Right";
   } else if (
     eyeLookInLeft > eyeLookInRight &&
     eyeLookOutRight > eyeLookOutLeft
   ) {
-    return 'Left';
+    return "Left";
   } else if (
     Math.abs(eyeLookInLeft - eyeLookInRight) < centerThreshold &&
     Math.abs(eyeLookOutLeft - eyeLookOutRight) < centerThreshold
   ) {
-    return 'Left';
+    return "Left";
   } else {
-    return 'Uncertain';
+    return "Uncertain";
   }
 };
 
@@ -79,7 +79,7 @@ export function getGazeDirection(landmarks: any) {
     !landmarks?.[33] ||
     !landmarks?.[263]
   ) {
-    return 'Invalid landmarks';
+    return "Invalid landmarks";
   }
 
   // Extract coordinates
@@ -104,11 +104,11 @@ export function getGazeDirection(landmarks: any) {
 
   // Determine gaze direction
   if (leftDistance > rightDistance) {
-    return 'Right'; // Face is looking right
+    return "left"; // right wrt screen
   } else if (rightDistance > leftDistance) {
-    return 'Left'; // Face is looking left
+    return "right"; // left wrt screen
   } else {
-    return 'Center'; // Face is looking straight
+    return "center"; // Face is looking straight
   }
 }
 
