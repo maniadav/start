@@ -1,13 +1,14 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { timer } from '@utils/timer';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import useWindowSize from '@hooks/useWindowSize';
-import CloseGesture from 'components/CloseGesture';
-import { usePreferentialLookingStateContext } from 'state/provider/PreferentialLookingStateProvider';
-import useVideoRecorder from '@hooks/useVideoRecorder';
-import VidProcessingPopup from 'components/common/VidProcessingPopup';
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { timer } from "@utils/timer";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import useWindowSize from "@hooks/useWindowSize";
+import CloseGesture from "components/CloseGesture";
+import { usePreferentialLookingStateContext } from "state/provider/PreferentialLookingStateProvider";
+import useVideoRecorder from "@hooks/useVideoRecorder";
+import VidProcessingPopup from "components/common/VidProcessingPopup";
+import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -22,10 +23,10 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get('attempt') || '0';
+  const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `preferential-looking-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 30000; // 30 seconds, considering video lenngth
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
 
@@ -100,9 +101,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timrLimit: timeData?.timeLimit || '',
-            endTime: timeData?.endTime || '',
-            startTime: timeData?.startTime || '',
+            timrLimit: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -111,9 +112,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: 'UPDATE_SURVEY_DATA',
+            type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: 'PreferentialLookingTask',
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -150,7 +151,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           onProcessComplete={setShowPopup}
           reAttemptUrl={reAttemptUrl}
           attempt={attempt}
-          taskID={'PreferentialLookingTask'}
+          taskID={TaskContent.id}
         />
       )}
     </div>

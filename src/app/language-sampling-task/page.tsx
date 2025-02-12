@@ -8,17 +8,13 @@ import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
 import LanguageSamplingTask from "./LanguageSamplingTask";
 import SuspenseWrapper from "components/SuspenseWrapper";
-const colors: string[] = ["red", "green", "blue", "yellow", "purple", "orange"];
+import { LanguageSamplingContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<any>(null);
-
-  const data = TasksConstant.LanguageSamplingTask;
 
   const handleStartGame = () => {
     setSurvey(!survey);
-    setStartTime(Date.now());
   };
 
   return (
@@ -30,8 +26,8 @@ const IndexPage = () => {
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome
-            taskName={data.title}
-            taskMessage={data.taskMessage}
+            taskName={TaskContent.title}
+            taskMessage={TaskContent.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
           <LanguageSamplingTask />

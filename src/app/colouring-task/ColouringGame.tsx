@@ -127,6 +127,7 @@ const ColouringGame: React.FC = () => {
         testName={"Colouring Game"}
         reAttemptUrl={reAttemptUrl}
       />
+      
     </div>
   );
 };

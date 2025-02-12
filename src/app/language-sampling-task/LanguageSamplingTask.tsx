@@ -9,6 +9,7 @@ import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
 import CommonIcon from "components/common/CommonIcon";
 import CloseGesture from "components/CloseGesture";
+import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -27,7 +28,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `bubble-popping-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 180000;
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: "LanguageSamplingTask",
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -139,10 +140,8 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={
-            "You have completed the Language Sampling Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. "
-          }
-          testName={"language Sampling task"}
+          msg={TaskContent.taskMessage}
+          testName={TaskContent.title}
           reAttemptUrl={reAttemptUrl}
         />
       )}

@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import { TasksConstant } from "constants/tasks.constant";
+import { BubblePoppingContent } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import BubblePoppingTask from "./BubblePoppingTask";
+import { BubblePoppingContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {
-  const data = TasksConstant.BubblePoppingTask;
   const [survey, setSurvey] = useState<boolean>(false);
 
   const handleStartGame = () => {
@@ -22,8 +22,8 @@ const IndexPage = () => {
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome
-            taskName={data.title}
-            taskMessage={data.taskMessage}
+            taskName={TaskContent.title}
+            taskMessage={TaskContent.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
           <BubblePoppingTask />

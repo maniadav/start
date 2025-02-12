@@ -5,9 +5,9 @@ import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import MototFollowingTask from "./MototFollowingTask";
 import { MotorStateProvider } from "state/provider/MotorStateProvider";
+import { MotorFollowingContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {
-  const data = TasksConstant.BubblePoppingTask;
   const [survey, setSurvey] = useState<boolean>(false);
 
   const handleStartGame = () => {
@@ -23,8 +23,8 @@ const IndexPage = () => {
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome
-            taskName={data.title}
-            taskMessage={data.taskMessage}
+            taskName={TaskContent.title}
+            taskMessage={TaskContent.taskMessage}
             handleStartGame={() => handleStartGame()}
           />
           <MototFollowingTask />

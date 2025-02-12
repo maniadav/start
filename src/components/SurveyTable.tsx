@@ -1,11 +1,11 @@
-'use client';
-import React from 'react';
-import { TasksConstant } from 'constants/tasks.constant';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import { PlusIcon, TickedIcon } from './common/svg';
-import { useRouter } from 'next/navigation';
-import { FaDownload } from 'react-icons/fa6';
-import DataDownloadButton from './DataDownloadButton';
+"use client";
+import React from "react";
+import { TasksConstant } from "constants/tasks.constant";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import { PlusIcon, TickedIcon } from "./common/svg";
+import { useRouter } from "next/navigation";
+import { FaDownload } from "react-icons/fa6";
+import DataDownloadButton from "./DataDownloadButton";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();
@@ -70,7 +70,7 @@ const SurveyTable = () => {
                         <tr
                           key={TasksConstant?.[items].id}
                           className={`${
-                            i % 2 == 0 ? 'bg-gray-100' : 'bg-white'
+                            i % 2 == 0 ? "bg-gray-100" : "bg-white"
                           } border-b`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -101,7 +101,7 @@ const SurveyTable = () => {
                                     onClick={() =>
                                       router.push(
                                         `${
-                                          TasksConstant[items].surveyLink
+                                          TasksConstant[items].surveyRoute
                                         }?attempt=${
                                           parseInt(
                                             state?.[items]?.noOfAttempt || 0,
@@ -152,7 +152,7 @@ const SurveyTable = () => {
                   </svg>
                   <button
                     className="ml-3"
-                    onClick={() => alert('data is uploaded')}
+                    onClick={() => alert("data is uploaded")}
                   >
                     Upload Survey
                   </button>

@@ -1,14 +1,15 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
-import MessagePopup from 'components/common/MessagePopup';
-import { timer } from '@utils/timer';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import useWindowSize from '@hooks/useWindowSize';
-import ProgressiveCircle from './ProgrgessiveCircle';
-import Firework from './FireWork';
-import CloseGesture from 'components/CloseGesture';
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
+import MessagePopup from "components/common/MessagePopup";
+import { timer } from "@utils/timer";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import useWindowSize from "@hooks/useWindowSize";
+import ProgressiveCircle from "./ProgrgessiveCircle";
+import Firework from "./FireWork";
+import CloseGesture from "components/CloseGesture";
+import { DelayedGratificationContent as TaskContent } from "@constants/tasks.constant";
 
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -27,10 +28,11 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get('attempt') || '0';
+  const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `delayed-gratification-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+
   const timeLimit = 180000;
 
   useEffect(() => {
@@ -81,10 +83,10 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeTaken: timeData?.timeTaken || '',
-            timeLimit: timeData?.timeLimit || '',
-            endTime: timeData?.endTime || '',
-            startTime: timeData?.startTime || '',
+            timeTaken: timeData?.timeTaken || "",
+            timeLimit: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -93,9 +95,9 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: 'UPDATE_SURVEY_DATA',
+            type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: 'DelayedGratificationTask',
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -120,7 +122,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
         closeGame(timeData);
       }
     } else {
-      alert('you may start the game!');
+      alert("you may start the game!");
     }
   };
 
@@ -168,10 +170,8 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={
-            'You have completed the Delayed Gratification Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
-          }
-          testName={'delayed gratification'}
+          msg={TaskContent.taskMessage}
+          testName={TaskContent.title}
           reAttemptUrl={reAttemptUrl}
         />
       )}

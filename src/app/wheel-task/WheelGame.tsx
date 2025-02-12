@@ -1,15 +1,15 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
-import { timer } from '@utils/timer';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import useWindowSize from '@hooks/useWindowSize';
-import useVideoRecorder from '@hooks/useVideoRecorder';
-import CloseGesture from 'components/CloseGesture';
-import DepthEstimation from './DepthEstimation';
-import PopupModal from 'components/common/PopupModal';
-import { TasksConstant } from '@constants/tasks.constant';
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
+import { timer } from "@utils/timer";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import useWindowSize from "@hooks/useWindowSize";
+import useVideoRecorder from "@hooks/useVideoRecorder";
+import CloseGesture from "components/CloseGesture";
+import DepthEstimation from "./DepthEstimation";
+import PopupModal from "components/common/PopupModal";
+import { WheelContent as TaskContent } from "@constants/tasks.constant";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -25,11 +25,10 @@ const WheelTask = ({ isSurvey = false }) => {
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
-  const attemptString = searchParams.get('attempt') || '0';
+  const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
-  const taskConstant = TasksConstant.WheelTask;
   const reAttemptUrl =
-    attempt < 3 ? `${taskConstant.surveyLink}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 180000; // 3 min
 
   useEffect(() => {
@@ -80,10 +79,10 @@ const WheelTask = ({ isSurvey = false }) => {
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
-            timeLimit: timeData?.timeLimit || '',
-            timeTaken: timeData?.timeTaken || '',
-            endTime: timeData?.endTime || '',
-            startTime: timeData?.startTime || '',
+            timeLimit: timeData?.timeLimit || "",
+            timeTaken: timeData?.timeTaken || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -91,9 +90,9 @@ const WheelTask = ({ isSurvey = false }) => {
             closedMidWay,
           };
           dispatch({
-            type: 'UPDATE_SURVEY_DATA',
+            type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: taskConstant.id,
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -109,7 +108,7 @@ const WheelTask = ({ isSurvey = false }) => {
       const timeData = handleStopTimer();
       closeGame(timeData);
     } else {
-      alert('you may start the game!');
+      alert("you may start the game!");
     }
   };
   const handleCloseMidWay = () => {
@@ -142,7 +141,7 @@ const WheelTask = ({ isSurvey = false }) => {
             showFilter={showPopup}
             reAttemptUrl={reAttemptUrl}
             attempt={attempt}
-            taskID={taskConstant.id}
+            taskID={TaskContent.id}
           />
         </PopupModal>
       )}

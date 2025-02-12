@@ -1,14 +1,15 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import MessagePopup from 'components/common/MessagePopup';
-import { timer } from '@utils/timer';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import useWindowSize from '@hooks/useWindowSize';
-import DrumSVG from 'app/synchrony-task/DrumSVG';
-import CloseGesture from 'components/CloseGesture';
-import { useSynchronyStateContext } from 'state/provider/SynchronyStateProvider';
-import DrumPatch from './DrumPatch';
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import MessagePopup from "components/common/MessagePopup";
+import { timer } from "@utils/timer";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import useWindowSize from "@hooks/useWindowSize";
+import DrumSVG from "app/synchrony-task/DrumSVG";
+import CloseGesture from "components/CloseGesture";
+import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
+import DrumPatch from "./DrumPatch";
+import { SynchronyContent as TaskContent } from "@constants/tasks.constant";
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -27,10 +28,10 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const stopTimerFuncRef = useRef<() => any>();
-  const attemptString = searchParams.get('attempt') || '0';
+  const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `synchrony-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 30000;
 
   useEffect(() => {
@@ -76,14 +77,14 @@ const SynchronyTask = ({ isSurvey = false }) => {
       if (isSurvey) {
         setIsGameActive(false);
         setShowPopup(true);
-        
+
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
             timeTaken: timeData.timeTaken,
-            timrLimit: timeData?.timeLimit || '',
-            endTime: timeData?.endTime || '',
-            startTime: timeData?.startTime || '',
+            timrLimit: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
@@ -94,9 +95,9 @@ const SynchronyTask = ({ isSurvey = false }) => {
           };
 
           dispatch({
-            type: 'UPDATE_SURVEY_DATA',
+            type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: 'SynchronyTask',
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -134,10 +135,8 @@ const SynchronyTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={
-            'You have completed the Synchrony Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task. '
-          }
-          testName={'Synchrony task'}
+          msg={TaskContent.taskEndMessage}
+          testName={TaskContent.title}
           reAttemptUrl={reAttemptUrl}
         />
       )}

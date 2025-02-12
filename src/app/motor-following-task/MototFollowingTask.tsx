@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import useDraw from '@hooks/useDraw';
-import useWindowSize from '@hooks/useWindowSize';
-import { drawLine } from '@utils/canva';
-import Ball from './Ball';
-import { timer } from '@utils/timer';
-import MessagePopup from 'components/common/MessagePopup';
-import { useSearchParams } from 'next/navigation';
-import { useSurveyContext } from 'state/provider/SurveytProvider';
-import { trackTaskTime } from '@utils/trackTime';
-import Image from 'next/image';
-import BallAnimation from './BallAnimation';
-import { useMotorStateContext } from 'state/provider/MotorStateProvider';
-import { Coordinate } from 'types/survey.types';
-import useAudio from '@hooks/useAudio';
-import CloseGesture from 'components/CloseGesture';
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import useDraw from "@hooks/useDraw";
+import useWindowSize from "@hooks/useWindowSize";
+import { drawLine } from "@utils/canva";
+import Ball from "./Ball";
+import { timer } from "@utils/timer";
+import MessagePopup from "components/common/MessagePopup";
+import { useSearchParams } from "next/navigation";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import { trackTaskTime } from "@utils/trackTime";
+import Image from "next/image";
+import BallAnimation from "./BallAnimation";
+import { useMotorStateContext } from "state/provider/MotorStateProvider";
+import { Coordinate } from "types/survey.types";
+import useAudio from "@hooks/useAudio";
+import CloseGesture from "components/CloseGesture";
+import { MotorFollowingContent as TaskContent } from "@constants/tasks.constant";
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -48,17 +49,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const { windowSize, deviceType } = useWindowSize();
   const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
-  const bubblePop = useAudio('/audio/audio-caught.wav');
+  const bubblePop = useAudio("/audio/audio-caught.wav");
   const ballCoordinatesRef = useRef(ballCoordinates);
   const touchCoordinatesRef = useRef(touchCoordinates);
   // const balls = useRef<any[]>([]);
   const animationRef = useRef<number | null>(null);
-  const color = '#000000';
+  const color = "#000000";
   const newlineWidth = 3;
-  const attemptString = searchParams.get('attempt') || '0';
+  const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `motor-following-task?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
   // require for updated movement data
@@ -136,7 +137,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     const canvasElement = canvasRef.current;
 
     if (canvasElement) {
-      const ctx = canvasElement.getContext('2d');
+      const ctx = canvasElement.getContext("2d");
       if (ctx) {
         initializeCanvas(canvasElement, ctx);
 
@@ -227,20 +228,20 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const saveImage = (): string | undefined => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (ctx) {
         ballCoordinates.forEach((item: Coordinate) => {
           ctx.beginPath();
           ctx.arc(item.x, item.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = 'blue';
+          ctx.fillStyle = "blue";
           ctx.fill();
         });
       }
 
-      const imageData = canvas.toDataURL('image/png');
+      const imageData = canvas.toDataURL("image/png");
 
-      const link = document.createElement('a');
-      link.download = 'drawing.png';
+      const link = document.createElement("a");
+      link.download = "drawing.png";
       link.href = imageData;
       link.click();
 
@@ -272,7 +273,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const handleStartGame = () => {
     handleTimer();
-    trackTaskTime('start'); // Start tracking time
+    trackTaskTime("start"); // Start tracking time
 
     setSurveyData((prevState: any) => ({
       ...prevState,
@@ -291,9 +292,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           const updatedSurveyData = {
             ...prevState,
             timeTaken: timeData.timeTaken,
-            timrLimit: timeData?.timeLimit || '',
-            endTime: timeData?.endTime || '',
-            startTime: timeData?.startTime || '',
+            timrLimit: timeData?.timeLimit || "",
+            endTime: timeData?.endTime || "",
+            startTime: timeData?.startTime || "",
             closedWithTimeout: timeData?.isTimeOver || false,
             touchX,
             touchY,
@@ -306,9 +307,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             // image,
           };
           dispatch({
-            type: 'UPDATE_SURVEY_DATA',
+            type: "UPDATE_SURVEY_DATA",
             attempt,
-            task: 'MotorFollowingTask',
+            task: TaskContent.id,
             data: updatedSurveyData,
           });
 
@@ -347,8 +348,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             </div>
             <MessagePopup
               showFilter={showPopup}
-              msg="You have completed the Motor Following Task. You can now make another attempt for this test, go back to the survey dashboard or start the new task."
-              testName="motor follwoing"
+              msg={TaskContent.taskEndMessage}
+              testName={TaskContent.title}
               reAttemptUrl={reAttemptUrl}
             />
           </div>
@@ -377,8 +378,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             className="z-10 absolute flex items-center top-0 left-0 w-full h-full bg-cover bg-center"
           >
             <Image
-              src={'/arrow.png'}
-              alt={'arrow'}
+              src={"/arrow.png"}
+              alt={"arrow"}
               width={100}
               height={100}
               className="absolute rotate-45"

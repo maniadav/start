@@ -37,6 +37,7 @@ const IndexPage = () => {
   const attempt = searchParams.get("attempt") || "0";
   const bubblePop = useAudio("/bubble-pop.mp3");
   const data = TasksConstant.BubblePoppingTask;
+  
   const reAttemptUrl =
     parseInt(attempt) < 3
       ? `bubble-popping-task?attempt=${parseInt(attempt) + 1}`
@@ -148,13 +149,6 @@ const IndexPage = () => {
   const startTimer = () => {
     setIsRunning(true);
   };
-
-  // const handleTimeout = () => {
-  //   console.log("3 minutes have passed. Calling the function...");
-  //   closeGame();
-  // };
-
-  // console.log({ surveyData });
 
   return (
     <>
