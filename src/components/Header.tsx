@@ -1,15 +1,15 @@
-'use client';
-import { useReducer, useState } from 'react';
-import CommonIcon from './common/CommonIcon';
-import { NavSideBar2 } from './NavSideBar';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { API_ENDPOINT } from '@constants/api.constant';
-import { useAuth } from 'state/provider/AuthProvider';
-import Link from 'next/link';
-import LanguageToggle from './LanguageToggle';
-import { getLocalStorageValue } from '@utils/localStorage';
-import { LOCALSTORAGE } from '@constants/storage.constant';
+"use client";
+import { useReducer, useState } from "react";
+import CommonIcon from "./common/CommonIcon";
+import { NavSideBar2 } from "./NavSideBar";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { API_ENDPOINT } from "@constants/api.constant";
+import { useAuth } from "state/provider/AuthProvider";
+import Link from "next/link";
+import LanguageToggle from "./LanguageToggle";
+import { getLocalStorageValue } from "@utils/localStorage";
+import { LOCALSTORAGE } from "@constants/storage.constant";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,7 @@ export const Header = () => {
                   className="rounded-full h-6 w-6 object-cover"
                 /> */}
                 <Image
-                  src={user?.profile || '/user.svg'}
+                  src={user?.profile || "/user.svg"}
                   alt="logo"
                   className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
                   width={32}
@@ -49,7 +49,7 @@ export const Header = () => {
                 ></Image>
               </div>
               <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {`Hi, ${user?.childName || 'user'}`}
+                {`Hi, ${user?.childName || "user"}`}
               </p>
               <span className="text-gray-500">
                 <CommonIcon
@@ -109,24 +109,24 @@ export const Header = () => {
 
 export const menuLink = [
   {
-    label: 'Home',
-    slug: '/',
+    label: "Home",
+    slug: "/",
   },
   {
-    label: 'Blog',
-    slug: '/blog',
+    label: "Blog",
+    slug: "/blog",
   },
   {
-    label: 'Alfaaz-e-Sukhan',
-    slug: '/poem',
+    label: "Alfaaz-e-Sukhan",
+    slug: "/poem",
   },
   {
-    label: 'Photography',
-    slug: '/photography',
+    label: "Photography",
+    slug: "/photography",
   },
   {
-    label: 'About',
-    slug: '/about',
+    label: "About",
+    slug: "/about",
   },
 ];
 
@@ -138,7 +138,7 @@ export const DropDown = () => {
     <div className="mr-20 absolute z-10 bg-white rounded-lg shadow w-44 dark:bg-gray-700">
       <div className="py-2 text-sm text-gray-700 dark:text-gray-200">
         <Link
-          href="/profile-setting#profile-update"
+          href="/"
           className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
         >
           <span className="">
@@ -157,7 +157,7 @@ export const DropDown = () => {
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
 
-          <span> {user ? 'Logout' : 'Sign In'}</span>
+          <span> {user ? "Logout" : "Sign In"}</span>
         </button>
       </div>
     </div>

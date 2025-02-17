@@ -1,11 +1,17 @@
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  output: "export",
-  compiler: {
-    removeConsole: process.env.NODE_ENV !== "development",
-  },
-  images: { unoptimized: true },
-};
+/** @type {import('next').NextConfig} */
 
-module.exports = nextConfig;
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+});
+
+module.exports = withPWA({
+  reactStrictMode: true,
+  output: "export",
+  basePath: "",
+  assetPrefix: "",
+  images: {
+    unoptimized: true,
+  },
+});
