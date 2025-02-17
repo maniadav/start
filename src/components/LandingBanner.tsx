@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
+import InstallButton from "./button/AppDownload";
 
 const LandingBanner = () => {
   const { languageContent } = useLanguageProvider();
@@ -49,6 +50,7 @@ const LandingBanner = () => {
               </svg>
               {languageContent.buttons.about}
             </a>
+            <InstallButton />
           </div>
         </div>
       </div>

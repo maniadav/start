@@ -11,10 +11,10 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://twitter.com/victormustar"
+                href="https://github.com/maniadav/START"
                 className="hover:underline"
               >
-                Twitter
+                Github
               </a>
             </li>
             <li>
@@ -54,7 +54,9 @@ const Footer = () => {
             </li>
           </ul>
           <ul className="space-y-1 text-gray-400">
-            <li className="text-xl pb-4 font-serif text-gray-200 font-bold">Company</li>
+            <li className="text-xl pb-4 font-serif text-gray-200 font-bold">
+              Company
+            </li>
             <li>
               <a href="#" className="hover:underline">
                 The team
@@ -77,7 +79,9 @@ const Footer = () => {
             </li>
           </ul>
           <ul className="space-y-1 text-gray-400">
-            <li className="text-xl pb-4 font-serif text-gray-200 font-bold">More</li>
+            <li className="text-xl pb-4 font-serif text-gray-200 font-bold">
+              More
+            </li>
             <li>
               <a href="#" className="hover:underline">
                 Github Repo

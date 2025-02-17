@@ -1,4 +1,3 @@
-"use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "state/provider/AuthProvider";
@@ -10,6 +9,16 @@ import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const metadata = {
+  title: "START Project",
+  description: "A progressive web application for autism screening.",
+  manifest: "/manifest.json",
+  icons: [
+    { rel: "icon", type: "image/png", url: "/icons/icon-512.png" },
+    { rel: "apple-touch-icon", url: "/icons/icon-masked-512.png" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,13 +28,6 @@ export default function RootLayout({
     <SurveyProvider>
       <LanguageProvider>
         <html lang={"en"}>
-          <Head>
-            <title>START App</title>
-            <link rel="icon" type="image/png" href="/icons/icon-512.png" />
-            <link rel="apple-touch-icon" href="/icons/icon-masked-512.png" />
-            <link rel="manifest" href="/manifest.json" />
-          </Head>
-
           <body className={inter.className}>
             <AuthProvider>
               <ProtectedRoute>
