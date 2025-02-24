@@ -60,7 +60,7 @@ const LandingBanner = () => {
         muted
         className="z-10 absolute min-h-full  max-w-none w-auto min-w-full backdrop-blur-sm"
       >
-        <source src="/home.mp4" type="video/mp4" />
+        <source src="/video/home.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </header>
