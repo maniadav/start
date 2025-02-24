@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 export default function RootLayoutClient({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -21,5 +20,5 @@ export default function RootLayoutClient({
     }
   }, []);
 
-  return <div className="w-full text-white flex flex-col">{children}</div>;
+  return <div className="w-full flex flex-col">{children}</div>;
 }
