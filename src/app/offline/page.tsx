@@ -29,6 +29,7 @@ const IndexPage: React.FC = () => {
   }, [router]);
 
   const handleRefresh = () => {
+    console.log(navigator?.onLine);
     if (navigator.onLine) {
       router.push("/");
     } else {
@@ -36,14 +37,9 @@ const IndexPage: React.FC = () => {
     }
   };
 
-  console.log(navigator.onLine);
-
   return (
     <div className="w-screen h-screen  flex items-center justify-center align-middle bg-white">
       <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
-        {/* <div className="">
-          <Image alt="anything" src="/image/404.jpg" width={400} height={400} />
-        </div> */}
         <div className="xl:pt-24 w-full flex flex-col items-center align-middle justify-center xl:w-1/2 pb-12 lg:pb-0">
           <div className="">
             <h1 className="my-2 text-gray-800 font-bold text-2xl">
