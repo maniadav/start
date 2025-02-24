@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const IndexPage: React.FC = () => {
   const [isOnline, setIsOnline] = useState(false);
@@ -35,32 +36,40 @@ const IndexPage: React.FC = () => {
     }
   };
 
+  console.log(navigator.onLine);
+
   return (
-    <div className="flex mx-auto h-screen max-w-[500px] w-full flex-col items-center justify-center  p-6 mt-12 text-white">
-      <h1 className="text-3xl font-bold mb-6">
-        {isOnline ? "Buddy, you are online!" : "Buddy, you are offline"}
-      </h1>
-      <p className="text-lg text-center mb-6">
-        {isOnline
-          ? "You are back online."
-          : "Please check your internet connection and try again."}
-      </p>
-      <div className="">This is a custom fallback page</div>
-      {isOnline ? (
-        <Link
-          href={"/"}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-        >
-          Return to Homepage
-        </Link>
-      ) : (
-        <button
-          onClick={handleRefresh}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-        >
-          Refresh
-        </button>
-      )}
+    <div className="w-screen h-screen  flex items-center justify-center align-middle bg-white">
+      <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
+        {/* <div className="">
+          <Image alt="anything" src="/image/404.jpg" width={400} height={400} />
+        </div> */}
+        <div className="xl:pt-24 w-full flex flex-col items-center align-middle justify-center xl:w-1/2 pb-12 lg:pb-0">
+          <div className="">
+            <h1 className="my-2 text-gray-800 font-bold text-2xl">
+              {isOnline
+                ? "You are back online."
+                : "Please check your internet connection and try again."}
+            </h1>
+
+            {isOnline ? (
+              <Link
+                href={"/"}
+                className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+              >
+                Return to Homepage
+              </Link>
+            ) : (
+              <button
+                onClick={handleRefresh}
+                className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+              >
+                Refresh
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

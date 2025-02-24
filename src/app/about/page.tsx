@@ -65,7 +65,7 @@ const IndexPage = () => {
 
   return (
     <div className="">
-      <div className="h-full w-full md:h-screen">
+      <div className="h-full w-full md:h-screen text-black">
         <div className="w-full mb-10 col-span-3 md:col-span-2">
           <div className=" mx-auto h-full sm:p-10">
             <nav className="flex px-4 justify-between items-center">
