@@ -1,5 +1,5 @@
 "use client";
-import { useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import CommonIcon from "./common/CommonIcon";
 import { NavSideBar2 } from "./NavSideBar";
 import Image from "next/image";
@@ -13,7 +13,12 @@ import { LOCALSTORAGE } from "@constants/storage.constant";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const data = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+    setUser(data || null);
+  }, []);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -35,11 +40,6 @@ export const Header = () => {
           <div className="relative group">
             <div className="flex items-center cursor-pointer px-3 py-2 text-sm font-normal text-center">
               <div className="h-auto mx-2">
-                {/* <img
-                  src={user?.profile || "/images/profile.png"}
-                  alt="logo"
-                  className="rounded-full h-6 w-6 object-cover"
-                /> */}
                 <Image
                   src={user?.profile || "/user.svg"}
                   alt="logo"
@@ -48,6 +48,7 @@ export const Header = () => {
                   height={32}
                 ></Image>
               </div>
+
               <p className="hidden md:block capitalize text-gray-300 text-sm">
                 {`Hi, ${user?.childName || "user"}`}
               </p>

@@ -5,11 +5,12 @@ import ProtectedRoute from "@hooks/ProtectedRoute";
 import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
-import Head from "next/head";
+import { Metadata } from "next";
+import RootLayoutClient from "components/RootLayoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "START Project",
   description: "A progressive web application for autism screening.",
   manifest: "/manifest.json",
@@ -31,7 +32,9 @@ export default function RootLayout({
           <body className={inter.className}>
             <AuthProvider>
               <ProtectedRoute>
-                <GameWrapper>{children}</GameWrapper>
+                <GameWrapper>
+                  <RootLayoutClient>{children}</RootLayoutClient>
+                </GameWrapper>
               </ProtectedRoute>
             </AuthProvider>
           </body>

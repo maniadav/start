@@ -138,8 +138,8 @@ const OS_ICONS: Record<string, JSX.Element> = {
       height="30"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M7.5 4a6.473 6.473 0 00-2.934.698l-1.65-2.475-.832.554 1.627 2.44A6.492 6.492 0 001 10.5V13h13v-2.5a6.492 6.492 0 00-2.711-5.282l1.627-2.44-.832-.555-1.65 2.475A6.473 6.473 0 007.5 4zM5 10H4V9h1v1zm5 0h1V9h-1v1z"
         fill="currentColor"
       ></path>
@@ -160,8 +160,8 @@ const OS_ICONS: Record<string, JSX.Element> = {
     >
       <path d="M10 12h3v-1h-3v1z" fill="currentColor"></path>
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M9.5 0A1.5 1.5 0 008 1.5V3H1.5A1.5 1.5 0 000 4.5v6A1.5 1.5 0 001.5 12H6v2H4v1h9.5a1.5 1.5 0 001.5-1.5v-12A1.5 1.5 0 0013.5 0h-4zM8.085 14H7v-2h1v1.5c0 .175.03.344.085.5zM9.5 14h4a.5.5 0 00.5-.5V6H9v7.5a.5.5 0 00.5.5zM9 5h5V1.5a.5.5 0 00-.5-.5h-4a.5.5 0 00-.5.5V5z"
         fill="currentColor"
       ></path>
