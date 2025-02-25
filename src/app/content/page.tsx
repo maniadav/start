@@ -1,5 +1,5 @@
 import React from "react";
-import SurveyDataDetails from "./SurveyDataType";
+import SurveyDataDetails from "./SurveyDataDetails";
 
 const HomePage = () => {
   return (

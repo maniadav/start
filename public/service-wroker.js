@@ -24,6 +24,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+// remove all old caches
 async function clearOldCaches() {
   const cacheNames = await caches.keys();
   return Promise.all(
@@ -71,31 +72,90 @@ async function cacheFirstStrategy(request) {
   }
 }
 
+// Network-first strategy with cache fallback
+async function networkFirstWithFallback(request, isNavigation) {
+  try {
+    // Try network first
+    const networkResponse = await fetch(request);
+
+    // Update cache with fresh response
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(request, networkResponse.clone());
+
+    return networkResponse;
+  } catch (error) {
+    // Network failed - try cache
+    const cachedResponse = await caches.match(request);
+
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    // If no cache and it's a navigation request, show offline page
+    if (isNavigation) {
+      return caches.match("/offline");
+    }
+
+    // For media requests with no cache, let browser handle failure
+    return Response.error();
+  }
+}
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Define patterns for images and videos
-  const isImageOrVideo = url.pathname.match(
+  // Detect if it's a navigation request
+  const isNavigation = request.mode === "navigate";
+
+  // Detect media files
+  const isMedia = url.pathname.match(
     /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
   );
 
-  if (isImageOrVideo) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        return (
-          cachedResponse ||
-          fetch(request).then(async (networkResponse) => {
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-          })
-        );
-      })
-    );
-  } else if (event.request.mode === "navigate") {
-    event.respondWith(cacheFirstStrategy(request));
+  // Apply network-first strategy to media and navigation
+  if (isMedia || isNavigation) {
+    event.respondWith(networkFirstWithFallback(request, isNavigation));
   } else {
-    event.respondWith(dynamicCaching(request));
+    // For other requests, use default strategy (network first with cache fallback)
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Update cache with fresh response
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
   }
 });
+
+// self.addEventListener("fetch", (event) => {
+//   const { request } = event;
+//   const url = new URL(request.url);
+
+//   // Define patterns for images and videos
+//   const isImageOrVideo = url.pathname.match(
+//     /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
+//   );
+
+//   if (isImageOrVideo) {
+//     event.respondWith(
+//       caches.match(request)        .then((cachedResponse) => {
+//           return (
+//           cachedResponse ||
+//           fetch(request).then(async (networkResponse) => {
+//           const cache = await           caches.open(CACHE_NAME);
+// cache.put(request, networkResponse.clone());
+//           return networkResponse;
+//         })
+//         );
+//       })
+//     );
+//   } else if (event.request.mode === "navigate") {
+//     event.respondWith(cacheFirstStrategy(request));
+//   } else {
+//     event.respondWith(dynamicCaching(request)    );
+//   }
+// });
