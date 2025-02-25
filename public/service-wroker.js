@@ -4,18 +4,18 @@ async function cacheCoreAssets() {
   const cache = await caches.open(CACHE_NAME);
   return cache.addAll([
     "/",
-    "about",
-    "auth/login",
-    "bubble-popping-task",
-    "button-task",
-    "content",
-    "delayed-gratification-task",
-    "motor-following-task",
-    "offline",
-    "preferential-looking-task",
-    "survey",
-    "synchrony-task",
-    "wheel-task",
+    "/about",
+    "/auth/login",
+    "/bubble-popping-task",
+    "/button-task",
+    "/content",
+    "/delayed-gratification-task",
+    "/motor-following-task",
+    "/offline",
+    "/preferential-looking-task",
+    "/survey",
+    "/synchrony-task",
+    "/wheel-task",
   ]);
 }
 
@@ -101,61 +101,61 @@ async function networkFirstWithFallback(request, isNavigation) {
   }
 }
 
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Detect if it's a navigation request
-  const isNavigation = request.mode === "navigate";
-
-  // Detect media files
-  const isMedia = url.pathname.match(
-    /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
-  );
-
-  // Apply network-first strategy to media and navigation
-  if (isMedia || isNavigation) {
-    event.respondWith(networkFirstWithFallback(request, isNavigation));
-  } else {
-    // For other requests, use default strategy (network first with cache fallback)
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Update cache with fresh response
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-  }
-});
-
 // self.addEventListener("fetch", (event) => {
 //   const { request } = event;
 //   const url = new URL(request.url);
 
-//   // Define patterns for images and videos
-//   const isImageOrVideo = url.pathname.match(
+//   // Detect if it's a navigation request
+//   const isNavigation = request.mode === "navigate";
+
+//   // Detect media files
+//   const isMedia = url.pathname.match(
 //     /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
 //   );
 
-//   if (isImageOrVideo) {
-//     event.respondWith(
-//       caches.match(request)        .then((cachedResponse) => {
-//           return (
-//           cachedResponse ||
-//           fetch(request).then(async (networkResponse) => {
-//           const cache = await           caches.open(CACHE_NAME);
-// cache.put(request, networkResponse.clone());
-//           return networkResponse;
-//         })
-//         );
-//       })
-//     );
-//   } else if (event.request.mode === "navigate") {
-//     event.respondWith(cacheFirstStrategy(request));
+//   // Apply network-first strategy to media and navigation
+//   if (isMedia || isNavigation) {
+//     event.respondWith(networkFirstWithFallback(request, isNavigation));
 //   } else {
-//     event.respondWith(dynamicCaching(request)    );
+//     // For other requests, use default strategy (network first with cache fallback)
+//     event.respondWith(
+//       fetch(request)
+//         .then((response) => {
+//           // Update cache with fresh response
+//           const clone = response.clone();
+//           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+//           return response;
+//         })
+//         .catch(() => caches.match(request))
+//     );
 //   }
 // });
+
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Define patterns for images and videos
+  const isImageOrVideo = url.pathname.match(
+    /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
+  );
+
+  if (isImageOrVideo) {
+    event.respondWith(
+      caches.match(request).then((cachedResponse) => {
+        return (
+          cachedResponse ||
+          fetch(request).then(async (networkResponse) => {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+          })
+        );
+      })
+    );
+  } else if (event.request.mode === "navigate") {
+    event.respondWith(cacheFirstStrategy(request));
+  } else {
+    event.respondWith(dynamicCaching(request));
+  }
+});
