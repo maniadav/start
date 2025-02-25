@@ -5,7 +5,6 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import CloseGesture from "components/CloseGesture";
-import { usePreferentialLookingStateContext } from "state/provider/PreferentialLookingStateProvider";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import VidProcessingPopup from "components/common/VidProcessingPopup";
 import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";

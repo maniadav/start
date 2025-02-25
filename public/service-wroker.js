@@ -1,14 +1,21 @@
-const CACHE_NAME = "next-pwa-cache-v1";
+const CACHE_NAME = "start-cache-v1";
 
 async function cacheCoreAssets() {
   const cache = await caches.open(CACHE_NAME);
   return cache.addAll([
     "/",
-    "/offline",
     "about",
-    "github",
     "auth/login",
+    "bubble-popping-task",
+    "button-task",
+    "content",
+    "delayed-gratification-task",
+    "motor-following-task",
+    "offline",
+    "preferential-looking-task",
     "survey",
+    "synchrony-task",
+    "wheel-task",
   ]);
 }
 
