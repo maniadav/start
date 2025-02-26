@@ -9,13 +9,13 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/icons/icon-192.jpg",
-      "type": "image/jpg",
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/icons/icon-512.jpg",
-      "type": "image/jpg",
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
       "sizes": "512x512"
     },
     {
@@ -29,6 +29,13 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/child.jpg",
+      "sizes": "1280x720",
+      "type": "image/webp"
     }
   ]
 }

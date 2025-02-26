@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "START Project",
   description: "A progressive web application for autism screening.",
-  manifest: "/manifest.json",
+  manifest: "/pwa-script/manifest.json",
   icons: [
     { rel: "icon", type: "image/png", url: "/icons/icon-512.png" },
     { rel: "apple-touch-icon", url: "/icons/icon-masked-512.png" },
