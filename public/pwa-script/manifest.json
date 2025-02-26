@@ -2,11 +2,12 @@
   "orientation": "landscape",
   "name": "START",
   "short_name": "Start",
-  "description": "A Progressive Web App for autism screening",
+  "description": "A Progressive Web Application designed to facilitate early-stage autism screening through structured surveys and observational assessments. ",
+  "id": "start_app_id",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#000",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -33,9 +34,18 @@
   ],
   "screenshots": [
     {
-      "src": "/images/child.jpg",
-      "sizes": "1280x720",
-      "type": "image/webp"
+      "src": "/image/start-logo.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Application"
+    },
+    {
+      "src": "/image/start-logo.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Application"
     }
   ]
 }

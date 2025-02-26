@@ -1,12 +1,14 @@
-'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import toast, { Toaster } from 'react-hot-toast';
-import UtilityAPI from '@services/utility';
-import { setLocalStorageValue } from '@utils/localStorage';
-import { LOCALSTORAGE } from '@constants/storage.constant';
-import Image from 'next/image';
-import { API_ENDPOINT } from '@constants/api.constant';
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+import UtilityAPI from "@services/utility";
+import { setLocalStorageValue } from "@utils/localStorage";
+import { LOCALSTORAGE } from "@constants/storage.constant";
+import Image from "next/image";
+import { API_ENDPOINT } from "@constants/api.constant";
+import { IconHome } from "components/common/Icons";
+import Link from "next/link";
 
 interface LoginDataType {
   childID: string;
@@ -18,11 +20,11 @@ interface LoginDataType {
 
 const LoginPage = () => {
   const [formData, setFormData] = useState<LoginDataType>({
-    childID: '',
-    childName: '',
-    childGender: '',
-    childDOB: '',
-    observerId: '',
+    childID: "",
+    childName: "",
+    childGender: "",
+    childDOB: "",
+    observerId: "",
   });
 
   const router = useRouter();
@@ -48,7 +50,7 @@ const LoginPage = () => {
       return;
     }
     if (!formData.observerId.trim()) {
-      toast.error('Hey there! Your Observer ID is missing.');
+      toast.error("Hey there! Your Observer ID is missing.");
       return;
     }
 
@@ -57,8 +59,8 @@ const LoginPage = () => {
       // toast.success(`Welcome ${formData.childName}! Let's begin the journey.`);
       router.push(API_ENDPOINT.page.survey);
     } catch (error) {
-      console.error('API call error:', error);
-      toast.error('Something went wrong. Please try again!');
+      console.error("API call error:", error);
+      toast.error("Something went wrong. Please try again!");
     }
   };
 
@@ -67,8 +69,22 @@ const LoginPage = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
         <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
-          <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 ">
-            {/* <div>
+          <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 h-full overflow-scroll">
+            <Link
+              className="flex px-4 justify-between items-center"
+              href="/"
+              legacyBehavior
+            >
+              <div className="flex flex-row gap-4 items-center align-middle">
+                <p className="text-xl md:text-4xl font-bold ">
+                  <span className="ml-2 text-primary">←</span>
+                </p>
+                <span className="font-bold text-xl md:text-4xl">
+                  <IconHome />
+                </span>
+              </div>
+            </Link>
+            <div>
               <Image
                 width={200}
                 height={200}
@@ -76,9 +92,9 @@ const LoginPage = () => {
                 className="w-52 mx-auto"
                 alt="logo"
               />
-            </div> */}
+            </div>
             <div className="flex flex-col items-center">
-              <h1 className="text-2xl xl:text-3xl font-extrabold text-[#DC72A4]">
+              <h1 className="text-2xl xl:text-3xl font-extrabold text-primary">
                 Ready for Some Magic?
               </h1>
               <p className="text-gray-400 mt-2">
@@ -174,7 +190,7 @@ const LoginPage = () => {
                   {/* Submit Button */}
                   <button
                     onClick={handleFormSubmit}
-                    className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-3 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                    className="mt-5 tracking-wide font-semibold bg-primary text-gray-100 w-full py-3 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                   >
                     <svg
                       className="w-6 h-6 -ml-2"
@@ -191,14 +207,14 @@ const LoginPage = () => {
                     <span className="ml-3">Let’s Start the Test!</span>
                   </button>
                   <p className="mt-6 text-xs text-gray-600 text-center">
-                    By proceeding, you agree to our{' '}
+                    By proceeding, you agree to our{" "}
                     <a
                       href="#"
                       className="border-b border-gray-500 border-dotted"
                     >
                       Terms of Service
-                    </a>{' '}
-                    and{' '}
+                    </a>{" "}
+                    and{" "}
                     <a
                       href="#"
                       className="border-b border-gray-500 border-dotted"

@@ -35,7 +35,7 @@ const HomeBanner = () => {
                 </a>
                 <a
                   href="#"
-                  className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 border-[#c4122f] text-[#c4122f] dark:text-white hover:bg-[#c4122f] hover:text-white text-md"
+                  className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 border-primary text-primary dark:text-white hover:bg-primary hover:text-white text-md"
                 >
                   About Us
                 </a>
