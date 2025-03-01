@@ -7,7 +7,7 @@ export default function RootLayoutClient({
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register("/pwa-script/service-wroker.js")
+        .register("/service-wroker.js")
         .then((registration) => {
           console.log(
             "Service Worker registered with scope:",
