@@ -6,11 +6,13 @@ async function cacheCoreAssets() {
   const cache = await caches.open(CACHE_NAME);
   return cache.addAll([
     "/",
+    "/manifest.json",
+    "/video/",
     "/about",
     "/auth/login",
     "/bubble-popping-task",
     // "/button-task",
-    // "/content",
+    "/content",
     // "/delayed-gratification-task",
     // "/motor-following-task",
     // "/preferential-looking-task",
@@ -50,6 +52,7 @@ async function cacheFirst(request) {
   try {
     const networkResponse = await fetch(request);
     cache.put(request, networkResponse.clone());
+    console.error("Network cache response:", networkResponse);
     return networkResponse;
   } catch (error) {
     console.error("Cache First failed:", error);
@@ -89,7 +92,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   const isImageOrVideo = url.pathname.match(
-    /\.(?:png|jpg|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
+    /\.(?:png|jpg|ico|jpeg|svg|gif|webp|mp4|webm|ogg|mov|avi)$/i
   );
 
   if (isImageOrVideo) {
@@ -98,6 +101,23 @@ self.addEventListener("fetch", (event) => {
   } else if (event.request.mode === "navigate") {
     event.respondWith(networkFirst(request));
     return;
+  }
+  if (request.url.includes("/_next/")) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        // Return cached asset or fetch and cache
+        return (
+          response ||
+          fetch(event.request).then((fetchResponse) => {
+            const cacheCopy = fetchResponse.clone();
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, cacheCopy));
+            return fetchResponse;
+          })
+        );
+      })
+    );
   }
 
   event.respondWith(networkFirst(request));

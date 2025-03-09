@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "START Project",
   description:
     "A Progressive Web Application designed to facilitate early-stage autism screening through structured surveys and observational assessments.",
-  manifest: "/pwa-script/manifest.json",
+  manifest: "/manifest.json",
   icons: [
     { rel: "icon", type: "image/png", url: "/icons/icon-512.png" },
     { rel: "apple-touch-icon", url: "/icons/icon-masked-512.png" },
