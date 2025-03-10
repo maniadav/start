@@ -1,7 +1,7 @@
-"use client"
-import React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+"use client";
+import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Custom404 = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const Custom404 = () => {
             </p>
             <button
               className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 text-center bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-opacity-50"
-              onClick={() => router.push('/')}
+              onClick={() => router.push("/")}
             >
               Go to Homepage
             </button>
