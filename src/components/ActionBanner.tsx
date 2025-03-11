@@ -8,6 +8,7 @@ import { getLocalStorageValue } from "@utils/localStorage";
 import { API_ENDPOINT } from "@constants/api.constant";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@constants/config.constant";
+import Link from "next/link";
 
 const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
@@ -45,13 +46,19 @@ const ActionBanner = () => {
                   {languageContent.banner.quesText}
                 </p>
                 <div className="h-4"></div>
-                <button
-                  onClick={() => handleSurvey()}
-                  className="flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary"
+                <Link
+                  href={
+                    user?.childID
+                      ? `${API_ENDPOINT.page.survey}`
+                      : `${API_ENDPOINT.auth.login}`
+                  }
+                  legacyBehavior
                 >
-                  <IconSurvey width="1.5" height="1.5" />
-                  <p>{languageContent.buttons.startSurvey}</p>
-                </button>
+                  <a className="flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
+                    <IconSurvey width="1.5" height="1.5" />
+                    <p>{languageContent.buttons.startSurvey}</p>
+                  </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { API_ENDPOINT } from "@constants/api.constant";
 import { IconHome } from "components/common/Icons";
 import Link from "next/link";
+import { BASE_URL } from "@constants/config.constant";
 
 interface LoginDataType {
   childID: string;
@@ -88,7 +89,7 @@ const LoginPage = () => {
               <Image
                 width={200}
                 height={200}
-                src="/image/start.png"
+                src={`${BASE_URL}/image/start.png`}
                 className="w-52 mx-auto"
                 alt="logo"
               />

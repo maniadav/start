@@ -55,6 +55,7 @@ import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper";
 import ProjectParticipants from "./ProjectParticipants";
+import { BASE_URL } from "@constants/config.constant";
 
 const IndexPage = () => {
   const data = TasksConstant.ButtonTask;
@@ -81,7 +82,7 @@ const IndexPage = () => {
 
           <div className="w-full h-96 pt-10 rounded-xl">
             <Image
-              src="/image/about_title.png"
+              src={`${BASE_URL}/image/about_title.png`}
               width={500}
               height={500}
               className="w-full h-full object-cover  shadow-2xl rounded-xl"

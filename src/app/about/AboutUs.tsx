@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { IconSurvey } from "components/common/Icons";
+import { BASE_URL } from "@constants/config.constant";
 // import CommonIcon from "./common/CommonIcon";
 
 const AboutUs = () => {
@@ -12,11 +13,11 @@ const AboutUs = () => {
           <div className="w-full flex align-middle items-center">
             <div className="block w-full">
               <Image
-                src="/image/about_title.png"
+                src={`${BASE_URL}/image/about_title.png`}
                 width={500}
                 height={500}
                 className="w-full max-w-lg m-auto"
-                alt="brain image"
+                alt="ABOUT IMAGE"
               />
             </div>
           </div>
