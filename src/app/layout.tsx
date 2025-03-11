@@ -6,7 +6,6 @@ import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
 import { Metadata } from "next";
-import RootLayoutClient from "components/RootLayoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,9 +32,7 @@ export default function RootLayout({
           <body className={inter.className}>
             <AuthProvider>
               <ProtectedRoute>
-                <GameWrapper>
-                  <RootLayoutClient>{children}</RootLayoutClient>
-                </GameWrapper>
+                <GameWrapper>{children}</GameWrapper>
               </ProtectedRoute>
             </AuthProvider>
           </body>
