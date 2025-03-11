@@ -1,12 +1,13 @@
-'use client';
-import React from 'react';
-import { IconSurvey } from './common/Icons';
-import Image from 'next/image';
-import { useLanguageProvider } from 'state/provider/LanguageProvider';
-import { LOCALSTORAGE } from '@constants/storage.constant';
-import { getLocalStorageValue } from '@utils/localStorage';
-import { API_ENDPOINT } from '@constants/api.constant';
-import { useRouter } from 'next/navigation';
+"use client";
+import React from "react";
+import { IconSurvey } from "./common/Icons";
+import Image from "next/image";
+import { useLanguageProvider } from "state/provider/LanguageProvider";
+import { LOCALSTORAGE } from "@constants/storage.constant";
+import { getLocalStorageValue } from "@utils/localStorage";
+import { API_ENDPOINT } from "@constants/api.constant";
+import { useRouter } from "next/navigation";
+import { BASE_URL } from "@constants/config.constant";
 
 const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
@@ -22,7 +23,7 @@ const ActionBanner = () => {
       <div className="container mx-auto overflow-hidden p-8 md:p-10 lg:p-12 ">
         <div className="grid grid-row gap-8 cols-reverse md:grid-cols-2">
           <div className="flex flex-col justify-center order-2 md:order-1">
-            <span className="w-20 h-2 bg-gray-800 dark:bg-white mb-12"></span>{' '}
+            <span className="w-20 h-2 bg-gray-800 dark:bg-white mb-12"></span>{" "}
             <p className="self-start inline font-sans text-xl font-medium text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-green-600">
               {languageContent.banner.shortText}
             </p>
@@ -59,7 +60,7 @@ const ActionBanner = () => {
             <div className="block w-full">
               {/* <img src="/brain.png" className="w-full max-w-lg m-auto" /> */}
               <Image
-                src="/brain.png"
+                src={`${BASE_URL}/brain.png`}
                 width={500}
                 height={500}
                 className="w-full max-w-lg m-auto"

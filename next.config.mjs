@@ -7,6 +7,7 @@ const nextConfig = {
   basePath: "/start",
   // gitHub Pages compatibility
   trailingSlash: true,
+  images: { unoptimized: true },
 };
 
 export default withSerwist({

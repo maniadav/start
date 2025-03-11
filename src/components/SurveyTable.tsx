@@ -100,7 +100,7 @@ const SurveyTable = () => {
                                   <button
                                     onClick={() =>
                                       router.push(
-                                        `${
+                                        `/${
                                           TasksConstant[items].surveyRoute
                                         }?attempt=${
                                           parseInt(

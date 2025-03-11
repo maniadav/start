@@ -11,6 +11,6 @@ export const API_ENDPOINT = {
   },
   page: {
     survey: "/survey",
-    
+    content: "/content",
   },
 };
