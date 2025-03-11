@@ -3,7 +3,7 @@ name: Deploy Next.js PWA to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - github
 permissions:
   contents: write
 
@@ -24,11 +24,10 @@ jobs:
         run: yarn install
 
       - name: Build Next.js App
-        run: yarn run build
+        run: yarn build && yarn export
 
-      - name: Setup GitHub Pages
-        run: |
-          touch out/.nojekyll  # Prevents GitHub Pages from ignoring `_next` folder
+      - name: Create .nojekyll file
+        run: touch out/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
