@@ -6,7 +6,6 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
-import CommonIcon from "components/common/CommonIcon";
 import { getRandomVideo } from "./RandomVideo";
 import CloseGesture from "components/CloseGesture";
 import { ButtonContent as TaskContent } from "@constants/tasks.constant";
