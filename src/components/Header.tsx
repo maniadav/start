@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import CommonIcon from "./common/CommonIcon";
-import { NavSideBar2 } from "./NavSideBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API_ENDPOINT } from "@constants/api.constant";
@@ -102,8 +101,6 @@ export const Header = () => {
             click={toggle}
           />
         </div>
-
-        <NavSideBar2 closeSidear={toggle} />
       </div>
     </div>
   );

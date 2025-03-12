@@ -1,13 +1,14 @@
-// next.config.mjs
 import withSerwist from "@serwist/next";
 
+const isGithub = true;
+
 const nextConfig = {
-  // next static export logic
-  output: "export",
-  basePath: "/start",
-  // gitHub Pages compatibility
+  output: isGithub ? "export" : undefined,
+  basePath: isGithub ? "/start" : "",
   trailingSlash: true,
-  images: { unoptimized: true },
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default withSerwist({
