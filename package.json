@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:gh-page": "npx serve out",
     "start": "next start",
     "lint": "next lint"
   },

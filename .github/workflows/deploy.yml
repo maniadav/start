@@ -24,7 +24,7 @@ jobs:
         run: yarn install
 
       - name: Build Next.js App
-        run: yarn build
+        run: yarn build:gh-pages
 
       - name: Create .nojekyll file
         run: touch out/.nojekyll
