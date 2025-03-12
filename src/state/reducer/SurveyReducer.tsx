@@ -30,7 +30,6 @@ export type Action =
     };
 
 export const SurveyReducer = (state: SurveyState, action: Action): any => {
-  // console.log("pinned dispatched", action);
   switch (action.type) {
     case "SET_SURVEY_DATA":
       return { ...state, ...action.payload };
@@ -47,6 +46,7 @@ export const SurveyReducer = (state: SurveyState, action: Action): any => {
           },
         },
       };
+
     default:
       return { ...state };
   }
