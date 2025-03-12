@@ -1,6 +1,7 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import ErrorComponent from './common/ErrorComponent';
+"use client";
+import React, { useEffect, useState } from "react";
+import ErrorComponent from "./common/ErrorComponent";
+import { BASE_URL } from "@constants/config.constant";
 //  make sure screen is in landscape mode
 
 const GameWrapper = ({ children }: any) => {
@@ -16,11 +17,11 @@ const GameWrapper = ({ children }: any) => {
       }
     };
 
-    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener("resize", handleOrientationChange);
     handleOrientationChange(); // Initial check
 
     return () => {
-      window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener("resize", handleOrientationChange);
     };
   }, []);
 
@@ -43,13 +44,13 @@ const GameWrapper = ({ children }: any) => {
     };
 
     // Add event listener for window resize
-    window.addEventListener('resize', checkWindowSize);
+    window.addEventListener("resize", checkWindowSize);
 
     // Initial check
     checkWindowSize();
 
     // Cleanup event listener on component unmount
-    return () => window.removeEventListener('resize', checkWindowSize);
+    return () => window.removeEventListener("resize", checkWindowSize);
   }, [initialWidth]);
 
   return (
@@ -60,20 +61,20 @@ const GameWrapper = ({ children }: any) => {
             <div className="w-full overflow-hidden m-0">{children}</div>
           ) : (
             <ErrorComponent
-              imageUrl={'/image/restrict.jpg'}
-              title={'Uh-oh! Something went off-screen...'}
+              imageUrl={`${BASE_URL}/image/restrict.jpg`}
+              title={"Uh-oh! Something went off-screen..."}
               subTitle={
-                'It looks like resizing the window caused this issue. Please restore the screen to its recommended size or visit the homepage to continue exploring.'
+                "It looks like resizing the window caused this issue. Please restore the screen to its recommended size or visit the homepage to continue exploring."
               }
             />
           )}
         </>
       ) : (
         <ErrorComponent
-          imageUrl={'/image/sadcat.png'}
+          imageUrl={`${BASE_URL}/image/sadcat.png`}
           title={"Oops! Looks like your device dimensions aren't compatible"}
           subTitle={
-            'Please rotate your device to portrait mode to continue using the application.'
+            "Please rotate your device to portrait mode to continue using the application."
           }
         />
       )}

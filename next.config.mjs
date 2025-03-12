@@ -4,7 +4,7 @@ import withSerwist from "@serwist/next";
 const nextConfig = {
   // next static export logic
   output: "export",
-  basePath: "/start",
+  basePath: "",
   // gitHub Pages compatibility
   trailingSlash: true,
   images: { unoptimized: true },

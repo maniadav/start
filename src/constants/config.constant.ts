@@ -1,1 +1,1 @@
-export const BASE_URL = "/start";
+export const BASE_URL = "";

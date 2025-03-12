@@ -1,11 +1,14 @@
 import React from "react";
 import SurveyDataDetails from "./SurveyDataDetails";
+import TopNav from "components/TopNav";
 
 const HomePage = () => {
   return (
-    <div className="container mx-auto px-4 text-black">
-      <h1 className="text-2xl font-bold my-4">Assessment Data Display</h1>
-      <SurveyDataDetails />
+    <div className="w-full p-8">
+      <TopNav primaryText={"Assessment"} secondaryText={"Data"} />
+      <div className="container mx-auto py-20 px-4 text-black">
+        <SurveyDataDetails />
+      </div>
     </div>
   );
 };

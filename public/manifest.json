@@ -8,6 +8,15 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000",
+  "shortcuts": [
+    {
+      "name": "Open START",
+      "short_name": "START",
+      "description": "Open the survey page",
+      "url": "/start",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
