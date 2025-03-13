@@ -4,13 +4,12 @@ import { TasksConstant } from "constants/tasks.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PlusIcon, TickedIcon } from "./common/svg";
 import { useRouter } from "next/navigation";
-import { FaDownload } from "react-icons/fa6";
 import DataDownloadButton from "./DataDownloadButton";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();
   const router = useRouter();
-  // console.log({ state });
+
   return (
     <section className="text-gray-700 body-font overflow-hidden">
       <div className="container px-5 py-20 mx-auto flex flex-col ">

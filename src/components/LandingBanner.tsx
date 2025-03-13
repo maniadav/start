@@ -3,6 +3,7 @@ import React from "react";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
 import InstallButton from "./button/AppDownload";
 import Link from "next/link";
+import { BASE_URL } from "@constants/config.constant";
 
 const LandingBanner = () => {
   const { languageContent } = useLanguageProvider();
@@ -60,7 +61,7 @@ const LandingBanner = () => {
         muted
         className="z-10 absolute min-h-full  max-w-none w-auto min-w-full backdrop-blur-sm"
       >
-        <source src="/video/home.mp4" type="video/mp4" />
+        <source src={`${BASE_URL}/video/home.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </header>

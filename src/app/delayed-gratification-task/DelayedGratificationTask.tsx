@@ -7,9 +7,9 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import ProgressiveCircle from "./ProgrgessiveCircle";
-import Firework from "./FireWork";
 import CloseGesture from "components/CloseGesture";
 import { DelayedGratificationContent as TaskContent } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -140,7 +140,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
             className="absolute top-0 left-0 w-full h-full object-fit"
             autoPlay
           >
-            <source src="video/firework.mp4" type="video/mp4" />
+            <source src={`${BASE_URL}/video/firework.mp4`} type="video/mp4" />
           </video>
         </div>
       ) : (

@@ -8,6 +8,7 @@ import CloseGesture from "components/CloseGesture";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import VidProcessingPopup from "components/common/VidProcessingPopup";
 import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -140,7 +141,10 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           autoPlay
           muted
         >
-          <source src="video/preferential.mp4" type="video/mp4" />
+          <source
+            src={`${BASE_URL}/video/preferential.mp4"`}
+            type="video/mp4"
+          />
         </video>
       </div>
 

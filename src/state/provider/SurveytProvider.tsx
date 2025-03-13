@@ -1,22 +1,22 @@
-'use client';
-import { IndexDB_Storage } from '@constants/storage.constant';
-import { InitialSurveyState } from '@constants/survey.data.constant';
-import { getIndexedDBValue, setIndexedDBValue } from '@utils/indexDB';
+"use client";
+import { IndexDB_Storage } from "@constants/storage.constant";
+import { InitialSurveyState } from "@constants/survey.data.constant";
+import { getIndexedDBValue, setIndexedDBValue } from "@utils/indexDB";
 import React, {
   useReducer,
   ReactNode,
   useContext,
   useEffect,
   useState,
-} from 'react';
-import SurveyContext from 'state/context/SurveyContext';
-import { SurveyReducer } from 'state/reducer/SurveyReducer';
+} from "react";
+import SurveyContext from "state/context/SurveyContext";
+import { SurveyReducer } from "state/reducer/SurveyReducer";
 
 const SurveyProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(SurveyReducer, InitialSurveyState);
   const [isStateLoaded, setIsStateLoaded] = useState(false); // Tracks if the state is initialized
 
-  // Load persisted state from IndexedDB only once
+  // load state from IndexedDB only once
   useEffect(() => {
     const loadPersistedState = async () => {
       try {
@@ -26,12 +26,12 @@ const SurveyProvider = ({ children }: { children: ReactNode }) => {
         );
         if (persistedState && !isStateLoaded) {
           dispatch({
-            type: 'SET_SURVEY_DATA',
+            type: "SET_SURVEY_DATA",
             payload: persistedState,
           });
         }
       } catch (error) {
-        console.error('Failed to load persisted survey state:', error);
+        console.error("Failed to load persisted survey state:", error);
       } finally {
         setIsStateLoaded(true);
       }
@@ -52,7 +52,7 @@ const SurveyProvider = ({ children }: { children: ReactNode }) => {
             state
           );
         } catch (error) {
-          console.error('Failed to save survey state:', error);
+          console.error("Failed to save survey state:", error);
         }
       };
       persistState();
@@ -69,7 +69,7 @@ const SurveyProvider = ({ children }: { children: ReactNode }) => {
 const useSurveyContext = () => {
   const context = useContext(SurveyContext);
   if (!context) {
-    throw new Error('useSurveyContext must be used within a SurveyProvider');
+    throw new Error("useSurveyContext must be used within a SurveyProvider");
   }
   return context;
 };

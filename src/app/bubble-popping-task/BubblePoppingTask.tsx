@@ -15,6 +15,7 @@ import {
   BubblePoppingContent as TaskContent,
   TasksConstant,
 } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 export const colors: string[] = [
   "red",
@@ -229,7 +230,12 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     <>
       <div className="relative w-screen h-screen overflow-hidden">
         {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
-        <Image src="/ocean.jpg" layout="fill" objectFit="cover" alt="ocean" />
+        <Image
+          src={`${BASE_URL}/ocean.jpg`}
+          layout="fill"
+          objectFit="cover"
+          alt="ocean"
+        />
         {positionRange && screenWidth && screenHeight && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
             <div className="flex flex-wrap justify-center">

@@ -17,6 +17,7 @@ import { Coordinate } from "types/survey.types";
 import useAudio from "@hooks/useAudio";
 import CloseGesture from "components/CloseGesture";
 import { MotorFollowingContent as TaskContent } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -59,7 +60,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
   // require for updated movement data
@@ -378,7 +379,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             className="z-10 absolute flex items-center top-0 left-0 w-full h-full bg-cover bg-center"
           >
             <Image
-              src={"/arrow.png"}
+              src={`${BASE_URL}/arrow.png`}
               alt={"arrow"}
               width={100}
               height={100}
@@ -388,7 +389,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         )}
         <div
           className="z-0 absolute top-0 left-0 w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url('/motor_bg.jpg')` }}
+          style={{ backgroundImage: `url('${BASE_URL}/motor_bg.jpg')` }}
         ></div>
       </div>
     );
