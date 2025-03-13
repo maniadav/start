@@ -1,10 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import TimerComponent from './TimerComponent';
-import TouchPressureComponent from 'app/bubble-popping-task/TouchPressure';
-import { IndexDB_Storage, LOCALSTORAGE } from '@constants/storage.constant';
-import { getLocalStorageValue } from '@utils/localStorage';
-import { VideoProcessorComponent } from 'app/preferential-looking-task/VideoProcessorComponent';
+import { IndexDB_Storage } from '@constants/storage.constant';
 import PopupModal from 'components/common/PopupModal';
 import DepthEstimation from 'app/wheel-task/DepthEstimation';
 import { getIndexedDBValue } from '@utils/indexDB';
