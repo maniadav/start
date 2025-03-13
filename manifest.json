@@ -1,15 +1,6 @@
 {
   "orientation": "landscape",
   "name": "START",
-  "shortcuts": [
-    {
-      "name": "Open START",
-      "short_name": "START",
-      "description": "Open the survey page",
-      "url": "/start",
-      "icons": [{ "src": "/start/icons/icon-192.png", "sizes": "192x192" }]
-    }
-  ],
   "protocol_handlers": [
     {
       "protocol": "web+start",
@@ -23,6 +14,15 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000",
+  "shortcuts": [
+    {
+      "name": "Open START",
+      "short_name": "START",
+      "description": "Open the survey page",
+      "url": "/start",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "/start/icons/icon-192.png",
