@@ -10,6 +10,7 @@ import CloseGesture from "components/CloseGesture";
 import DepthEstimation from "./DepthEstimation";
 import PopupModal from "components/common/PopupModal";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -121,7 +122,7 @@ const WheelTask = ({ isSurvey = false }) => {
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
-          src="/hallucination.gif"
+          src={`${BASE_URL}/gif/hallucination.gif`}
           layout="fill"
           objectFit="contain"
           alt="ocean"

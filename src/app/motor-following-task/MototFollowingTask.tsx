@@ -379,7 +379,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             className="z-10 absolute flex items-center top-0 left-0 w-full h-full bg-cover bg-center"
           >
             <Image
-              src={`${BASE_URL}/arrow.png`}
+              src={`${BASE_URL}/image/arrow.png`}
               alt={"arrow"}
               width={100}
               height={100}
@@ -389,7 +389,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         )}
         <div
           className="z-0 absolute top-0 left-0 w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url('${BASE_URL}/motor_bg.jpg')` }}
+          style={{ backgroundImage: `url('${BASE_URL}/image/motor_bg.jpg')` }}
         ></div>
       </div>
     );

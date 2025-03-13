@@ -231,7 +231,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
       <div className="relative w-screen h-screen overflow-hidden">
         {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
         <Image
-          src={`${BASE_URL}/ocean.jpg`}
+          src={`${BASE_URL}/image/ocean.jpg`}
           layout="fill"
           objectFit="cover"
           alt="ocean"

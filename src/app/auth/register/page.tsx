@@ -130,7 +130,7 @@ const RegisterPage = () => {
                   <div className="relative w-auto h-auto flex justify-center py-4">
                     <label htmlFor="profile">
                       <Image
-                        src={file || "/profile.png"}
+                        src={file || "/image/profile.png"}
                         className="w-28 h-28 rounded-full cursor-pointer border-2 border-gray-400"
                         alt="avatar"
                         width={150}

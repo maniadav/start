@@ -47,7 +47,7 @@ const ContentPage = () => {
         </div>
         <div className="flex justify-end col-span-3 md:col-span-1">
           <Image
-            src={`${BASE_URL}/survey.jpg`}
+            src={`${BASE_URL}/image/survey.jpg`}
             width={400}
             height={500}
             className="w-full h-full object-cover"

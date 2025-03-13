@@ -41,7 +41,7 @@ export const Header = () => {
             <div className="flex items-center cursor-pointer px-3 py-2 text-sm font-normal text-center">
               <div className="h-auto mx-2">
                 <Image
-                  src={user?.profile || `${BASE_URL}/user.svg`}
+                  src={user?.profile || `${BASE_URL}/svg/user.svg`}
                   alt="logo"
                   className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
                   width={32}
