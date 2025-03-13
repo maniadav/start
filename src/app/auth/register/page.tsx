@@ -14,6 +14,7 @@ import Image from "next/image";
 import { API_ENDPOINT } from "@constants/api.constant";
 import { setLocalStorageValue } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 interface FormDataType {
   email: string;
@@ -130,7 +131,7 @@ const RegisterPage = () => {
                   <div className="relative w-auto h-auto flex justify-center py-4">
                     <label htmlFor="profile">
                       <Image
-                        src={file || "/image/profile.png"}
+                        src={file || `${BASE_URL}/image/profile.png`}
                         className="w-28 h-28 rounded-full cursor-pointer border-2 border-gray-400"
                         alt="avatar"
                         width={150}
