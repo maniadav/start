@@ -12,7 +12,6 @@ const nextConfig = {
 };
 
 export default withSerwist({
-  // Service Worker configuration
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
 })(nextConfig);
