@@ -1,47 +1,76 @@
+// _sw-default-cache.ts
 import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from "serwist";
 
-// export const cacheKeyWillBeUsed = ({ request }: any) => {
-//   const url = new URL(request.url);
-//   return url.pathname; // Treat /abc?attempt=1 as /abc
-// };
+const CACHE_NAMES = {
+  PAGES: "pages-v2",
+  ASSETS: "assets-v2",
+  IMAGES: "images-v2",
+  CDN: "cdn-models-v1",
+  DATA: "dynamic-data-v1",
+};
+
+const commonPlugins = [
+  {
+    cacheKeyWillBeUsed: async ({ request }: { request: Request }) => {
+      const url = new URL(request.url);
+      return url.href; // Maintain full URL including query params for non-page resources
+    },
+    cacheWillUpdate: async ({ response }: { response: Response }) => {
+      return response.status === 200 ? response : null;
+    },
+  },
+];
 
 export const defaultCache = [
+  // Network-first for HTML pages
   {
-    matcher: ({ request }: any) => request.destination === "document",
-    // strategy: new NetworkFirst({
-    //   cacheName: "pages",
-    // }),
+    matcher: ({ request }: { request: Request }) =>
+      request.destination === "document" && request.mode === "navigate",
     strategy: new NetworkFirst({
-      cacheName: "pages",
-      matchOptions: {
-        ignoreSearch: true, // Ignores query parameters when checking the cache
-      },
+      cacheName: CACHE_NAMES.PAGES,
+      networkTimeoutSeconds: 3,
+      matchOptions: { ignoreSearch: true },
       plugins: [
         {
           cacheKeyWillBeUsed: async ({ request }) => {
             const url = new URL(request.url);
-            return url.pathname; // Treats `/delayed-gratification-task?attempt=1` as `/delayed-gratification-task`
-          },
-          cacheWillUpdate: async ({ response }) => {
-            return response.status === 200 ? response : null;
+            return url.pathname; // Ignore query params for page cache
           },
         },
       ],
     }),
   },
+  // Cache-first for CDN resources (models, etc.)
   {
-    matcher: ({ request }: any) =>
-      request.destination === "script" || request.destination === "style",
+    matcher: ({ request }: { request: Request }) => {
+      const url = new URL(request.url);
+      // Update this pattern to match your CDN URLs
+      return (
+        url.origin === "https://your-cdn-domain.com" ||
+        url.pathname.includes("/models/")
+      );
+    },
     strategy: new CacheFirst({
-      cacheName: "assets",
+      cacheName: CACHE_NAMES.CDN,
+      plugins: commonPlugins,
     }),
   },
+  // Stale-while-revalidate for other assets
   {
-    matcher({ request }: any) {
-      return request.destination === "image";
-    },
+    matcher: ({ request }: { request: Request }) =>
+      ["script", "style", "font"].includes(request.destination),
     strategy: new StaleWhileRevalidate({
-      cacheName: "images",
+      cacheName: CACHE_NAMES.ASSETS,
+      plugins: commonPlugins,
+    }),
+  },
+  // Cache images
+  {
+    matcher: ({ request }: { request: Request }) =>
+      request.destination === "image",
+    strategy: new StaleWhileRevalidate({
+      cacheName: CACHE_NAMES.IMAGES,
+      plugins: commonPlugins,
     }),
   },
 ];

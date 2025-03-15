@@ -9,6 +9,17 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack: (config) => {
+    // rule for .task files
+    config.module.rules.push({
+      test: /\.task$/,
+      type: "asset/resource",
+      generator: {
+        filename: "static/[hash][ext][query]", // Custom output path
+      },
+    });
+    return config;
+  },
 };
 
 export default withSerwist({

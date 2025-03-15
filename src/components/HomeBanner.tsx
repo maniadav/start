@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { BASE_URL } from "@constants/config.constant";
 
 const HomeBanner = () => {
   return (
@@ -44,7 +45,7 @@ const HomeBanner = () => {
           </div>
           <div className="block w-full p-6 md:p-12">
             <Image
-              src="/brain.png"
+              src={`${BASE_URL}/image/brain.png`}
               className="w-full max-w-lg m-auto"
               alt="hds"
               height={600}

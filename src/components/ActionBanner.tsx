@@ -63,11 +63,9 @@ const ActionBanner = () => {
             </div>
           </div>
           <div className="order-1 md:order-2">
-            {/* <div className="-mr-24 rounded-lg md:rounded-l-full bg-gradient-to-br from-gray-900 to-black h-96"></div> */}
             <div className="block w-full">
-              {/* <img src="/brain.png" className="w-full max-w-lg m-auto" /> */}
               <Image
-                src={`${BASE_URL}/brain.png`}
+                src={`${BASE_URL}/image/brain.png`}
                 width={500}
                 height={500}
                 className="w-full max-w-lg m-auto"

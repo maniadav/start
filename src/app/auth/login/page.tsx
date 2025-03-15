@@ -233,7 +233,7 @@ const LoginPage = () => {
             <div
               className="absolute w-full h-full bg-cover bg-top bg-no-repeat"
               style={{
-                backgroundImage: `url('/image/hand.jpg')`,
+                backgroundImage: `url('${BASE_URL}/image/hand.jpg')`,
               }}
             ></div>
           </div>

@@ -151,7 +151,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           <Image
             width={600}
             height={600}
-            src="/gif/star2.gif"
+            src={`${BASE_URL}/gif/star.gif`}
             objectFit="contain"
             alt="langaugesampling.png"
             className="border-b"

@@ -45,6 +45,7 @@ const Page = () => {
           reAttemptUrl={'reAttemptUrl'}
           attempt={0}
           taskID={'PreferentialLookingTask'}
+          videoURL='/large.mp4'
         />
       </PopupModal>
     </div>

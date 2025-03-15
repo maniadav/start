@@ -10,6 +10,7 @@ import AudioRecorder from "@hooks/useAudioRecorder";
 import CommonIcon from "components/common/CommonIcon";
 import CloseGesture from "components/CloseGesture";
 import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
+import { BASE_URL } from "@constants/config.constant";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -123,7 +124,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
-          src="/image/langaugesampling.png"
+          src={`${BASE_URL}/image/langaugesampling.png`}
           layout="fill"
           objectFit="contain"
           alt="langaugesampling.png"
