@@ -11,12 +11,14 @@ import { useRouter } from "next/navigation";
 import { calculateDepth } from "@utils/mediapipe.utils";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { IndexDB_Storage } from "@constants/storage.constant";
+import { downloadFile } from "@helper/downloader";
 
 type DepthEstimationInterface = {
   reAttemptUrl: string | null;
   showFilter: boolean;
   attempt: number;
   taskID: string;
+  videoURL?: string;
 };
 
 const DepthEstimation = ({
@@ -24,6 +26,7 @@ const DepthEstimation = ({
   showFilter,
   attempt,
   taskID,
+  videoURL,
 }: DepthEstimationInterface) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -37,13 +40,16 @@ const DepthEstimation = ({
   const faceLandmarkerRef = useRef<FaceLandmarker | null>(null);
   const drawingUtilsRef = useRef<DrawingUtils | null>(null);
   const router = useRouter();
-  const cdn_file =
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"; //'model/mediapipe'; // or use
+
+  //  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"; //'model/mediapipe'; // or use
+
+  // task vision local files instead of CDN
+  const cdn_file = "/model/mediapipe/task-vision";
 
   useEffect(() => {
     if (showFilter) {
       createFaceLandmarker().then(() => {
-        fetchVideoFromDB();
+        fetchVideoData();
       });
     }
   }, [showFilter]);
@@ -72,20 +78,36 @@ const DepthEstimation = ({
         canvasRef.current?.getContext("2d")!
       );
     } catch (error) {
-      setMsg("error loading model");
-      console.error(error);
+      setMsg(
+        "error loading model: " +
+          (error instanceof Error ? error.message : String(error))
+      );
+      console.error("Detailed model loading error:", error);
       throw new Error("Unable to load model");
     }
   };
 
-  // load video data
-  const fetchVideoFromDB = async () => {
-    setMsg("fetching video data..");
+  const fetchVideoData = async () => {
+    setMsg("Fetching video data...");
+
     try {
+      if (videoURL) {
+        // fetch testing video
+        if (videoRef.current) {
+          videoRef.current.src = videoURL;
+          videoRef.current.addEventListener("loadeddata", () => {
+            processVideo();
+          });
+        }
+        return;
+      }
+
+      // Fetch from IndexedDB if no relative URL is provided
       const videoBase64: string | null = await getIndexedDBValue(
         IndexDB_Storage.temporaryDB,
         IndexDB_Storage.tempVideo
       );
+
       if (videoBase64) {
         const videoBlob = convertBase64ToFile(videoBase64, "video/webm");
         const videoURL = URL.createObjectURL(videoBlob);
@@ -97,12 +119,12 @@ const DepthEstimation = ({
         }
       } else {
         setMsg(
-          `couldn't retrive  key ${IndexDB_Storage.tempVideo} from ${IndexDB_Storage.temporaryDB} database. `
+          `Couldn't retrieve key ${IndexDB_Storage.tempVideo} from ${IndexDB_Storage.temporaryDB} database.`
         );
       }
     } catch (error) {
-      setMsg("Error fetching video from IndexedDB");
-      console.error("Error fetching video from IndexedDB:", error);
+      setMsg("Error fetching video");
+      console.error("Error fetching video:", error);
     }
   };
 
@@ -120,6 +142,18 @@ const DepthEstimation = ({
     video.height = fixedHeight;
     canvasElement.width = fixedWidth;
     canvasElement.height = fixedHeight;
+
+    // Start playing the video
+    try {
+      await video.play();
+    } catch (error) {
+      setMsg(
+        "Error playing video: " +
+          (error instanceof Error ? error.message : String(error))
+      );
+      console.error("Error playing video:", error);
+      return;
+    }
 
     let lastTimestamp = -1;
 
@@ -146,7 +180,7 @@ const DepthEstimation = ({
           video,
           startTimeMs
         );
-        // console.log(results);
+
         if (results?.faceLandmarks && drawingUtilsRef.current) {
           for (const landmarks of results.faceLandmarks) {
             drawingUtilsRef.current.drawConnectors(
@@ -181,7 +215,8 @@ const DepthEstimation = ({
         if (!video.paused && !video.ended) {
           requestAnimationFrame(processFrame);
         } else {
-          // downloadJSON(gazeResults, 'gaze depth');
+          // Video processing complete
+          downloadFile(gazeDistance, "gaze");
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
             gazeDistance,
@@ -194,15 +229,15 @@ const DepthEstimation = ({
             task: taskID,
             data: updatedSurveyData,
           });
-          setMsg("saving data");
+          setMsg("Processing complete! Data saved.");
           setIsProcessing(false);
         }
       } catch (error) {
-        setMsg("Something went wrong while processing the video:");
-        console.error(
-          "Something went wrong while processing the video:",
-          error
+        setMsg(
+          "Error processing video: " +
+            (error instanceof Error ? error.message : String(error))
         );
+        console.error("Video processing error:", error);
         setIsProcessing(false);
       }
     };
@@ -235,8 +270,8 @@ const DepthEstimation = ({
               className="absolute h-full w-full max-w-xl rounded-lg bg-gray-800"
               id="webcam"
               ref={videoRef}
-              autoPlay
               playsInline
+              muted
             >
               Your browser does not support the video tag.
             </video>
@@ -247,6 +282,15 @@ const DepthEstimation = ({
             ></canvas>
             {isProcessing && <p>We are processing the video, please wait...</p>}
           </div>
+          {/* Add progress bar */}
+          {isProcessing && (
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          )}
         </div>
         <div className="w-full flex items-center justify-center p-4 border-t border-gray-200 rounded-b dark:border-gray-600">
           <button
