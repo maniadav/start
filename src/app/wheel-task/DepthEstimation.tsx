@@ -12,6 +12,7 @@ import { calculateDepth } from "@utils/mediapipe.utils";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { IndexDB_Storage } from "@constants/storage.constant";
 import { downloadFile } from "@helper/downloader";
+import { BASE_URL } from "@constants/config.constant";
 
 type DepthEstimationInterface = {
   reAttemptUrl: string | null;
@@ -42,9 +43,10 @@ const DepthEstimation = ({
   const router = useRouter();
 
   //  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"; //'model/mediapipe'; // or use
-
   // task vision local files instead of CDN
-  const cdn_file = "/model/mediapipe/task-vision";
+  const cdn_file = `${BASE_URL}/model/mediapipe/task-vision`;
+  //     "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+  const modelPath = `${BASE_URL}/model/mediapipe/face-landmark/face_landmarker.task`; // Local development path,
 
   useEffect(() => {
     if (showFilter) {
@@ -56,7 +58,7 @@ const DepthEstimation = ({
 
   // model
   const createFaceLandmarker = async () => {
-    setMsg("loading mediapipe model for gaze detection..");
+    setMsg("Loading MediaPipe model for gaze detection...");
     try {
       const filesetResolver = await FilesetResolver.forVisionTasks(cdn_file);
 
@@ -64,8 +66,7 @@ const DepthEstimation = ({
         filesetResolver,
         {
           baseOptions: {
-            modelAssetPath:
-              "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+            modelAssetPath: modelPath,
             delegate: "GPU",
           },
           outputFaceBlendshapes: true,
@@ -77,13 +78,13 @@ const DepthEstimation = ({
       drawingUtilsRef.current = new DrawingUtils(
         canvasRef.current?.getContext("2d")!
       );
+      setMsg("Model loaded successfully");
     } catch (error) {
-      setMsg(
-        "error loading model: " +
-          (error instanceof Error ? error.message : String(error))
-      );
-      console.error("Detailed model loading error:", error);
-      throw new Error("Unable to load model");
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      setMsg(`Error loading model: ${errorMessage}`);
+      console.error("Detailed error:", error);
+      throw new Error("Unable to load face landmark model");
     }
   };
 
