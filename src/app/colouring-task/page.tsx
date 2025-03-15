@@ -2,10 +2,8 @@
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
-import Image from "next/image";
 import { TasksConstant } from "constants/tasks.constant";
 import useAudio from "@hooks/useAudio";
-import MessagePopup from "components/common/MessagePopup";
 import TaskHome from "components/TaskHome";
 import { useRouter } from "next/navigation";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component

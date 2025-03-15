@@ -63,7 +63,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const data = TasksConstant.BubblePoppingTask;
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
-  const bubblePop = useAudio("/audio/bubble-pop.mp3");
+  const bubblePop = useAudio(`${BASE_URL}/audio/bubble-pop.mp3`);
   const reAttemptUrl =
     attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 1800000;

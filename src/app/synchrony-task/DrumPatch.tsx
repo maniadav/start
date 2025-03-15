@@ -1,6 +1,7 @@
-import useAudio from '@hooks/useAudio';
-import React, { useEffect, useState } from 'react';
-import { useSynchronyStateContext } from 'state/provider/SynchronyStateProvider';
+import { BASE_URL } from "@constants/config.constant";
+import useAudio from "@hooks/useAudio";
+import React, { useEffect, useState } from "react";
+import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
 
 interface DrumInterface {
   startTime: number;
@@ -11,7 +12,7 @@ interface DrumInterface {
 const DrumPatch = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
   const [isClicked, setIsClicked] = useState(false);
   const { setDrumClicks } = useSynchronyStateContext();
-  const drumHit = useAudio('/audio/drum-hit.mp3');
+  const drumHit = useAudio(`${BASE_URL}/audio/drum-hit.mp3`);
 
   useEffect(() => {
     if (isClicked) {
@@ -38,9 +39,9 @@ const DrumPatch = ({ startTime, isSurvey, isGameActive }: DrumInterface) => {
   return (
     <div
       className={`w-full h-52 ${
-        isClicked ? 'bg-yellow-300' : 'bg-gray-200'
+        isClicked ? "bg-yellow-300" : "bg-gray-200"
       } highlight:bg-gray-300 border-[10px] border-gray-400 rounded-t-lg cursor-pointer focus:ring`}
-      style={{ borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%' }}
+      style={{ borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%" }}
       onClick={handleDrumPress}
     ></div>
   );
