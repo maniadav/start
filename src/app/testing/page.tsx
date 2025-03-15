@@ -1,13 +1,14 @@
-'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { IndexDB_Storage } from '@constants/storage.constant';
-import PopupModal from 'components/common/PopupModal';
-import DepthEstimation from 'app/wheel-task/DepthEstimation';
-import { getIndexedDBValue } from '@utils/indexDB';
-import { convertBase64ToFile } from '@helper/binaryConvertion';
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { IndexDB_Storage } from "@constants/storage.constant";
+import PopupModal from "components/common/PopupModal";
+import DepthEstimation from "app/wheel-task/DepthEstimation";
+import { getIndexedDBValue } from "@utils/indexDB";
+import { convertBase64ToFile } from "@helper/binaryConvertion";
+import { BASE_URL } from "@constants/config.constant";
 
 const Page = () => {
-  const [vidSRC, setVidSRC] = useState('');
+  const [vidSRC, setVidSRC] = useState("");
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -18,12 +19,12 @@ const Page = () => {
           IndexDB_Storage.tempVideo
         );
         if (videoBase64) {
-          const videoBlob = convertBase64ToFile(videoBase64, 'video/webm');
+          const videoBlob = convertBase64ToFile(videoBase64, "video/webm");
           const videoURL = URL.createObjectURL(videoBlob);
           setVidSRC(videoURL);
         }
       } catch (error) {
-        console.error('Error fetching video from IndexedDB:', error);
+        console.error("Error fetching video from IndexedDB:", error);
       }
     };
     fetchVideoFromDB();
@@ -42,10 +43,10 @@ const Page = () => {
       <PopupModal show={true}>
         <DepthEstimation
           showFilter={true}
-          reAttemptUrl={'reAttemptUrl'}
+          reAttemptUrl={"reAttemptUrl"}
           attempt={0}
-          taskID={'PreferentialLookingTask'}
-          videoURL='/large.mp4'
+          taskID={"PreferentialLookingTask"}
+          videoURL={`${BASE_URL}/large.mp4`}
         />
       </PopupModal>
     </div>
