@@ -148,10 +148,7 @@ const DepthEstimation = ({
     try {
       await video.play();
     } catch (error) {
-      setMsg(
-        "Error playing video: " +
-          (error instanceof Error ? error.message : String(error))
-      );
+      setMsg("Error playing video");
       console.error("Error playing video:", error);
       return;
     }
@@ -231,14 +228,11 @@ const DepthEstimation = ({
             data: updatedSurveyData,
           });
           setMsg("Processing complete! Data saved.");
-          setIsProcessing(false);
         }
       } catch (error) {
-        setMsg(
-          "Error processing video: " +
-            (error instanceof Error ? error.message : String(error))
-        );
+        setMsg("Error processing video");
         console.error("Video processing error:", error);
+      } finally {
         setIsProcessing(false);
       }
     };
