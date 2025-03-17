@@ -31,7 +31,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 30000;
 
   useEffect(() => {
