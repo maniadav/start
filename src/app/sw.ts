@@ -20,6 +20,7 @@ const staticRoutesConfig = [
   "/about",
   "/auth/login",
   "/offline",
+  "testing",
 ];
 
 // dynamic routes

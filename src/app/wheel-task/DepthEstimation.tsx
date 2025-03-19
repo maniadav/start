@@ -214,7 +214,7 @@ const DepthEstimation = ({
           requestAnimationFrame(processFrame);
         } else {
           // Video processing complete
-          downloadFile(gazeDistance, "gaze");
+          downloadFile(gazeDistance, "gaze-data");
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
             gazeDistance,
