@@ -1,29 +1,70 @@
-// sw.ts
-import { Serwist } from "serwist";
-import { defaultCache } from "./_sw-default-cache";
+import { PrecacheEntry, Serwist, SerwistGlobalConfig } from "serwist";
 import { BASE_URL } from "@constants/config.constant";
+import { CACHE_NAME, CACHE_VERSION } from "./pwa.config.constant";
+// import { defaultCache } from "./_sw-default-cache";
+import { defaultCache } from "@serwist/next/worker";
 
-declare const self: ServiceWorkerGlobalScope & {
-  __SW_MANIFEST: Array<{ url: string; revision: string | null }>;
-};
+declare global {
+  interface WorkerGlobalScope extends SerwistGlobalConfig {
+    __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
+  }
+}
 
-const CACHE_NAME = "api-cache-v2";
+declare const self: ServiceWorkerGlobalScope;
 
-// Generate attempt URLs programmatically
-const generateAttemptUrls = (basePath: string, attempts: number) =>
-  Array.from({ length: attempts }, (_, i) => ({
-    url: `${BASE_URL}${basePath}?attempt=${i + 1}`,
-    revision: "v2",
-  }));
+// static routes
+const staticRoutesConfig = [
+  "/",
+  "/survey",
+  "/content",
+  "/about",
+  "/auth/login",
+  "/offline",
+];
+
+// dynamic routes
+const dynamicRouteConfigs = [
+  { base: "/bubble-popping-task", attempts: 3 },
+  { base: "/motor-following-task", attempts: 3 },
+  { base: "/button-task", attempts: 3 },
+  { base: "/wheel-task", attempts: 3 },
+  { base: "/delayed-gratification-task", attempts: 3 },
+  { base: "/synchrony-task", attempts: 3 },
+  { base: "/preferential-looking-task", attempts: 3 },
+];
+
+// Generate all URLs to precache before Serwist initialization
+const staticRoutes = staticRoutesConfig.map((path) => ({
+  url: `${BASE_URL}${path}`,
+  revision: CACHE_VERSION,
+}));
+
+// For dynamic routes, we can either:
+// 1. Precache the base route and handle the query params with runtime caching
+// 2. Or precache each variation if they're different
+const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base }) => ({
+  url: `${BASE_URL}${base}`,
+  revision: CACHE_VERSION,
+}));
+
+// create precache list
+console.log({ staticRoutes, dynamicRoutes });
+const precacheEntries = [
+  ...(self.__SW_MANIFEST || []),
+  ...staticRoutes,
+  ...dynamicRoutes,
+];
 
 const serwist = new Serwist({
-  precacheEntries: self.__SW_MANIFEST,
+  precacheEntries: precacheEntries, //self.__SW_MANIFEST
   skipWaiting: true,
   clientsClaim: true,
-  runtimeCaching: defaultCache.map((cache) => ({
-    ...cache,
-    handler: cache.strategy,
-  })),
+  runtimeCaching: defaultCache,
+  // runtimeCaching: defaultCache.map((cache) => ({
+  //   ...cache,
+  //   handler: cache.strategy,
+  // })),
+
   fallbacks: {
     entries: [
       {
@@ -35,35 +76,28 @@ const serwist = new Serwist({
   },
 });
 
-self.addEventListener("install", () => {
-  const staticRoutes = [
-    "/",
-    "/survey",
-    "/content",
-    "/about",
-    "/auth/login",
-    "/motor-following-task",
-    "/offline",
-  ].map((path) => ({ url: `${BASE_URL}${path}`, revision: "v2" }));
-
-  const dynamicRoutes = [
-    { base: "/bubble-popping-task", attempts: 3 },
-    { base: "/button-task", attempts: 3 },
-    { base: "/wheel-task", attempts: 3 },
-    { base: "/delayed-gratification-task", attempts: 3 },
-    { base: "/synchrony-task", attempts: 3 },
-    { base: "/preferential-looking-task", attempts: 3 },
-  ].flatMap(({ base, attempts }) => generateAttemptUrls(base, attempts));
-
-  serwist.addToPrecacheList([...staticRoutes, ...dynamicRoutes]);
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.delete(CACHE_NAME).then(() => {
-      return caches.open(CACHE_NAME);
-    })
-  );
+// No need to add to precache list in the install event as we've already included everything
+self.addEventListener("install", (event) => {
+  // You could add additional install logic here if needed
+  console.log("Service worker installed");
 });
 
 serwist.addEventListeners();
+
+// self.addEventListener("activate", (event) => {
+//   event.waitUntil(
+//     caches.keys().then((cacheNames) =>
+//       Promise.all(
+//         cacheNames
+//           .filter(
+//             (name) =>
+//               name.startsWith(CACHE_NAME) && !name.includes(CACHE_VERSION)
+//           )
+//           .map((name) => {
+//             console.log("Deleting old cache:", name);
+//             return caches.delete(name);
+//           })
+//       )
+//     )
+//   );
+// });
