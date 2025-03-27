@@ -10,8 +10,6 @@ import { WheelContent as TaskContent } from "constants/tasks.constant";
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
 
-  const data = TasksConstant.WheelTask;
-
   const handleStartGame = () => {
     setSurvey(!survey);
   };

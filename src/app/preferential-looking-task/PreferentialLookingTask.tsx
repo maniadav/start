@@ -63,9 +63,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
+    await startVidRecording();
     handleTimer();
-    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();

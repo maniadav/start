@@ -32,8 +32,8 @@ const DepthEstimation = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
-  const [gazeDistance, setGazeDistance] = useState<number[]>([]);
-  const [gazeTiming, setGazeTiming] = useState<number[]>([]);
+  const [gazeDistance, setGazeDistance] = useState<number[]>([0]);
+  const [gazeTiming, setGazeTiming] = useState<number[]>([0]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>("");
   const { state, dispatch } = useSurveyContext();
@@ -219,6 +219,7 @@ const DepthEstimation = ({
             ...state[taskID][`attempt${attempt}`],
             gazeDistance,
             gazeTiming,
+            videoDuration: video.duration,
           };
 
           dispatch({

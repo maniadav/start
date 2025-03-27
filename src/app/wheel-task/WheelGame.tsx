@@ -30,7 +30,7 @@ const WheelTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
     attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000; // 3 min
+  const timeLimit = 30000; // 30 sec
 
   useEffect(() => {
     if (isSurvey) {
@@ -45,9 +45,9 @@ const WheelTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
+    await startVidRecording();
     handleTimer();
-    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
