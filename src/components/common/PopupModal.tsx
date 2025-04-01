@@ -1,30 +1,4 @@
 interface IPopup {
-  show: boolean;
-  children: any;
-  onRequestClose?: () => void;
-}
-
-const PopupModal = ({ show, children, onRequestClose }: IPopup) => {
-  return (
-    <div className={`${show ? "show" : "hidden"}`}>
-      <div
-        className="z-50 inset-0 fixed bg-black bg-opacity-[0.6]"
-        onClick={() => onRequestClose && onRequestClose()}
-      >
-        <div
-          className="relative w-full h-full overflow-y-scroll"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default PopupModal;
-
-interface IPopup2 {
   slideBottom?: boolean;
   slideTop?: boolean;
   slideRight?: boolean;
@@ -35,7 +9,7 @@ interface IPopup2 {
   customStyle?: any;
 }
 
-export const PopupModal2 = ({
+export const PopupModal = ({
   show,
   children,
   onRequestClose,
@@ -44,7 +18,7 @@ export const PopupModal2 = ({
   slideRight = false,
   slideLeft = false,
   customStyle,
-}: IPopup2) => {
+}: IPopup) => {
   return (
     <div
       className={`${

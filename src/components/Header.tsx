@@ -7,9 +7,13 @@ import { API_ENDPOINT } from "@constants/api.constant";
 import { useAuth } from "state/provider/AuthProvider";
 import Link from "next/link";
 import LanguageToggle from "./LanguageToggle";
-import { getLocalStorageValue } from "@utils/localStorage";
+import {
+  clearLocalStorageValue,
+  getLocalStorageValue,
+} from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { BASE_URL } from "@constants/config.constant";
+import LogOutPopupModal from "./popup/LogOutPopup";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,8 +105,6 @@ export const Header = () => {
             click={toggle}
           />
         </div>
-
-
       </div>
     </div>
   );
@@ -134,6 +136,15 @@ export const menuLink = [
 export const DropDown = () => {
   const router = useRouter();
   const { user } = useAuth();
+  console.log({ user });
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const handleLogout = () => {
+    if (user?.childID) {
+      setShowPopup(!showPopup);
+    } else {
+      router.push(`${API_ENDPOINT.auth.login}`);
+    }
+  };
 
   return (
     <div className="mr-20 absolute z-10 bg-white rounded-lg shadow w-44 dark:bg-gray-700">
@@ -149,18 +160,19 @@ export const DropDown = () => {
         </Link>
         <button
           className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
-          onClick={() => {
-            localStorage.clear();
-            router.push(`${API_ENDPOINT.auth.login}`);
-          }}
+          onClick={() => handleLogout()}
         >
           <span className="">
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
 
-          <span> {user ? "Logout" : "Sign In"}</span>
+          <span> {user?.childID ? "Logout" : "Sign In"}</span>
         </button>
       </div>
+      <LogOutPopupModal
+        showFilter={showPopup}
+        closeModal={() => setShowPopup(!showPopup)}
+      />
     </div>
   );
 };

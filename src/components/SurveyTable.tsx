@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PlusIcon, TickedIcon } from "./common/svg";
@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation";
 import DataDownloadButton from "./DataDownloadButton";
 import BatchDataDownloadButton from "./BatchDataDownloadButton";
 import { FaUpload } from "react-icons/fa6";
+import LogOutPopupModal from "./popup/LogOutPopup";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();
   const router = useRouter();
+
 
   return (
     <section className="text-gray-700 body-font overflow-hidden">
@@ -132,6 +134,7 @@ const SurveyTable = () => {
                   </tbody>
                 </table>
               </div>
+
               <div className="mt-12 flex flex-col justify-center gap-y-5 sm:mt-10 sm:flex-row sm:gap-y-0 sm:gap-x-6">
                 <a
                   className="group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900 animate-fade-in-left"

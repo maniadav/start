@@ -1,7 +1,7 @@
-'use client';
-import { PopupModal2 } from './PopupModal';
-import { useRouter } from 'next/navigation';
-import GazeDetection from 'app/preferential-looking-task/GazeDetection';
+"use client";
+import { PopupModal } from "./PopupModal";
+import { useRouter } from "next/navigation";
+import GazeDetection from "app/preferential-looking-task/GazeDetection";
 
 interface msgPopUp {
   attempt: number;
@@ -20,7 +20,7 @@ const VidProcessingPopup = ({
   const router = useRouter();
   console.log({ showFilter });
   return (
-    <PopupModal2 show={showFilter} slideBottom={true}>
+    <PopupModal show={showFilter} slideBottom={true}>
       <div className="fixed top-0 right-0 left-0 botom-0  w-full h-full flex items-center align-middle justify-center align-center overflow-y-auto bg-black">
         <div className="relative p-4 w-full max-w-xl max-h-full">
           <div className="relative bg-white rounded-lg shadow ">
@@ -35,7 +35,7 @@ const VidProcessingPopup = ({
           </div>
         </div>
       </div>
-    </PopupModal2>
+    </PopupModal>
   );
 };
 

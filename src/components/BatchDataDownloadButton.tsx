@@ -5,45 +5,45 @@ import React from "react";
 import JSZip from "jszip";
 import { FaDownload } from "react-icons/fa6";
 
+export const handleBatchDownload = async () => {
+  const survey: any = await getIndexedDBValue(
+    IndexDB_Storage.surveyDB,
+    IndexDB_Storage.surveyData
+  );
+  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  if (survey) {
+    const zip = new JSZip();
+
+    // Add each survey entry to the ZIP
+    Object.keys(survey).forEach((id) => {
+      const data = survey[id];
+      const fileName = `child_id_${user.childID}_${id}_${formattedDate}.csv`;
+      const csvContent = generateCsv(data);
+      zip.file(fileName, csvContent);
+    });
+
+    // Generate and download ZIP
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const zipUrl = URL.createObjectURL(zipBlob);
+    const zipLink = document.createElement("a");
+    zipLink.href = zipUrl;
+    zipLink.download = `start_child_id_${user.childID}_${formattedDate}.zip`;
+    zipLink.click();
+    URL.revokeObjectURL(zipUrl); // Clean up memory
+  }
+};
+
 function BatchDataDownloadButton() {
-  const handleDownload = async () => {
-    const survey: any = await getIndexedDBValue(
-      IndexDB_Storage.surveyDB,
-      IndexDB_Storage.surveyData
-    );
-    const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
-    const today = new Date();
-    const formattedDate = today.toISOString().split("T")[0];
-
-    if (survey) {
-      const zip = new JSZip();
-
-      // Add each survey entry to the ZIP
-      Object.keys(survey).forEach((id) => {
-        const data = survey[id];
-        const fileName = `child_id_${user.childID}_${id}_${formattedDate}.csv`;
-        const csvContent = generateCsv(data);
-        zip.file(fileName, csvContent);
-      });
-
-      // Generate and download ZIP
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      const zipUrl = URL.createObjectURL(zipBlob);
-      const zipLink = document.createElement("a");
-      zipLink.href = zipUrl;
-      zipLink.download = `child_id_${user.childID}_${formattedDate}_batch.zip`;
-      zipLink.click();
-      URL.revokeObjectURL(zipUrl); // Clean up memory
-    }
-  };
-
   return (
     <a
       className="group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900 animate-fade-in-left"
       href="#"
     >
       <FaDownload />
-      <button className="ml-3" onClick={() => handleDownload()}>
+      <button className="ml-3" onClick={() => handleBatchDownload()}>
         Download Batch Data
       </button>
     </a>
