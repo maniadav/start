@@ -6,6 +6,7 @@ import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper 
 import MototFollowingTask from "./MototFollowingTask";
 import { MotorStateProvider } from "state/provider/MotorStateProvider";
 import { MotorFollowingContent as TaskContent } from "constants/tasks.constant";
+import FullScreenWrapper from "components/FullScreenWrapper";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
@@ -17,9 +18,9 @@ const IndexPage = () => {
   return (
     <>
       {survey ? (
-        <div>
+        <FullScreenWrapper isFullScreen={survey}>
           <MototFollowingTask isSurvey={true} />
-        </div>
+        </FullScreenWrapper>
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome

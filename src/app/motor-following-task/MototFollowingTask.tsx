@@ -301,6 +301,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             touchY,
             objX,
             objY,
+            time,
             screenHeight: windowSize.height,
             screenWidth: windowSize.width,
             deviceType,
@@ -319,7 +320,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       }
     },
 
-    [isSurvey, timerData, attempt, showPopup, touchX, touchY, objX, objY]
+    [isSurvey, timerData, attempt, showPopup, touchX, touchY, objX, objY, time]
   );
 
   useEffect(() => {
