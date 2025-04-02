@@ -5,6 +5,7 @@ import TaskHome from "components/TaskHome";
 import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import BubblePoppingTask from "./BubblePoppingTask";
 import { BubblePoppingContent as TaskContent } from "constants/tasks.constant";
+import FullScreenWrapper from "components/FullScreenWrapper";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
@@ -16,9 +17,9 @@ const IndexPage = () => {
   return (
     <>
       {survey ? (
-        <div>
+        <FullScreenWrapper isFullScreen={survey}>
           <BubblePoppingTask isSurvey={true} />
-        </div>
+        </FullScreenWrapper>
       ) : (
         <div className="w-full h-full overflow-hidden">
           <TaskHome

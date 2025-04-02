@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 interface BubbleProps {
   color: string;
   onClick: (
-    ballCoordString: string,
-    mouseCoordString: string,
+    ballCoordX: number,
+    ballCoordY: number,
+    mouseCoordX: number,
+    mouseCoordY: number,
     color: string
   ) => void;
   bubbleSize: number;
@@ -23,48 +25,52 @@ const Bubble = ({
   initialPosition,
 }: BubbleProps) => {
   const [position, setPosition] = useState(initialPosition);
-
-  const [speed] = useState(Math.random() * 4 + 2); // Random speed between 1 and 5
+  const [speed] = useState(Math.random() * 4 + 2);
+  const [direction, setDirection] = useState(-1); // -1 for up, 1 for down
 
   const handleBallTouch = (event: React.MouseEvent<HTMLDivElement>) => {
-    const relativeX = (position.x / screenWidth) * 100;
-    const relativeY =
-      ((screenHeight - position.y - bubbleSize) / screenHeight) * 100;
-    const ballCoordString = `${relativeX.toFixed(2)}-${relativeY.toFixed(2)}`;
+    // Calculate bubble center coordinate, posotion is top left point
+    const bubbleCenterX = position.x + bubbleSize / 2;
+    const bubbleCenterY = position.y + bubbleSize / 2;
 
-    const xPercent = (event.clientX / window.innerWidth) * 100;
-    const yPercent =
-      ((window.innerHeight - event.clientY) / window.innerHeight) * 100;
-    const mouseCoordString = `${xPercent.toFixed(2)}-${yPercent.toFixed(2)}`;
+    // Convert to percentages relative to screen dimensions
+    const ballCoordX = (bubbleCenterX / screenWidth) * 100;
+    const ballCoordY = (bubbleCenterY / screenHeight) * 100;
 
-    onClick(ballCoordString, mouseCoordString, color);
+    // Mouse coordinates relative to screen
+    const mouseCoordX = (event.clientX / window.innerWidth) * 100;
+    const mouseCoordY = (event.clientY / window.innerHeight) * 100;
+    console.log({ ballCoordY, mouseCoordY });
+    onClick(
+      parseFloat(ballCoordX.toFixed(2)),
+      parseFloat(ballCoordY.toFixed(2)),
+      parseFloat(mouseCoordX.toFixed(2)),
+      parseFloat(mouseCoordY.toFixed(2)),
+      color
+    );
   };
 
   useEffect(() => {
-    let increasing = true;
-
     const intervalId = setInterval(() => {
-      setPosition((prevPosition) => {
-        let newY = 0;
-        if (increasing) {
-          newY = prevPosition.y - speed;
-          if (newY <= 0) {
-            increasing = false;
-            newY = prevPosition.y + speed;
-          }
-        } else {
-          newY = prevPosition.y + speed;
-          if (newY >= screenHeight - bubbleSize) {
-            increasing = true;
-            newY = prevPosition.y - speed;
-          }
+      setPosition((prev) => {
+        const newY = prev.y + speed * direction;
+        const maxY = screenHeight - bubbleSize;
+
+        // Check boundaries and reverse direction
+        if (newY <= 0) {
+          setDirection(1);
+          return { ...prev, y: 0 };
         }
-        return { ...prevPosition, y: newY };
+        if (newY >= maxY) {
+          setDirection(-1);
+          return { ...prev, y: maxY };
+        }
+        return { ...prev, y: newY };
       });
     }, 50);
 
     return () => clearInterval(intervalId);
-  }, [bubbleSize, screenHeight, speed]);
+  }, [direction, bubbleSize, screenHeight, speed]);
 
   return (
     <div
@@ -76,9 +82,10 @@ const Bubble = ({
         backgroundColor: color,
         width: `${bubbleSize}px`,
         height: `${bubbleSize}px`,
+        transform: "translateZ(0)", // Improve animation performance
       }}
       onClick={handleBallTouch}
-    ></div>
+    >{`${position.x}-${position.y}`}</div>
   );
 };
 

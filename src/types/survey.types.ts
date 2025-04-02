@@ -3,8 +3,10 @@
 export interface Attempt {
   closedWithTimeout: boolean;
   timeTaken: string;
-  ballCoord: string[];
-  mouseCoord: string[];
+  bubbleX: number[];
+  bubbleY: number[];
+  mouseX: number[];
+  mouseY: number[];
   colors: string[];
   bubblesPopped: string;
   bubblesTotal: string;
