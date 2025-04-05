@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { IndexDB_Storage } from "@constants/storage.constant";
-import PopupModal from "components/common/PopupModal";
 import DepthEstimation from "app/wheel-task/DepthEstimation";
 import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { BASE_URL } from "@constants/config.constant";
+import { PopupModal } from "components/common/PopupModal";
 
 const Page = () => {
   const [vidSRC, setVidSRC] = useState("");
@@ -46,7 +46,7 @@ const Page = () => {
           reAttemptUrl={"reAttemptUrl"}
           attempt={0}
           taskID={"PreferentialLookingTask"}
-          videoURL={`${BASE_URL}/large.mp4`}
+          // videoURL={`${BASE_URL}/large.mp4`}
         />
       </PopupModal>
     </div>

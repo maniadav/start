@@ -62,18 +62,36 @@ const DepthEstimation = ({
     try {
       const filesetResolver = await FilesetResolver.forVisionTasks(cdn_file);
 
-      faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(
-        filesetResolver,
-        {
-          baseOptions: {
-            modelAssetPath: modelPath,
-            delegate: "GPU",
-          },
-          outputFaceBlendshapes: true,
-          runningMode: "VIDEO",
-          numFaces: 1,
-        }
-      );
+      // First try with GPU
+      try {
+        faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(
+          filesetResolver,
+          {
+            baseOptions: {
+              modelAssetPath: modelPath,
+              delegate: "GPU",
+            },
+            outputFaceBlendshapes: true,
+            runningMode: "VIDEO",
+            numFaces: 1,
+          }
+        );
+      } catch (gpuError) {
+        console.warn("GPU acceleration failed, falling back to CPU:", gpuError);
+        // Fallback to CPU if GPU fails
+        faceLandmarkerRef.current = await FaceLandmarker.createFromOptions(
+          filesetResolver,
+          {
+            baseOptions: {
+              modelAssetPath: modelPath,
+              delegate: "CPU",
+            },
+            outputFaceBlendshapes: true,
+            runningMode: "VIDEO",
+            numFaces: 1,
+          }
+        );
+      }
 
       drawingUtilsRef.current = new DrawingUtils(
         canvasRef.current?.getContext("2d")!
@@ -144,7 +162,9 @@ const DepthEstimation = ({
     canvasElement.width = fixedWidth;
     canvasElement.height = fixedHeight;
 
-    // Start playing the video
+    // ensure consistent timing
+    video.playbackRate = 1.0;
+
     try {
       await video.play();
     } catch (error) {
@@ -153,19 +173,16 @@ const DepthEstimation = ({
       return;
     }
 
-    let lastTimestamp = -1;
+    let frameCount = 0;
+    // Pause video initially
+    video.pause();
 
-    const processFrame = async (timestamp: number) => {
+    const processFrame = async () => {
       try {
-        if (timestamp - lastTimestamp < 1000 / FPS) {
-          requestAnimationFrame(processFrame);
-          return;
-        }
-        lastTimestamp = timestamp;
+        const currentTime = video.currentTime;
+        frameCount++;
 
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-        const startTimeMs = performance.now();
 
         if (
           !faceLandmarkerRef.current ||
@@ -174,52 +191,53 @@ const DepthEstimation = ({
           throw new Error("faceLandmarkerRef.current model is unavailable");
         }
 
-        const results = await faceLandmarkerRef.current.detectForVideo(
-          video,
-          startTimeMs
-        );
+        try {
+          const results = faceLandmarkerRef.current.detectForVideo(
+            video,
+            performance.now()
+          );
 
-        if (results?.faceLandmarks && drawingUtilsRef.current) {
-          for (const landmarks of results.faceLandmarks) {
-            drawingUtilsRef.current.drawConnectors(
-              landmarks,
-              FaceLandmarker.FACE_LANDMARKS_TESSELATION,
-              { color: "#C0C0C070", lineWidth: 1 }
+          if (results?.faceLandmarks?.[0] && drawingUtilsRef.current) {
+            for (const landmarks of results.faceLandmarks) {
+              drawingUtilsRef.current.drawConnectors(
+                landmarks,
+                FaceLandmarker.FACE_LANDMARKS_TESSELATION,
+                { color: "#C0C0C070", lineWidth: 1 }
+              );
+            }
+
+            const landmarks = results.faceLandmarks[0];
+
+            // check mediapipe_face_landmark_fullsize in public/model
+            const leftEye = landmarks?.[33]; // coordinates of left corner of left eye
+            const rightEye = landmarks?.[263]; // coordinates of right corner of right eye
+
+            // calculate percieved depth
+            const distance = calculateDepth({ leftEye, rightEye }) || 0;
+            setMsg(
+              `Frame ${frameCount}: Project Distance: ${distance.toFixed(
+                2
+              )} cm at time ${currentTime.toFixed(3)}s`
             );
+            gazeTiming.push(currentTime);
+            gazeDistance.push(distance);
           }
-
-          const landmarks = results.faceLandmarks[0];
-          // check mediapipe_face_landmark_fullsize in public/model
-          const leftEye = landmarks?.[33]; // coordinates of left corner of left eye
-          const rightEye = landmarks?.[263]; // coordinates of right corner of right eye
-
-          // Use the utility function to calculate depth
-          const distance =
-            calculateDepth({
-              leftEye,
-              rightEye,
-            }) || 0;
-
-          setMsg(`Perceived distance bw eyes: ${distance.toFixed(2)} cm`);
-          const timestamp: number =
-            parseFloat(video.currentTime.toFixed(3)) || 0;
-          gazeTiming.push(timestamp);
-          gazeDistance.push(distance);
+        } catch (detectionError) {
+          console.warn("Frame detection error:", detectionError);
         }
-        // progress
-        const progressPercentage = (video.currentTime / video.duration) * 100;
+
+        const progressPercentage = (currentTime / video.duration) * 100;
         setProgress(progressPercentage);
 
-        if (!video.paused && !video.ended) {
-          requestAnimationFrame(processFrame);
-        } else {
-          // Video processing complete
+        // Check if we've reached the end of the video
+        if (currentTime >= video.duration) {
           downloadFile(gazeDistance, "gaze-data");
           const updatedSurveyData = {
             ...state[taskID][`attempt${attempt}`],
             gazeDistance,
             gazeTiming,
             videoDuration: video.duration,
+            totalFramesProcessed: frameCount,
           };
 
           dispatch({
@@ -229,17 +247,35 @@ const DepthEstimation = ({
             data: updatedSurveyData,
           });
           setMsg("Processing complete! Data saved.");
+          setIsProcessing(false);
+          return;
         }
+
+        // Move to next frame
+        const nextFrameTime = Math.min(currentTime + 1 / FPS, video.duration);
+        video.currentTime = nextFrameTime;
       } catch (error) {
-        setMsg("Error processing video");
-        console.error("Video processing error:", error);
-      } finally {
-        setIsProcessing(false);
+        console.error("Frame processing error:", error);
+        setMsg(`Error processing frame ${frameCount}: ${error}`);
       }
     };
 
-    setIsProcessing(true); // Mark processing as started
-    requestAnimationFrame(processFrame);
+    // Function to handle timeupdate event
+    const handleTimeUpdate = async () => {
+      await processFrame();
+    };
+
+    // Add timeupdate event listener
+    video.addEventListener("timeupdate", handleTimeUpdate);
+
+    // Start processing by setting initial time
+    setIsProcessing(true);
+    video.currentTime = 0;
+
+    // Cleanup function
+    return () => {
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+    };
   };
 
   return (

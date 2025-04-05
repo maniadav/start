@@ -23,8 +23,8 @@ export const PopupModal = ({
     <div
       className={`${
         show
-          ? `inset-0 fixed w-full  h-full ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-black opacity-100`
-          : `inset-0 fixed w-full  h-full ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-transparent opacity-0
+          ? `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-black opacity-100`
+          : `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-transparent opacity-0
           ${slideRight && "translate-x-full"} 
           ${slideLeft && "-translate-x-full"}
           ${slideBottom && "translate-y-full"}
@@ -33,7 +33,7 @@ export const PopupModal = ({
       onClick={() => onRequestClose && onRequestClose()}
     >
       <div
-        className={`${customStyle} relative `}
+        className={`${customStyle} relative w-full h-full`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
