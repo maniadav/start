@@ -6,6 +6,8 @@ import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { BASE_URL } from "@constants/config.constant";
 import { PopupModal } from "components/common/PopupModal";
+import { TasksConstant } from "@constants/tasks.constant";
+import MediaPipeHandler from "components/mediapipe/MediaPipeHandler";
 
 const Page = () => {
   const [vidSRC, setVidSRC] = useState("");
@@ -41,11 +43,11 @@ const Page = () => {
         playsInline
       ></video> */}
       <PopupModal show={true}>
-        <DepthEstimation
+        <MediaPipeHandler
           showFilter={true}
           reAttemptUrl={"reAttemptUrl"}
           attempt={0}
-          taskID={"PreferentialLookingTask"}
+          taskID={TasksConstant.PreferentialLookingTask.id}
           // videoURL={`${BASE_URL}/large.mp4`}
         />
       </PopupModal>

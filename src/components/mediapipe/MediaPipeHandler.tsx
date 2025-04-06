@@ -8,13 +8,14 @@ import {
 import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { useRouter } from "next/navigation";
-import { calculateDepth } from "@utils/mediapipe.utils";
+import { calculateDepth, getGazeDirection } from "@utils/mediapipe.utils";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { IndexDB_Storage } from "@constants/storage.constant";
 import { downloadFile } from "@helper/downloader";
 import { BASE_URL } from "@constants/config.constant";
+import { TasksConstant } from "@constants/tasks.constant";
 
-type DepthEstimationInterface = {
+type MediaPipeHandlerInterface = {
   reAttemptUrl: string | null;
   showFilter: boolean;
   attempt: number;
@@ -22,19 +23,28 @@ type DepthEstimationInterface = {
   videoURL?: string;
 };
 
-const DepthEstimation = ({
+const MediaPipeHandler = ({
   reAttemptUrl,
   showFilter,
   attempt,
   taskID,
   videoURL,
-}: DepthEstimationInterface) => {
+}: MediaPipeHandlerInterface) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [progress, setProgress] = useState(0);
-  const [gazeDistance, setGazeDistance] = useState<number[]>([0]);
+  const [gazeMainData, setGazeMainData] = useState<(number | string)[]>([0]);
   const [gazeTiming, setGazeTiming] = useState<number[]>([0]);
+  const [gazeVidType] = useState<string[]>(["initial"]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
+  const videoTypes: string[] = [
+    "social",
+    "nonsocial",
+    "social",
+    "nonsocial",
+    "nonsocial",
+    "social",
+  ]; // 1 = social, 0 = non-social. each vid is 5 sec long
   const [msg, setMsg] = useState<string>("");
   const { state, dispatch } = useSurveyContext();
   const FPS = 30;
@@ -207,15 +217,40 @@ const DepthEstimation = ({
             }
 
             const landmarks = results.faceLandmarks[0];
+            let mainData: number | string = "";
+            if (taskID == TasksConstant.WheelTask.id) {
+              mainData = calculateDepth(landmarks);
+              setMsg(
+                `Frame: ${frameCount}, Projected Distance: ${mainData.toFixed(
+                  2
+                )} cm at time ${currentTime.toFixed(3)}s`
+              );
+            } else {
+              mainData = getGazeDirection(landmarks);
+              setMsg(`Looking ${mainData}`);
+              const timestamp: number = parseFloat(currentTime.toFixed(3)) || 0;
+              setMsg(
+                `Frame: ${frameCount}, Looking ${mainData} at time ${currentTime.toFixed(
+                  3
+                )}s`
+              );
 
-            const distance = calculateDepth(landmarks);
-            setMsg(
-              `Frame ${frameCount}: Project Distance: ${distance.toFixed(
-                2
-              )} cm at time ${currentTime.toFixed(3)}s`
-            );
+              // 5-second segment of vid frame,0-5 sec -> segment 0, 5-10 sec -> segment 1
+              const vidSegmentIndex = Math.floor(timestamp / 5);
+
+              if (vidSegmentIndex < videoTypes.length) {
+                let currentVidType = videoTypes[vidSegmentIndex];
+
+                // If the gaze direction is left, flip the video type as we only consider what type is on right side
+                if (mainData === "left") {
+                  currentVidType =
+                    currentVidType === "social" ? "nonsocial" : "social";
+                }
+                gazeVidType.push(currentVidType);
+              }
+            }
             gazeTiming.push(currentTime);
-            gazeDistance.push(distance);
+            gazeMainData.push(mainData || "initial");
           }
         } catch (detectionError) {
           console.warn("Frame detection error:", detectionError);
@@ -226,14 +261,27 @@ const DepthEstimation = ({
 
         // Check if we've reached the end of the video
         if (currentTime >= video.duration) {
-          downloadFile(gazeDistance, "gaze-data");
-          const updatedSurveyData = {
-            ...state[taskID][`attempt${attempt}`],
-            gazeDistance,
-            gazeTiming,
-            videoDuration: video.duration,
-            totalFramesProcessed: frameCount,
-          };
+          downloadFile(gazeMainData, "gaze-data");
+
+          let updatedSurveyData;
+          if (taskID == TasksConstant.WheelTask.id) {
+            const updatedSurveyData = {
+              ...state[taskID][`attempt${attempt}`],
+              gazeDistance: gazeMainData,
+              gazeTiming,
+              videoDuration: video.duration,
+              totalFramesProcessed: frameCount,
+            };
+          } else {
+            updatedSurveyData = {
+              ...state[taskID][`attempt${attempt}`],
+              gazeDirection: gazeMainData,
+              gazeTiming,
+              gazeVidType,
+              videoDuration: video.duration,
+              totalFramesProcessed: frameCount,
+            };
+          }
 
           dispatch({
             type: "UPDATE_SURVEY_DATA",
@@ -353,4 +401,4 @@ const DepthEstimation = ({
   );
 };
 
-export default DepthEstimation;
+export default MediaPipeHandler;
