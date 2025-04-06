@@ -1,7 +1,7 @@
 "use client";
 import { PopupModal } from "./PopupModal";
 import { useRouter } from "next/navigation";
-import GazeDetection from "app/preferential-looking-task/GazeDetection";
+import MediaPipeHandler from "components/mediapipe/MediaPipeHandler";
 
 interface msgPopUp {
   attempt: number;
@@ -25,7 +25,7 @@ const VidProcessingPopup = ({
         <div className="relative p-4 w-full max-w-xl max-h-full">
           <div className="relative bg-white rounded-lg shadow ">
             <div className="p-4 md:p-5 space-y-4">
-              <GazeDetection
+              <MediaPipeHandler
                 reAttemptUrl={reAttemptUrl}
                 showFilter={showFilter}
                 attempt={attempt}
