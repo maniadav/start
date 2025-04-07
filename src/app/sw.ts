@@ -84,21 +84,21 @@ self.addEventListener("install", (event) => {
 });
 
 serwist.addEventListeners();
-
-// self.addEventListener("activate", (event) => {
-//   event.waitUntil(
-//     caches.keys().then((cacheNames) =>
-//       Promise.all(
-//         cacheNames
-//           .filter(
-//             (name) =>
-//               name.startsWith(CACHE_NAME) && !name.includes(CACHE_VERSION)
-//           )
-//           .map((name) => {
-//             console.log("Deleting old cache:", name);
-//             return caches.delete(name);
-//           })
-//       )
-//     )
-//   );
-// });
+// delete old caches
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames
+          .filter(
+            (name) =>
+              name.startsWith(CACHE_NAME) && !name.includes(CACHE_VERSION)
+          )
+          .map((name) => {
+            console.log("Deleting old cache:", name);
+            return caches.delete(name);
+          })
+      )
+    )
+  );
+});
