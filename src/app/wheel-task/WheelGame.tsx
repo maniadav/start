@@ -8,9 +8,9 @@ import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import CloseGesture from "components/CloseGesture";
 import DepthEstimation from "./DepthEstimation";
-import PopupModal from "components/common/PopupModal";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { PopupModal } from "components/common/PopupModal";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
