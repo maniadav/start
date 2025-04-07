@@ -48,7 +48,7 @@ const IndexPage: React.FC = () => {
                 : "Please check your internet connection and try again."}
             </h1>
 
-            {isOnline ? (
+            {/* {isOnline ? (
               <Link
                 href={"/"}
                 className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
@@ -62,7 +62,13 @@ const IndexPage: React.FC = () => {
               >
                 Refresh
               </button>
-            )}
+            )} */}
+            <Link
+              href={"/"}
+              className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Return to Homepage
+            </Link>
           </div>
         </div>
       </div>

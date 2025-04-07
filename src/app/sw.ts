@@ -43,10 +43,23 @@ const staticRoutes = staticRoutesConfig.map((path) => ({
 // For dynamic routes, we can either:
 // 1. Precache the base route and handle the query params with runtime caching
 // 2. Or precache each variation if they're different
-const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base }) => ({
-  url: `${BASE_URL}${base}`,
-  revision: CACHE_VERSION,
-}));
+const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base, attempts }) => {
+  const routes = [];
+  // Add the base route
+  routes.push({
+    url: `${BASE_URL}${base}`,
+    revision: CACHE_VERSION,
+  });
+  
+  // Add variations with attempt numbers if needed
+  for (let i = 1; i <= attempts; i++) {
+    routes.push({
+      url: `${BASE_URL}${base}?attempt=${i}`,
+      revision: CACHE_VERSION,
+    });
+  }
+  return routes;
+});
 
 // create precache list
 console.log({ staticRoutes, dynamicRoutes });

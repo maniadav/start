@@ -1,4 +1,4 @@
-import { NetworkFirst, StaleWhileRevalidate } from "serwist";
+import { NetworkFirst, StaleWhileRevalidate, CacheFirst } from "serwist";
 import { CACHE_NAME, CACHE_VERSION } from "./pwa.config.constant";
 
 const CACHE_NAMES = {
@@ -6,14 +6,13 @@ const CACHE_NAMES = {
   ASSETS: `${CACHE_NAME}-assets-${CACHE_VERSION}`,
   IMAGES: `${CACHE_NAME}-images-${CACHE_VERSION}`,
   CDN: `${CACHE_NAME}-cdn-${CACHE_VERSION}`,
-  DATA: `${CACHE_NAME}-data-${CACHE_VERSION}`,
 };
 
 const commonPlugins = [
   {
     cacheKeyWillBeUsed: async ({ request }: { request: Request }) => {
       const url = new URL(request.url);
-      return url.href; //  full URL including query params
+      return url.href; // Use full URL including query params
     },
     cacheWillUpdate: async ({ response }: { response: Response }) => {
       return response.status === 200 ? response : null;
@@ -33,7 +32,8 @@ export const defaultCache = [
         {
           cacheKeyWillBeUsed: async ({ request }) => {
             const url = new URL(request.url);
-            return url.pathname;
+            // Include both pathname and search params for dynamic routes
+            return `${url.pathname}${url.search}`;
           },
         },
       ],
@@ -43,7 +43,7 @@ export const defaultCache = [
   {
     matcher: ({ request }: { request: Request }) =>
       ["script", "style", "font"].includes(request.destination),
-    strategy: new StaleWhileRevalidate({
+    strategy: new CacheFirst({
       cacheName: CACHE_NAMES.ASSETS,
       plugins: commonPlugins,
     }),
@@ -52,7 +52,7 @@ export const defaultCache = [
   {
     matcher: ({ request }: { request: Request }) =>
       request.destination === "image",
-    strategy: new StaleWhileRevalidate({
+    strategy: new CacheFirst({
       cacheName: CACHE_NAMES.IMAGES,
       plugins: commonPlugins,
     }),
