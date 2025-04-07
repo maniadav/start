@@ -85,7 +85,9 @@ const Bubble = ({
         transform: "translateZ(0)", // Improve animation performance
       }}
       onClick={handleBallTouch}
-    >{`${position.x}-${position.y}`}</div>
+    >
+      {/* {`${position.x}-${position.y}`} */}
+    </div>
   );
 };
 
