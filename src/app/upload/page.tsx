@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState, useCallback } from "react";
-import { Upload, CheckCircle, AlertCircle, FileUp } from "lucide-react";
+import { FiUpload, FiCheckCircle, FiAlertCircle, FiFile } from "react-icons/fi";
 
 import {
   Card,
@@ -255,7 +255,7 @@ export default function FileUploadPage() {
             onDragOver={handleDragOver}
             onClick={() => document.getElementById("fileInput")?.click()}
           >
-            <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <FiUpload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-lg mb-2">Drag and drop files here</p>
             <p className="text-sm text-muted-foreground mb-4">
               or click to browse
@@ -341,11 +341,11 @@ export default function FileUploadPage() {
                 >
                   <div className="flex items-center gap-3">
                     {isUploaded ? (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <FiCheckCircle className="h-5 w-5 text-green-500" />
                     ) : hasFiles ? (
-                      <FileUp className="h-5 w-5 text-blue-500" />
+                      <FiFile className="h-5 w-5 text-blue-500" />
                     ) : (
-                      <AlertCircle className="h-5 w-5 text-muted-foreground" />
+                      <FiAlertCircle className="h-5 w-5 text-muted-foreground" />
                     )}
                     <div>
                       <p className="font-medium">{taskType}</p>
