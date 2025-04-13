@@ -1,4 +1,4 @@
-import { PrecacheEntry, Serwist, SerwistGlobalConfig } from "serwist";
+import { PrecacheEntry, Serwist, SerwistGlobalConfig, RouteHandlerCallbackOptions, RouteHandler, RuntimeCaching } from "serwist";
 import { BASE_URL } from "@constants/config.constant";
 import { CACHE_NAME, CACHE_VERSION } from "./pwa.config.constant";
 // import { defaultCache } from "./_sw-default-cache";
@@ -50,7 +50,7 @@ const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base, attempts }) => {
     url: `${BASE_URL}${base}`,
     revision: CACHE_VERSION,
   });
-  
+
   // Add variations with attempt numbers if needed
   for (let i = 1; i <= attempts; i++) {
     routes.push({
@@ -58,11 +58,13 @@ const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base, attempts }) => {
       revision: CACHE_VERSION,
     });
   }
+  
   return routes;
 });
 
 // create precache list
 console.log({ staticRoutes, dynamicRoutes });
+
 const precacheEntries = [
   ...(self.__SW_MANIFEST || []),
   ...staticRoutes,
@@ -70,15 +72,36 @@ const precacheEntries = [
 ];
 
 const serwist = new Serwist({
-  precacheEntries: precacheEntries, //self.__SW_MANIFEST
+  precacheEntries: precacheEntries,
   skipWaiting: true,
   clientsClaim: true,
-  runtimeCaching: defaultCache,
-  // runtimeCaching: defaultCache.map((cache) => ({
-  //   ...cache,
-  //   handler: cache.strategy,
-  // })),
-
+  runtimeCaching: [
+    {
+      matcher: ({ url }: { url: URL }) => {
+        // Match any of the dynamic routes with or without attempt parameter
+        return dynamicRouteConfigs.some(({ base }) => 
+          url.pathname === base || url.pathname.startsWith(`${base}/`)
+        );
+      },
+      handler: "NetworkFirst" as unknown as RouteHandler,
+      options: {
+        cacheName: `${CACHE_NAME}-dynamic-routes`,
+        networkTimeoutSeconds: 10,
+        plugins: [
+          {
+            cacheWillUpdate: async ({ response }: { response: Response }) => {
+              // Only cache successful responses
+              if (response && response.status === 200) {
+                return response;
+              }
+              return null;
+            },
+          },
+        ],
+      },
+    },
+    ...defaultCache,
+  ] as RuntimeCaching[],
   fallbacks: {
     entries: [
       {
