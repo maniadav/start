@@ -122,7 +122,7 @@ const WheelTask = ({ isSurvey = false }) => {
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
-          src={`${BASE_URL}/gif/hallucination.gif`}
+          src={`${BASE_URL}/video/wheel.mp4`}
           layout="fill"
           objectFit="contain"
           alt="ocean"
