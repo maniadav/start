@@ -121,13 +121,14 @@ const WheelTask = ({ isSurvey = false }) => {
     <div className="relative w-screen h-screen overflow-hidden">
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
-        <Image
+        <video
           src={`${BASE_URL}/video/wheel.mp4`}
-          layout="fill"
-          objectFit="contain"
-          alt="ocean"
-          className="h-screen w-auto"
-        />
+          className="absolute top-0 left-0 w-full h-full object-fit"
+          autoPlay
+          muted
+        >
+          <source src={`${BASE_URL}/gif/plt.gif`} type="video/mp4" />
+        </video>
       </div>
 
       <div className="absolute bottom-5 left-5">
