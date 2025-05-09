@@ -46,13 +46,14 @@ const GazeDetection = ({
   const [gazeVidType] = useState<string[]>(["initial"]);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
   const [msg, setMsg] = useState<string>("");
+  // considering the right side of the device as focus point
   const videoTypes: string[] = [
     "social",
     "nonsocial",
     "social",
     "nonsocial",
-    "nonsocial",
     "social",
+    "nonsocial",
   ]; // 1 = social, 0 = non-social. each vid is 5 sec long
 
   const { state, dispatch } = useSurveyContext();
