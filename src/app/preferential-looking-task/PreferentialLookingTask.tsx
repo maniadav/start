@@ -26,7 +26,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 30000; // 30 seconds, considering video lenngth
   const { startVidRecording, stopVidRecording } = useVideoRecorder();
 
@@ -63,9 +63,9 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
+    await startVidRecording();
     handleTimer();
-    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -141,7 +141,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           autoPlay
           muted
         >
-          <source src={`${BASE_URL}/video/preferential.mp4`} type="video/mp4" />
+          <source src={`${BASE_URL}/video/plt.mp4`} type="video/mp4" />
         </video>
       </div>
 

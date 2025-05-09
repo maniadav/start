@@ -45,8 +45,10 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const [surveyData, setSurveyData] = useState<Attempt>({
     closedWithTimeout: false,
     timeTaken: "",
-    ballCoord: [],
-    mouseCoord: [],
+    bubbleX: [],
+    bubbleY: [],
+    mouseX: [],
+    mouseY: [],
     colors: [],
     bubblesPopped: "",
     bubblesTotal: "",
@@ -65,7 +67,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const bubblePop = useAudio(`${BASE_URL}/audio/bubble-pop.mp3`);
   const reAttemptUrl =
-    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 1800000;
   const maxNumberOfBubble: number = 6;
   const bubbleSize: number = 100;
@@ -112,24 +114,34 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   }, [alertShown, timerData]);
 
   // function to get the coordinates of click
-  const pushEntry = (ballCoordEntry: any, mouseCoordEntry: any, color: any) => {
+  const pushEntry = (
+    bubbleX: number,
+    bubbleY: number,
+    mouseX: number,
+    mouseY: number,
+    color: string
+  ) => {
     setSurveyData((prevState: any) => ({
       ...prevState,
-      ballCoord: [...(prevState?.ballCoord || []), ballCoordEntry],
-      mouseCoord: [...(prevState?.mouseCoord || []), mouseCoordEntry],
+      bubbleX: [...(prevState?.bubbleX || []), bubbleX],
+      bubbleY: [...(prevState?.bubbleY || []), bubbleY],
+      mouseX: [...(prevState?.mouseX || []), mouseX],
+      mouseY: [...(prevState?.mouseY || []), mouseY],
       colors: [...(prevState?.colors || []), color],
     }));
   };
 
   const handleBubblePop = (
-    ball_coord: any,
-    mouse_coord: any,
+    bubbleX: number,
+    bubbleY: number,
+    mouseX: number,
+    mouseY: number,
     color: string
   ) => {
     bubblePop();
     if (isSurvey) {
       setBubblesPopped((prevState) => prevState + 1);
-      pushEntry(ball_coord, mouse_coord, color);
+      pushEntry(bubbleX, bubbleY, mouseX, mouseY, color);
     }
 
     setBubbles((bubble) =>

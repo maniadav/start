@@ -1,5 +1,5 @@
 "use client";
-import { PopupModal2 } from "./PopupModal";
+import { PopupModal } from "./PopupModal";
 import { useRouter } from "next/navigation";
 
 interface msgPopUp {
@@ -18,7 +18,7 @@ const MessagePopup = ({
   const router = useRouter();
 
   return (
-    <PopupModal2
+    <PopupModal
       show={showFilter}
       // onRequestClose={() => onRequestClose(!showFilter)}
       slideBottom={true}
@@ -73,14 +73,14 @@ const MessagePopup = ({
                   }}
                   className={`cursor-pointer ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}
                 >
-                    Create New Attempt
+                  Create New Attempt
                 </button>
               )}
             </div>
           </div>
         </div>
       </div>
-    </PopupModal2>
+    </PopupModal>
   );
 };
 

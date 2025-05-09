@@ -8,9 +8,9 @@ import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import CloseGesture from "components/CloseGesture";
 import DepthEstimation from "./DepthEstimation";
-import PopupModal from "components/common/PopupModal";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { PopupModal } from "components/common/PopupModal";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -29,8 +29,8 @@ const WheelTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000; // 3 min
+    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+  const timeLimit = 30000; // 30 sec
 
   useEffect(() => {
     if (isSurvey) {
@@ -45,9 +45,9 @@ const WheelTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
+    await startVidRecording();
     handleTimer();
-    startVidRecording();
   };
 
   const stopTimerFuncRef = useRef<() => any>();
@@ -122,7 +122,7 @@ const WheelTask = ({ isSurvey = false }) => {
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <Image
-          src={`${BASE_URL}/gif/hallucination.gif`}
+          src={`${BASE_URL}/video/wheel.mp4`}
           layout="fill"
           objectFit="contain"
           alt="ocean"

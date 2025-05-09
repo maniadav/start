@@ -73,10 +73,15 @@ type DepthEstimationParams = {
 };
 
 export function getGazeDirection(landmarks: any) {
+  // check public/model/mediapipe/mediapipe_face_landmark_fullsize.png
   if (
+    // Point 468: Left eye iris
     !landmarks?.[468] ||
+    // Point 473: Right eye iris
     !landmarks?.[473] ||
+    // Point 33: Left eye outer corner (face mesh)
     !landmarks?.[33] ||
+    // Point 263: Right eye outer corner (face mesh)
     !landmarks?.[263]
   ) {
     return "Invalid landmarks";
@@ -112,14 +117,17 @@ export function getGazeDirection(landmarks: any) {
   }
 }
 
-// distance of user from screen is estimated using the distance between eyeys in each frame.
-export const calculateDepth = ({
-  leftEye,
-  rightEye,
-}: DepthEstimationParams): number => {
-  if (!leftEye || !rightEye) {
+// distance of user from screen is estimated using the distance between eyes in each frame.
+export const calculateDepth = (landmarks: any) => {
+  // check mediapipe_face_landmark_fullsize in public/model
+
+  // calculate percieved depth
+  if (!landmarks?.[33] || !landmarks?.[263]) {
     return 0;
   }
+
+  const leftEye = landmarks?.[33]; // coordinates of left corner of left eye
+  const rightEye = landmarks?.[263]; // coordinates of right corner of right eye
 
   const perceivedWidth = Math.sqrt(
     Math.pow(leftEye.x - rightEye.x, 2) + Math.pow(leftEye.y - rightEye.y, 2)

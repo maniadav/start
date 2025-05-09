@@ -1,3 +1,5 @@
+import { IndexDB_Storage } from "@constants/storage.constant";
+
 function openDatabase(
   dbName: string,
   version: number = 1
@@ -11,8 +13,8 @@ function openDatabase(
 
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains('data')) {
-        db.createObjectStore('data');
+      if (!db.objectStoreNames.contains("data")) {
+        db.createObjectStore("data");
       }
     };
   });
@@ -22,8 +24,8 @@ async function setIndexedDBValue<T>(dbName: string, key: string, value: T) {
   // console.log({ dbName, key, value });
   try {
     const db = await openDatabase(dbName);
-    const tx = db.transaction('data', 'readwrite');
-    const store = tx.objectStore('data');
+    const tx = db.transaction("data", "readwrite");
+    const store = tx.objectStore("data");
     const request = store.put(value, key);
 
     // request.onsuccess = () => {
@@ -56,8 +58,8 @@ async function getIndexedDBValue<T>(
   try {
     const db = await openDatabase(dbName);
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('data', 'readonly');
-      const store = tx.objectStore('data');
+      const tx = db.transaction("data", "readonly");
+      const store = tx.objectStore("data");
       const request = store.get(key);
 
       request.onsuccess = () => {
@@ -83,8 +85,8 @@ async function getIndexedDBValue<T>(
 async function removeIndexedDBValue(dbName: string, key: string) {
   try {
     const db = await openDatabase(dbName);
-    const tx = db.transaction('data', 'readwrite');
-    const store = tx.objectStore('data');
+    const tx = db.transaction("data", "readwrite");
+    const store = tx.objectStore("data");
     store.delete(key);
     tx.oncomplete = () => db.close();
   } catch (error) {
@@ -92,4 +94,35 @@ async function removeIndexedDBValue(dbName: string, key: string) {
   }
 }
 
-export { setIndexedDBValue, getIndexedDBValue, removeIndexedDBValue };
+const clearEntireIndexedDB = async () => {
+  try {
+    const db = await openDatabase(IndexDB_Storage.surveyDB);
+    
+    // Check if the object store exists
+    if (!db.objectStoreNames.contains(IndexDB_Storage.surveyData)) {
+      console.warn('Object store not found, nothing to clear');
+      db.close();
+      return;
+    }
+
+    const tx = db.transaction(IndexDB_Storage.surveyData, "readwrite");
+    const store = tx.objectStore(IndexDB_Storage.surveyData);
+    store.clear();
+
+    await new Promise((resolve, reject) => {
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+    db.close();
+  } catch (error) {
+    console.error("Error clearing IndexedDB:", error);
+    throw error;
+  }
+};
+
+export {
+  setIndexedDBValue,
+  getIndexedDBValue,
+  removeIndexedDBValue,
+  clearEntireIndexedDB,
+};

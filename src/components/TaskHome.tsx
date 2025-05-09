@@ -19,8 +19,10 @@ const TaskHome = ({
         <div className="flex justify-between gap-12">
           <div className="flex flex-col justify-center ">
             <div className="w-auto flex flex-row gap-2">
-              <Link legacyBehavior href="/">
-                <a className="font-bold text-xl md:text-4xl text-green-900">←</a>
+              <Link legacyBehavior href={"/survey"}>
+                <a className="font-bold text-xl md:text-4xl text-green-900">
+                  ←
+                </a>
               </Link>
               <h2 className="text-4xl font-bold text-gray-300 text-transparent bg-clip-text bg-gradient-to-br from-green-400 to-green-600">
                 {taskName}
