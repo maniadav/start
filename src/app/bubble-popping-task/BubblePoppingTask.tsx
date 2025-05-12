@@ -67,7 +67,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
   const bubblePop = useAudio(`${BASE_URL}/audio/bubble-pop.mp3`);
   const reAttemptUrl =
-    attempt < 3 ? `/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
   const timeLimit = 1800000;
   const maxNumberOfBubble: number = 6;
   const bubbleSize: number = 100;
