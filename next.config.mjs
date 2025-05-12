@@ -5,7 +5,7 @@ const isGithub = true;
 const nextConfig = {
   output: isGithub ? "export" : undefined,
   basePath: isGithub ? "/start" : "",
-  trailingSlash: true,
+  trailingSlash: false,
   images: {
     unoptimized: true,
   },
