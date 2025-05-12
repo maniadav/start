@@ -8,6 +8,12 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000",
+  "protocol_handlers": [
+    {
+      "protocol": "web+start",
+      "url": "/"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Open START",
