@@ -1,6 +1,6 @@
 import withSerwist from "@serwist/next";
 
-const isGithub = true;
+const isGithub = false;
 
 const nextConfig = {
   output: isGithub ? "export" : undefined,
