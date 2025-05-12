@@ -1,12 +1,6 @@
 {
   "orientation": "landscape",
   "name": "START",
-  "protocol_handlers": [
-    {
-      "protocol": "web+start://",
-      "url": "/"
-    }
-  ],
   "short_name": "Start",
   "description": "A Progressive Web Application designed to facilitate early-stage autism screening through structured surveys and observational assessments.",
   "id": "start_app_id",
@@ -14,6 +8,12 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000",
+  "protocol_handlers": [
+    {
+      "protocol": "web+start",
+      "url": "/"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Open START",

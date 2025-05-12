@@ -16,7 +16,7 @@
     "dotenv": "^16.4.5",
     "face-api.js": "^0.22.2",
     "jszip": "^3.10.1",
-    "next": "^14.2.5",
+    "next": "^15.3.2",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
