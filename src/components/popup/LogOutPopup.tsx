@@ -17,7 +17,6 @@ interface msgPopUp {
   closeModal: any;
 }
 const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
-  console.log({ showFilter });
   const router = useRouter();
 
   const [isCleaningData, setIsCleaningData] = useState(false);
