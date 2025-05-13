@@ -136,7 +136,7 @@ export const menuLink = [
 export const DropDown = () => {
   const router = useRouter();
   const { user } = useAuth();
-  console.log({ user });
+
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const handleLogout = () => {
     if (user?.childID) {
@@ -166,7 +166,7 @@ export const DropDown = () => {
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
 
-          <span> {user?.childID ? "Logout" : "Sign In"}</span>
+          <span>{`${user?.childID ? "Logout" : "Sign In"}`}</span>
         </button>
       </div>
       <LogOutPopupModal
