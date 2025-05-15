@@ -116,3 +116,16 @@ Each task has additional specific fields required for different purposes:
 | `attempt<attempt_number>_gazeTiming`    | Timing of gaze movements (in `sec` with two decimal points) |
 | `attempt<attempt_number>_gazeDirection` | Direction of gaze movement (**left** or **right**)          |
 | `attempt<attempt_number>_gazeVidType`   | Type of video used for gaze tracking (social or non-social) |
+
+# Deployment
+## Deployment on gh-pages
+
+1. Assets will be fetched from URLs related to your GitHub account. Update the base URL in your config constant accordingly, for example:
+   ```ts
+   export const BASE_URL = "/start";
+   ```
+2. Set the `isGithub` flag to `true` in your `next.config.mjs` file.
+3. Update asset paths in `public/manifest.json` to use the correct base path (e.g., `/<your_github_repo>/icons/icon-192.png`).
+4. Ensure all static assets and routes reference the correct base path for GitHub Pages deployment.
+5. Deploy your app to GitHub Pages as usual.
+
