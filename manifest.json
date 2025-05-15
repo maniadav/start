@@ -1,14 +1,8 @@
 {
   "orientation": "landscape",
   "name": "START",
-  "protocol_handlers": [
-    {
-      "protocol": "web+start",
-      "url": "/?start=%s"
-    }
-  ],
   "short_name": "Start",
-  "description": "A Progressive Web Application designed to facilitate early-stage autism screening through structured surveys and observational assessments.",
+  "description": "A Progressive Web Application designed to facilitate early-stage autism screening through structured surveys and observational assessments. ",
   "id": "start_app_id",
   "start_url": "/",
   "display": "standalone",
@@ -19,29 +13,29 @@
       "name": "Open START",
       "short_name": "START",
       "description": "Open the survey page",
-      "url": "/start",
+      "url": "/",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "icons": [
     {
-      "src": "/start/icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/start/icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "/start/icons/icon-masked-192.png",
+      "src": "/icons/icon-masked-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "/start/icons/icon-masked-512.png",
+      "src": "/icons/icon-masked-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
@@ -49,14 +43,14 @@
   ],
   "screenshots": [
     {
-      "src": "/start/image/start-logo.png",
+      "src": "/image/start-logo.png",
       "sizes": "500x500",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Application"
     },
     {
-      "src": "/start/image/start-logo.png",
+      "src": "/image/start-logo.png",
       "sizes": "500x500",
       "type": "image/png",
       "form_factor": "narrow",
