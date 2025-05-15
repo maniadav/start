@@ -1,7 +1,7 @@
 import React from "react";
 
 const commonDataMetrics = [
-  { key: "assestment_id", description: "Unique id for the assessment type" },
+  { key: "assessment_id", description: "Unique id for the assessment type" },
   { key: "noOfAttempt", description: "Number of attempts made (max 3)" },
   {
     key: "attempt<attempt_number>_timeTaken",
@@ -43,7 +43,7 @@ const commonDataMetrics = [
 
 const motorFollowingTaskMetrics = [
   {
-    key: " assestment_id                  | ",
+    key: " assessment_id                  | ",
     description: "MotorFollowingTask`",
   },
   {
@@ -66,7 +66,7 @@ const motorFollowingTaskMetrics = [
 
 const bubblePoppingTaskMetrics = [
   {
-    key: " assestment_id                         ",
+    key: " assessment_id                         ",
     description: "BubblePoppingTask",
   },
   {
@@ -93,7 +93,7 @@ const bubblePoppingTaskMetrics = [
 
 const buttonTaskMetrics = [
   {
-    key: " assestment_id                             ",
+    key: " assessment_id                             ",
     description: "ButtonTask",
   },
   {
@@ -111,7 +111,7 @@ const buttonTaskMetrics = [
 ];
 
 const wheelTaskMetrics = [
-  { key: " assestment_id                        ", description: "WheelTask" },
+  { key: " assessment_id                        ", description: "WheelTask" },
   {
     key: "attempt<attempt_number>_gazeDistance",
     description: "Distance of user from the device",
@@ -123,7 +123,7 @@ const wheelTaskMetrics = [
 ];
 
 const synchronyTaskMetrics = [
-  { key: " assestment_id                     ", description: "SynchronyTask" },
+  { key: " assessment_id                     ", description: "SynchronyTask" },
   {
     key: "attempt<attempt_number>_drumPress",
     description: "Timing when user presses the drum",
@@ -135,12 +135,12 @@ const synchronyTaskMetrics = [
 ];
 
 const delayedGratificationTaskMetrics = [
-  { key: " assestment_id ", description: "DelayedGratificationTask" },
+  { key: " assessment_id ", description: "DelayedGratificationTask" },
 ];
 
 const preferentialLookingTaskMetrics = [
   {
-    key: " assestment_id                         ",
+    key: " assessment_id                         ",
     description: "PreferentialLookingTask",
   },
   {
@@ -164,7 +164,7 @@ const SurveyDataDetails = () => {
       <p className="mb-6 text-gray-700">
         The data collected for each task includes 3 attempts per assessment.
         Each assessment has a unique{" "}
-        <code className="bg-gray-200 px-1">assestment_id</code>, and a maximum
+        <code className="bg-gray-200 px-1">assessment_id</code>, and a maximum
         of three attempts (<code className="bg-gray-200 px-1">noOfAttempt</code>{" "}
         ≤ 3) is allowed.
       </p>

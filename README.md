@@ -22,7 +22,7 @@ START is now part of the [STREAM platform](https://research.reading.ac.uk/stream
 
 # START App Data Format
 
-The data collected for the each task includes 3 attempts per assessment. Each assessment has a unique `assestment_id`, and a maximum of three attempts (`noOfAttempt` ≤ 3) is allowed. Each generated csv file contains the data of all three attempts depending on how many attempta has been made. The structure of the data is as follows:
+The data collected for the each task includes 3 attempts per assessment. Each assessment has a unique `assessment_id`, and a maximum of three attempts (`noOfAttempt` ≤ 3) is allowed. Each generated csv file contains the data of all three attempts depending on how many attempta has been made. The structure of the data is as follows:
 
 ## Notes
 
@@ -37,7 +37,7 @@ These fields are shared across all tasks:
 
 | Column Name                                 | Description                                                |
 | ------------------------------------------- | ---------------------------------------------------------- |
-| `assestment_id`                             | Unique id for the assessment type                          |
+| `assessment_id`                             | Unique id for the assessment type                          |
 | `noOfAttempt`                               | Number of attempts made (max 3)                            |
 | `attempt<attempt_number>_timeTaken`         | Time taken for the attempt                                 |
 | `attempt<attempt_number>_timeLimit`         | Max time limit for the attempt                             |
@@ -60,7 +60,7 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name                      | Description                 |
 | -------------------------------- | --------------------------- |
-| `assestment_id`                  | `MotorFollowingTask`        |
+| `assessment_id`                  | `MotorFollowingTask`        |
 | `attempt<attempt_number>_touchX` | X coordinate of touch input |
 | `attempt<attempt_number>_touchY` | Y coordinate of touch input |
 | `attempt<attempt_number>_objX`   | X coordinate of object      |
@@ -70,7 +70,7 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name                             | Description                                                                |
 | --------------------------------------- | -------------------------------------------------------------------------- |
-| `assestment_id`                         | BubblePoppingTask                                                          |
+| `assessment_id`                         | BubblePoppingTask                                                          |
 | `attempt<attempt_number>_ballCoord`     | Coordinates of the ball center at the time of pop (format `x-y` in pixel ) |
 | `attempt<attempt_number>_mouseCoord`    | Coordinates of the touch pointer (format `x-y` in pixel )                  |
 | `attempt<attempt_number>_colors`        | Colors of the bubbles popped                                               |
@@ -81,7 +81,7 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name                                 | Description                                                      |
 | ------------------------------------------- | ---------------------------------------------------------------- |
-| `assestment_id`                             | ButtonTask                                                       |
+| `assessment_id`                             | ButtonTask                                                       |
 | `attempt<attempt_number>_buttonClickedData` | Type of button clicked (**red** or **blue**)                     |
 | `attempt<attempt_number>_redButton`         | Video type linked with red button (**social** or **nonsocial**)  |
 | `attempt<attempt_number>_blueButton`        | Video type linked with blue button (**social** or **nonsocial**) |
@@ -90,7 +90,7 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name                            | Description                      |
 | -------------------------------------- | -------------------------------- |
-| `assestment_id`                        | WheelTask                        |
+| `assessment_id`                        | WheelTask                        |
 | `attempt<attempt_number>_gazeDistance` | Distance of user from the device |
 | `attempt<attempt_number>_gazeTiming`   | Timing of gaze distance          |
 
@@ -98,7 +98,7 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name                         | Description                       |
 | ----------------------------------- | --------------------------------- |
-| `assestment_id`                     | SynchronyTask                     |
+| `assessment_id`                     | SynchronyTask                     |
 | `attempt<attempt_number>_drumPress` | Timing when user presses the drum |
 | `attempt<attempt_number>_stickHit`  | Timing when stick hits the drum   |
 
@@ -106,13 +106,13 @@ Each task has additional specific fields required for different purposes:
 
 | Column Name     | Description              |
 | --------------- | ------------------------ |
-| `assestment_id` | DelayedGratificationTask |
+| `assessment_id` | DelayedGratificationTask |
 
 ### Preferential Looking Task
 
 | Column Name                             | Description                                                 |
 | --------------------------------------- | ----------------------------------------------------------- |
-| `assestment_id`                         | PreferentialLookingTask                                     |
+| `assessment_id`                         | PreferentialLookingTask                                     |
 | `attempt<attempt_number>_gazeTiming`    | Timing of gaze movements (in `sec` with two decimal points) |
 | `attempt<attempt_number>_gazeDirection` | Direction of gaze movement (**left** or **right**)          |
 | `attempt<attempt_number>_gazeVidType`   | Type of video used for gaze tracking (social or non-social) |

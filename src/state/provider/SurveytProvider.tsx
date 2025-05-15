@@ -1,6 +1,6 @@
 "use client";
 import { IndexDB_Storage } from "@constants/storage.constant";
-import { InitialSurveyState } from "@constants/survey.data.constant";
+import { getInitialSurveyState } from "@constants/survey.data.constant";
 import { getIndexedDBValue, setIndexedDBValue } from "@utils/indexDB";
 import React, {
   useReducer,
@@ -13,7 +13,7 @@ import SurveyContext from "state/context/SurveyContext";
 import { SurveyReducer } from "state/reducer/SurveyReducer";
 
 const SurveyProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(SurveyReducer, InitialSurveyState);
+  const [state, dispatch] = useReducer(SurveyReducer, getInitialSurveyState());
   const [isStateLoaded, setIsStateLoaded] = useState(false); // Tracks if the state is initialized
 
   // load state from IndexedDB only once
