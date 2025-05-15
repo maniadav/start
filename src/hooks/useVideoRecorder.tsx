@@ -1,14 +1,48 @@
-import { IndexDB_Storage } from '@constants/storage.constant';
-import { convertFileToBase64 } from '@helper/binaryConvertion';
-import { setIndexedDBValue } from '@utils/indexDB';
-import { useRef, useState } from 'react';
+import { IndexDB_Storage } from "@constants/storage.constant";
+import { convertFileToBase64 } from "@helper/binaryConvertion";
+import { setIndexedDBValue } from "@utils/indexDB";
+import CameraPermissionPopup from "components/popup/CameraPermissionPopup";
+import { useEffect, useRef, useState } from "react";
 
 const useVideoRecorder = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const videoChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [showCameraPopup, setShowCameraPopup] = useState(false);
+
+  // Check camera permission on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        // Check for camera permission status
+        if (navigator.permissions) {
+          const status = await navigator.permissions.query({ name: "camera" as PermissionName });
+          if (status.state === "denied") {
+            setShowCameraPopup(true);
+          }
+          status.onchange = () => {
+            if (status.state === "denied") setShowCameraPopup(true);
+            else setShowCameraPopup(false);
+          };
+        } else {
+          // Fallback: try to access camera to trigger browser prompt
+          try {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+          } catch {
+            setShowCameraPopup(true);
+          }
+        }
+      } catch {
+        setShowCameraPopup(true);
+      }
+    })();
+  }, []);
+
   const startVidRecording = async () => {
+    // Only proceed if permission is not denied
+    if (showCameraPopup) return;
+
     try {
       const userStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -17,7 +51,7 @@ const useVideoRecorder = () => {
       setStream(userStream);
 
       mediaRecorderRef.current = new MediaRecorder(userStream, {
-        mimeType: 'video/webm',
+        mimeType: "video/webm",
       });
 
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -29,9 +63,9 @@ const useVideoRecorder = () => {
       mediaRecorderRef.current.start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Error accessing media devices.', error);
-      alert('Camera access is required for this task');
-      window.location.reload();
+      console.error("Error accessing media devices.", error);
+      // Handle the case where camera access is denied
+      setShowCameraPopup(true);
     }
   };
 
@@ -41,11 +75,11 @@ const useVideoRecorder = () => {
         mediaRecorderRef.current.stop();
 
         mediaRecorderRef.current.onstop = async () => {
-          const blob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+          const blob = new Blob(videoChunksRef.current, { type: "video/webm" });
 
           try {
             // Convert video blob to Base64
-            const file = new File([blob], 'video.webm', { type: 'video/webm' });
+            const file = new File([blob], "video.webm", { type: "video/webm" });
             const base64data = await convertFileToBase64(file);
 
             await setIndexedDBValue(
@@ -65,7 +99,7 @@ const useVideoRecorder = () => {
 
             resolve(base64data);
           } catch (error) {
-            console.error('Error converting video to base64:', error);
+            console.error("Error converting video to base64:", error);
             resolve(null);
           }
         };
@@ -75,7 +109,19 @@ const useVideoRecorder = () => {
     });
   };
 
-  return { isRecording, startVidRecording, stopVidRecording };
+  const CameraPermissionPopupUI = (
+    <CameraPermissionPopup
+      show={showCameraPopup}
+      onRequestClose={() => setShowCameraPopup(false)}
+    />
+  );
+
+  return {
+    isRecording,
+    startVidRecording,
+    stopVidRecording,
+    CameraPermissionPopupUI,
+  };
 };
 
 export default useVideoRecorder;
