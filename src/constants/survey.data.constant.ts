@@ -1,9 +1,9 @@
-import { getLocalStorageValue } from '@utils/localStorage';
-import { BubblePoppingType, MotorFollowingType } from 'types/survey.types';
-import { LOCALSTORAGE } from './storage.constant';
+import { getLocalStorageValue } from "@utils/localStorage";
+import { BubblePoppingType, MotorFollowingType } from "types/survey.types";
+import { LOCALSTORAGE } from "./storage.constant";
 
 const LOGGED_IN_USER = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
-const { childID, childDOB, childGender } = LOGGED_IN_USER || {};
+const { childID, childDOB, childGender, observerId } = LOGGED_IN_USER || {};
 
 const createTaskData = (assestment_id: string): any => ({
   assestment_id,
@@ -11,7 +11,7 @@ const createTaskData = (assestment_id: string): any => ({
   attempt1: {},
   attempt2: {},
   attempt3: {},
-  userID: '',
+  userID: "",
 });
 
 const createInitialState = (taskIds: string[]) => {
@@ -21,24 +21,25 @@ const createInitialState = (taskIds: string[]) => {
       userID: childID,
       userDOB: childDOB,
       userGender: childGender,
+      observerId: observerId,
     };
     return state;
   }, {} as Record<string, any>);
 };
 
 export const BubblePoppingData: BubblePoppingType =
-  createTaskData('BubblePoppingTask');
+  createTaskData("BubblePoppingTask");
 export const MotorFollowingData: MotorFollowingType =
-  createTaskData('MotorFollowingTask');
-export const ButtonTaskData: MotorFollowingType = createTaskData('ButtonTask');
+  createTaskData("MotorFollowingTask");
+export const ButtonTaskData: MotorFollowingType = createTaskData("ButtonTask");
 
 export const InitialSurveyState = createInitialState([
-  'BubblePoppingTask',
-  'DelayedGratificationTask',
-  'MotorFollowingTask',
-  'ButtonTask',
-  'SynchronyTask',
-  'LanguageSamplingTask',
-  'WheelTask',
-  'PreferentialLookingTask',
+  "BubblePoppingTask",
+  "DelayedGratificationTask",
+  "MotorFollowingTask",
+  "ButtonTask",
+  "SynchronyTask",
+  "LanguageSamplingTask",
+  "WheelTask",
+  "PreferentialLookingTask",
 ]);
