@@ -54,11 +54,11 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
             {/* Header */}
             <div className="flex items-center gap-3">
               <FaExclamationTriangle className="w-8 h-8 text-red-500 shrink-0" />
-              <div>
+              <div className="flex flex-col gap-1 w-full">
                 <h3 className="text-2xl font-bold text-gray-900">
                   Unsaved Data Alert
                 </h3>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600 mt-1 text-base md:text-sm">
                   You have unsaved data that will be lost if you logout now
                 </p>
               </div>
@@ -70,45 +70,39 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
                 <h4 className="font-semibold text-blue-800 mb-3">
                   Save Your Data First
                 </h4>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    className="cursor-pointer p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all"
+                    className="cursor-pointer w-full p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all flex flex-col items-center md:flex-row md:items-center gap-3"
                     onClick={() => handleBatchDownload()}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <FaDownload className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div className="text-left">
-                        <span className="block font-semibold">
-                          Download Locally
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          Save CSV files to your device
-                        </span>
-                      </div>
+                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                      <FaDownload className="w-8 h-8 md:w-6 md:h-6 text-blue-600" />
+                    </div>
+                    <div className="text-left w-full">
+                      <span className="block font-semibold text-base md:text-sm">
+                        Download Locally
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        Save CSV files to your device
+                      </span>
                     </div>
                   </button>
-
                   <button
-                    className="cursor-pointer p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all"
+                    className="cursor-pointer w-full p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all flex flex-col items-center md:flex-row md:items-center gap-3"
                     onClick={() => {
                       alert("yet to connect with server");
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <FaUpload className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div className="text-left">
-                        <span className="block font-semibold">
-                          Upload to Server
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          Sync your data securely
-                        </span>
-                      </div>
+                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                      <FaUpload className="w-8 h-8 md:w-6 md:h-6 text-blue-600" />
+                    </div>
+                    <div className="text-left w-full">
+                      <span className="block font-semibold text-base md:text-sm">
+                        Upload to Server
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        Sync your data securely
+                      </span>
                     </div>
                   </button>
                 </div>
@@ -116,16 +110,16 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col md:flex-row justify-end gap-3">
               <button
                 onClick={closeModal}
-                className="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                className="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors w-full md:w-auto"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleSecureLogout()}
-                className="px-5 py-2.5 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2"
+                className="px-5 py-2.5 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
               >
                 <FaSignOutAlt />
                 {isCleaningData ? "Cleaning..." : "Logout"}

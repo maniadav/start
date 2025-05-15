@@ -18,8 +18,10 @@ import LogOutPopupModal from "./popup/LogOutPopup";
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const data = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
     setUser(data || null);
   }, []);
@@ -44,17 +46,19 @@ export const Header = () => {
           <div className="relative group">
             <div className="flex items-center cursor-pointer px-3 py-2 text-sm font-normal text-center">
               <div className="h-auto mx-2">
-                <Image
-                  src={user?.profile || `${BASE_URL}/svg/user.svg`}
-                  alt="logo"
-                  className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
-                  width={32}
-                  height={32}
-                ></Image>
+                {mounted && (
+                  <Image
+                    src={user?.profile || `${BASE_URL}/svg/user.svg`}
+                    alt="logo"
+                    className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
+                    width={32}
+                    height={32}
+                  />
+                )}
               </div>
 
               <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {`Hi, ${user?.childName || "user"}`}
+                {mounted ? `Hi, ${user?.childName || "user"}` : ""}
               </p>
               <span className="text-gray-500">
                 <CommonIcon
@@ -66,7 +70,7 @@ export const Header = () => {
               </span>
             </div>
             <div className="group-hover:block hidden">
-              <DropDown />
+              <DropDown mounted={mounted} />
             </div>
           </div>
           <LanguageToggle />
@@ -133,7 +137,7 @@ export const menuLink = [
   },
 ];
 
-export const DropDown = () => {
+export const DropDown = ({ mounted }: any) => {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -166,7 +170,9 @@ export const DropDown = () => {
             <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
           </span>
 
-          <span>{`${user?.childID ? "Logout" : "Sign In"}`}</span>
+          <span>
+            {mounted ? `Hi, ${user?.childID ? "Logout" : "Sign In"}` : ""}
+          </span>
         </button>
       </div>
       <LogOutPopupModal

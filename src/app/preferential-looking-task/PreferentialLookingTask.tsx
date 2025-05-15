@@ -26,9 +26,12 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3
+      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
+      : null;
   const timeLimit = 30000; // 30 seconds, considering video lenngth
-  const { startVidRecording, stopVidRecording } = useVideoRecorder();
+  const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =
+    useVideoRecorder();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoDuration, setVideoDuration] = useState<number>(timeLimit);
@@ -133,6 +136,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {CameraPermissionPopupUI}
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="w-screen h-screen relative bg-black">
         <video
@@ -141,7 +145,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           autoPlay
           muted
         >
-          <source src={`${BASE_URL}/video/plt.mp4`} type="video/mp4" />
+          <source src={`${BASE_URL}/video/start-plt.mp4`} type="video/mp4" />
         </video>
       </div>
 

@@ -1,7 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
@@ -23,13 +22,16 @@ const WheelTask = ({ isSurvey = false }) => {
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
   const { windowSize, deviceType } = useWindowSize();
-  const { startVidRecording, stopVidRecording } = useVideoRecorder();
+  const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =
+    useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3
+      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
+      : null;
   const timeLimit = 30000; // 30 sec
 
   useEffect(() => {
@@ -119,6 +121,7 @@ const WheelTask = ({ isSurvey = false }) => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
+      {CameraPermissionPopupUI}
       {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
       <div className="relative h-screen w-full">
         <video
