@@ -1,4 +1,10 @@
-import { PrecacheEntry, Serwist, SerwistGlobalConfig, RouteHandlerCallbackOptions, RouteHandler, RuntimeCaching } from "serwist";
+import {
+  PrecacheEntry,
+  Serwist,
+  SerwistGlobalConfig,
+  RouteHandler,
+  RuntimeCaching,
+} from "serwist";
 import { BASE_URL } from "@constants/config.constant";
 import { CACHE_NAME, CACHE_VERSION } from "./pwa.config.constant";
 // import { defaultCache } from "./_sw-default-cache";
@@ -14,24 +20,24 @@ declare const self: ServiceWorkerGlobalScope;
 
 // static routes
 const staticRoutesConfig = [
-  "/",
-  "/survey",
-  "/content",
-  "/about",
-  "/auth/login",
-  "/offline",
-  "testing",
+  `${BASE_URL}/`,
+  `${BASE_URL}/survey`,
+  `${BASE_URL}/content`,
+  `${BASE_URL}/about`,
+  `${BASE_URL}/auth/login`,
+  `${BASE_URL}/offline`,
+  `${BASE_URL}/testing`,
 ];
 
 // dynamic routes
 const dynamicRouteConfigs = [
-  { base: "/bubble-popping-task", attempts: 3 },
-  { base: "/motor-following-task", attempts: 3 },
-  { base: "/button-task", attempts: 3 },
-  { base: "/wheel-task", attempts: 3 },
-  { base: "/delayed-gratification-task", attempts: 3 },
-  { base: "/synchrony-task", attempts: 3 },
-  { base: "/preferential-looking-task", attempts: 3 },
+  { base: `${BASE_URL}/bubble-popping-task`, attempts: 3 },
+  { base: `${BASE_URL}/motor-following-task`, attempts: 3 },
+  { base: `${BASE_URL}/button-task`, attempts: 3 },
+  { base: `${BASE_URL}/wheel-task`, attempts: 3 },
+  { base: `${BASE_URL}/delayed-gratification-task`, attempts: 3 },
+  { base: `${BASE_URL}/synchrony-task`, attempts: 3 },
+  { base: `${BASE_URL}/preferential-looking-task`, attempts: 3 },
 ];
 
 // Generate all URLs to precache before Serwist initialization
@@ -58,12 +64,12 @@ const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base, attempts }) => {
       revision: CACHE_VERSION,
     });
   }
-  
+
   return routes;
 });
 
 // create precache list
-console.log({ staticRoutes, dynamicRoutes });
+// console.log({ staticRoutes, dynamicRoutes });
 
 const precacheEntries = [
   ...(self.__SW_MANIFEST || []),
@@ -79,8 +85,9 @@ const serwist = new Serwist({
     {
       matcher: ({ url }: { url: URL }) => {
         // Match any of the dynamic routes with or without attempt parameter
-        return dynamicRouteConfigs.some(({ base }) => 
-          url.pathname === base || url.pathname.startsWith(`${base}/`)
+        return dynamicRouteConfigs.some(
+          ({ base }) =>
+            url.pathname === base || url.pathname.startsWith(`${base}/`)
         );
       },
       handler: "NetworkFirst" as unknown as RouteHandler,

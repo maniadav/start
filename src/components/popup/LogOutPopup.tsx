@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaExclamationTriangle, FaSignOutAlt } from "react-icons/fa";
 import { FaDownload, FaUpload } from "react-icons/fa6";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 
 interface msgPopUp {
   showFilter: boolean;
@@ -20,6 +21,7 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
   const router = useRouter();
 
   const [isCleaningData, setIsCleaningData] = useState(false);
+  const { dispatch } = useSurveyContext();
 
   const handleSecureLogout = async () => {
     try {
@@ -33,6 +35,8 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
       ]);
 
       clearLocalStorageValue();
+
+      dispatch({ type: "RESET_SURVEY_DATA" });
       router.push(`${API_ENDPOINT.auth.login}`);
     } catch (err) {
       console.error("Data cleanup error:", err);

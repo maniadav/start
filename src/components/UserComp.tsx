@@ -31,7 +31,7 @@ const ContentPage = () => {
           </div>
           <div className="capitalize flex flex-row gap-2 items-center align-middle">
             <h3 className="text-base md:text-lg font-semibold">Observer ID:</h3>
-            <p className="capitalize text-xs md:text-sm">{user?.observerId}</p>
+            <p className="capitalize text-xs md:text-sm">{user?.observerID}</p>
           </div>
         </div>
         <div className="bg-sky-500 p-0.5 rounded-b-lg"></div>

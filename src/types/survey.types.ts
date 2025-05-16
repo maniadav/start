@@ -18,7 +18,7 @@ export interface Attempt {
 }
 
 export interface BubblePoppingType {
-  assestment_id: string;
+  assessment_id: string;
   noOfAttempt: number;
   attempt1: Partial<Attempt>;
   attempt2: Partial<Attempt>;
@@ -28,7 +28,7 @@ export interface BubblePoppingType {
 }
 
 export interface MotorFollowingType {
-  assestment_id: string;
+  assessment_id: string;
   noOfAttempt: number;
   attempt1: Partial<Attempt>;
   attempt2: Partial<Attempt>;

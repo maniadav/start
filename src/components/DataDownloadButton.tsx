@@ -15,7 +15,7 @@ function DataDownloadButton({ id }: { id: string }) {
 
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    const fileName = `child_id_${user.childID}_observer_id_${user.observerId}_${id}_${formattedDate}`;
+    const fileName = `child_id_${user.childID}_observer_id_${user.observerID}_${id}_${formattedDate}`;
 
     const data = survey[id];
     // downloadDictionaryAsFiles(data.attempt1, fileName);

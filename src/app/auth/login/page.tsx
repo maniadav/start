@@ -10,13 +10,14 @@ import { API_ENDPOINT } from "@constants/api.constant";
 import { IconHome } from "components/common/Icons";
 import Link from "next/link";
 import { BASE_URL } from "@constants/config.constant";
+import { useSurveyContext } from "state/provider/SurveytProvider";
 
 interface LoginDataType {
   childID: string;
   childName: string;
   childGender: string;
   childDOB: string;
-  observerId: string;
+  observerID: string;
 }
 
 const LoginPage = () => {
@@ -25,10 +26,11 @@ const LoginPage = () => {
     childName: "",
     childGender: "",
     childDOB: "",
-    observerId: "",
+    observerID: "",
   });
 
   const router = useRouter();
+  const { dispatch } = useSurveyContext();
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -50,13 +52,14 @@ const LoginPage = () => {
       toast.error("Oops! Don't forget to enter the child's date of birth.");
       return;
     }
-    if (!formData.observerId.trim()) {
+    if (!formData.observerID.trim()) {
       toast.error("Hey there! Your Observer ID is missing.");
       return;
     }
 
     try {
       setLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, formData, true);
+      dispatch({ type: "RESET_SURVEY_DATA" });
       // toast.success(`Welcome ${formData.childName}! Let's begin the journey.`);
       router.push(API_ENDPOINT.page.survey);
     } catch (error) {
@@ -181,9 +184,9 @@ const LoginPage = () => {
                       className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                       type="text"
                       placeholder="Enter Your ID"
-                      id="observerId"
-                      name="observerId"
-                      value={formData.observerId}
+                      id="observerID"
+                      name="observerID"
+                      value={formData.observerID}
                       onChange={handleInputChange}
                     />
                   </div>
