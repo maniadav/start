@@ -96,7 +96,7 @@ const Footer = () => {
         </ul>
       </div>
       <div className="mt-8 border-t border-gray-800 pt-4 text-center text-gray-500 text-xs">
-        © {new Date().getFullYear()} START. All rights reserved.
+        {`© 2025 START. All rights reserved.`}
       </div>
     </footer>
   );
