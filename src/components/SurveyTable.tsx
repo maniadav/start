@@ -7,12 +7,11 @@ import { useRouter } from "next/navigation";
 import DataDownloadButton from "./DataDownloadButton";
 import BatchDataDownloadButton from "./BatchDataDownloadButton";
 import { FaUpload } from "react-icons/fa6";
-import LogOutPopupModal from "./popup/LogOutPopup";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();
   const router = useRouter();
-
 
   return (
     <section className="text-gray-700 body-font overflow-hidden">
@@ -143,7 +142,7 @@ const SurveyTable = () => {
                   <FaUpload />
                   <button
                     className="ml-3"
-                    onClick={() => alert("data is uploaded")}
+                    onClick={() => router.push(PAGE_ROUTES.UPLOAD.path)}
                   >
                     Upload Survey
                   </button>

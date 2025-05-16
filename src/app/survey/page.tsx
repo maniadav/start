@@ -17,19 +17,19 @@ const ContentPage = () => {
           <div className=" mx-auto h-full sm:p-10">
             <header className="container px-4 lg:flex mt-20 md:mt-10 items-center h-full lg:mt-0">
               <div className="w-full">
-                <h1 className="text-4xl lg:text-6xl font-bold">
+                <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight drop-shadow mb-4">
                   Complete all <span className="text-primary">survey</span> ...
                 </h1>
-                <div className="w-20 h-2 bg-primary my-4"></div>
-                <p className="text-xl mb-10">
+                <div className="w-32 h-2 bg-gradient-to-r from-primary to-red-900 rounded my-4"></div>
+                <p className="text-xl mb-10 text-slate-700 max-w-2xl">
                   Perform a series of structured tasks designed to identify
                   early signs of autism in children aged 2-5 years.
                 </p>
 
                 <Link href="/content" legacyBehavior>
-                  <a className="bg-primary text-white text-2xl font-medium px-4 py-2 rounded shadow inline-flex items-center justify-center w-full text-center border border-gray-200 sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100">
+                  <a className="bg-gradient-to-r from-red-900 to-primary text-white text-2xl font-semibold px-6 py-3 rounded-lg shadow-lg inline-flex items-center justify-center w-full text-center border border-gray-200 sm:w-auto hover:scale-105 hover:bg-blue-700 transition-all duration-200 focus:ring-4 focus:ring-blue-200">
                     <svg
-                      className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-200"
+                      className="w-5 h-5 mr-3 text-white"
                       fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 496 512"

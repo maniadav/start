@@ -31,10 +31,12 @@ export default function RootLayout({
       <LanguageProvider>
         <html lang={"en"}>
           <body className={inter.className}>
-            <AuthProvider>
-              <ServiceWorkerUpdater />
-              <GameWrapper>{children}</GameWrapper>
-            </AuthProvider>
+            <GameWrapper>
+              <AuthProvider>
+                <ServiceWorkerUpdater />
+                {children}
+              </AuthProvider>
+            </GameWrapper>
           </body>
         </html>
       </LanguageProvider>

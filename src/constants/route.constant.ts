@@ -43,4 +43,8 @@ export const PAGE_ROUTES = {
     label: "Survey",
     path: "/survey",
   },
+  UPLOAD: {
+    label: "Upload",
+    path: "/survey/upload",
+  },
 };
