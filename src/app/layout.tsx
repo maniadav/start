@@ -3,7 +3,6 @@ import { BASE_URL } from "@constants/config.constant";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "state/provider/AuthProvider";
-import ProtectedRoute from "@hooks/ProtectedRoute";
 import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
@@ -27,19 +26,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
     <SurveyProvider>
       <LanguageProvider>
         <html lang={"en"}>
           <body className={inter.className}>
-            <AuthProvider>
-              <ProtectedRoute>
+            <GameWrapper>
+              <AuthProvider>
                 <ServiceWorkerUpdater />
-                <GameWrapper>{children}</GameWrapper>
-              </ProtectedRoute>
-            </AuthProvider>
+                {children}
+              </AuthProvider>
+            </GameWrapper>
           </body>
         </html>
       </LanguageProvider>

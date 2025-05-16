@@ -35,7 +35,7 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={clsx(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-primary text-2xl font-semibold leading-none tracking-tight",
       className
     )}
     {...props}

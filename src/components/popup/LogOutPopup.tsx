@@ -52,7 +52,7 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
       slideBottom={true}
       onRequestClose={closeModal}
     >
-      <div className="fixed inset-0 w-full h-full flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm z-50">
+      <div className="fixed right-0 top-0 inset-0 w-full h-full flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 backdrop-blur-sm z-[1000]">
         <div className="relative p-4 w-full max-w-xl max-h-full">
           <div className="relative bg-white rounded-xl shadow-2xl p-8 space-y-6">
             {/* Header */}

@@ -44,7 +44,7 @@ const commonDataMetrics = [
 const motorFollowingTaskMetrics = [
   {
     key: " assessment_id                  | ",
-    description: "MotorFollowingTask`",
+    description: "MotorFollowingTask",
   },
   {
     key: "attempt<attempt_number>_touchX",
@@ -157,32 +157,46 @@ const preferentialLookingTaskMetrics = [
   },
 ];
 
+const TABLE_HEADER_CLASS =
+  "p-2 text-left bg-gray-200 text-gray-700 font-semibold";
+const TABLE_CELL_CLASS = "p-2 border-b border-gray-100";
+const TABLE_KEY_CLASS = "font-mono text-blue-700 whitespace-nowrap";
+
 const SurveyDataDetails = () => {
   return (
-    <div className="max-w-[1200px] container p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">App Data Format</h1>
-      <p className="mb-6 text-gray-700">
-        The data collected for each task includes 3 attempts per assessment.
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg min-h-screen mt-8 mb-8">
+      <h1 className="text-3xl font-extrabold mb-2 text-primary">
+        Survey Data Format
+      </h1>
+      <p className="mb-6 text-gray-600 text-base">
+        The data collected for each task includes <b>3 attempts</b> per
+        assessment.
+        <br />
         Each assessment has a unique{" "}
-        <code className="bg-gray-200 px-1">assessment_id</code>, and a maximum
-        of three attempts (<code className="bg-gray-200 px-1">noOfAttempt</code>{" "}
-        ≤ 3) is allowed.
+        <code className="bg-gray-100 px-1 rounded text-sm">assessment_id</code>,
+        and a maximum of three attempts{" "}
+        <code className="bg-gray-100 px-1 rounded text-sm">noOfAttempt</code> ≤
+        3) is allowed.
       </p>
 
-      <h2 className="text-2xl font-semibold mt-4">Common Data Metrics</h2>
-      <div className="overflow-x-auto mt-2">
-        <table className="w-full border border-gray-300 bg-white">
+      <h2 className="text-xl font-bold mt-6 mb-2 text-gray-800 border-l-4 border-primary pl-2">
+        Common Data Metrics
+      </h2>
+      <div className="overflow-x-auto rounded-lg shadow">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-300">
-              <th className="p-2 text-left">Column Name</th>
-              <th className="p-2 text-left">Description</th>
+            <tr>
+              <th className={TABLE_HEADER_CLASS}>Column Name</th>
+              <th className={TABLE_HEADER_CLASS}>Description</th>
             </tr>
           </thead>
           <tbody>
             {commonDataMetrics.map((metric, index) => (
-              <tr key={index} className="border-b border-gray-200">
-                <td className="p-2 font-mono text-blue-700">{metric.key}</td>
-                <td className="p-2 text-gray-700">{metric.description}</td>
+              <tr key={index} className="hover:bg-gray-50 transition">
+                <td className={`${TABLE_CELL_CLASS} ${TABLE_KEY_CLASS}`}>
+                  {metric.key}
+                </td>
+                <td className={TABLE_CELL_CLASS}>{metric.description}</td>
               </tr>
             ))}
           </tbody>
@@ -205,30 +219,30 @@ const SurveyDataDetails = () => {
         },
       ].map((task, index) => (
         <div key={index}>
-          <h2 className="text-2xl font-semibold mt-6">{task.title}</h2>
-          <div className="overflow-x-auto mt-2">
-            <table className="w-full border border-gray-300 bg-white">
+          <h2 className="text-xl font-bold mt-8 mb-2 text-gray-800 border-l-4 border-primary pl-2">
+            {task.title}
+          </h2>
+          <div className="overflow-x-auto rounded-lg shadow">
+            <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-300">
-                  <th className="p-2 text-left">Column Name</th>
-                  <th className="p-2 text-left">Description</th>
+                <tr>
+                  <th className={TABLE_HEADER_CLASS}>Column Name</th>
+                  <th className={TABLE_HEADER_CLASS}>Description</th>
                 </tr>
               </thead>
               <tbody>
                 {task.data.length > 0 ? (
-                  task.data.map((metric, index) => (
-                    <tr key={index} className="border-b border-gray-200">
-                      <td className="p-2 font-mono text-blue-700">
+                  task.data.map((metric, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50 transition">
+                      <td className={`${TABLE_CELL_CLASS} ${TABLE_KEY_CLASS}`}>
                         {metric.key}
                       </td>
-                      <td className="p-2 text-gray-700">
-                        {metric.description}
-                      </td>
+                      <td className={TABLE_CELL_CLASS}>{metric.description}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td className="p-2" colSpan={2}>
+                    <td className={TABLE_CELL_CLASS} colSpan={2}>
                       No specific metrics
                     </td>
                   </tr>

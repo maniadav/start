@@ -35,7 +35,7 @@ const Button = ({
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
   const variantStyles = {
-    default: "bg-black text-white hover:bg-primary/90",
+    default: "bg-black text-white",
     outline:
       "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
     ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -76,7 +76,7 @@ interface FileWithTask {
   taskType: string | null;
 }
 
-export default function FileUploadPage() {
+export default function Upload() {
   const [files, setFiles] = useState<FileWithTask[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadedTasks, setUploadedTasks] = useState<Record<string, boolean>>(
@@ -236,11 +236,9 @@ export default function FileUploadPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Task File Upload</h1>
-
+    <div className="container mx-auto py-8 px-4 ">
       {/* File Upload Area */}
-      <Card className="mb-8">
+      <Card className="mb-8 border-primary">
         <CardHeader>
           <CardTitle>Upload Files</CardTitle>
           <CardDescription>
@@ -343,7 +341,7 @@ export default function FileUploadPage() {
                     {isUploaded ? (
                       <FiCheckCircle className="h-5 w-5 text-green-500" />
                     ) : hasFiles ? (
-                      <FiFile className="h-5 w-5 text-blue-500" />
+                      <FiFile className="h-5 w-5 text-primary" />
                     ) : (
                       <FiAlertCircle className="h-5 w-5 text-muted-foreground" />
                     )}

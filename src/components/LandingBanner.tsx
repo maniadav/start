@@ -4,11 +4,12 @@ import { useLanguageProvider } from "state/provider/LanguageProvider";
 import InstallButton from "./button/AppDownload";
 import Link from "next/link";
 import { BASE_URL } from "@constants/config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const LandingBanner = () => {
   const { languageContent } = useLanguageProvider();
   return (
-    <header className="relative flex h-screen overflow-hidden bg-red-300">
+    <header className="relative flex h-screen overflow-hidden">
       <div className="flex justify-center z-20 absolute w-auto min-w-full min-h-full max-w-none align-middle bg-white opacity-50"></div>
       <div className="flex justify-center z-30 absolute w-auto min-w-full min-h-full max-w-none align-middle">
         <div className="px-20 mr-auto place-self-center lg:col-span-7">
@@ -34,8 +35,26 @@ const LandingBanner = () => {
               </svg>
               {languageContent.buttons.viewGithub}
             </a>
-            <Link href="/about" legacyBehavior>
-              <a className="inline-flex items-center justify-center gap-2 uppercase py-2 px-4 rounded-lg border-2 text-[#c4122f] dark:text-white bg-[#c4122f] hover:bg-red-800 hover:text-white text-md">
+
+            <Link href={`${PAGE_ROUTES.CONTENT.path}`} legacyBehavior>
+              <a className="inline-flex items-center justify-center gap-2 capitalize py-2 px-4 rounded-lg border-2 text-[#c4122f] dark:text-white bg-[#c4122f] hover:bg-red-800 hover:text-white text-md">
+                <svg
+                  viewBox="0 0 15 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                >
+                  <path
+                    d="M7 4.5V5h1v-.5H7zm1-.01v-.5H7v.5h1zM8 11V7H7v4h1zm0-6.5v-.01H7v.01h1zM6 8h1.5V7H6v1zm0 3h3v-1H6v1zM7.5 1A6.5 6.5 0 0114 7.5h1A7.5 7.5 0 007.5 0v1zM1 7.5A6.5 6.5 0 017.5 1V0A7.5 7.5 0 000 7.5h1zM7.5 14A6.5 6.5 0 011 7.5H0A7.5 7.5 0 007.5 15v-1zm0 1A7.5 7.5 0 0015 7.5h-1A6.5 6.5 0 017.5 14v1z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+                {languageContent.buttons.content}
+              </a>
+            </Link>
+            <Link href={`${PAGE_ROUTES.ABOUT.path}`} legacyBehavior>
+              <a className="inline-flex items-center justify-center gap-2 capitalize py-2 px-4 rounded-lg border-2 text-[#c4122f] dark:text-white bg-[#c4122f] hover:bg-red-800 hover:text-white text-md">
                 <svg
                   viewBox="0 0 15 15"
                   fill="none"

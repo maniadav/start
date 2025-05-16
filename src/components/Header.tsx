@@ -2,185 +2,126 @@
 import { useEffect, useState } from "react";
 import CommonIcon from "./common/CommonIcon";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { API_ENDPOINT } from "@constants/api.constant";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "state/provider/AuthProvider";
 import Link from "next/link";
 import LanguageToggle from "./LanguageToggle";
-import {
-  clearLocalStorageValue,
-  getLocalStorageValue,
-} from "@utils/localStorage";
-import { LOCALSTORAGE } from "@constants/storage.constant";
 import { BASE_URL } from "@constants/config.constant";
 import LogOutPopupModal from "./popup/LogOutPopup";
+import { NAV_ROUTES, PAGE_ROUTES } from "@constants/route.constant";
 
 export const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const data = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
-    setUser(data || null);
-  }, []);
-
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div className="w-full h-auto px-2 flex justify-center">
-      <div
-        className={`max-w-[700px] absolute z-40 mt-5 bg-black/50 rounded-full w-full flex justify-between items-center py-1 px-8 transition-all`}
-      >
-        <Link href="/" className="flex items-center">
-          <span className="self-center text-lg md:text-xl font-semibold whitespace-nowrap dark:text-white">
-            START
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          {/* user profile */}
-          <div className="relative group">
-            <div className="flex items-center cursor-pointer px-3 py-2 text-sm font-normal text-center">
-              <div className="h-auto mx-2">
-                {mounted && (
-                  <Image
-                    src={user?.profile || `${BASE_URL}/svg/user.svg`}
-                    alt="logo"
-                    className="rounded-full h-10 w-10 object-cover border-2 border-gray-400"
-                    width={32}
-                    height={32}
-                  />
-                )}
-              </div>
-
-              <p className="hidden md:block capitalize text-gray-300 text-sm">
-                {mounted ? `Hi, ${user?.childName || "user"}` : ""}
-              </p>
-              <span className="text-gray-500">
-                <CommonIcon
-                  icon="material-symbols:arrow-drop-up"
-                  height={25}
-                  width={25}
-                  rotate={90}
-                />
-              </span>
-            </div>
-            <div className="group-hover:block hidden">
-              <DropDown mounted={mounted} />
-            </div>
-          </div>
-          <LanguageToggle />
-          {/* <div
-            className="cursor-pointer rounded p-1 md:p-2 flex flex-row bg-black text-gray-400 items-center hover:bg-gray-800 hover:text-white"
-            onClick={toggle}
-          >
-            <div className="hidden md:block mr-1 rounded items-center">
-              Menu
-            </div>
-            <CommonIcon icon="pepicons-pop:menu" />
-          </div> */}
-        </div>
-      </div>
-      {/* side navigation bar */}
-      <div
-        className={`${
-          isOpen
-            ? `fixed w-full md:w-72 h-full ease-linear transform transition duration-500 z-40 left-0 top-0 bg-white opacity-100`
-            : `fixed w-full md:w-72 h-full ease-linear transform transition duration-500 z-40 left-0 top-0 -translate-x-full bg-transparent opacity-0 bg-[#0d0d0d]`
-        }`}
-      >
-        {/* <div
-          className="h-screen w-full text-white top-5 right-6 bg-transparent text-[2rem] cursor-pointer outline-none"
-          onClick={toggle}
-        >
-          <span className="w-full  md:w-72 items-end" onClick={toggle}>
-            <CommonIcon icon="mingcute:close-fill" height={20} width={20} />
-          </span>
-        </div> */}
-        <div className="p-2 flex justify-start w-full text-black text-base cursor-pointer outline-none">
-          <CommonIcon
-            icon="mingcute:close-fill"
-            height={20}
-            width={20}
-            click={toggle}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const menuLink = [
-  {
-    label: "Home",
-    slug: "/",
-  },
-  {
-    label: "Blog",
-    slug: "/blog",
-  },
-  {
-    label: "Alfaaz-e-Sukhan",
-    slug: "/poem",
-  },
-  {
-    label: "Photography",
-    slug: "/photography",
-  },
-  {
-    label: "About",
-    slug: "/about",
-  },
-];
-
-export const DropDown = ({ mounted }: any) => {
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const router = useRouter();
   const { user } = useAuth();
-
-  const [showPopup, setShowPopup] = useState<boolean>(false);
   const handleLogout = () => {
     if (user?.childID) {
       setShowPopup(!showPopup);
     } else {
-      router.push(`${API_ENDPOINT.auth.login}`);
+      router.push(`${PAGE_ROUTES.LOGIN.path}`);
     }
   };
 
-  return (
-    <div className="mr-20 absolute z-10 bg-white rounded-lg shadow w-44 dark:bg-gray-700">
-      <div className="py-2 text-sm text-gray-700 dark:text-gray-200">
-        <Link
-          href="/"
-          className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
-        >
-          <span className="">
-            <CommonIcon icon="ion:settings-outline" height={20} width={20} />
-          </span>
-          <span>Settings</span>
-        </Link>
-        <button
-          className="w-full hover:bg-gray-900 px-6 py-2 flex gap-2 items-center"
-          onClick={() => handleLogout()}
-        >
-          <span className="">
-            <CommonIcon icon="ri:logout-circle-r-line" height={20} width={20} />
-          </span>
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-          <span>
-            {mounted ? `Hi, ${user?.childID ? "Logout" : "Sign In"}` : ""}
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <header className="w-full fixed top-0 left-0 z-50 flex justify-center pointer-events-none">
+      <nav
+        className={`max-w-[900px] w-full mt-4 mx-2 flex items-center justify-between rounded-3xl px-4 py-2 transition-all duration-300 pointer-events-auto
+        ${
+          scrolled
+            ? "backdrop-blur-lg bg-black/50 shadow-2xl"
+            : "backdrop-blur-md bg-black/30 shadow-lg"
+        }
+        border-b border-white/10 glassmorphism`}
+        style={{ border: "1.5px solid rgba(255,255,255,0.12)" }}
+      >
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/icons/start-rounded-96.png"
+            alt="START Logo"
+            width={36}
+            height={36}
+            className="rounded-full"
+          />
+          <span className="text-lg md:text-xl font-bold text-white tracking-wide drop-shadow">
+            START
           </span>
-        </button>
-      </div>
+        </Link>
+        <ul className="hidden md:flex gap-4 items-center text-white/90 font-medium">
+          {Object.values(NAV_ROUTES).map((route) => (
+            <li key={route.path} className="relative group">
+              <Link
+                href={route.path}
+                className={`transition rounded-none px-3 py-1 uppercase
+                  ${pathname === route.path ? "text-primary font-bold" : ""}`}
+              >
+                {route.label}
+                <span
+                  className={`absolute left-0 -bottom-0.5 h-[2px] w-full bg-primary origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100
+                    ${pathname === route.path ? "hidden" : ""}`}
+                  aria-hidden="true"
+                />
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <div className="flex gap-2 relative group">
+            <button className="flex items-center px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition border border-white/20">
+              <Image
+                src={user?.profile || `${BASE_URL}/svg/user.svg`}
+                alt="User"
+                className="rounded-full h-8 w-8 object-cover border border-gray-400"
+                width={32}
+                height={32}
+              />
+              <span className="ml-2 hidden md:block text-sm text-white/80">
+                {mounted ? `Hi, ${user?.childName || "user"}` : ""}
+              </span>
+              {/* <CommonIcon
+                icon="material-symbols:arrow-drop-up"
+                height={25}
+                width={25}
+                rotate={90}
+              /> */}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="cursor-pointer gap-2 text-white/80 flex items-center px-2 py-1 rounded-full bg-primary hover:bg-black transition-color duration-300 ease-in-out border border-white/20"
+            >
+              <span className="ml-2 hidden md:block text-sm">
+                {mounted ? `${user?.childID ? "Logout" : "Sign In"}` : ""}
+              </span>
+              <CommonIcon
+                icon="ri:logout-circle-r-line"
+                height={20}
+                width={20}
+                rotate={user?.childID ? 120 : 90}
+              />
+            </button>
+          </div>
+        </div>
+      </nav>
       <LogOutPopupModal
         showFilter={showPopup}
         closeModal={() => setShowPopup(!showPopup)}
       />
-    </div>
+    </header>
   );
 };
-
 export default Header;
