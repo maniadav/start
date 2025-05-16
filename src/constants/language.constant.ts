@@ -12,6 +12,7 @@ export const englishContent = {
     viewGithub: "View on Github",
     startSurvey: "start the survey",
     about: "about us",
+    content: "View Data",
   },
 
   hints: {
@@ -226,6 +227,7 @@ export const hindiContent = {
     viewGithub: "गिटहब पर देखें",
     startSurvey: "सर्वे शुरू करें",
     about: "हमारे बारे में",
+    content: "डेटा देखें",
   },
   hints: {
     username: "यूजर नेम",

@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+
 interface IPopup {
   slideBottom?: boolean;
   slideTop?: boolean;
@@ -19,13 +21,14 @@ export const PopupModal = ({
   slideLeft = false,
   customStyle,
 }: IPopup) => {
-  return (
+  if (typeof window === "undefined") return null;
+  return createPortal(
     <div
       className={`${
         show
-          ? `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-black opacity-100`
-          : `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-transparent opacity-0
-          ${slideRight && "translate-x-full"} 
+          ? `inset-0 fixed w-screen h-screen ease-linear transform transition duration-500 z-[9999] right-0 top-0 bg-opacity-[0.6] bg-black opacity-100`
+          : `inset-0 fixed w-screen h-screen ease-linear transform transition duration-500 z-[9999] right-0 top-0 bg-opacity-[0.6] bg-transparent opacity-0
+          ${slideRight && "translate-x-full"}
           ${slideLeft && "-translate-x-full"}
           ${slideBottom && "translate-y-full"}
           ${slideTop && "-translate-y-full"}`
@@ -38,6 +41,7 @@ export const PopupModal = ({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

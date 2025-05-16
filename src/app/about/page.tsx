@@ -3,15 +3,12 @@ import Image from "next/image";
 import SuspenseWrapper from "components/SuspenseWrapper";
 import ProjectParticipants from "./ProjectParticipants";
 import { BASE_URL } from "@constants/config.constant";
-import TopNav from "components/TopNav";
 
 const IndexPage = () => {
   return (
     <div className="h-full flex flex-col gap-10">
       <div className="w-full mb-10">
         <div className=" mx-auto h-full sm:p-10">
-          <TopNav primaryText={"About"} secondaryText={"Us"} />
-
           <div className="w-full h-96 pt-10 rounded-xl">
             <Image
               src={`${BASE_URL}/image/about_title.png`}

@@ -3,7 +3,6 @@ import { BASE_URL } from "@constants/config.constant";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
 import SurveyTable from "components/SurveyTable";
-import TopNav from "components/TopNav";
 import UserComp from "components/UserComp";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,7 +15,6 @@ const ContentPage = () => {
       <div className="grid md:grid-cols-3 h-full md:h-screen text-black">
         <div className="w-full mb-10 col-span-3 md:col-span-2">
           <div className=" mx-auto h-full sm:p-10">
-            <TopNav primaryText={"Start Your"} secondaryText={"Survey"} />
             <header className="container px-4 lg:flex mt-20 md:mt-10 items-center h-full lg:mt-0">
               <div className="w-full">
                 <h1 className="text-4xl lg:text-6xl font-bold">
