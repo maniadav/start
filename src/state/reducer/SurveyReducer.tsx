@@ -1,3 +1,5 @@
+import { getInitialSurveyState } from "@constants/survey.data.constant";
+
 // reducers/SurveyReducer.ts
 export interface SurveyAttempt {
   closedWithTimeout?: boolean;
@@ -27,7 +29,8 @@ export type Action =
       attempt: number;
       task: string;
       data: SurveyAttempt;
-    };
+    }
+  | { type: "RESET_SURVEY_DATA" };
 
 export const SurveyReducer = (state: SurveyState, action: Action): any => {
   switch (action.type) {
@@ -46,7 +49,8 @@ export const SurveyReducer = (state: SurveyState, action: Action): any => {
           },
         },
       };
-
+    case "RESET_SURVEY_DATA":
+      return getInitialSurveyState();
     default:
       return { ...state };
   }

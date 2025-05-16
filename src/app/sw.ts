@@ -63,7 +63,7 @@ const dynamicRoutes = dynamicRouteConfigs.flatMap(({ base, attempts }) => {
 });
 
 // create precache list
-console.log({ staticRoutes, dynamicRoutes });
+// console.log({ staticRoutes, dynamicRoutes });
 
 const precacheEntries = [
   ...(self.__SW_MANIFEST || []),
