@@ -1,3 +1,4 @@
+// tasks constant for multi-language support
 export const TasksConstant: any = {
   MotorFollowingTask: {
     id: "MotorFollowingTask",
@@ -155,7 +156,7 @@ export interface Task {
   taskMessage: string;
   taskEndMessage: string;
 }
-taskEndMessage: "";
+
 export const MotorFollowingContent: Task = TasksConstant.MotorFollowingTask;
 
 export const BubblePoppingContent: Task = TasksConstant.BubblePoppingTask;

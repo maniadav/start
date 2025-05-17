@@ -2,6 +2,8 @@ import React from "react";
 import CommonIcon from "./common/CommonIcon";
 import Image from "next/image";
 import { PAGE_ROUTES } from "@constants/route.constant";
+import { BASE_URL } from "@constants/config.constant";
+import Link from "next/link";
 
 const SOCIAL_LINKS = [
   {
@@ -23,12 +25,12 @@ const SOCIAL_LINKS = [
 
 const LOCATIONS = ["India", "United Kingdom", "London"];
 
-const COMPANY_LINKS = [
-  { href: PAGE_ROUTES.ABOUT.path, label: "The team" },
-  { href: PAGE_ROUTES.CONTENT.path, label: "Data Format" },
-  { href: PAGE_ROUTES.SURVEY.path, label: "Perform Survey" },
-  { href: PAGE_ROUTES.ABOUT.path, label: "Join us" },
-];
+// const COMPANY_LINKS = [
+//   { href: PAGE_ROUTES.ABOUT.path, label: "The team" },
+//   { href: PAGE_ROUTES.CONTENT.path, label: "Data Format" },
+//   { href: PAGE_ROUTES.SURVEY.path, label: "Perform Survey" },
+//   { href: PAGE_ROUTES.ABOUT.path, label: "Join us" },
+// ];
 
 const Footer = () => {
   return (
@@ -37,7 +39,7 @@ const Footer = () => {
         {/* Branding */}
         <div className="flex flex-col items-center md:items-start gap-2 md:gap-4 mb-6 md:mb-0">
           <Image
-            src="/image/start-logo.png"
+            src={`${BASE_URL}/image/start-logo.png`}
             alt="START Logo"
             width={48}
             height={48}
@@ -86,13 +88,15 @@ const Footer = () => {
           <li className="text-xl pb-2 font-serif text-gray-200 font-bold">
             Company
           </li>
-          {COMPANY_LINKS.map(({ href, label }) => (
-            <li key={label}>
-              <a href={href} className="hover:text-white transition">
-                {label}
-              </a>
-            </li>
-          ))}
+          <li key={PAGE_ROUTES.ABOUT.path} className="capitalize">
+            <Link href={PAGE_ROUTES.ABOUT.path}>Know about us</Link>
+          </li>
+          <li key={PAGE_ROUTES.CONTENT.path} className="capitalize">
+            <Link href={PAGE_ROUTES.CONTENT.path}>check data format</Link>
+          </li>
+          <li key={PAGE_ROUTES.SURVEY.path} className="capitalize">
+            <Link href={PAGE_ROUTES.SURVEY.path}>ready for the survey?</Link>
+          </li>
         </ul>
       </div>
       <div className="mt-8 border-t border-gray-800 pt-4 text-center text-gray-500 text-xs">
