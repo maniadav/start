@@ -1,3 +1,4 @@
+// header navigation
 export const NAV_ROUTES = {
   HOME: {
     label: "Home",
@@ -17,6 +18,7 @@ export const NAV_ROUTES = {
   },
 };
 
+// all the page routes are defined here
 export const PAGE_ROUTES = {
   HOME: {
     label: "Home",

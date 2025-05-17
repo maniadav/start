@@ -51,7 +51,7 @@ export const Header = () => {
       >
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/icons/start-rounded-96.png"
+            src={`${BASE_URL}/icons/start-rounded-96.png`}
             alt="START Logo"
             width={36}
             height={36}

@@ -1,3 +1,4 @@
+// multi lingual support for the app
 export const englishContent = {
   language: "eng",
   app_name: "Start",
