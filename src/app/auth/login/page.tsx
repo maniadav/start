@@ -11,6 +11,7 @@ import { IconHome } from "components/common/Icons";
 import Link from "next/link";
 import { BASE_URL } from "@constants/config.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 interface LoginDataType {
   childID: string;
@@ -60,8 +61,7 @@ const LoginPage = () => {
     try {
       setLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, formData, true);
       dispatch({ type: "RESET_SURVEY_DATA" });
-      // toast.success(`Welcome ${formData.childName}! Let's begin the journey.`);
-      router.push(API_ENDPOINT.page.survey);
+      router.push(PAGE_ROUTES.SURVEY.path);
     } catch (error) {
       console.error("API call error:", error);
       toast.error("Something went wrong. Please try again!");

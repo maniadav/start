@@ -19,21 +19,31 @@ export const PopupModal = ({
   slideLeft = false,
   customStyle,
 }: IPopup) => {
+  // Compute slide classes
+  const getSlideClass = () => {
+    if (slideRight) return show ? "translate-x-0" : "translate-x-full";
+    if (slideLeft) return show ? "translate-x-0" : "-translate-x-full";
+    if (slideBottom) return show ? "translate-y-0" : "translate-y-full";
+    if (slideTop) return show ? "translate-y-0" : "-translate-y-full";
+    return "";
+  };
+
   return (
     <div
-      className={`${
+      role="dialog"
+      aria-modal="true"
+      className={`inset-0 fixed w-screen h-screen z-[9999] bg-black bg-opacity-60 transition-all duration-500 ease-linear flex items-center justify-center ${
         show
-          ? `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-black opacity-100`
-          : `inset-0 fixed w-screen  h-screen ease-linear transform transition duration-500 z-50 right-0 top-0 bg-opacity-[0.6] bg-transparent opacity-0
-          ${slideRight && "translate-x-full"} 
-          ${slideLeft && "-translate-x-full"}
-          ${slideBottom && "translate-y-full"}
-          ${slideTop && "-translate-y-full"}`
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
       }`}
+      style={{ pointerEvents: show ? "auto" : "none" }}
       onClick={() => onRequestClose && onRequestClose()}
     >
       <div
-        className={`${customStyle} relative w-full h-full`}
+        className={`relative transition-transform duration-500 ease-linear w-full h-full ${getSlideClass()} ${
+          customStyle || ""
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

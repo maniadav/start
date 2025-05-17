@@ -18,18 +18,12 @@ const ErrorComponent = ({ imageUrl, title, subTitle }: errorComInterface) => {
         </div>
         <div className="xl:pt-24 w-full flex flex-col items-center align-middle justify-center xl:w-1/2 pb-12 lg:pb-0">
           <div className="">
-            <h1 className="text-center lg:text-start my-2 text-gray-800 font-bold text-2xl">
+            <h1 className="capitalize text-center lg:text-start my-2 text-primary font-bold text-2xl">
               {title}
             </h1>
             <p className="text-center lg:text-start my-2 text-gray-800">
               {subTitle}
             </p>
-            {/* <button
-              className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 text-center bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-opacity-50"
-              onClick={() => router.push('/')}
-            >
-              Go to Homepage
-            </button> */}
           </div>
         </div>
       </div>

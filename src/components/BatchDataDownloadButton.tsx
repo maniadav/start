@@ -30,7 +30,7 @@ export const handleBatchDownload = async () => {
     const zipUrl = URL.createObjectURL(zipBlob);
     const zipLink = document.createElement("a");
     zipLink.href = zipUrl;
-    zipLink.download = `start_child_id_${user.childID}_${formattedDate}.zip`;
+    zipLink.download = `start_child_id_${user.childID}_observer_id_${user.observerID}_${formattedDate}.zip`;
     zipLink.click();
     URL.revokeObjectURL(zipUrl); // Clean up memory
   }

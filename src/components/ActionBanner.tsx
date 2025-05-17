@@ -9,6 +9,7 @@ import { API_ENDPOINT } from "@constants/api.constant";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
@@ -46,15 +47,8 @@ const ActionBanner = () => {
                   {languageContent.banner.quesText}
                 </p>
                 <div className="h-4"></div>
-                <Link
-                  href={
-                    user?.childID
-                      ? `${API_ENDPOINT.page.survey}`
-                      : `${API_ENDPOINT.auth.login}`
-                  }
-                  legacyBehavior
-                >
-                  <a className="flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
+                <Link href={PAGE_ROUTES.SURVEY.path} legacyBehavior>
+                  <a className="capitalize flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
                     <IconSurvey width="1.5" height="1.5" />
                     <p>{languageContent.buttons.startSurvey}</p>
                   </a>
