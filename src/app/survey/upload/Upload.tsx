@@ -13,64 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "./card";
+import TASK_TYPE from "@constants/survey.type.constant";
+import FileDropZone from "components/common/FileDropZone";
+import Button from "components/common/Button";
 
-interface ButtonProps {
-  variant?: "default" | "outline" | "ghost";
-  size?: "sm" | "md" | "lg";
-  disabled?: boolean;
-  onClick?: () => void;
-  className?: string;
-  children: React.ReactNode;
-}
-
-const Button = ({
-  variant = "default",
-  size = "md",
-  disabled = false,
-  onClick,
-  className = "",
-  children,
-}: ButtonProps) => {
-  const baseStyles =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-
-  const variantStyles = {
-    default: "bg-black text-white",
-    outline:
-      "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-    ghost: "hover:bg-accent hover:text-accent-foreground",
-  };
-
-  const sizeStyles = {
-    sm: "h-9 px-3 text-sm",
-    md: "h-10 px-4 py-2",
-    lg: "h-11 px-8 text-lg",
-  };
-
-  return (
-    <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
-
-// Define the task types
-const TASK_TYPES = [
-  "BubblePoppingTask",
-  "DelayedGratificationTask",
-  "MotorFollowingTask",
-  "ButtonTask",
-  "SynchronyTask",
-  "LanguageSamplingTask",
-  "WheelTask",
-  "PreferentialLookingTask",
-];
-
-// Define the file type
 interface FileWithTask {
   file: File;
   taskType: string | null;
@@ -85,7 +31,7 @@ export default function Upload() {
 
   // Detect task type from file name
   const detectTaskType = (fileName: string): string | null => {
-    for (const taskType of TASK_TYPES) {
+    for (const taskType of TASK_TYPE) {
       if (fileName.includes(taskType)) {
         return taskType;
       }
@@ -93,35 +39,13 @@ export default function Upload() {
     return null;
   };
 
-  // Handle file drop
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (e.dataTransfer.files) {
-      const newFiles = Array.from(e.dataTransfer.files).map((file) => ({
-        file,
-        taskType: detectTaskType(file.name),
-      }));
-
-      setFiles((prev) => [...prev, ...newFiles]);
-    }
-  }, []);
-
-  // Handle file selection via input
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files).map((file) => ({
-        file,
-        taskType: detectTaskType(file.name),
-      }));
-
-      setFiles((prev) => [...prev, ...newFiles]);
-    }
-  };
-
-  // Handle drag over
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  // Handle files selected from FileDropZone
+  const handleFilesSelected = (fileList: FileList) => {
+    const newFiles = Array.from(fileList).map((file) => ({
+      file,
+      taskType: detectTaskType(file.name),
+    }));
+    setFiles((prev) => [...prev, ...newFiles]);
   };
 
   // Upload a single file
@@ -247,29 +171,7 @@ export default function Upload() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div
-            className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onClick={() => document.getElementById("fileInput")?.click()}
-          >
-            <FiUpload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-lg mb-2">Drag and drop files here</p>
-            <p className="text-sm text-muted-foreground mb-4">
-              or click to browse
-            </p>
-            <Button variant="outline" size="sm">
-              Select Files
-            </Button>
-            <input
-              id="fileInput"
-              type="file"
-              multiple
-              accept=".json,.csv"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </div>
+          <FileDropZone onFilesSelected={handleFilesSelected} />
         </CardContent>
       </Card>
 
@@ -327,7 +229,7 @@ export default function Upload() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {TASK_TYPES.map((taskType) => {
+            {TASK_TYPE.map((taskType) => {
               const taskFiles = getFilesForTask(taskType);
               const hasFiles = taskFiles.length > 0;
               const isUploaded = uploadedTasks[taskType];
