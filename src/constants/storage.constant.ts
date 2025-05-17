@@ -1,3 +1,4 @@
+// This file contains the keys used for localStorage and IndexedDB
 export const LOCALSTORAGE = {
   LOGGED_IN_USER: 'start_user',
   MFA_ACCESS_TOKEN: 'x-secure-token',

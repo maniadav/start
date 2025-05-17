@@ -147,12 +147,12 @@ const MediaPipeHandler = ({
           });
         }
       } else {
-        setMsg(
-          `Couldn't retrieve key ${IndexDB_Storage.tempVideo} from ${IndexDB_Storage.temporaryDB} database.`
-        );
+        setMsg(`Unable to fetch video data. Please try again later.`);
+        setIsProcessing(false);
       }
     } catch (error) {
       setMsg("Error fetching video");
+      setIsProcessing(false);
       console.error("Error fetching video:", error);
     }
   };
@@ -230,7 +230,7 @@ const MediaPipeHandler = ({
               setMsg(`Looking ${mainData}`);
               const timestamp: number = parseFloat(currentTime.toFixed(3)) || 0;
               setMsg(
-                `Frame: ${frameCount}, Looking ${mainData} at time ${currentTime.toFixed(
+                `Frame: ${frameCount}, Direction: ${mainData}, Time: ${currentTime.toFixed(
                   3
                 )}s`
               );
@@ -265,7 +265,7 @@ const MediaPipeHandler = ({
 
           let updatedSurveyData;
           if (taskID == TasksConstant.WheelTask.id) {
-            const updatedSurveyData = {
+            updatedSurveyData = {
               ...state[taskID][`attempt${attempt}`],
               gazeDistance: gazeMainData,
               gazeTiming,
