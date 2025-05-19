@@ -83,6 +83,27 @@ const serwist = new Serwist({
   clientsClaim: true,
   runtimeCaching: [
     {
+      // NetworkFirst for all navigation/document requests (HTML pages)
+      matcher: ({ request }: { request: Request }) =>
+        request.destination === "document" && request.mode === "navigate",
+      handler: "NetworkFirst" as unknown as RouteHandler,
+      options: {
+        cacheName: `${CACHE_NAME}-pages`,
+        networkTimeoutSeconds: 10,
+        plugins: [
+          {
+            cacheWillUpdate: async ({ response }: { response: Response }) => {
+              // Only cache successful responses
+              if (response && response.status === 200) {
+                return response;
+              }
+              return null;
+            },
+          },
+        ],
+      },
+    },
+    {
       matcher: ({ url }: { url: URL }) => {
         // Match any of the dynamic routes with or without attempt parameter
         return dynamicRouteConfigs.some(
