@@ -145,7 +145,12 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           autoPlay
           muted
         >
-          <source src={`${BASE_URL}/video/start-plt.mp4`} type="video/mp4" />
+          <source
+            src={`${BASE_URL}/video/${
+              isSurvey ? "start-plt.mp4" : "plt-sample.mp4"
+            }`}
+            type="video/mp4"
+          />
         </video>
       </div>
 
