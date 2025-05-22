@@ -190,7 +190,6 @@ const MediaPipeHandler = ({
     const processFrame = async () => {
       try {
         const currentTime = video.currentTime;
-        frameCount++;
 
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
@@ -201,6 +200,8 @@ const MediaPipeHandler = ({
           throw new Error("faceLandmarkerRef.current model is unavailable");
         }
 
+        let mainData: number | string = "no-eye-detected";
+        let currentVidType: string | undefined = undefined;
         try {
           const results = faceLandmarkerRef.current.detectForVideo(
             video,
@@ -217,13 +218,12 @@ const MediaPipeHandler = ({
             }
 
             const landmarks = results.faceLandmarks[0];
-            let mainData: number | string = "";
             if (taskID == TasksConstant.WheelTask.id) {
               mainData = calculateDepth(landmarks);
               setMsg(
                 `Frame: ${frameCount}, Projected Distance: ${mainData.toFixed(
                   2
-                )} cm at time ${currentTime.toFixed(3)}s`
+                )}, Time: ${currentTime.toFixed(3)}s`
               );
             } else {
               mainData = getGazeDirection(landmarks);
@@ -239,22 +239,29 @@ const MediaPipeHandler = ({
               const vidSegmentIndex = Math.floor(timestamp / 5);
 
               if (vidSegmentIndex < videoTypes.length) {
-                let currentVidType = videoTypes[vidSegmentIndex];
-
+                currentVidType = videoTypes[vidSegmentIndex];
                 // If the gaze direction is left, flip the video type as we only consider what type is on right side
                 if (mainData === "left") {
                   currentVidType =
                     currentVidType === "social" ? "nonsocial" : "social";
                 }
-                gazeVidType.push(currentVidType);
               }
             }
-            gazeTiming.push(currentTime);
-            gazeMainData.push(mainData || "initial");
+          } else {
+            // No face/eye detected
+            setMsg(
+              `Frame: ${frameCount}, No eye detected, Time: ${currentTime.toFixed(
+                3
+              )}s`
+            );
           }
         } catch (detectionError) {
           console.warn("Frame detection error:", detectionError);
         }
+
+        gazeVidType.push(currentVidType || "no-eye-detected");
+        gazeTiming.push(currentTime);
+        gazeMainData.push(mainData || "no-eye-detected");
 
         const progressPercentage = (currentTime / video.duration) * 100;
         setProgress(progressPercentage);
@@ -300,6 +307,8 @@ const MediaPipeHandler = ({
       } catch (error) {
         console.error("Frame processing error:", error);
         setMsg(`Error processing frame ${frameCount}: ${error}`);
+      } finally {
+        frameCount++;
       }
     };
 
