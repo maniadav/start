@@ -10,6 +10,7 @@ import DepthEstimation from "./DepthEstimation";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { PopupModal } from "components/common/PopupModal";
+import VidProcessingPopup from "components/common/VidProcessingPopup";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -140,7 +141,7 @@ const WheelTask = ({ isSurvey = false }) => {
           onClick={handleCloseGame}
         ></button>
       </div>
-      {isSurvey && (
+      {/* {isSurvey && (
         <PopupModal show={showPopup}>
           <DepthEstimation
             showFilter={showPopup}
@@ -149,6 +150,15 @@ const WheelTask = ({ isSurvey = false }) => {
             taskID={TaskContent.id}
           />
         </PopupModal>
+      )} */}
+      {isSurvey && (
+        <VidProcessingPopup
+          showFilter={showPopup}
+          onProcessComplete={setShowPopup}
+          reAttemptUrl={reAttemptUrl}
+          attempt={attempt}
+          taskID={TaskContent.id}
+        />
       )}
     </div>
   );

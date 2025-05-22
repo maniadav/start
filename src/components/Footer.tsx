@@ -4,6 +4,7 @@ import Image from "next/image";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
+import CacheResetButton from "./button/CacheResetButton";
 
 const SOCIAL_LINKS = [
   {
@@ -48,6 +49,8 @@ const Footer = () => {
           <span className="text-2xl font-bold text-white tracking-wide font-serif">
             START
           </span>
+
+          <CacheResetButton />
           <span className="text-xs text-gray-500">
             Empowering Early Development
           </span>

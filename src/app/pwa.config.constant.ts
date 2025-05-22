@@ -1,3 +1,3 @@
-export const CACHE_NAME = "start-app-cache";
+export const CACHE_NAME = "start";
 // Use package version and optional build ID for cache versioning
-export const CACHE_VERSION = "0.1.2";
+export const CACHE_VERSION = "1.0.1";
