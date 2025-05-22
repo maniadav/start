@@ -38,6 +38,7 @@ const dynamicRouteConfigs = [
   { base: `${BASE_URL}/delayed-gratification-task`, attempts: 3 },
   { base: `${BASE_URL}/synchrony-task`, attempts: 3 },
   { base: `${BASE_URL}/preferential-looking-task`, attempts: 3 },
+  { base: `${BASE_URL}/language-sampling-task`, attempts: 3 },
 ];
 
 // Generate all URLs to precache before Serwist initialization
