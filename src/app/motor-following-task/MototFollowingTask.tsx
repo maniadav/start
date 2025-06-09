@@ -18,6 +18,9 @@ import useAudio from "@hooks/useAudio";
 import CloseGesture from "components/CloseGesture";
 import { MotorFollowingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { useAuth } from "state/provider/AuthProvider";
+import { setIndexedDBValue } from "@utils/indexDB";
+import { IndexDB_Storage } from "@constants/storage.constant";
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -60,9 +63,14 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3
+      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
+      : null;
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
+  const { user } = useAuth();
+  // Generate a unique image file name
+  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${attempt}_image`;
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;
@@ -241,8 +249,18 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
       const imageData = canvas.toDataURL("image/png");
 
+      try {
+        setIndexedDBValue(
+          IndexDB_Storage.temporaryDB,
+          `${IndexDB_Storage.tempImage}${attempt}`,
+          imageData
+        );
+      } catch (error) {
+        console.error("Error saving audio to IndexedDB:", error);
+      }
+
       const link = document.createElement("a");
-      link.download = "drawing.png";
+      link.download = imagefile;
       link.href = imageData;
       link.click();
 
@@ -340,9 +358,9 @@ export default function MotorFollowingTask({ isSurvey = false }) {
         {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
         {isSurvey && (
           <div className="absolute z-50">
-            <div className="fixed top-4 right-4 flex flex-col space-y-2">
+            <div className="fixed top-4 left-4 flex flex-col space-y-2">
               <button
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80"
                 onClick={closeGame}
               >
                 Save

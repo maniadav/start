@@ -11,6 +11,7 @@ import CommonIcon from "components/common/CommonIcon";
 import CloseGesture from "components/CloseGesture";
 import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { useAuth } from "state/provider/AuthProvider";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -28,8 +29,11 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
+  const { user } = useAuth();
   const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3
+      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
+      : null;
   const timeLimit = 180000;
 
   useEffect(() => {
@@ -133,8 +137,13 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       </div>
 
       {isSurvey && (
-        <div className="fixed bottom-12 right-1/2">
-          <AudioRecorder handleCloseGame={handleCloseGame} />
+        <div className="fixed bottom-12 right-1/2 translate-x-1/2">
+          <AudioRecorder
+            handleCloseGame={handleCloseGame}
+            child_id_3456_observer_id_k88888_SynchronyTask_2025-06-09
+            filename={`child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${attempt}_audio`}
+            attempt={attempt}
+          />
         </div>
       )}
 

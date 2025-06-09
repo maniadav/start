@@ -10,126 +10,147 @@ import ProgressiveCircle from "./ProgrgessiveCircle";
 import CloseGesture from "components/CloseGesture";
 import { DelayedGratificationContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { DGTAttemptDataType, TimerDataType } from "types/survey.types";
 
+/**
+ * DelayedGratificationTask - A component that tests a user's ability to delay gratification
+ * The user can either wait for the circle to complete or click the star to end the task early
+ */
 const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [circleCompStatus, setCircleCompStatus] = useState<boolean>(false);
   const [showFireWorks, setShowFireWorks] = useState<boolean>(false);
-  const [alertShown, setAlertShown] = useState(false);
-  const [timerData, setTimerData] = useState<{
-    startTime: string;
-    endTime: string;
-    timeLimit: number;
-    isTimeOver: boolean;
-    timeTaken: number;
-  } | null>(null);
-  const [surveyData, setSurveyData] = useState<any>({});
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+  const [timerData, setTimerData] = useState<TimerDataType | null>(null);
+  const [surveyData, setSurveyAttemptData] = useState<
+    Partial<DGTAttemptDataType>
+  >({});
 
   const { windowSize, deviceType } = useWindowSize();
-  const { state, dispatch } = useSurveyContext();
+  const { dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+    attempt < 3
+      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
+      : null;
 
   const timeLimit = 180000;
 
+  // Stop timer ref to store and access the timer stop function
+  const stopTimerFuncRef = useRef<() => TimerDataType | undefined>();
+
+  const handleTimer = useCallback(() => {
+    const { endTimePromise, stopTimer } = timer(timeLimit);
+
+    stopTimerFuncRef.current = stopTimer;
+
+    // Use a local variable to track component mount status
+    let isMounted = true;
+
+    endTimePromise.then((data) => {
+      // Only update state if the component is still mounted
+      if (isMounted) {
+        setTimerData(data);
+      }
+    });
+
+    return () => {
+      // Mark as unmounted to prevent state updates after unmounting
+      isMounted = false;
+      // Clean up timer
+      stopTimerFuncRef.current && stopTimerFuncRef.current();
+    };
+  }, [timeLimit]);
+
+  const handleStartGame = useCallback(() => {
+    handleTimer();
+  }, [handleTimer]);
+
+  const handleStopTimer = useCallback(() => {
+    if (stopTimerFuncRef.current) {
+      return stopTimerFuncRef.current();
+    }
+    return undefined;
+  }, []);
+
+  const closeGame = useCallback(
+    (timeData?: TimerDataType, closedMidWay: boolean = false) => {
+      if (!isSurvey || !timeData) return;
+
+      setShowPopup(true);
+      setSurveyAttemptData((prevState: any) => {
+        const updatedSurveyData = {
+          ...prevState,
+          timeTaken: timeData?.timeTaken || "",
+          timeLimit: timeData?.timeLimit || "",
+          endTime: timeData?.endTime || "",
+          startTime: timeData?.startTime || "",
+          closedWithTimeout: timeData?.isTimeOver || false,
+          screenHeight: windowSize.height,
+          screenWidth: windowSize.width,
+          deviceType,
+          closedMidWay,
+        };
+
+        dispatch({
+          type: "UPDATE_SURVEY_DATA",
+          attempt,
+          task: TaskContent.id,
+          data: updatedSurveyData,
+        });
+
+        return updatedSurveyData;
+      });
+    },
+    [isSurvey, attempt, windowSize, deviceType, dispatch]
+  );
+
+  const handleCloseGame = useCallback(() => {
+    if (isSurvey) {
+      setShowFireWorks(true);
+      const timeData = handleStopTimer();
+      if (timeData) {
+        closeGame(timeData);
+      }
+    }
+  }, [isSurvey, handleStopTimer, closeGame]);
+
+  const handleCloseMidWay = useCallback(() => {
+    const timeData = handleStopTimer();
+    if (timeData) {
+      closeGame(timeData, true);
+    }
+  }, [handleStopTimer, closeGame]);
+
+  const closeGameOnCircleCompStatus = useCallback(() => {
+    if (isSurvey) {
+      setCircleCompStatus(true);
+      setShowFireWorks(true);
+
+      // Add a 5-second delay for fireworks to show before closing the game
+      const timerId = setTimeout(handleCloseGame, 5000);
+
+      // Return cleanup function to prevent memory leak if component unmounts
+      return () => clearTimeout(timerId);
+    }
+  }, [isSurvey, handleCloseGame]);
+
+  // Start the game when in survey mode
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
     }
-  }, [isSurvey]);
+  }, [isSurvey, handleStartGame]);
 
+  // Handle timer completion
   useEffect(() => {
     if (timerData?.isTimeOver && !alertShown) {
       closeGame(timerData);
       setAlertShown(true);
     }
-  }, [alertShown, timerData]);
-
-  const handleStartGame = () => {
-    handleTimer();
-  };
-
-  const stopTimerFuncRef = useRef<() => any>();
-
-  const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(timeLimit);
-
-    stopTimerFuncRef.current = stopTimer;
-
-    endTimePromise.then(setTimerData);
-
-    return () => {
-      // Optional cleanup if necessary
-      stopTimerFuncRef.current && stopTimerFuncRef.current();
-    };
-  };
-
-  const handleStopTimer = useCallback(() => {
-    if (stopTimerFuncRef.current) {
-      const data = stopTimerFuncRef.current();
-      return data;
-    }
-  }, []);
-
-  const closeGame = useCallback(
-    (timeData?: any, closedMidWay: boolean = false) => {
-      console.log({ timeData });
-      if (isSurvey) {
-        setShowPopup(true);
-        console.log({ timeData });
-        setSurveyData((prevState: any) => {
-          const updatedSurveyData = {
-            ...prevState,
-            timeTaken: timeData?.timeTaken || "",
-            timeLimit: timeData?.timeLimit || "",
-            endTime: timeData?.endTime || "",
-            startTime: timeData?.startTime || "",
-            closedWithTimeout: timeData?.isTimeOver || false,
-            screenHeight: windowSize.height,
-            screenWidth: windowSize.width,
-            deviceType,
-            closedMidWay,
-          };
-
-          dispatch({
-            type: "UPDATE_SURVEY_DATA",
-            attempt,
-            task: TaskContent.id,
-            data: updatedSurveyData,
-          });
-
-          return updatedSurveyData;
-        });
-      }
-    },
-    [isSurvey, timerData, attempt]
-  );
-
-  const handleCloseGame = () => {
-    if (isSurvey) {
-      setShowFireWorks(true);
-      const timeData = handleStopTimer();
-
-      // Add a 5-second delay for firework
-      if (circleCompStatus) {
-        setTimeout(() => {
-          closeGame(timeData);
-        }, 5000);
-      } else {
-        closeGame(timeData);
-      }
-    } else {
-      alert("you may start the game!");
-    }
-  };
-
-  const handleCloseMidWay = () => {
-    const timeData = handleStopTimer();
-    closeGame(timeData, true);
-  };
+  }, [timerData, alertShown, closeGame]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -146,15 +167,15 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       ) : (
         <div
           className="w-52 h-52 top-40 left-32 absolute cursor-pointer z-60"
-          onClick={() => handleCloseGame()}
+          onClick={handleCloseGame}
         >
           <Image
             width={600}
             height={600}
             src={`${BASE_URL}/gif/star.gif`}
-            objectFit="contain"
-            alt="langaugesampling.png"
+            alt="Star for delayed gratification task"
             className="border-b"
+            priority
           />
         </div>
       )}
@@ -162,7 +183,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       <div className="top-1/2 relative w-full flex justify-center align-middle items-center gap-20">
         <div className="absolute">
           <ProgressiveCircle
-            setCircleCompStatus={(e: boolean) => setCircleCompStatus(e)}
+            handleCircleComplete={closeGameOnCircleCompStatus}
           />
         </div>
       </div>

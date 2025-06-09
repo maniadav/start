@@ -50,7 +50,7 @@ export const TasksConstant: any = {
     title: "Language Sampling Task",
     surveyRoute: "language-sampling-task",
     taskMessage:
-      "Look at the picture. There are many different things happening. Explain the events to the child. Can you describe what is happening in the video?",
+      "Look at the picture. There are many different things happening. Explain the events to the child. Can you describe what is happening in this image?",
     taskEndMessage:
       "You have completed the Language Sampling Task. You can now go back to the survey dashboard, or start a new task.",
   },
