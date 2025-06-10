@@ -7,12 +7,14 @@ interface BallAnimationProp {
   width: number;
   height: number;
   attempt: number;
+  isSurvey: boolean;
 }
 
 const BallAnimation: React.FC<BallAnimationProp> = ({
   width,
   height,
   attempt,
+  isSurvey,
 }) => {
   const pathRef = useRef<SVGPathElement>(null);
   const ballRef = useRef<SVGCircleElement>(null);
@@ -79,14 +81,16 @@ const BallAnimation: React.FC<BallAnimationProp> = ({
       const point = path.getPointAtLength(Math.min(progress, 1) * length);
       ball.setAttribute("cx", point.x.toString());
       ball.setAttribute("cy", point.y.toString());
-
-      setBallCoordinates((prevPoints: Coordinate[]) => [
-        ...(prevPoints || []),
-        {
-          x: Number(point.x.toFixed(2)),
-          y: Number(point.y.toFixed(2)),
-        },
-      ]);
+      // avoid double data entry
+      if (isSurvey) {
+        setBallCoordinates((prevPoints: Coordinate[]) => [
+          ...(prevPoints || []),
+          {
+            x: Number(point.x.toFixed(2)),
+            y: Number(point.y.toFixed(2)),
+          },
+        ]);
+      }
 
       requestAnimationFrame(animateBall);
     };

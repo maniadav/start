@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import useDraw from "@hooks/useDraw";
 import useWindowSize from "@hooks/useWindowSize";
 import { drawLine } from "@utils/canva";
-import Ball from "./Ball";
 import { timer } from "@utils/timer";
 import MessagePopup from "components/common/MessagePopup";
 import { useSearchParams } from "next/navigation";
@@ -390,6 +389,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
             width={windowSize.width}
             height={windowSize.height}
             attempt={attempt}
+            isSurvey={isSurvey}
           />
         </div>
         {isArrowVisible && (
