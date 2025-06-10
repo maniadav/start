@@ -37,7 +37,7 @@ const CacheResetButton = () => {
 
   return (
     <Button
-      className={`px-4 py-2 rounded font-semibold transition focus:outline-none text-primary`}
+      className={`px-4 py-2 rounded font-semibold transition focus:outline-none text-primary border border-primary hover:bg-primary hover:text-white`}
       onClick={handleCacheReset}
       variant="outline"
       aria-label="Clear cache and storage"
