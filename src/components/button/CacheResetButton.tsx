@@ -1,7 +1,11 @@
 import Button from "components/common/Button";
 import React from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 const CacheResetButton = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const handleCacheReset = async () => {
     try {
       // Clear all caches (Cache API, sessionStorage, service worker)
@@ -18,6 +22,13 @@ const CacheResetButton = () => {
       }
 
       alert("Cache and storage cleared successfully!");
+
+      // Redirect to home page or refresh the current page
+      if (pathname === "/") {
+        window.location.reload();
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       console.error("Failed to clear cache:", error);
       alert("Failed to clear cache. See console for details.");
@@ -31,7 +42,7 @@ const CacheResetButton = () => {
       variant="outline"
       aria-label="Clear cache and storage"
     >
-      <span className="capitalize">Clear cache</span>
+      <span className="capitalize">Clear Cache</span>
     </Button>
   );
 };
