@@ -43,3 +43,4 @@ next-env.d.ts
 # serwist pwa files
 public/sw*
 public/swe-worker*
+.env.local
