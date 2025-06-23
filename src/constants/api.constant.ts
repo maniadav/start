@@ -5,6 +5,7 @@ export const API_CONFIG = {
 
 // All the API endpoints are defined here
 export const API_ENDPOINT = {
+  health: "/api/health", // Health check endpoint
   auth: {
     login: "/auth/login",
     register: "/auth/register",
