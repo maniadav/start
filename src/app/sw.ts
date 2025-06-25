@@ -43,7 +43,7 @@ const dynamicRouteConfigs = [
 
 // Generate all URLs to precache before Serwist initialization
 const staticRoutes = staticRoutesConfig.map((path) => ({
-  url: `${BASE_URL}${path}`,
+  url: path,
   revision: CACHE_VERSION,
 }));
 
