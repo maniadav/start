@@ -2,25 +2,25 @@ import { BASE_URL } from "@constants/config.constant";
 import { CACHE_VERSION } from "./pwa.config.constant";
 
 const staticRoutesConfig = [
-  `${BASE_URL}/`,
-  `${BASE_URL}/survey`,
-  `${BASE_URL}/content`,
-  `${BASE_URL}/about`,
-  `${BASE_URL}/auth/login`,
-  `${BASE_URL}/offline`,
-  `${BASE_URL}/testing`,
+  "/",
+  "/survey",
+  "/content",
+  "/about",
+  "/auth/login",
+  "/offline",
+  "/testing",
 ];
 
 // dynamic routes
 const dynamicRouteConfigs = [
-  { base: `${BASE_URL}/bubble-popping-task`, attempts: 3 },
-  { base: `${BASE_URL}/motor-following-task`, attempts: 3 },
-  { base: `${BASE_URL}/button-task`, attempts: 3 },
-  { base: `${BASE_URL}/wheel-task`, attempts: 3 },
-  { base: `${BASE_URL}/delayed-gratification-task`, attempts: 3 },
-  { base: `${BASE_URL}/synchrony-task`, attempts: 3 },
-  { base: `${BASE_URL}/preferential-looking-task`, attempts: 3 },
-  { base: `${BASE_URL}/language-sampling-task`, attempts: 3 },
+  { base: "/bubble-popping-task", attempts: 3 },
+  { base: "/motor-following-task", attempts: 3 },
+  { base: "/button-task", attempts: 3 },
+  { base: "/wheel-task", attempts: 3 },
+  { base: "/delayed-gratification-task", attempts: 3 },
+  { base: "/synchrony-task", attempts: 3 },
+  { base: "/preferential-looking-task", attempts: 3 },
+  { base: "/language-sampling-task", attempts: 3 },
 ];
 
 // Generate all URLs to precache before Serwist initialization
