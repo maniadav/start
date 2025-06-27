@@ -2,14 +2,14 @@ import { RuntimeCaching } from "serwist";
 import { CACHE_NAME } from "./pwa.config.constant";
 import { dynamicRouteConfigs } from "./pwa.routes";
 import { defaultCache } from "@serwist/next/worker";
+import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from "serwist";
 
 export const runtimeCacheConfig = [
   {
     // NetworkFirst for all navigation/document requests (HTML pages)
     matcher: ({ request }: { request: Request }) =>
       request.destination === "document" && request.mode === "navigate",
-    handler: "NetworkFirst",
-    options: {
+    handler: new NetworkFirst({
       cacheName: `${CACHE_NAME}-pages`,
       networkTimeoutSeconds: 10,
       plugins: [
@@ -22,14 +22,13 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // CacheFirst for Next.js static assets (CSS, JS, fonts)
     matcher: ({ url }: { url: URL }) =>
       url.pathname.startsWith("/_next/static/"),
-    handler: "CacheFirst",
-    options: {
+    handler: new CacheFirst({
       cacheName: `${CACHE_NAME}-next-static`,
       plugins: [
         {
@@ -47,7 +46,7 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // CacheFirst for fonts specifically
@@ -57,8 +56,7 @@ export const runtimeCacheConfig = [
       request.url.includes('.woff2') || 
       request.url.includes('.ttf') || 
       request.url.includes('.otf'),
-    handler: "CacheFirst",
-    options: {
+    handler: new CacheFirst({
       cacheName: `${CACHE_NAME}-fonts`,
       plugins: [
         {
@@ -70,14 +68,13 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // CacheFirst for CSS files
     matcher: ({ request }: { request: Request }) =>
       request.destination === "style" || request.url.includes('.css'),
-    handler: "CacheFirst",
-    options: {
+    handler: new CacheFirst({
       cacheName: `${CACHE_NAME}-styles`,
       plugins: [
         {
@@ -95,14 +92,13 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // CacheFirst for JavaScript files
     matcher: ({ request }: { request: Request }) =>
       request.destination === "script" || request.url.includes('.js'),
-    handler: "CacheFirst",
-    options: {
+    handler: new CacheFirst({
       cacheName: `${CACHE_NAME}-scripts`,
       plugins: [
         {
@@ -120,14 +116,13 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // CacheFirst for images
     matcher: ({ request }: { request: Request }) =>
       request.destination === "image",
-    handler: "CacheFirst",
-    options: {
+    handler: new CacheFirst({
       cacheName: `${CACHE_NAME}-images`,
       plugins: [
         {
@@ -139,7 +134,7 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   {
     // NetworkFirst for dynamic routes
@@ -150,8 +145,7 @@ export const runtimeCacheConfig = [
           url.pathname === base || url.pathname.startsWith(`${base}/`)
       );
     },
-    handler: "NetworkFirst",
-    options: {
+    handler: new NetworkFirst({
       cacheName: `${CACHE_NAME}-dynamic-routes`,
       networkTimeoutSeconds: 10,
       plugins: [
@@ -164,7 +158,7 @@ export const runtimeCacheConfig = [
           },
         },
       ],
-    },
+    }),
   },
   // Include default cache strategies for any other assets
   ...defaultCache,
