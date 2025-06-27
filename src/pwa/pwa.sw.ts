@@ -1,8 +1,4 @@
-import {
-  PrecacheEntry,
-  Serwist,
-  SerwistGlobalConfig,
-} from "serwist";
+import { PrecacheEntry, Serwist, SerwistGlobalConfig } from "serwist";
 import { BASE_URL } from "@constants/config.constant";
 import { CACHE_NAME, CACHE_VERSION } from "../pwa/pwa.config.constant";
 import { dynamicRoutes, staticRoutes } from "./pwa.routes";

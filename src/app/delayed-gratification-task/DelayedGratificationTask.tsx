@@ -183,6 +183,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       <div className="top-1/2 relative w-full flex justify-center align-middle items-center gap-20">
         <div className="absolute">
           <ProgressiveCircle
+            durationMs={60000} // 60 seconds
             handleCircleComplete={closeGameOnCircleCompStatus}
           />
         </div>
