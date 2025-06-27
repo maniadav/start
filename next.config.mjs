@@ -28,6 +28,6 @@ const configExport = disableSerwist
   : withSerwist({
       swSrc: "src/pwa/pwa.sw.ts",
       swDest: "public/sw.js",
-    })(nextConfig);
+      })(nextConfig);
 
 export default configExport;
