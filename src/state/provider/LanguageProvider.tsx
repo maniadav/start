@@ -27,7 +27,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     setLanguageContent(getContentByLanguage(language));
   }, [language]);
 
-  const toggleLanguage = ({}) => {
+  const toggleLanguage = () => {
     const newLanguage = language === 'en' ? 'hi' : 'en';
     setLanguage(newLanguage);
     setLocalStorageValue(LOCALSTORAGE.SELECTED_LANGUAGE, newLanguage);

@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       PAGE_ROUTES.CONTENT.path,
       PAGE_ROUTES.ABOUT.path,
       PAGE_ROUTES.CONTENT.path,
-      ,
       PAGE_ROUTES.SURVEY.path,
     ],
     []
