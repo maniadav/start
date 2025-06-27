@@ -25,24 +25,24 @@ export const runtimeCacheConfig = [
     }),
   },
   {
-    // CacheFirst for Next.js static assets (CSS, JS, fonts)
+    // NetworkFirst for Next.js static assets (CSS, JS, fonts) to handle version changes
     matcher: ({ url }: { url: URL }) =>
       url.pathname.startsWith("/_next/static/"),
-    handler: new CacheFirst({
+    handler: new NetworkFirst({
       cacheName: `${CACHE_NAME}-next-static`,
+      networkTimeoutSeconds: 5,
       plugins: [
         {
-          cacheKeyWillBeUsed: async ({ request }: { request: Request }) => {
-            const url = new URL(request.url);
-            // Remove version parameters for cache key consistency
-            url.search = '';
-            return url.href;
-          },
           cacheWillUpdate: async ({ response }: { response: Response }) => {
+            // Only cache successful responses
             if (response && response.status === 200) {
               return response;
             }
             return null;
+          },
+          cacheKeyWillBeUsed: async ({ request }: { request: Request }) => {
+            // Use the full URL including version hash for cache key
+            return request.url;
           },
         },
       ],

@@ -28,8 +28,8 @@ const serwist = new Serwist({
     entries: [
       {
         url: `${BASE_URL}/offline`,
-        matcher: ({ request }: { request: Request }) =>
-          request.destination === "document" && request.mode === "navigate",
+        matcher: ({ request }: { request: Request }) => 
+          request.destination === "document",
       },
     ],
   },
@@ -45,19 +45,36 @@ serwist.addEventListeners();
 // Clean up old caches
 self.addEventListener("activate", (event) => {
   console.log("Service worker activated");
+  
+  // Clean up old caches when a new service worker activates
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames
-          .filter(
-            (name) =>
-              name.startsWith(CACHE_NAME) && !name.includes(CACHE_VERSION)
-          )
-          .map((name) => {
-            console.log("Deleting old cache:", name);
-            return caches.delete(name);
-          })
-      )
-    )
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          // Delete caches that don't match current version
+          if (cacheName.includes(CACHE_NAME) && !cacheName.includes(CACHE_VERSION)) {
+            console.log("Deleting old cache:", cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
+});
+
+// Handle failed requests for versioned assets
+self.addEventListener("fetch", (event) => {
+  // If it's a request for a versioned chunk and it fails, don't cache the error
+  if (event.request.url.includes("/_next/static/chunks/") && 
+      event.request.url.match(/-[a-f0-9]+\.js$/)) {
+    
+    event.respondWith(
+      fetch(event.request).catch((error) => {
+        console.log("Failed to fetch versioned chunk:", event.request.url);
+        // For failed chunk requests, return a minimal response or let it fail gracefully
+        // instead of serving a cached 404
+        throw error;
+      })
+    );
+  }
 });
