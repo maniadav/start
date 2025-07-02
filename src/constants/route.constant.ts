@@ -39,7 +39,7 @@ export const PAGE_ROUTES = {
   },
   LOGIN: {
     label: "Login",
-    path: "/auth/login",
+    path: "/management/login",
   },
   SURVEY: {
     label: "Survey",
@@ -48,5 +48,17 @@ export const PAGE_ROUTES = {
   UPLOAD: {
     label: "Upload",
     path: "/survey/upload",
+  },
+  MANAGEMENT: {
+    USER: { label: "Upload", path: "/management/upload" },
+    ADMIN: {
+      DASHBOARD: { label: "Dashboard", path: "/management/admin/dashboard" },
+      ORGANISATION: { label: "Organisation", path: "/management/admin/org" },
+    },
+    ORGANIZATION: {
+      DASHBOARD: { label: "Dashboard", path: "/management/org/dashboard" },
+      OBSERVER: { label: "Organisation", path: "/management/org/obs" },
+    },
+    OBSERVER: { label: "Upload", path: "/management/upload" },
   },
 };

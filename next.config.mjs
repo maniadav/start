@@ -1,7 +1,7 @@
 import withSerwist from "@serwist/next";
 
 const isGithub = false;
-const disableSerwist = false; // set to true to disable Serwist caching for localhost
+const disableSerwist = true; // set to true to disable Serwist caching for localhost
 
 const nextConfig = {
   output: isGithub ? "export" : undefined,
@@ -10,17 +10,17 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  webpack: (config) => {
-    // rule for .task files
-    config.module.rules.push({
-      test: /\.task$/,
-      type: "asset/resource",
-      generator: {
-        filename: "static/[hash][ext][query]", // Custom output path
-      },
-    });
-    return config;
-  },
+  // webpack: (config) => {
+  //   // rule for .task files
+  //   config.module.rules.push({
+  //     test: /\.task$/,
+  //     type: "asset/resource",
+  //     generator: {
+  //       filename: "static/[hash][ext][query]", // Custom output path
+  //     },
+  //   });
+  //   return config;
+  // },
 };
 
 const configExport = disableSerwist

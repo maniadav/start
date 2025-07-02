@@ -27,19 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SurveyProvider>
-      <LanguageProvider>
-        <html lang={"en"}>
+    <html lang={"en"}>
+      <SurveyProvider>
+        <LanguageProvider>
           <body className={inter.className}>
             <GameWrapper>
-              <AuthProvider>
-                <ServiceWorkerUpdater />
-                {children}
-              </AuthProvider>
+              {/* <AuthProvider> */}
+              {/* <ServiceWorkerUpdater /> */}
+              {children}
+              {/* </AuthProvider> */}
             </GameWrapper>
           </body>
-        </html>
-      </LanguageProvider>
-    </SurveyProvider>
+        </LanguageProvider>
+      </SurveyProvider>
+    </html>
   );
 }

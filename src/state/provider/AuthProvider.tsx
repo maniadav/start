@@ -14,6 +14,7 @@ import AuthContext from "state/context/AuthContext";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import LoadingSection from "components/section/loading-section";
+import { initializeDummyData } from "@management/lib/dummy-data";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
@@ -45,13 +46,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const showFooter = footerRoutes.includes(path);
-
+  
+  // creating dummy admin, organization, and observer in local storage for testing purposes
   useEffect(() => {
-    if (!user?.childID && !publicRoutes.includes(currentPath)) {
-      router.push(PAGE_ROUTES.LOGIN.path); // Redirect to login if not authenticated
-    }
-    setLoading(false);
-  }, [user, router, path, publicRoutes, currentPath]);
+    initializeDummyData();
+  }, []);
+
+  // useEffect(() => {
+  //   if (!user?.userId && !publicRoutes.includes(currentPath)) {
+  //     router.push(PAGE_ROUTES.LOGIN.path); // Redirect to login if not authenticated
+  //   }
+  //   setLoading(false);
+  // }, [user, router, path, publicRoutes, currentPath]);
+
+
 
   if (loading) {
     return <LoadingSection />;

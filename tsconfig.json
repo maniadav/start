@@ -22,9 +22,11 @@
     "baseUrl": "./src",
     "paths": {
       "@components/*": ["comp/*"],
+      "@management/*": ["management/*"],
+      "@pages/*": ["pages/*"],
       "@utils/*": ["utils/*"],
       "@store/*": ["store/*"],
-      "@types/*": ["types/*"],
+      "@type/*": ["types/*"],
       "@services/*": ["services/*"],
       "@models/*": ["models/*"],
       "@hooks/*": ["hooks/*"],
