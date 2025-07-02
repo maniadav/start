@@ -102,7 +102,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       const elapsed = Date.now() - currentDate;
       if (caught || !isSurvey) {
         const timeData = handleStopTimer();
-        closeGame(timeData, true);
+        closeGame(timeData);
         clearInterval(intervalId);
         return;
       }
@@ -346,21 +346,23 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
-  const handleCloseMidWay = () => {
+  const handleCloseGame = (midway: boolean = false) => {
     const timeData = handleStopTimer();
-    closeGame(timeData, true);
+    closeGame(timeData, midway);
   };
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
       <div className="relative w-screen h-screen overflow-hidden">
-        {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
+        {isSurvey && (
+          <CloseGesture handlePressAction={() => handleCloseGame(true)} />
+        )}
         {isSurvey && (
           <div className="absolute z-50">
             <div className="fixed top-4 left-4 flex flex-col space-y-2">
               <button
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80"
-                onClick={closeGame}
+                onClick={() => handleCloseGame()}
               >
                 Save
               </button>

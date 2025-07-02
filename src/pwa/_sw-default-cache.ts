@@ -1,5 +1,5 @@
 import { NetworkFirst, StaleWhileRevalidate, CacheFirst } from "serwist";
-import { CACHE_NAME, CACHE_VERSION } from "./pwa.config.constant";
+import { CACHE_NAME, CACHE_VERSION } from "../pwa/pwa.config.constant";
 
 const CACHE_NAMES = {
   PAGES: `${CACHE_NAME}-pages-${CACHE_VERSION}`,

@@ -26,7 +26,7 @@ const nextConfig = {
 const configExport = disableSerwist
   ? nextConfig
   : withSerwist({
-      swSrc: "src/app/sw.ts",
+      swSrc: "src/pwa/pwa.sw.ts",
       swDest: "public/sw.js",
     })(nextConfig);
 
