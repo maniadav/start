@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import MessagePopup from "components/common/MessagePopup";
@@ -11,6 +11,11 @@ import CloseGesture from "components/CloseGesture";
 import { DelayedGratificationContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { DGTAttemptDataType, TimerDataType } from "types/survey.types";
+import {
+  SURVEY_MAX_ATTEMPTS,
+  SURVEY_MAX_DURATION,
+} from "@constants/survey.config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 /**
  * DelayedGratificationTask - A component that tests a user's ability to delay gratification
@@ -27,22 +32,23 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   >({});
 
   const { windowSize, deviceType } = useWindowSize();
-  const { dispatch } = useSurveyContext();
+  const { state, dispatch } = useSurveyContext();
+  const router = useRouter();
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
+
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3
-      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
-      : null;
-
-  const timeLimit = 180000;
 
   // Stop timer ref to store and access the timer stop function
   const stopTimerFuncRef = useRef<() => TimerDataType | undefined>();
 
   const handleTimer = useCallback(() => {
-    const { endTimePromise, stopTimer } = timer(timeLimit);
+    const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
 
     stopTimerFuncRef.current = stopTimer;
 
@@ -62,7 +68,7 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       // Clean up timer
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
-  }, [timeLimit]);
+  }, [SURVEY_MAX_DURATION]);
 
   const handleStartGame = useCallback(() => {
     handleTimer();
@@ -78,7 +84,14 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     (timeData?: TimerDataType, closedMidWay: boolean = false) => {
       if (!isSurvey || !timeData) return;
-
+      if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+        alert(
+          `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+        );
+        router.push(PAGE_ROUTES.SURVEY.path);
+        return;
+      }
+      setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
       setShowPopup(true);
       setSurveyAttemptData((prevState: any) => {
         const updatedSurveyData = {
@@ -192,9 +205,9 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={TaskContent.taskMessage}
+          msg={TaskContent.taskEndMessage}
           testName={TaskContent.title}
-          reAttemptUrl={reAttemptUrl}
+          showAction={showPopupActionButton}
         />
       )}
     </div>

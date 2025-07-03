@@ -1,16 +1,16 @@
 "use client";
-import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import CloseGesture from "components/CloseGesture";
-import DepthEstimation from "./DepthEstimation";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
-import { PopupModal } from "components/common/PopupModal";
 import VidProcessingPopup from "components/common/VidProcessingPopup";
+import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
+import { useRouter } from "next/navigation";
 
 const WheelTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -26,13 +26,14 @@ const WheelTask = ({ isSurvey = false }) => {
   const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =
     useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
-  const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3
-      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
-      : null;
+
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
+  // Get the current attempt directly from state
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
+  const router = useRouter();
   const timeLimit = 30000; // 30 sec
 
   useEffect(() => {
@@ -78,6 +79,15 @@ const WheelTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        // Navigate to survey page if attempts exceed maximum
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         const videoData = await stopVidRecording();
         setShowPopup(true);
         setSurveyData((prevState: any) => {
@@ -95,7 +105,7 @@ const WheelTask = ({ isSurvey = false }) => {
           };
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -104,7 +114,7 @@ const WheelTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt, windowSize, deviceType]
+    [isSurvey, timerData, currentAttempt, windowSize, deviceType]
   );
 
   const handleCloseGame = () => {
@@ -141,23 +151,14 @@ const WheelTask = ({ isSurvey = false }) => {
           onClick={handleCloseGame}
         ></button>
       </div>
-      {/* {isSurvey && (
-        <PopupModal show={showPopup}>
-          <DepthEstimation
-            showFilter={showPopup}
-            reAttemptUrl={reAttemptUrl}
-            attempt={attempt}
-            taskID={TaskContent.id}
-          />
-        </PopupModal>
-      )} */}
+
       {isSurvey && (
         <VidProcessingPopup
           showFilter={showPopup}
           onProcessComplete={setShowPopup}
-          reAttemptUrl={reAttemptUrl}
-          attempt={attempt}
+          showPopupActionButton={showPopupActionButton}
           taskID={TaskContent.id}
+          attempt={currentAttempt}
         />
       )}
     </div>

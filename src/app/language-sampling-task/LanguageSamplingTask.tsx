@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import MessagePopup from "components/common/MessagePopup";
@@ -12,6 +12,11 @@ import CloseGesture from "components/CloseGesture";
 import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { useAuth } from "state/provider/AuthProvider";
+import {
+  SURVEY_MAX_ATTEMPTS,
+  SURVEY_MAX_DURATION,
+} from "@constants/survey.config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -30,11 +35,12 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const { user } = useAuth();
-  const reAttemptUrl =
-    attempt < 3
-      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
-      : null;
-  const timeLimit = 180000;
+  const router = useRouter();
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
 
   useEffect(() => {
     if (isSurvey) {
@@ -56,7 +62,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   const stopTimerFuncRef = useRef<() => any>();
 
   const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(timeLimit);
+    const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
 
     stopTimerFuncRef.current = stopTimer;
 
@@ -78,6 +84,14 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     (timeData?: any, audioBlob?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup(true);
         console.log({ timeData });
         setSurveyData((prevState: any) => {
@@ -97,7 +111,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
 
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -150,9 +164,9 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}
-          msg={TaskContent.taskMessage}
+          msg={TaskContent.taskEndMessage}
           testName={TaskContent.title}
-          reAttemptUrl={reAttemptUrl}
+          showAction={showPopupActionButton}
         />
       )}
     </div>

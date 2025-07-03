@@ -16,7 +16,7 @@ import { BASE_URL } from "@constants/config.constant";
 import { TasksConstant } from "@constants/tasks.constant";
 
 type MediaPipeHandlerInterface = {
-  reAttemptUrl: string | null;
+  showAction: boolean;
   showFilter: boolean;
   attempt: number;
   taskID: string;
@@ -24,7 +24,7 @@ type MediaPipeHandlerInterface = {
 };
 
 const MediaPipeHandler = ({
-  reAttemptUrl,
+  showAction,
   showFilter,
   attempt,
   taskID,
@@ -387,19 +387,14 @@ const MediaPipeHandler = ({
             Go to Dashboard
           </button>
 
-          {reAttemptUrl && (
+          {showAction && (
             <button
-              disabled={isProcessing}
               onClick={() => {
-                if (!isProcessing && window.location) {
-                  window.location.href = reAttemptUrl;
+                if (window.location) {
+                  window.location.reload();
                 }
               }}
-              className={`${
-                isProcessing
-                  ? "cursor-not-allowed opacity-50"
-                  : "cursor-pointer"
-              } ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}
+              className={`cursor-pointer ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}
             >
               Create New Attempt
             </button>

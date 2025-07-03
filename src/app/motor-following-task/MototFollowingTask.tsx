@@ -69,8 +69,6 @@ export default function MotorFollowingTask({
   const [isDrawing, setIsDrawing] = useState(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [caught, setCaught] = useState<boolean>(false);
-  const [alertShown, setAlertShown] = useState(false);
-  const [popupActionAttempt, setPopupActionAttempt] = useState<number>(1);
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -80,12 +78,14 @@ export default function MotorFollowingTask({
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
-  const router = useRouter();
 
-  // Get the current attempt directly from state
+  const router = useRouter();
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
   const noOfAttemptFromState =
     parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
+
   const { windowSize, deviceType } = useWindowSize();
   const { ballCoordinates } = useMotorStateContext();
   const bubblePop = useAudio(`${BASE_URL}/audio/audio-caught.wav`);
@@ -312,7 +312,7 @@ export default function MotorFollowingTask({
   };
 
   const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(180000);
+    const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
 
     stopTimerFuncRef.current = stopTimer;
 
@@ -352,7 +352,7 @@ export default function MotorFollowingTask({
           router.push(PAGE_ROUTES.SURVEY.path);
           return;
         }
-        setPopupActionAttempt(currentAttempt);
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup((prev) => {
           return !prev;
         });
@@ -436,7 +436,7 @@ export default function MotorFollowingTask({
               showFilter={showPopup}
               msg={TaskContent.taskEndMessage}
               testName={TaskContent.title}
-              showAction={popupActionAttempt < SURVEY_MAX_ATTEMPTS}
+              showAction={showPopupActionButton}
             />
           </div>
         )}

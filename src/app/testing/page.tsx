@@ -45,7 +45,7 @@ const Page = () => {
       <PopupModal show={true}>
         <MediaPipeHandler
           showFilter={true}
-          reAttemptUrl={"reAttemptUrl"}
+          showAction={true}
           attempt={0}
           taskID={TasksConstant.PreferentialLookingTask.id}
           // videoURL={`${BASE_URL}/large.mp4`}

@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ButtonCanvas } from "./ButtonCanvas";
 import MessagePopup from "components/common/MessagePopup";
@@ -10,6 +10,8 @@ import { getRandomVideo } from "./RandomVideo";
 import CloseGesture from "components/CloseGesture";
 import { ButtonContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { SURVEY_MAX_ATTEMPTS, SURVEY_MAX_DURATION } from "@constants/survey.config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const ButtonTask = ({ isSurvey = false }) => {
   const [buttonClicked, setButtonClicked] = useState<string[]>([]);
@@ -18,7 +20,8 @@ const ButtonTask = ({ isSurvey = false }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [videoSRC, setVideoSRC] = useState<string>();
   const [randomVideoObj, setRandomVideoObj] = useState<any>(getRandomVideo());
-
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -36,14 +39,16 @@ const ButtonTask = ({ isSurvey = false }) => {
   });
 
   const { windowSize, deviceType } = useWindowSize();
-  const { dispatch } = useSurveyContext();
+  const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   console.log({ randomVideoObj });
   const attemptString = searchParams.get("attempt") || "1";
   const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
-  const timeLimit = 180000; // 3 minutes
+
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
+  const router = useRouter();
   const stopTimerFuncRef = useRef<() => any>();
 
   useEffect(() => {
@@ -97,14 +102,22 @@ const ButtonTask = ({ isSurvey = false }) => {
   };
 
   const handleStartGame = useCallback(() => {
-    const { endTimePromise, stopTimer } = timer(timeLimit);
+    const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
     stopTimerFuncRef.current = stopTimer;
     endTimePromise.then(setTimerData);
-  }, [timeLimit]);
+  }, [SURVEY_MAX_DURATION]);
 
   const closeGame = useCallback(
     (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup(true);
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
@@ -125,7 +138,7 @@ const ButtonTask = ({ isSurvey = false }) => {
 
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -164,7 +177,7 @@ const ButtonTask = ({ isSurvey = false }) => {
           showFilter={showPopup}
           msg={TaskContent.taskEndMessage}
           testName={TaskContent.title}
-          reAttemptUrl={reAttemptUrl}
+          showAction={showPopupActionButton}
         />
       )}
     </div>

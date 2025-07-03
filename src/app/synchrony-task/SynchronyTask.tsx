@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
@@ -11,6 +11,8 @@ import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider"
 import DrumPatch from "./DrumPatch";
 import { SynchronyContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
+import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 const SynchronyTask = ({ isSurvey = false }) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -29,10 +31,13 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const stopTimerFuncRef = useRef<() => any>();
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3 ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}` : null;
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
+  // Get the current attempt directly from state
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
+  const router = useRouter();
   const timeLimit = 30000;
 
   useEffect(() => {
@@ -76,6 +81,15 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
+        // Navigate to survey page if attempts exceed maximum
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setIsGameActive(false);
         setShowPopup(true);
 
@@ -97,7 +111,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
 
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -106,7 +120,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
         });
       }
     },
-    [isSurvey, timerData, attempt, stickClick, drumHit]
+    [isSurvey, timerData, currentAttempt, stickClick, drumHit]
   );
 
   const handleCloseMidWay = () => {
@@ -138,7 +152,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
           showFilter={showPopup}
           msg={TaskContent.taskEndMessage}
           testName={TaskContent.title}
-          reAttemptUrl={reAttemptUrl}
+          showAction={showPopupActionButton}
         />
       )}
     </div>
