@@ -1,29 +1,57 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+// Hooks
 import useDraw from "@hooks/useDraw";
 import useWindowSize from "@hooks/useWindowSize";
+import useAudio from "@hooks/useAudio";
+import { useAuth } from "state/provider/AuthProvider";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import { useMotorStateContext } from "state/provider/MotorStateProvider";
+
+// Utils
 import { drawLine } from "@utils/canva";
 import { timer } from "@utils/timer";
-import MessagePopup from "components/common/MessagePopup";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useSurveyContext } from "state/provider/SurveytProvider";
 import { trackTaskTime } from "@utils/trackTime";
-import Image from "next/image";
-import BallAnimation from "./BallAnimation";
-import { useMotorStateContext } from "state/provider/MotorStateProvider";
-import { Coordinate } from "types/survey.types";
-import useAudio from "@hooks/useAudio";
+import { setIndexedDBValue } from "@utils/indexDB";
+
+// Components
+import MessagePopup from "components/common/MessagePopup";
 import CloseGesture from "components/CloseGesture";
+import BallAnimation from "./BallAnimation";
+
+// Constants
 import { MotorFollowingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
-import { useAuth } from "state/provider/AuthProvider";
-import { setIndexedDBValue } from "@utils/indexDB";
 import { IndexDB_Storage } from "@constants/storage.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
+import {
+  SURVEY_MAX_ATTEMPTS,
+  SURVEY_MAX_DURATION,
+} from "@constants/survey.config.constant";
 
-export default function MotorFollowingTask({ isSurvey = false }) {
+// Types
+import { Coordinate } from "types/survey.types";
+
+// Constants
+const BUFFER_ZONE = 25;
+const LINE_WIDTH = 3;
+const LINE_COLOR = "#000000";
+const DATA_RECORD_INTERVAL = 20; // data records at 20ms rate
+const BALL_DOT_RADIUS = 2;
+const BALL_DOT_COLOR = "blue";
+
+interface MotorFollowingTaskProps {
+  isSurvey?: boolean;
+}
+
+export default function MotorFollowingTask({
+  isSurvey = false,
+}: MotorFollowingTaskProps) {
+  // State
   const [isArrowVisible, setIsArrowVisible] = useState(true);
   const [surveyData, setSurveyData] = useState<any>(false);
 
@@ -59,15 +87,13 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
   const { windowSize, deviceType } = useWindowSize();
-  const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
   const bubblePop = useAudio(`${BASE_URL}/audio/audio-caught.wav`);
   const ballCoordinatesRef = useRef(ballCoordinates);
   const touchCoordinatesRef = useRef(touchCoordinates);
   // const balls = useRef<any[]>([]);
   const animationRef = useRef<number | null>(null);
-  const color = "#000000";
-  const newlineWidth = 3;
+
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
   const { user } = useAuth();
@@ -83,15 +109,16 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     // considering ball radius, 25, as buffer zone
     if (
       windowSize.width &&
-      ballCoordinates[ballCoordinates.length - 1].x - 25 <
+      ballCoordinates[ballCoordinates.length - 1].x - BUFFER_ZONE <
         touchCoordinates[touchCoordinates.length - 1].x &&
       touchCoordinates[touchCoordinates.length - 1].x <
         ballCoordinates[ballCoordinates.length - 1].x &&
-      ballCoordinates[ballCoordinates.length - 1].y - 25 <
+      ballCoordinates[ballCoordinates.length - 1].y - BUFFER_ZONE <
         touchCoordinates[touchCoordinates.length - 1].y &&
       touchCoordinates[touchCoordinates.length - 1].y <
         ballCoordinates[ballCoordinates.length - 1].y &&
-      windowSize.width - 25 < touchCoordinates[touchCoordinates.length - 1].x
+      windowSize.width - BUFFER_ZONE <
+        touchCoordinates[touchCoordinates.length - 1].x
     ) {
       bubblePop();
       setCaught(true);
@@ -123,7 +150,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       setTime((prev: number[]) => [...prev, elapsed]);
       setObjX((prev: number[]) => [...prev, objX]);
       setObjY((prev: number[]) => [...prev, objY]);
-    }, 20); // data records at 20ms rate
+    }, DATA_RECORD_INTERVAL);
 
     return () => clearInterval(intervalId);
   }, [caught, isSurvey]);
@@ -163,8 +190,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
                 prevPoint: path[i - 1],
                 currentPoint: point,
                 ctx,
-                color,
-                newlineWidth,
+                color: LINE_COLOR,
+                newlineWidth: LINE_WIDTH,
               });
             });
           });
@@ -175,8 +202,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
               prevPoint: currentPath[i - 1],
               currentPoint: point,
               ctx,
-              color,
-              newlineWidth,
+              color: LINE_COLOR,
+              newlineWidth: LINE_WIDTH,
             });
           });
 
@@ -208,7 +235,13 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
     if (!isDrawing || !currentPoint || !prevPoint) return;
-    drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
+    drawLine({
+      prevPoint,
+      currentPoint,
+      ctx,
+      color: LINE_COLOR,
+      newlineWidth: LINE_WIDTH,
+    });
 
     setCurrentPath((prev) => [...prev, currentPoint]);
     // touchCoordinates.push({time: elapsed, x: currentPoint})
@@ -243,8 +276,14 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       if (ctx) {
         ballCoordinates.forEach((item: Coordinate) => {
           ctx.beginPath();
-          ctx.arc(item.x, item.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = "blue";
+          ctx.arc(
+            item.x,
+            item.y,
+            BALL_DOT_RADIUS,
+            0,
+            Math.PI * BALL_DOT_RADIUS
+          );
+          ctx.fillStyle = BALL_DOT_COLOR;
           ctx.fill();
         });
       }
