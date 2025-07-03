@@ -34,21 +34,12 @@ const Page = () => {
 
   return (
     <div className="w-screen h-screen">
-      {/* <TouchPressureComponent /> */}
-      {/* <video
-        className="h-full w-full rounded-lg bg-gray-800"
-        id="webcam"
-        src={vidSRC}
-        autoPlay
-        playsInline
-      ></video> */}
       <PopupModal show={true}>
         <MediaPipeHandler
           showFilter={true}
           showAction={true}
           attempt={0}
           taskID={TasksConstant.PreferentialLookingTask.id}
-          // videoURL={`${BASE_URL}/large.mp4`}
         />
       </PopupModal>
     </div>
