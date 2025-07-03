@@ -143,8 +143,6 @@ export default function MotorFollowingTask({
       const { x: touchX, y: touchY } = lastTouch;
       const { x: objX, y: objY } = lastBallPosition;
 
-      // console.log({ time: elapsed, touchX, touchY, objX, objY });
-
       setTouchX((prev: number[]) => [...prev, touchX]);
       setTouchY((prev: number[]) => [...prev, touchY]);
       setTime((prev: number[]) => [...prev, elapsed]);
@@ -411,10 +409,6 @@ export default function MotorFollowingTask({
     const timeData = handleStopTimer();
     closeGame(timeData, midway);
   };
-
-  useEffect(() => {
-    console.log("currentAttempt", currentAttempt);
-  }, [currentAttempt]);
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (

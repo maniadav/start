@@ -13,6 +13,7 @@ import { PAGE_ROUTES } from "@constants/route.constant";
 import { useRouter } from "next/navigation";
 
 const WheelTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
@@ -22,20 +23,20 @@ const WheelTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
   const { windowSize, deviceType } = useWindowSize();
   const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =
     useVideoRecorder();
   const { state, dispatch } = useSurveyContext();
-
-  const [showPopupActionButton, setPopupActionButton] =
-    useState<boolean>(false);
-  // Get the current attempt directly from state
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
   const router = useRouter();
-  const timeLimit = 30000; // 30 sec
+  const timeLimit = 30000;
+  const stopTimerFuncRef = useRef<() => any>();
 
+  // Effects
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
@@ -49,22 +50,17 @@ const WheelTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
+  // Handlers
   const handleStartGame = async () => {
     await startVidRecording();
     handleTimer();
   };
 
-  const stopTimerFuncRef = useRef<() => any>();
-
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(timeLimit);
-
     stopTimerFuncRef.current = stopTimer;
-
     endTimePromise.then(setTimerData);
-
     return () => {
-      // Optional cleanup if necessary
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
   };
@@ -79,7 +75,6 @@ const WheelTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        // Navigate to survey page if attempts exceed maximum
         if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
           alert(
             `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
@@ -109,12 +104,19 @@ const WheelTask = ({ isSurvey = false }) => {
             task: TaskContent.id,
             data: updatedSurveyData,
           });
-
           return updatedSurveyData;
         });
       }
     },
-    [isSurvey, timerData, currentAttempt, windowSize, deviceType]
+    [
+      isSurvey,
+      windowSize,
+      deviceType,
+      dispatch,
+      currentAttempt,
+      router,
+      stopVidRecording,
+    ]
   );
 
   const handleCloseGame = () => {
@@ -125,6 +127,7 @@ const WheelTask = ({ isSurvey = false }) => {
       alert("you may start the game!");
     }
   };
+
   const handleCloseMidWay = () => {
     const timeData = handleStopTimer();
     closeGame(timeData, true);
@@ -144,14 +147,12 @@ const WheelTask = ({ isSurvey = false }) => {
           <source src={`${BASE_URL}/gif/plt.gif`} type="video/mp4" />
         </video>
       </div>
-
       <div className="absolute bottom-5 left-5">
         <button
           className="border border-black shadow-lg rounded-full bg-primary w-16 h-16 px-2 py-1 animate-recPulse "
           onClick={handleCloseGame}
         ></button>
       </div>
-
       {isSurvey && (
         <VidProcessingPopup
           showFilter={showPopup}

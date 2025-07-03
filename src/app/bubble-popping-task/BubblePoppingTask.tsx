@@ -1,16 +1,15 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from "react";
-import Bubble from "./Bubble";
 import Image from "next/image";
+import Bubble from "./Bubble";
 import useAudio from "@hooks/useAudio";
+import useWindowSize from "@hooks/useWindowSize";
 import MessagePopup from "components/common/MessagePopup";
+import CloseGesture from "components/CloseGesture";
 import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
-import useWindowSize from "@hooks/useWindowSize";
-import CloseGesture from "components/CloseGesture";
 import {
   BubblePoppingContent as TaskContent,
   TasksConstant,
@@ -32,6 +31,7 @@ export const colors: string[] = [
 ];
 
 const BubblePoppingTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [numberOfBubbles, setNumberOfBubbles] = useState<number>(4);
   const [bubbles, setBubbles] = useState<string[]>(colors);
@@ -64,6 +64,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     deviceType: "",
   });
 
+  // Hooks
   const { windowSize } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
@@ -77,18 +78,19 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
+  const stopTimerFuncRef = useRef<() => any>();
 
+  // Constants
   const maxNumberOfBubble: number = 6;
   const bubbleSize: number = 100;
 
-  // start game
+  // Effects
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
     }
   }, [isSurvey]);
 
-  // screensize
   useEffect(() => {
     if (windowSize.width && windowSize.height) {
       setScreenWidth(windowSize.width);
@@ -97,12 +99,10 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     }
   }, [windowSize]);
 
-  // increase bubble number
   useEffect(() => {
     if (windowSize.width) {
       setPositionRange(windowSize.width / numberOfBubbles);
     }
-
     if (numberOfBubbles === maxNumberOfBubble + 1) {
       if (isSurvey) {
         const timeData = handleStopTimer();
@@ -122,7 +122,7 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
-  // function to get the coordinates of click
+  // Handlers
   const pushEntry = (
     bubbleX: number,
     bubbleY: number,
@@ -152,7 +152,6 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
       setBubblesPopped((prevState) => prevState + 1);
       pushEntry(bubbleX, bubbleY, mouseX, mouseY, color);
     }
-
     setBubbles((bubble) =>
       bubble.filter((prevBubbles) => prevBubbles !== color)
     );
@@ -166,7 +165,6 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     const width = window.screen.width;
     const height = window.screen.height;
     const device = navigator.userAgent;
-
     setSurveyData((prevState: any) => ({
       ...prevState,
       screenHeight: height,
@@ -176,17 +174,11 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
     setNumberOfBubbles(1);
   };
 
-  const stopTimerFuncRef = useRef<() => any>();
-
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
-
     stopTimerFuncRef.current = stopTimer;
-
     endTimePromise.then(setTimerData);
-
     return () => {
-      // Optional cleanup if necessary
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
   };
@@ -210,7 +202,6 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
         }
         setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup(true);
-        console.log({ timeData });
         const bubblesTotal: number =
           (maxNumberOfBubble / 2) * (2 + (maxNumberOfBubble - 1));
         setSurveyData((prevState: any) => {
@@ -225,14 +216,12 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
             bubblesPopped,
             closedMidWay,
           };
-
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
-
           return updatedSurveyData;
         });
       }
@@ -243,10 +232,8 @@ const BubblePoppingTask = ({ isSurvey = false }) => {
   const calculatePosition = (index: number) => {
     const min = index * positionRange + bubbleSize / 2;
     const max = (index + 1) * positionRange - bubbleSize;
-
     let x = Math.random() * (max - min) + min;
     const y = Math.random() * (screenHeight - bubbleSize);
-
     return { x, y };
   };
 

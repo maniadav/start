@@ -19,6 +19,7 @@ import {
 import { PAGE_ROUTES } from "@constants/route.constant";
 
 const LanguageSamplingTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [audioString, setAudioString] = useState();
@@ -29,19 +30,21 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const searchParams = useSearchParams();
   const attemptString = searchParams.get("attempt") || "0";
   const attempt = parseInt(attemptString);
   const { user } = useAuth();
-  const router = useRouter();
-  const [showPopupActionButton, setPopupActionButton] =
-    useState<boolean>(false);
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
+  const router = useRouter();
+  const stopTimerFuncRef = useRef<() => any>();
 
+  // Effects
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
@@ -55,21 +58,16 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
+  // Handlers
   const handleStartGame = () => {
     handleTimer();
   };
 
-  const stopTimerFuncRef = useRef<() => any>();
-
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
-
     stopTimerFuncRef.current = stopTimer;
-
     endTimePromise.then(setTimerData);
-
     return () => {
-      // Optional cleanup if necessary
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
   };
@@ -93,7 +91,6 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
         }
         setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup(true);
-        console.log({ timeData });
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -108,23 +105,29 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
             deviceType,
             closedMidWay,
           };
-
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
-
           return updatedSurveyData;
         });
       }
     },
-    [isSurvey, timerData, attempt, audioString]
+    [
+      isSurvey,
+      attempt,
+      audioString,
+      windowSize,
+      deviceType,
+      dispatch,
+      currentAttempt,
+      router,
+    ]
   );
 
   const handleCloseGame = (data: string) => {
-    console.log(data);
     if (isSurvey) {
       const timeData = handleStopTimer();
       closeGame(timeData, data);
@@ -132,6 +135,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
       alert("you may start the game!");
     }
   };
+
   const handleCloseMidWay = () => {
     const timeData = handleStopTimer();
     closeGame(timeData, "", true);
@@ -149,7 +153,6 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
           className="h-screen w-auto"
         />
       </div>
-
       {isSurvey && (
         <div className="fixed bottom-12 right-1/2 translate-x-1/2">
           <AudioRecorder
@@ -160,7 +163,6 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
           />
         </div>
       )}
-
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}

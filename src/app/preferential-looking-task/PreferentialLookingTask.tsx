@@ -13,6 +13,7 @@ import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 
 const PreferentialLookingTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
@@ -22,33 +23,30 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
-  const { windowSize, deviceType } = useWindowSize();
-  const { state, dispatch } = useSurveyContext();
-
-  const timeLimit = 30000; // 30 seconds, considering video lenngth
-  const router = useRouter();
   const [showPopupActionButton, setPopupActionButton] =
     useState<boolean>(false);
+  const { windowSize, deviceType } = useWindowSize();
+  const { state, dispatch } = useSurveyContext();
+  const timeLimit = 30000;
+  const router = useRouter();
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
-
   const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =
     useVideoRecorder();
-
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoDuration, setVideoDuration] = useState<number>(timeLimit);
+  const stopTimerFuncRef = useRef<() => any>();
 
+  // Effects
   useEffect(() => {
     const videoElement = videoRef.current;
     if (videoElement) {
-      // Set up an event listener for when metadata is loaded
       videoElement.onloadedmetadata = () => {
         const durationInMilliseconds = videoElement.duration * 1000;
         setVideoDuration(durationInMilliseconds);
       };
     }
-
     return () => {
       if (videoElement) {
         videoElement.onloadedmetadata = null;
@@ -69,22 +67,17 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
+  // Handlers
   const handleStartGame = async () => {
     await startVidRecording();
     handleTimer();
   };
 
-  const stopTimerFuncRef = useRef<() => any>();
-
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(videoDuration);
-
     stopTimerFuncRef.current = stopTimer;
-
     endTimePromise.then(setTimerData);
-
     return () => {
-      // Optional cleanup if necessary
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
   };
@@ -99,7 +92,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        // Navigate to survey page if attempts exceed maximum
         if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
           alert(
             `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
@@ -109,10 +101,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
         }
         setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         const videoData = await stopVidRecording();
-
-        setShowPopup((prev) => {
-          return !prev;
-        });
+        setShowPopup((prev) => !prev);
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -125,20 +114,25 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
             closedMidWay,
             deviceType,
           };
-
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
-
           return updatedSurveyData;
         });
       }
     },
-
-    [isSurvey, timerData, currentAttempt, showPopup]
+    [
+      isSurvey,
+      windowSize,
+      deviceType,
+      dispatch,
+      currentAttempt,
+      router,
+      stopVidRecording,
+    ]
   );
 
   const handleCloseMidWay = () => {
@@ -165,7 +159,6 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
           />
         </video>
       </div>
-
       {isSurvey && (
         <VidProcessingPopup
           showFilter={showPopup}

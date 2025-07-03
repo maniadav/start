@@ -17,11 +17,8 @@ import {
 } from "@constants/survey.config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 
-/**
- * DelayedGratificationTask - A component that tests a user's ability to delay gratification
- * The user can either wait for the circle to complete or click the star to end the task early
- */
 const DelayedGratificationTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [circleCompStatus, setCircleCompStatus] = useState<boolean>(false);
   const [showFireWorks, setShowFireWorks] = useState<boolean>(false);
@@ -30,7 +27,6 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const [surveyData, setSurveyAttemptData] = useState<
     Partial<DGTAttemptDataType>
   >({});
-
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
   const router = useRouter();
@@ -39,36 +35,23 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
-
-  const searchParams = useSearchParams();
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-
-  // Stop timer ref to store and access the timer stop function
   const stopTimerFuncRef = useRef<() => TimerDataType | undefined>();
 
+  // Timer handler
   const handleTimer = useCallback(() => {
     const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
-
     stopTimerFuncRef.current = stopTimer;
-
-    // Use a local variable to track component mount status
     let isMounted = true;
-
     endTimePromise.then((data) => {
-      // Only update state if the component is still mounted
       if (isMounted) {
         setTimerData(data);
       }
     });
-
     return () => {
-      // Mark as unmounted to prevent state updates after unmounting
       isMounted = false;
-      // Clean up timer
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
-  }, [SURVEY_MAX_DURATION]);
+  }, []);
 
   const handleStartGame = useCallback(() => {
     handleTimer();
@@ -106,18 +89,24 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           deviceType,
           closedMidWay,
         };
-
         dispatch({
           type: "UPDATE_SURVEY_DATA",
-          attempt,
+          attempt: currentAttempt,
           task: TaskContent.id,
           data: updatedSurveyData,
         });
-
         return updatedSurveyData;
       });
     },
-    [isSurvey, attempt, windowSize, deviceType, dispatch]
+    [
+      isSurvey,
+      currentAttempt,
+      windowSize,
+      deviceType,
+      dispatch,
+      currentAttempt,
+      router,
+    ]
   );
 
   const handleCloseGame = useCallback(() => {
@@ -141,23 +130,18 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
     if (isSurvey) {
       setCircleCompStatus(true);
       setShowFireWorks(true);
-
-      // Add a 5-second delay for fireworks to show before closing the game
       const timerId = setTimeout(handleCloseGame, 5000);
-
-      // Return cleanup function to prevent memory leak if component unmounts
       return () => clearTimeout(timerId);
     }
   }, [isSurvey, handleCloseGame]);
 
-  // Start the game when in survey mode
+  // Effects
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
     }
   }, [isSurvey, handleStartGame]);
 
-  // Handle timer completion
   useEffect(() => {
     if (timerData?.isTimeOver && !alertShown) {
       closeGame(timerData);
@@ -192,16 +176,14 @@ const DelayedGratificationTask = ({ isSurvey = false }) => {
           />
         </div>
       )}
-
       <div className="top-1/2 relative w-full flex justify-center align-middle items-center gap-20">
         <div className="absolute">
           <ProgressiveCircle
-            durationMs={60000} // 60 seconds for the circle to complete
+            durationMs={60000}
             handleCircleComplete={closeGameOnCircleCompStatus}
           />
         </div>
       </div>
-
       {isSurvey && (
         <MessagePopup
           showFilter={showPopup}

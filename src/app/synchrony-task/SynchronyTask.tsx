@@ -10,11 +10,11 @@ import CloseGesture from "components/CloseGesture";
 import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
 import DrumPatch from "./DrumPatch";
 import { SynchronyContent as TaskContent } from "@constants/tasks.constant";
-import { BASE_URL } from "@constants/config.constant";
 import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 
 const SynchronyTask = ({ isSurvey = false }) => {
+  // State declarations
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [isGameAtive, setIsGameActive] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
@@ -26,20 +26,19 @@ const SynchronyTask = ({ isSurvey = false }) => {
     isTimeOver: boolean;
   } | null>(null);
   const [surveyData, setSurveyData] = useState<any>({});
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
   const { stickClick, drumHit } = useSynchronyStateContext();
   const { windowSize, deviceType } = useWindowSize();
   const { state, dispatch } = useSurveyContext();
-  const searchParams = useSearchParams();
-  const stopTimerFuncRef = useRef<() => any>();
-  const [showPopupActionButton, setPopupActionButton] =
-    useState<boolean>(false);
-  // Get the current attempt directly from state
   const noOfAttemptFromState =
     parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
   const router = useRouter();
   const timeLimit = 30000;
+  const stopTimerFuncRef = useRef<() => any>();
 
+  // Effects
   useEffect(() => {
     if (isSurvey) {
       handleStartGame();
@@ -53,6 +52,7 @@ const SynchronyTask = ({ isSurvey = false }) => {
     }
   }, [alertShown, timerData]);
 
+  // Handlers
   const handleStartGame = () => {
     setStartTime(Date.now());
     setIsGameActive(true);
@@ -61,11 +61,8 @@ const SynchronyTask = ({ isSurvey = false }) => {
 
   const handleTimer = () => {
     const { endTimePromise, stopTimer } = timer(timeLimit);
-
     stopTimerFuncRef.current = stopTimer;
-
     endTimePromise.then(setTimerData);
-
     return () => {
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
@@ -81,7 +78,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
-        // Navigate to survey page if attempts exceed maximum
         if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
           alert(
             `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
@@ -92,7 +88,6 @@ const SynchronyTask = ({ isSurvey = false }) => {
         setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setIsGameActive(false);
         setShowPopup(true);
-
         setSurveyData((prevState: any) => {
           const updatedSurveyData = {
             ...prevState,
@@ -108,19 +103,27 @@ const SynchronyTask = ({ isSurvey = false }) => {
             closedMidWay,
             deviceType,
           };
-
           dispatch({
             type: "UPDATE_SURVEY_DATA",
             attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
-
           return updatedSurveyData;
         });
       }
     },
-    [isSurvey, timerData, currentAttempt, stickClick, drumHit]
+    [
+      isSurvey,
+      timerData,
+      currentAttempt,
+      stickClick,
+      drumHit,
+      windowSize,
+      deviceType,
+      dispatch,
+      router,
+    ]
   );
 
   const handleCloseMidWay = () => {
