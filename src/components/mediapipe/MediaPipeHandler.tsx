@@ -389,6 +389,7 @@ const MediaPipeHandler = ({
 
           {showAction && (
             <button
+              disabled={isProcessing}
               onClick={() => {
                 if (window.location) {
                   window.location.reload();

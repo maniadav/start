@@ -31,7 +31,7 @@ const WheelTask = ({ isSurvey = false }) => {
     useState<boolean>(false);
   // Get the current attempt directly from state
   const noOfAttemptFromState =
-    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+    parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
   const router = useRouter();
   const timeLimit = 30000; // 30 sec

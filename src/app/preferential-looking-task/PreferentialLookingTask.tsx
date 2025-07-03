@@ -30,7 +30,7 @@ const PreferentialLookingTask = ({ isSurvey = false }) => {
   const [showPopupActionButton, setPopupActionButton] =
     useState<boolean>(false);
   const noOfAttemptFromState =
-    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+    parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
 
   const { startVidRecording, stopVidRecording, CameraPermissionPopupUI } =

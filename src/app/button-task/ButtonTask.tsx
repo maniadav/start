@@ -46,7 +46,7 @@ const ButtonTask = ({ isSurvey = false }) => {
   const attempt = parseInt(attemptString);
 
   const noOfAttemptFromState =
-    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+    parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
   const currentAttempt = noOfAttemptFromState + 1;
   const router = useRouter();
   const stopTimerFuncRef = useRef<() => any>();
