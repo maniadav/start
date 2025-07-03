@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { IndexDB_Storage } from "@constants/storage.constant";
-import DepthEstimation from "app/wheel-task/DepthEstimation";
+import DepthEstimation from "app/task/wheel-task/DepthEstimation";
 import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { BASE_URL } from "@constants/config.constant";

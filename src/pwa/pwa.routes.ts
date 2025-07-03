@@ -9,14 +9,14 @@ const staticRoutesConfig = [
   `${BASE_URL}/auth/login`,
   `${BASE_URL}/offline`,
   `${BASE_URL}/testing`,
-  `${BASE_URL}/bubble-popping-task`,
-  `${BASE_URL}/motor-following-task`,
-  `${BASE_URL}/button-task`,
-  `${BASE_URL}/wheel-task`,
-  `${BASE_URL}/delayed-gratification-task`,
-  `${BASE_URL}/synchrony-task`,
-  `${BASE_URL}/preferential-looking-task`,
-  `${BASE_URL}/language-sampling-task`,
+  `${BASE_URL}/task/bubble-popping-task`,
+  `${BASE_URL}/task/motor-following-task`,
+  `${BASE_URL}/task/button-task`,
+  `${BASE_URL}/task/wheel-task`,
+  `${BASE_URL}/task/delayed-gratification-task`,
+  `${BASE_URL}/task/synchrony-task`,
+  `${BASE_URL}/task/preferential-looking-task`,
+  `${BASE_URL}/task/language-sampling-task`,
 ];
 
 // Generate all URLs to precache before Serwist initialization

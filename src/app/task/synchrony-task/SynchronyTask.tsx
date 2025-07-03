@@ -5,7 +5,7 @@ import MessagePopup from "components/common/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
-import DrumSVG from "app/synchrony-task/DrumSVG";
+import DrumSVG from "app/task/synchrony-task/DrumSVG";
 import CloseGesture from "components/CloseGesture";
 import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
 import DrumPatch from "./DrumPatch";
