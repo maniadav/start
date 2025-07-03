@@ -7,13 +7,15 @@ interface msgPopUp {
   onRequestClose?: any;
   msg: string;
   testName: string;
-  reAttemptUrl: string | null;
+  reAttemptUrl?: string | null;
+  showAction?: boolean;
 }
 const MessagePopup = ({
   showFilter,
   msg,
   testName,
   reAttemptUrl,
+  showAction = false,
 }: msgPopUp) => {
   const router = useRouter();
 
@@ -69,6 +71,18 @@ const MessagePopup = ({
                   onClick={() => {
                     if (window.location) {
                       window.location.href = reAttemptUrl;
+                    }
+                  }}
+                  className={`cursor-pointer ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}
+                >
+                  Create New Attempt
+                </button>
+              )}
+              {showAction && (
+                <button
+                  onClick={() => {
+                    if (window.location) {
+                      window.location.reload();
                     }
                   }}
                   className={`cursor-pointer ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}

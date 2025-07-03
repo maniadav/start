@@ -20,6 +20,8 @@ import { BASE_URL } from "@constants/config.constant";
 import { useAuth } from "state/provider/AuthProvider";
 import { setIndexedDBValue } from "@utils/indexDB";
 import { IndexDB_Storage } from "@constants/storage.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
+import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
 
 export default function MotorFollowingTask({ isSurvey = false }) {
   const [isArrowVisible, setIsArrowVisible] = useState(true);
@@ -40,6 +42,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [caught, setCaught] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
+  const [popupAttempt, setPopupAttempt] = useState<number>(1); // Track attempt for popup display
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -49,6 +52,11 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
+
+  useEffect(() => {
+    const attempt = parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+    setPopupAttempt(attempt + 1);
+  }, [state.MotorFollowingTask.noOfAttempt]);
   const { windowSize, deviceType } = useWindowSize();
   const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
@@ -59,17 +67,11 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const animationRef = useRef<number | null>(null);
   const color = "#000000";
   const newlineWidth = 3;
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3
-      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
-      : null;
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
   const { user } = useAuth();
   // Generate a unique image file name
-  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${attempt}_image`;
+  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${popupAttempt}_image`;
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;
@@ -251,7 +253,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       try {
         setIndexedDBValue(
           IndexDB_Storage.temporaryDB,
-          `${IndexDB_Storage.tempImage}${attempt}`,
+          `${IndexDB_Storage.tempImage}${popupAttempt}`,
           imageData
         );
       } catch (error) {
@@ -327,7 +329,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           };
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: popupAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -337,7 +339,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       }
     },
 
-    [isSurvey, timerData, attempt, showPopup, touchX, touchY, objX, objY, time]
+    [
+      isSurvey,
+      timerData,
+      popupAttempt,
+      showPopup,
+      touchX,
+      touchY,
+      objX,
+      objY,
+      time,
+    ]
   );
 
   useEffect(() => {
@@ -346,10 +358,20 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
+  // useEffect(() => {
+  //   if (popupAttempt > SURVEY_MAX_ATTEMPTS) {
+  //     router.push(PAGE_ROUTES.SURVEY.path);
+  //   }
+  // }, [attempt, router]);
+
   const handleCloseGame = (midway: boolean = false) => {
     const timeData = handleStopTimer();
     closeGame(timeData, midway);
   };
+
+  useEffect(() => {
+    console.log("popupAttempt", popupAttempt);
+  }, [popupAttempt]);
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
@@ -371,7 +393,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
               showFilter={showPopup}
               msg={TaskContent.taskEndMessage}
               testName={TaskContent.title}
-              reAttemptUrl={reAttemptUrl}
+              showAction={popupAttempt < SURVEY_MAX_ATTEMPTS}
             />
           </div>
         )}
@@ -390,7 +412,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           <BallAnimation
             width={windowSize.width}
             height={windowSize.height}
-            attempt={attempt}
+            attempt={popupAttempt}
             isSurvey={isSurvey}
           />
         </div>
