@@ -103,14 +103,7 @@ const SurveyTable = () => {
                                   <button
                                     onClick={() =>
                                       router.push(
-                                        `/${
-                                          TasksConstant[items].surveyRoute
-                                        }?attempt=${
-                                          parseInt(
-                                            state?.[items]?.noOfAttempt || 0,
-                                            10
-                                          ) + 1
-                                        }`
+                                        `/${TasksConstant[items].surveyRoute}`
                                       )
                                     }
                                     className="cursor-pointer"

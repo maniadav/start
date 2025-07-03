@@ -1,27 +1,57 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+// Hooks
 import useDraw from "@hooks/useDraw";
 import useWindowSize from "@hooks/useWindowSize";
+import useAudio from "@hooks/useAudio";
+import { useAuth } from "state/provider/AuthProvider";
+import { useSurveyContext } from "state/provider/SurveytProvider";
+import { useMotorStateContext } from "state/provider/MotorStateProvider";
+
+// Utils
 import { drawLine } from "@utils/canva";
 import { timer } from "@utils/timer";
-import MessagePopup from "components/common/MessagePopup";
-import { useSearchParams } from "next/navigation";
-import { useSurveyContext } from "state/provider/SurveytProvider";
 import { trackTaskTime } from "@utils/trackTime";
-import Image from "next/image";
-import BallAnimation from "./BallAnimation";
-import { useMotorStateContext } from "state/provider/MotorStateProvider";
-import { Coordinate } from "types/survey.types";
-import useAudio from "@hooks/useAudio";
+import { setIndexedDBValue } from "@utils/indexDB";
+
+// Components
+import MessagePopup from "components/common/MessagePopup";
 import CloseGesture from "components/CloseGesture";
+import BallAnimation from "./BallAnimation";
+
+// Constants
 import { MotorFollowingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
-import { useAuth } from "state/provider/AuthProvider";
-import { setIndexedDBValue } from "@utils/indexDB";
 import { IndexDB_Storage } from "@constants/storage.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
+import {
+  SURVEY_MAX_ATTEMPTS,
+  SURVEY_MAX_DURATION,
+} from "@constants/survey.config.constant";
 
-export default function MotorFollowingTask({ isSurvey = false }) {
+// Types
+import { Coordinate } from "types/survey.types";
+
+// Constants
+const BUFFER_ZONE = 25;
+const LINE_WIDTH = 3;
+const LINE_COLOR = "#000000";
+const DATA_RECORD_INTERVAL = 20; // data records at 20ms rate
+const BALL_DOT_RADIUS = 2;
+const BALL_DOT_COLOR = "blue";
+
+interface MotorFollowingTaskProps {
+  isSurvey?: boolean;
+}
+
+export default function MotorFollowingTask({
+  isSurvey = false,
+}: MotorFollowingTaskProps) {
+  // State
   const [isArrowVisible, setIsArrowVisible] = useState(true);
   const [surveyData, setSurveyData] = useState<any>(false);
 
@@ -39,7 +69,6 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [caught, setCaught] = useState<boolean>(false);
-  const [alertShown, setAlertShown] = useState(false);
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -49,27 +78,27 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
+
+  const router = useRouter();
+  const [showPopupActionButton, setPopupActionButton] =
+    useState<boolean>(false);
+  const noOfAttemptFromState =
+    parseInt(state[TaskContent.id]?.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
+
   const { windowSize, deviceType } = useWindowSize();
-  const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
   const bubblePop = useAudio(`${BASE_URL}/audio/audio-caught.wav`);
   const ballCoordinatesRef = useRef(ballCoordinates);
   const touchCoordinatesRef = useRef(touchCoordinates);
   // const balls = useRef<any[]>([]);
   const animationRef = useRef<number | null>(null);
-  const color = "#000000";
-  const newlineWidth = 3;
-  const attemptString = searchParams.get("attempt") || "0";
-  const attempt = parseInt(attemptString);
-  const reAttemptUrl =
-    attempt < 3
-      ? `${BASE_URL}/${TaskContent.surveyRoute}?attempt=${attempt + 1}`
-      : null;
+
   const currentDate = Date.now();
   const stopTimerFuncRef = useRef<() => any>();
   const { user } = useAuth();
   // Generate a unique image file name
-  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${attempt}_image`;
+  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${currentAttempt}_image`;
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;
@@ -80,15 +109,16 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     // considering ball radius, 25, as buffer zone
     if (
       windowSize.width &&
-      ballCoordinates[ballCoordinates.length - 1].x - 25 <
+      ballCoordinates[ballCoordinates.length - 1].x - BUFFER_ZONE <
         touchCoordinates[touchCoordinates.length - 1].x &&
       touchCoordinates[touchCoordinates.length - 1].x <
         ballCoordinates[ballCoordinates.length - 1].x &&
-      ballCoordinates[ballCoordinates.length - 1].y - 25 <
+      ballCoordinates[ballCoordinates.length - 1].y - BUFFER_ZONE <
         touchCoordinates[touchCoordinates.length - 1].y &&
       touchCoordinates[touchCoordinates.length - 1].y <
         ballCoordinates[ballCoordinates.length - 1].y &&
-      windowSize.width - 25 < touchCoordinates[touchCoordinates.length - 1].x
+      windowSize.width - BUFFER_ZONE <
+        touchCoordinates[touchCoordinates.length - 1].x
     ) {
       bubblePop();
       setCaught(true);
@@ -102,7 +132,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       const elapsed = Date.now() - currentDate;
       if (caught || !isSurvey) {
         const timeData = handleStopTimer();
-        closeGame(timeData, true);
+        closeGame(timeData);
         clearInterval(intervalId);
         return;
       }
@@ -113,14 +143,12 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       const { x: touchX, y: touchY } = lastTouch;
       const { x: objX, y: objY } = lastBallPosition;
 
-      // console.log({ time: elapsed, touchX, touchY, objX, objY });
-
       setTouchX((prev: number[]) => [...prev, touchX]);
       setTouchY((prev: number[]) => [...prev, touchY]);
       setTime((prev: number[]) => [...prev, elapsed]);
       setObjX((prev: number[]) => [...prev, objX]);
       setObjY((prev: number[]) => [...prev, objY]);
-    }, 20); // data records at 20ms rate
+    }, DATA_RECORD_INTERVAL);
 
     return () => clearInterval(intervalId);
   }, [caught, isSurvey]);
@@ -160,8 +188,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
                 prevPoint: path[i - 1],
                 currentPoint: point,
                 ctx,
-                color,
-                newlineWidth,
+                color: LINE_COLOR,
+                newlineWidth: LINE_WIDTH,
               });
             });
           });
@@ -172,8 +200,8 @@ export default function MotorFollowingTask({ isSurvey = false }) {
               prevPoint: currentPath[i - 1],
               currentPoint: point,
               ctx,
-              color,
-              newlineWidth,
+              color: LINE_COLOR,
+              newlineWidth: LINE_WIDTH,
             });
           });
 
@@ -205,7 +233,13 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
     if (!isDrawing || !currentPoint || !prevPoint) return;
-    drawLine({ prevPoint, currentPoint, ctx, color, newlineWidth });
+    drawLine({
+      prevPoint,
+      currentPoint,
+      ctx,
+      color: LINE_COLOR,
+      newlineWidth: LINE_WIDTH,
+    });
 
     setCurrentPath((prev) => [...prev, currentPoint]);
     // touchCoordinates.push({time: elapsed, x: currentPoint})
@@ -240,8 +274,14 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       if (ctx) {
         ballCoordinates.forEach((item: Coordinate) => {
           ctx.beginPath();
-          ctx.arc(item.x, item.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = "blue";
+          ctx.arc(
+            item.x,
+            item.y,
+            BALL_DOT_RADIUS,
+            0,
+            Math.PI * BALL_DOT_RADIUS
+          );
+          ctx.fillStyle = BALL_DOT_COLOR;
           ctx.fill();
         });
       }
@@ -251,17 +291,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       try {
         setIndexedDBValue(
           IndexDB_Storage.temporaryDB,
-          `${IndexDB_Storage.tempImage}${attempt}`,
+          `${IndexDB_Storage.tempImage}${currentAttempt}`,
           imageData
         );
       } catch (error) {
         console.error("Error saving audio to IndexedDB:", error);
       }
 
-      const link = document.createElement("a");
-      link.download = imagefile;
-      link.href = imageData;
-      link.click();
+      // const link = document.createElement("a");
+      // link.download = imagefile;
+      // link.href = imageData;
+      // link.click();
 
       // return Base64 image data
       return imageData;
@@ -270,7 +310,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   };
 
   const handleTimer = () => {
-    const { endTimePromise, stopTimer } = timer(180000);
+    const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
 
     stopTimerFuncRef.current = stopTimer;
 
@@ -302,6 +342,15 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         const image = saveImage();
+        // Navigate to survey page if attempts exceed maximum
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionButton(currentAttempt < SURVEY_MAX_ATTEMPTS);
         setShowPopup((prev) => {
           return !prev;
         });
@@ -327,7 +376,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           };
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -337,7 +386,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       }
     },
 
-    [isSurvey, timerData, attempt, showPopup, touchX, touchY, objX, objY, time]
+    [
+      isSurvey,
+      timerData,
+      currentAttempt,
+      showPopup,
+      touchX,
+      touchY,
+      objX,
+      objY,
+      time,
+    ]
   );
 
   useEffect(() => {
@@ -346,21 +405,23 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
-  const handleCloseMidWay = () => {
+  const handleCloseGame = (midway: boolean = false) => {
     const timeData = handleStopTimer();
-    closeGame(timeData, true);
+    closeGame(timeData, midway);
   };
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
       <div className="relative w-screen h-screen overflow-hidden">
-        {isSurvey && <CloseGesture handlePressAction={handleCloseMidWay} />}
+        {isSurvey && (
+          <CloseGesture handlePressAction={() => handleCloseGame(true)} />
+        )}
         {isSurvey && (
           <div className="absolute z-50">
             <div className="fixed top-4 left-4 flex flex-col space-y-2">
               <button
                 className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80"
-                onClick={closeGame}
+                onClick={() => handleCloseGame()}
               >
                 Save
               </button>
@@ -369,7 +430,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
               showFilter={showPopup}
               msg={TaskContent.taskEndMessage}
               testName={TaskContent.title}
-              reAttemptUrl={reAttemptUrl}
+              showAction={showPopupActionButton}
             />
           </div>
         )}
@@ -388,7 +449,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           <BallAnimation
             width={windowSize.width}
             height={windowSize.height}
-            attempt={attempt}
+            attempt={currentAttempt}
             isSurvey={isSurvey}
           />
         </div>

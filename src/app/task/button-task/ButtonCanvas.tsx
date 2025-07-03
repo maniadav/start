@@ -51,26 +51,28 @@ export const ButtonCanvas = ({ handleButtonClick }: ButtonCanvasProps) => {
 
   return (
     <div className="z-40 w-screen h-screen relative overflow-hidden">
-      <div
+      <button
+        disabled={animate}
         className={`absolute ${
-          animate ? "animate-redBall" : ""
+          animate ? "animate-redBall opacity-80" : ""
         } w-[150px] h-[150px] bg-red-800 shadow-2xl border-2 border-red-900 rounded-full absolute`}
         style={{
           bottom: `${positions.red.bottom}%`,
           left: `${positions.red.left}%`,
         }}
         onClick={() => handleButtonClick("red")}
-      ></div>
-      <div
+      ></button>
+      <button
+        disabled={animate}
         className={`${
-          animate ? "animate-blueBall" : ""
+          animate ? "animate-blueBall opacity-80" : ""
         } w-[150px] h-[150px] bg-blue-800 shadow-2xl border-2 border-blue-900 rounded-full absolute`}
         style={{
           top: `${positions.blue.top}%`,
           right: `${positions.blue.right}%`,
         }}
         onClick={() => handleButtonClick("blue")}
-      ></div>
+      ></button>
     </div>
   );
 };

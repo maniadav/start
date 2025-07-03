@@ -9,6 +9,9 @@ const IndexPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // Set initial online status
+    setIsOnline(navigator.onLine);
+
     const handleOnline = () => {
       setIsOnline(true);
       // Redirect to homepage if online
@@ -38,38 +41,36 @@ const IndexPage: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen  flex items-center justify-center align-middle bg-white">
-      <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
-        <div className="xl:pt-24 w-full flex flex-col items-center align-middle justify-center xl:w-1/2 pb-12 lg:pb-0">
-          <div className="">
-            <h1 className="my-2 text-gray-800 font-bold text-2xl">
-              {isOnline
-                ? "You are back online."
-                : "Please check your internet connection and try again."}
-            </h1>
-
-            {/* {isOnline ? (
-              <Link
-                href={"/"}
-                className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-              >
-                Return to Homepage
-              </Link>
-            ) : (
-              <button
-                onClick={handleRefresh}
-                className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-              >
-                Refresh
-              </button>
-            )} */}
-            <Link
-              href={"/"}
-              className="mt-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-            >
-              Return to Homepage
-            </Link>
-          </div>
+    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-white to-red-200">
+      <div className="bg-white rounded-3xl shadow-2xl p-10 flex flex-col items-center max-w-md w-full">
+        <Image
+          src={isOnline ? "/icons/icon-192.png" : "/image/restrict.jpg"}
+          alt={isOnline ? "Online" : "Offline"}
+          width={120}
+          height={120}
+          className="mb-6 rounded-full border-4 border-primary shadow-lg"
+        />
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-2 text-center">
+          {isOnline ? "You are back online!" : "No Internet Connection"}
+        </h1>
+        <p className="text-gray-500 text-center mb-6">
+          {isOnline
+            ? "You are now connected to the internet."
+            : "It looks like you are offline. Please check your internet connection and try again."}
+        </p>
+        <div className="flex flex-col gap-3 w-full">
+          <button
+            onClick={handleRefresh}
+            className="w-full px-4 py-2 bg-primary text-white rounded-lg font-semibold shadow hover:bg-primary/90 transition-colors duration-200"
+          >
+            Try Again
+          </button>
+          <Link
+            href={"/"}
+            className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold shadow hover:bg-gray-300 text-center transition-colors duration-200"
+          >
+            Return to Homepage
+          </Link>
         </div>
       </div>
     </div>

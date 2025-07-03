@@ -6,7 +6,7 @@ import { AuthProvider } from "state/provider/AuthProvider";
 import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
-import ServiceWorkerUpdater from "../components/ServiceWorkerUpdater";
+import ServiceWorkerUpdater from "../pwa/ServiceWorkerUpdater";
 
 const inter = Inter({ subsets: ["latin"] });
 
