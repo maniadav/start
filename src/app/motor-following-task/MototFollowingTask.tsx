@@ -6,7 +6,7 @@ import useWindowSize from "@hooks/useWindowSize";
 import { drawLine } from "@utils/canva";
 import { timer } from "@utils/timer";
 import MessagePopup from "components/common/MessagePopup";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { trackTaskTime } from "@utils/trackTime";
 import Image from "next/image";
@@ -42,7 +42,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [caught, setCaught] = useState<boolean>(false);
   const [alertShown, setAlertShown] = useState(false);
-  const [popupAttempt, setPopupAttempt] = useState<number>(1); // Track attempt for popup display
+  const [popupActionAttempt, setPopupActionAttempt] = useState<number>(1);
   const [timerData, setTimerData] = useState<{
     startTime: string;
     endTime: string;
@@ -52,11 +52,12 @@ export default function MotorFollowingTask({ isSurvey = false }) {
 
   const { canvasRef, onInteractStart } = useDraw(onDraw);
   const { state, dispatch } = useSurveyContext();
+  const router = useRouter();
 
-  useEffect(() => {
-    const attempt = parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
-    setPopupAttempt(attempt + 1);
-  }, [state.MotorFollowingTask.noOfAttempt]);
+  // Get the current attempt directly from state
+  const noOfAttemptFromState =
+    parseInt(state.MotorFollowingTask.noOfAttempt) || 0;
+  const currentAttempt = noOfAttemptFromState + 1;
   const { windowSize, deviceType } = useWindowSize();
   const searchParams = useSearchParams();
   const { ballCoordinates } = useMotorStateContext();
@@ -71,7 +72,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
   const stopTimerFuncRef = useRef<() => any>();
   const { user } = useAuth();
   // Generate a unique image file name
-  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${popupAttempt}_image`;
+  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${currentAttempt}_image`;
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;
@@ -253,17 +254,17 @@ export default function MotorFollowingTask({ isSurvey = false }) {
       try {
         setIndexedDBValue(
           IndexDB_Storage.temporaryDB,
-          `${IndexDB_Storage.tempImage}${popupAttempt}`,
+          `${IndexDB_Storage.tempImage}${currentAttempt}`,
           imageData
         );
       } catch (error) {
         console.error("Error saving audio to IndexedDB:", error);
       }
 
-      const link = document.createElement("a");
-      link.download = imagefile;
-      link.href = imageData;
-      link.click();
+      // const link = document.createElement("a");
+      // link.download = imagefile;
+      // link.href = imageData;
+      // link.click();
 
       // return Base64 image data
       return imageData;
@@ -304,6 +305,15 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     async (timeData?: any, closedMidWay: boolean = false) => {
       if (isSurvey) {
         const image = saveImage();
+        // Navigate to survey page if attempts exceed maximum
+        if (currentAttempt > SURVEY_MAX_ATTEMPTS) {
+          alert(
+            `Max attempts (${SURVEY_MAX_ATTEMPTS}) exceeded, navigating to survey page`
+          );
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return;
+        }
+        setPopupActionAttempt(currentAttempt);
         setShowPopup((prev) => {
           return !prev;
         });
@@ -329,7 +339,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           };
           dispatch({
             type: "UPDATE_SURVEY_DATA",
-            attempt: popupAttempt,
+            attempt: currentAttempt,
             task: TaskContent.id,
             data: updatedSurveyData,
           });
@@ -342,7 +352,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     [
       isSurvey,
       timerData,
-      popupAttempt,
+      currentAttempt,
       showPopup,
       touchX,
       touchY,
@@ -358,20 +368,14 @@ export default function MotorFollowingTask({ isSurvey = false }) {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (popupAttempt > SURVEY_MAX_ATTEMPTS) {
-  //     router.push(PAGE_ROUTES.SURVEY.path);
-  //   }
-  // }, [attempt, router]);
-
   const handleCloseGame = (midway: boolean = false) => {
     const timeData = handleStopTimer();
     closeGame(timeData, midway);
   };
 
   useEffect(() => {
-    console.log("popupAttempt", popupAttempt);
-  }, [popupAttempt]);
+    console.log("currentAttempt", currentAttempt);
+  }, [currentAttempt]);
 
   if (windowSize.height && windowSize.width !== undefined) {
     return (
@@ -393,7 +397,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
               showFilter={showPopup}
               msg={TaskContent.taskEndMessage}
               testName={TaskContent.title}
-              showAction={popupAttempt < SURVEY_MAX_ATTEMPTS}
+              showAction={popupActionAttempt < SURVEY_MAX_ATTEMPTS}
             />
           </div>
         )}
@@ -412,7 +416,7 @@ export default function MotorFollowingTask({ isSurvey = false }) {
           <BallAnimation
             width={windowSize.width}
             height={windowSize.height}
-            attempt={popupAttempt}
+            attempt={currentAttempt}
             isSurvey={isSurvey}
           />
         </div>
