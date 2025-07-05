@@ -15,7 +15,7 @@ export const handleBatchDownload = async () => {
     IndexDB_Storage.surveyDB,
     IndexDB_Storage.surveyData
   );
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
 

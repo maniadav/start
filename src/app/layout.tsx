@@ -32,10 +32,10 @@ export default function RootLayout({
         <LanguageProvider>
           <body className={inter.className}>
             <GameWrapper>
-              {/* <AuthProvider> */}
-              {/* <ServiceWorkerUpdater /> */}
-              {children}
-              {/* </AuthProvider> */}
+              <AuthProvider>
+                <ServiceWorkerUpdater />
+                {children}
+              </AuthProvider>
             </GameWrapper>
           </body>
         </LanguageProvider>

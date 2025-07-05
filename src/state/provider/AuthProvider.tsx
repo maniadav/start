@@ -7,18 +7,18 @@ import React, {
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getLocalStorageValue } from "@utils/localStorage";
-import { LOCALSTORAGE } from "@constants/storage.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import AuthContext from "state/context/AuthContext";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import LoadingSection from "components/section/loading-section";
 import { initializeDummyData } from "@management/lib/dummy-data";
+import { getCurrentMember, getCurrentUser } from "@utils/auth.utils";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const user = getCurrentUser();
+  const member = getCurrentMember();
   const router = useRouter();
   const path = usePathname();
   const currentPath = path.split("?")[0];
@@ -46,27 +46,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const showFooter = footerRoutes.includes(path);
-  
+
   // creating dummy admin, organization, and observer in local storage for testing purposes
   useEffect(() => {
     initializeDummyData();
   }, []);
 
-  // useEffect(() => {
-  //   if (!user?.userId && !publicRoutes.includes(currentPath)) {
-  //     router.push(PAGE_ROUTES.LOGIN.path); // Redirect to login if not authenticated
-  //   }
-  //   setLoading(false);
-  // }, [user, router, path, publicRoutes, currentPath]);
-
-
+  useEffect(() => {
+    if (!member?.userId && !publicRoutes.includes(currentPath)) {
+      router.push(PAGE_ROUTES.LOGIN.path); // Redirect to login if not authenticated
+    }
+    setLoading(false);
+  }, [member, router, path, publicRoutes, currentPath]);
 
   if (loading) {
     return <LoadingSection />;
   }
 
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, member }}>
       <>
         {showFooter && <Header />}
         {children}

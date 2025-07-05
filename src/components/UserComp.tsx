@@ -3,7 +3,7 @@ import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
 
 const ContentPage = () => {
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
 
   return (
     <div className="flex justify-center items-center p-8 lg:p-12">

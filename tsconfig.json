@@ -34,7 +34,8 @@
       "@helper/*": ["helper/*"],
       "@assets/*": ["assets/*"],
       "@constants/*": ["constants/*"],
-      "@context/*": ["context/*"]
+      "@context/*": ["context/*"],
+      "@data/*": ["data/*"]
     }
   },
   "include": [

@@ -1,12 +1,12 @@
-// dynamic initial survey data for survey provider
-import { getLocalStorageValue } from "@utils/localStorage";
-import { LOCALSTORAGE } from "./storage.constant";
 import TASK_TYPE from "./survey.type.constant";
+import { getCurrentMember, getCurrentUser } from "@utils/auth.utils";
 
 export const getInitialSurveyState = () => {
-  const LOGGED_IN_USER =
-    getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true) || {};
-  const { childID, childDOB, childGender, observerID } = LOGGED_IN_USER;
+  const user = getCurrentUser() || {};
+  const member = getCurrentMember() || {};
+  const { childID, childDOB, childGender } = user;
+  const { userId: observerID } = member;
+
   const createTaskData = (assessment_id: string): any => ({
     assessment_id,
     noOfAttempt: 0,

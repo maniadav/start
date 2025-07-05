@@ -16,9 +16,9 @@ export const Header = () => {
   const pathname = usePathname();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const router = useRouter();
-  const { user } = useAuth();
+  const { member } = useAuth();
   const handleLogout = () => {
-    if (user?.childID) {
+    if (member?.userId) {
       setShowPopup(!showPopup);
     } else {
       router.push(`${PAGE_ROUTES.LOGIN.path}`);
@@ -84,14 +84,14 @@ export const Header = () => {
           <div className="flex gap-2 relative group">
             <button className="flex items-center px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition border border-white/20">
               <Image
-                src={user?.profile || `${BASE_URL}/svg/user.svg`}
+                src={member?.profile.image || `${BASE_URL}/svg/user.svg`}
                 alt="User"
                 className="rounded-full h-8 w-8 object-cover border border-gray-400"
                 width={32}
                 height={32}
               />
               <span className="ml-2 hidden md:block text-sm text-white/80">
-                {mounted ? `Hi, ${user?.childName || "user"}` : ""}
+                {mounted ? `Hi, ${member?.profile.name || "user"}` : ""}
               </span>
               {/* <CommonIcon
                 icon="material-symbols:arrow-drop-up"
@@ -105,13 +105,13 @@ export const Header = () => {
               className="cursor-pointer gap-2 text-white/80 flex items-center px-2 py-1 rounded-full bg-primary hover:bg-black transition-color duration-300 ease-in-out border border-white/20"
             >
               <span className="ml-2 hidden md:block text-sm">
-                {mounted ? `${user?.childID ? "Logout" : "Sign In"}` : ""}
+                {mounted ? `${member?.userId ? "Logout" : "Sign In"}` : ""}
               </span>
               <CommonIcon
                 icon="ri:logout-circle-r-line"
                 height={20}
                 width={20}
-                rotate={user?.childID ? 120 : 90}
+                rotate={member?.userId ? 120 : 90}
               />
             </button>
           </div>

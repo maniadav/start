@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const ContentPage = () => {
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
 
   return (
     <div className="">

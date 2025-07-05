@@ -96,7 +96,7 @@ const RegisterPage = () => {
       toast.success(msg);
       const accessToken = data.accessToken || "";
       const refreshToken = data.refreshToken || "";
-      setLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, data.user, true);
+      setLocalStorageValue(LOCALSTORAGE.START_USER, data.user, true);
       setLocalStorageValue(LOCALSTORAGE.MFA_ACCESS_TOKEN, accessToken);
       setLocalStorageValue(LOCALSTORAGE.MFA_REFRESH_TOKEN, refreshToken);
       router.push("/");

@@ -6,7 +6,7 @@ import {
 
 export function checkUserLoginStatus() {
   try {
-    const currentUser = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+    const currentUser = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
     if (currentUser) {
       return currentUser?._id ? true : false;
     }
@@ -19,7 +19,7 @@ export function checkUserLoginStatus() {
 
 export function getUserData() {
   try {
-    const currentUser = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+    const currentUser = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
     return currentUser;
   } catch (err) {
     console.log(err);
@@ -125,7 +125,6 @@ export function getUserWithProfile(userId: string): UserWithProfile | null {
       profile = getOrganizationProfile(userId) || undefined;
       break;
     case "observer":
-    case "surveyor":
       profile = getObserverProfile(userId) || undefined;
       break;
   }
@@ -147,7 +146,7 @@ export function getUserWithProfile(userId: string): UserWithProfile | null {
       const orgProfile = profile as OrganisationProfile;
       userWithProfile.organizationId = orgProfile.id;
     }
-    if ((user.role === "observer" || user.role === "surveyor") && profile) {
+    if (user.role === "observer" && profile) {
       const obsProfile = profile as ObserverProfile;
       userWithProfile.organizationId = obsProfile.organizationId;
       userWithProfile.observerId = obsProfile.id;

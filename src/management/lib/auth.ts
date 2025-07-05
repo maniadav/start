@@ -37,7 +37,7 @@ export function setCurrentUser(user: User | null) {
 export function login(email: string, password: string): UserWithProfile | null {
   const users = getUsers();
   const user = users.find((u) => u.email === email);
-
+  console.log("Login attempt:", { email, password, user });
   if (user && password === "password") {
     // Simple password check for demo
     const userWithProfile = getUserWithProfile(user.id);
@@ -95,6 +95,69 @@ export function getUserWithProfile(userId: string): UserWithProfile | null {
       userWithProfile.organizationId = orgProfile.id;
     }
     if ((user.role === "observer" || user.role === "surveyor") && profile) {
+      const obsProfile = profile as ObserverProfile;
+      userWithProfile.organizationId = obsProfile.organizationId;
+      userWithProfile.observerId = obsProfile.id;
+    }
+  }
+
+  return userWithProfile;
+}
+
+/**
+ * Optimized: Get user with profile using either user object (with id and role) or just id.
+ * If userObj is provided, avoids fetching user again.
+ */
+export function getUserWithProfileOptimized(
+  userOrId: { id: string; role: UserRole } | string
+): UserWithProfile | null {
+  let user: User | undefined;
+  let role: UserRole | undefined;
+
+  if (typeof userOrId === "string") {
+    // Only id provided, use existing logic
+    const users = getUsers();
+    user = users.find((u) => u.id === userOrId);
+    if (!user) return null;
+    role = user.role;
+  } else {
+    // user object provided
+    user = userOrId as User;
+    role = user.role;
+  }
+
+  let profile:
+    | AdminProfile
+    | OrganisationProfile
+    | ObserverProfile
+    | undefined = undefined;
+
+  switch (role) {
+    case "admin":
+      profile = getAdminProfile(user.id) || undefined;
+      break;
+    case "organisation":
+      profile = getOrganizationProfile(user.id) || undefined;
+      break;
+    case "observer":
+    case "surveyor":
+      profile = getObserverProfile(user.id) || undefined;
+      break;
+  }
+
+  const userWithProfile: UserWithProfile = {
+    ...user,
+    name: profile?.name || "",
+    profile,
+  };
+
+  if (profile) {
+    if (profile.address) userWithProfile.address = profile.address;
+    if (role === "organisation" && profile) {
+      const orgProfile = profile as OrganisationProfile;
+      userWithProfile.organizationId = orgProfile.id;
+    }
+    if ((role === "observer" || role === "surveyor") && profile) {
       const obsProfile = profile as ObserverProfile;
       userWithProfile.organizationId = obsProfile.organizationId;
       userWithProfile.observerId = obsProfile.id;

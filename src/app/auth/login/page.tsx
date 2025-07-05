@@ -59,7 +59,7 @@ const LoginPage = () => {
     }
 
     try {
-      setLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, formData, true);
+      setLocalStorageValue(LOCALSTORAGE.START_USER, formData, true);
       dispatch({ type: "RESET_SURVEY_DATA" });
       router.push(PAGE_ROUTES.SURVEY.path);
     } catch (error) {

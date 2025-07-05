@@ -3,23 +3,16 @@ import React from "react";
 import { IconSurvey } from "./common/Icons";
 import Image from "next/image";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
-import { LOCALSTORAGE } from "@constants/storage.constant";
-import { getLocalStorageValue } from "@utils/localStorage";
-import { API_ENDPOINT } from "@constants/api.constant";
-import { useRouter } from "next/navigation";
 import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
 import { PAGE_ROUTES } from "@constants/route.constant";
+import { useAuth } from "state/provider/AuthProvider";
+import { MemberProfile } from "@data/start.data";
 
 const ActionBanner = () => {
   const { languageContent } = useLanguageProvider();
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
-  const router = useRouter();
-  const handleSurvey = () => {
-    user?.childID
-      ? router.push(API_ENDPOINT.page.survey)
-      : router.push(API_ENDPOINT.auth.login);
-  };
+  const { member } = useAuth();
+
   return (
     <div className="w-full h-auto bg-gradient-to-b from-gray-900 to-black">
       <div className="container mx-auto overflow-hidden p-8 md:p-10 lg:p-12 ">
@@ -43,16 +36,28 @@ const ActionBanner = () => {
             <div className="h-8"></div>
             <div className="grid grid-cols-2 gap-4 pt-8 border-t border-gray-800">
               <div>
-                <p className="font-semibold text-gray-400">
+                <p className="font-semibold text-gray-400 pb-4">
                   {languageContent.banner.quesText}
                 </p>
-                <div className="h-4"></div>
-                <Link href={PAGE_ROUTES.SURVEY.path} legacyBehavior>
-                  <a className="capitalize flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
-                    <IconSurvey width="1.5" height="1.5" />
-                    <p>{languageContent.buttons.startSurvey}</p>
-                  </a>
-                </Link>
+
+                {member?.role == MemberProfile.admin ||
+                member?.role == MemberProfile.organisation ? (
+                  <Link
+                    href={PAGE_ROUTES.MANAGEMENT.ADMIN.DASHBOARD.path}
+                    legacyBehavior
+                  >
+                    <a className="capitalize flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
+                      <p>{languageContent.buttons.showAdminPanel}</p>
+                    </a>
+                  </Link>
+                ) : (
+                  <Link href={PAGE_ROUTES.SURVEY.path} legacyBehavior>
+                    <a className="capitalize flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
+                      <IconSurvey width="1.5" height="1.5" />
+                      <p>{languageContent.buttons.startSurvey}</p>
+                    </a>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

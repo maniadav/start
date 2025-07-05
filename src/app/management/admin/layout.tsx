@@ -1,35 +1,39 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { getCurrentUser, hasRole } from "@management/lib/auth"
-import { SidebarProvider, SidebarInset } from "@management/components/ui/sidebar"
-import { AppSidebar } from "@management/components/app-sidebar"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  SidebarProvider,
+  SidebarInset,
+} from "@management/components/ui/sidebar";
+import { AppSidebar } from "@management/components/app-sidebar";
+import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
+import { PAGE_ROUTES } from "@constants/route.constant";
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const router = useRouter()
-  const user = getCurrentUser()
+  const router = useRouter();
+  const member = getCurrentMember();
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login")
-      return
+    if (!member) {
+      router.push(PAGE_ROUTES.LOGIN.path);
+      return;
     }
 
-    if (!hasRole(user, ["admin"])) {
-      router.push("/login")
-      return
+    if (!hasValidRole(member, ["admin"])) {
+      router.push(PAGE_ROUTES.LOGIN.path);
+      return;
     }
-  }, [user, router])
+  }, [member, router]);
 
-  if (!user || !hasRole(user, ["admin"])) {
-    return null
+  if (!member || !hasValidRole(member, ["admin"])) {
+    return null;
   }
 
   return (
@@ -37,5 +41,5 @@ export default function AdminLayout({
       <AppSidebar />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

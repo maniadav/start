@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@management/components/ui/button";
 import { Input } from "@management/components/ui/input";
@@ -16,8 +16,13 @@ import {
 } from "@management/components/ui/card";
 import Image from "next/image";
 import { useToast } from "@management/hooks/use-toast";
-import { login } from "@management/lib/auth";
 import { APP_CONFIG } from "@constants/config.constant";
+import {
+  getLocalStorageValue,
+  setLocalStorageValue,
+} from "@utils/localStorage";
+import { LOCALSTORAGE } from "@constants/storage.constant";
+import { redirectToDashboard } from "@utils/auth.utils";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,33 +35,46 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    alert(`${email}-${password}`);
-    const user = login(email, password);
-
-    if (user) {
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${user.name}!`,
+    try {
+      const res = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
+      const data = await res.json();
 
-      // Redirect based on role
-      if (user.role === "admin") {
-        router.push("/admin");
-      } else if (user.role === "organisation") {
-        router.push("/org");
+      if (res.ok) {
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${data.data?.profile?.name || email}!`,
+        });
+
+        setLocalStorageValue(LOCALSTORAGE.START_MEMBER, data.data, true);
+        redirectToDashboard(data.data.role, router);
       } else {
-        router.push("/surveyor");
+        toast({
+          title: "Login failed",
+          description: data.error || "Invalid email or password",
+          variant: "destructive",
+        });
       }
-    } else {
+    } catch (err) {
       toast({
         title: "Login failed",
-        description: "Invalid email or password",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     }
-
     setIsLoading(false);
   };
+
+  // On mount, check if already logged in and redirect
+  useEffect(() => {
+    const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
+    if (member && member.userId && member.role) {
+      redirectToDashboard(member.role, router);
+    }
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
