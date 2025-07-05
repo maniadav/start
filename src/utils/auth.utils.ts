@@ -1,6 +1,6 @@
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { MemberProfile } from "@data/start.data";
-import { getLocalStorageValue } from "./localStorage";
+import { getLocalStorageValue, removeLocalStorageValue } from "./localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { UserRole, UserWithProfile } from "@type/management.types";
 
@@ -22,6 +22,12 @@ export function getCurrentMember(): any | null {
 export function getCurrentUser(): any | null {
   const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
   return member;
+}
+
+export function logOut(): any | null {
+  removeLocalStorageValue(LOCALSTORAGE.START_MEMBER);
+  removeLocalStorageValue(LOCALSTORAGE.START_USER);
+  return null;
 }
 
 export function hasValidRole(

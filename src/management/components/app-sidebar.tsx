@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Building2, FileText, Home, Upload, Users, Eye } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { getCurrentUser, hasRole } from "@management/lib/auth"
+import { Building2, FileText, Home, Upload, Users, Eye } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getCurrentUser, hasRole } from "@management/lib/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -15,32 +15,33 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
-} from "@management/components/ui/sidebar"
-import { UserNav } from "./user-nav"
+} from "@management/components/ui/sidebar";
+import { UserNav } from "./user-nav";
+import { useAuth } from "state/provider/AuthProvider";
 
 export function AppSidebar() {
-  const pathname = usePathname()
-  const user = getCurrentUser()
+  const pathname = usePathname();
+  const { member } = useAuth();
 
-  if (!user) return null
+  if (!member) return null;
 
   const adminItems = [
     {
       title: "Dashboard",
-      url: "/admin",
+      url: "/management/admin/dashboard",
       icon: Home,
     },
     {
       title: "Organizations",
-      url: "/admin/organizations",
+      url: "/management/admin/organizations",
       icon: Building2,
     },
     {
       title: "All Files",
-      url: "/admin/files",
+      url: "/management/admin/files",
       icon: FileText,
     },
-  ]
+  ];
 
   const orgAdminItems = [
     {
@@ -68,20 +69,7 @@ export function AppSidebar() {
       url: "/org/files",
       icon: FileText,
     },
-  ]
-
-  const surveyorItems = [
-    {
-      title: "Dashboard",
-      url: "/surveyor",
-      icon: Home,
-    },
-    {
-      title: "Upload Files",
-      url: "/surveyor/upload",
-      icon: Upload,
-    },
-  ]
+  ];
 
   const observerItems = [
     {
@@ -99,23 +87,21 @@ export function AppSidebar() {
       url: "/observer/files",
       icon: FileText,
     },
-  ]
+  ];
 
   interface MenuItem {
-    title: string
-    url: string
-    icon: React.ComponentType<{ className?: string }>
+    title: string;
+    url: string;
+    icon: React.ComponentType<{ className?: string }>;
   }
 
-  let menuItems: MenuItem[] = []
-  if (hasRole(user, ["admin"])) {
-    menuItems = adminItems
-  } else if (hasRole(user, ["organisation"])) {
-    menuItems = orgAdminItems
-  } else if (hasRole(user, ["observer"])) {
-    menuItems = observerItems
-  } else if (hasRole(user, ["surveyor"])) {
-    menuItems = surveyorItems
+  let menuItems: MenuItem[] = [];
+  if (hasRole(member, ["admin"])) {
+    menuItems = adminItems;
+  } else if (hasRole(member, ["organisation"])) {
+    menuItems = orgAdminItems;
+  } else if (hasRole(member, ["observer"])) {
+    menuItems = observerItems;
   }
 
   return (
@@ -126,8 +112,10 @@ export function AppSidebar() {
             <FileText className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Survey Manager</p>
-            <p className="text-xs text-muted-foreground capitalize">{user.role.replace("_", " ")}</p>
+            <p className="text-sm font-semibold">START Manager</p>
+            <p className="text-xs text-muted-foreground capitalize">
+              {member.role.replace("_", " ")}
+            </p>
           </div>
         </div>
       </SidebarHeader>
@@ -154,5 +142,5 @@ export function AppSidebar() {
         <UserNav />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
