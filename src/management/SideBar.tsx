@@ -40,13 +40,13 @@ export function SideBar() {
       icon: Home,
     },
     {
-      title: "Organizations",
-      url: "/management/admin/organizations",
+      title: "Organisation",
+      url: "/management/admin/organisation",
       icon: Building2,
     },
     {
       title: "All Files",
-      url: "/management/admin/files",
+      url: "/management/admin/file",
       icon: FileText,
     },
   ];
@@ -58,7 +58,7 @@ export function SideBar() {
       icon: Home,
     },
     {
-      title: "Observers",
+      title: "Observer",
       url: "/org/observers",
       icon: Eye,
     },
@@ -74,7 +74,7 @@ export function SideBar() {
     },
     {
       title: "File Manager",
-      url: "/org/files",
+      url: "/org/file",
       icon: FileText,
     },
   ];
@@ -92,7 +92,7 @@ export function SideBar() {
     },
     {
       title: "Files",
-      url: "/observer/files",
+      url: "/observer/file",
       icon: FileText,
     },
   ];

@@ -39,11 +39,11 @@ export default function AdminDashboard() {
     async function fetchData() {
       setLoading(true);
       const [orgRes, surRes, fileRes, userRes, obsRes] = await Promise.all([
-        fetch("/api/v1/admin/organizations").then((r) => r.json()),
-        fetch("/api/v1/admin/surveys").then((r) => r.json()),
-        fetch("/api/v1/admin/files").then((r) => r.json()),
-        fetch("/api/v1/admin/users").then((r) => r.json()),
-        fetch("/api/v1/admin/observers").then((r) => r.json()),
+        fetch("/api/v1/admin/organisation").then((r) => r.json()),
+        fetch("/api/v1/admin/survey").then((r) => r.json()),
+        fetch("/api/v1/admin/file").then((r) => r.json()),
+        fetch("/api/v1/admin/user").then((r) => r.json()),
+        fetch("/api/v1/admin/observer").then((r) => r.json()),
       ]);
       setOrganizations(orgRes);
       setSurveys(surRes);
