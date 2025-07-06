@@ -37,7 +37,6 @@ import {
 } from "@management/components/ui/dropdown-menu";
 import { Input } from "@management/components/ui/input";
 import { Label } from "@management/components/ui/label";
-import { SidebarTrigger } from "@management/components/ui/sidebar";
 import { useToast } from "@management/hooks/use-toast";
 import { Badge } from "@management/components/ui/badge";
 import { Progress } from "@management/components/ui/progress";
@@ -58,6 +57,10 @@ import type {
   Status,
 } from "@type/management.types";
 import { formatFileSize } from "@management/lib/data-service";
+import { OrganisationCreateDialog } from "./OrganisationCreateDialog";
+import { OrganisationEditDialog } from "./OrganisationEditDialog";
+import { OrganisationTable } from "./OrganisationTable";
+import SidebarTrigger from "@management/SidebarTrigger";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = React.useState(getOrganizations());
@@ -430,224 +433,51 @@ export default function OrganizationsPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <SidebarTrigger />
-          <h2 className="text-3xl font-bold tracking-tight">Organizations</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Organisation</h2>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Organisation
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Create New Organisation</DialogTitle>
-              <DialogDescription>
-                Add a new organization and assign an admin user.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="org-name">Organisation Name *</Label>
-                  <Input
-                    id="org-name"
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                    placeholder="Enter organization name"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="org-email">Organisation Email *</Label>
-                  <Input
-                    id="org-email"
-                    type="email"
-                    value={orgEmail}
-                    onChange={(e) => setOrgEmail(e.target.value)}
-                    placeholder="Enter organization email"
-                  />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="org-address">Address</Label>
-                <Textarea
-                  id="org-address"
-                  value={orgAddress}
-                  onChange={(e) => setOrgAddress(e.target.value)}
-                  placeholder="Enter organization address"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="org-status">Status</Label>
-                  <Select
-                    value={orgStatus}
-                    onValueChange={(value: Status) => setOrgStatus(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="deactivated">Deactivated</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="org-storage">Allowed Storage (MB)</Label>
-                  <Input
-                    id="org-storage"
-                    type="number"
-                    value={orgStorage}
-                    onChange={(e) => setOrgStorage(e.target.value)}
-                    placeholder="2048"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="admin-name">Admin Name *</Label>
-                  <Input
-                    id="admin-name"
-                    value={adminName}
-                    onChange={(e) => setAdminName(e.target.value)}
-                    placeholder="Enter admin name"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="admin-email">Admin Email *</Label>
-                  <Input
-                    id="admin-email"
-                    type="email"
-                    value={adminEmail}
-                    onChange={(e) => setAdminEmail(e.target.value)}
-                    placeholder="Enter admin email"
-                  />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleCreateOrganization}>
-                Create Organisation
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <OrganisationCreateDialog
+          open={isCreateDialogOpen}
+          setOpen={setIsCreateDialogOpen}
+          orgName={orgName}
+          setOrgName={setOrgName}
+          orgEmail={orgEmail}
+          setOrgEmail={setOrgEmail}
+          orgAddress={orgAddress}
+          setOrgAddress={setOrgAddress}
+          orgStatus={orgStatus}
+          setOrgStatus={setOrgStatus}
+          orgStorage={orgStorage}
+          setOrgStorage={setOrgStorage}
+          adminEmail={adminEmail}
+          setAdminEmail={setAdminEmail}
+          adminName={adminName}
+          setAdminName={setAdminName}
+          handleCreateOrganization={handleCreateOrganization}
+        />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Organisation Management</CardTitle>
-          <div className="flex items-center gap-2">
-            <AdvancedFilters
-              filters={filters}
-              onFiltersChange={setFilters}
-              showStorageFilter
-              showUserCountFilter
-              showStatusFilter
-              showDateFilter
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            columns={columns}
-            data={filteredOrganizations}
-            searchKey="name"
-            searchPlaceholder="Search by name or ID..."
-          />
-        </CardContent>
-      </Card>
+      <OrganisationTable
+        columns={columns}
+        data={filteredOrganizations}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Organisation</DialogTitle>
-            <DialogDescription>
-              Update organization configuration.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-org-name">Organisation Name *</Label>
-                <Input
-                  id="edit-org-name"
-                  value={orgName}
-                  onChange={(e) => setOrgName(e.target.value)}
-                  placeholder="Enter organization name"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-org-email">Organisation Email *</Label>
-                <Input
-                  id="edit-org-email"
-                  type="email"
-                  value={orgEmail}
-                  onChange={(e) => setOrgEmail(e.target.value)}
-                  placeholder="Enter organization email"
-                />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-org-address">Address</Label>
-              <Textarea
-                id="edit-org-address"
-                value={orgAddress}
-                onChange={(e) => setOrgAddress(e.target.value)}
-                placeholder="Enter organization address"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-org-status">Status</Label>
-                <Select
-                  value={orgStatus}
-                  onValueChange={(value: Status) => setOrgStatus(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="deactivated">Deactivated</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-org-storage">Allowed Storage (MB)</Label>
-                <Input
-                  id="edit-org-storage"
-                  type="number"
-                  value={orgStorage}
-                  onChange={(e) => setOrgStorage(e.target.value)}
-                  placeholder="2048"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleUpdateOrganization}>
-              Update Organisation
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <OrganisationEditDialog
+        open={isEditDialogOpen}
+        setOpen={setIsEditDialogOpen}
+        orgName={orgName}
+        setOrgName={setOrgName}
+        orgEmail={orgEmail}
+        setOrgEmail={setOrgEmail}
+        orgAddress={orgAddress}
+        setOrgAddress={setOrgAddress}
+        orgStatus={orgStatus}
+        setOrgStatus={setOrgStatus}
+        orgStorage={orgStorage}
+        setOrgStorage={setOrgStorage}
+        handleUpdateOrganization={handleUpdateOrganization}
+      />
     </div>
   );
 }

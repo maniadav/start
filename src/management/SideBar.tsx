@@ -13,16 +13,18 @@ import {
   PanelRight,
   ChevronsRight,
   ChevronsLeft,
+  Sidebar,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserNav } from "./user-nav";
+import { UserNav } from "./UserNav";
 import { useSidebar } from "@management/SidebarProvider";
 import { useAuth } from "state/provider/AuthProvider";
 import React from "react";
 import { PanelLeft } from "lucide-react";
 import { Button } from "@management/components/ui/button";
 import { cn } from "@management/lib/utils";
+import SidebarTrigger from "./SidebarTrigger";
 
 export function SideBar() {
   const pathname = usePathname();
@@ -156,29 +158,15 @@ export function SideBar() {
           );
         })}
       </nav>
-      {/* Collapse/Expand Icon */}
+      {/* Collapse/Expand Icon
       <div
         className={cn(
           "flex justify-center items-center border-t p-2",
           collapsed ? "justify-center mt-2" : "justify-end ml-2 mt-2"
         )}
       >
-        <Button
-          data-sidebar="trigger"
-          variant="ghost"
-          size="icon"
-          className={cn("h-7 w-7 p-2 bg-primary flex text-white")}
-          onClick={toggleSidebar}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? (
-            <ChevronsRight className="h-4 w-4" />
-          ) : (
-            <ChevronsLeft className="h-4 w-4" />
-          )}
-          <span className="sr-only">Toggle Sidebar</span>
-        </Button>
-      </div>
+        <SidebarTrigger />
+      </div> */}
       {/* Logout at Bottom */}
       <div className="mt-auto border-t p-2 flex justify-center">
         <UserNav />

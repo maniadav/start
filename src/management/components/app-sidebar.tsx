@@ -16,7 +16,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@management/components/ui/sidebar";
-import { UserNav } from "../user-nav";
+import { UserNav } from "../UserNav";
 import { useAuth } from "state/provider/AuthProvider";
 
 export function AppSidebar() {
