@@ -4,12 +4,11 @@ import type React from "react";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SidebarProvider } from "@management/components/SidebarProvider";
-import { AppSidebar } from "@management/components/app-sidebar";
+import { SidebarProvider } from "@management/SidebarProvider";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { SideBar } from "@management/SideBar";
 import { cn } from "@management/lib/utils";
+import { SideBar } from "@management/SideBar";
 
 export default function AdminLayout({
   children,
@@ -36,12 +35,12 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen">
       <SidebarProvider>
         <SideBar />
         <main
           className={cn(
-            "relative flex min-h-svh flex-1 flex-col bg-background",
+            "overflow-y-scroll relative flex min-h-svh flex-1 flex-col bg-background",
             "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow"
           )}
         >
