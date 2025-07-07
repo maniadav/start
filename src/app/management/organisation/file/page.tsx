@@ -6,12 +6,13 @@ import { getFiles, getSurveys, formatFileSize } from "@management/lib/data-servi
 import { Button } from "@management/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@management/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@management/components/ui/table"
-import { SidebarTrigger } from "@management/components/ui/sidebar"
 import { Badge } from "@management/components/ui/badge"
+import SidebarTrigger from "@management/SidebarTrigger"
+import { getCurrentMember } from "@utils/auth.utils"
 
 export default function OrgFilesPage() {
-  const user = getCurrentUser()
-  const files = getFiles().filter((f) => f.organizationId === user?.organizationId)
+  const member = getCurrentMember()
+  const files = getFiles().filter((f) => f.organizationId === member?.profile.id)
   const surveys = getSurveys()
 
   const handleDownload = (file: any) => {

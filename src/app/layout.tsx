@@ -7,6 +7,7 @@ import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
 import ServiceWorkerUpdater from "../pwa/ServiceWorkerUpdater";
+import { Toaster } from "@management/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
               <AuthProvider>
                 <ServiceWorkerUpdater />
                 {children}
+                <Toaster />
               </AuthProvider>
             </GameWrapper>
           </body>

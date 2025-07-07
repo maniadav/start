@@ -41,6 +41,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      
       const data = await res.json();
 
       if (res.ok) {
@@ -52,9 +53,11 @@ export default function LoginPage() {
         setLocalStorageValue(LOCALSTORAGE.START_MEMBER, data.data, true);
         redirectToDashboard(data.data.role, router);
       } else {
+        // Improved error handling to catch different error message formats
+        const errorMessage = data.message || data.error || "Invalid email or password";
         toast({
           title: "Login failed",
-          description: data.error || "Invalid email or password",
+          description: errorMessage,
           variant: "destructive",
         });
       }
@@ -134,13 +137,10 @@ export default function LoginPage() {
                 <strong>Admin:</strong> admin@example.com
               </p>
               <p>
-                <strong>Org Admin:</strong> org1@example.com
+                <strong>Org Admin:</strong> organisation@example.com
               </p>
               <p>
-                <strong>Observer:</strong> observer1@example.com
-              </p>
-              <p>
-                <strong>Surveyor:</strong> surveyor1@example.com
+                <strong>Observer:</strong> observer@example.com
               </p>
               <p className="text-muted-foreground mt-2">Password: password</p>
             </div>

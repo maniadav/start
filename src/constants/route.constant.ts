@@ -56,7 +56,10 @@ export const PAGE_ROUTES = {
       ORGANISATION: { label: "Organisation", path: "/management/admin/org" },
     },
     ORGANISATION: {
-      DASHBOARD: { label: "Dashboard", path: "/management/org/dashboard" },
+      DASHBOARD: {
+        label: "Dashboard",
+        path: "/management/organisation/dashboard",
+      },
       OBSERVER: { label: "Organisation", path: "/management/org/obs" },
     },
     OBSERVER: {

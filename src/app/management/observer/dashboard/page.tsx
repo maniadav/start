@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, Upload } from "lucide-react";
+import { getCurrentUser } from "@management/lib/auth";
 import {
   getOrganizations,
   getSurveys,
@@ -14,19 +15,20 @@ import {
   CardTitle,
 } from "@management/components/ui/card";
 import SidebarTrigger from "@management/SidebarTrigger";
-import { getCurrentMember } from "@utils/auth.utils";
 
 export default function OrgDashboard() {
-  const member = getCurrentMember();
+  const user = getCurrentUser();
   const organizations = getOrganizations();
   const surveys = getSurveys();
   const files = getFiles();
 
-  const userOrg = organizations.find((o) => o.id === member?.profile.id);
+  const userOrg = organizations.find((o) => o.id === user?.organizationId);
   const orgSurveys = surveys.filter(
-    (s) => s.organizationId === member?.profile.id
+    (s) => s.organizationId === user?.organizationId
   );
-  const orgFiles = files.filter((f) => f.organizationId === member?.profile.id);
+  const orgFiles = files.filter(
+    (f) => f.organizationId === user?.organizationId
+  );
 
   const stats = [
     {

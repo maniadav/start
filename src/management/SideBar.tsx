@@ -1,30 +1,12 @@
 "use client";
 
-import {
-  Building2,
-  FileText,
-  Home,
-  Upload,
-  Users,
-  Eye,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  PanelRight,
-  ChevronsRight,
-  ChevronsLeft,
-  Sidebar,
-} from "lucide-react";
+import { Building2, FileText, Home, Upload, Users, Eye } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserNav } from "./UserNav";
 import { useSidebar } from "@management/SidebarProvider";
 import { useAuth } from "state/provider/AuthProvider";
 import React from "react";
-import { PanelLeft } from "lucide-react";
-import { Button } from "@management/components/ui/button";
-import { cn } from "@management/lib/utils";
-import SidebarTrigger from "./SidebarTrigger";
 
 export function SideBar() {
   const pathname = usePathname();
@@ -56,27 +38,18 @@ export function SideBar() {
   const orgAdminItems = [
     {
       title: "Dashboard",
-      url: "/org",
+      url: "/management/organisation/dashboard",
       icon: Home,
     },
     {
       title: "Observer",
-      url: "/org/observers",
+      url: "/management/organisation/observers",
       icon: Eye,
     },
-    {
-      title: "Surveys",
-      url: "/org/surveys",
-      icon: FileText,
-    },
-    {
-      title: "Upload Files",
-      url: "/org/upload",
-      icon: Upload,
-    },
+
     {
       title: "File Manager",
-      url: "/org/file",
+      url: "/management/organisation/file",
       icon: FileText,
     },
   ];

@@ -62,7 +62,7 @@ const organisationProfiles: OrganisationProfile[] = [
   {
     id: "org_1",
     userId: "user_2",
-    name: "Org Admin 1",
+    name: "Ashoka University",
     organizationName: "Healthcare Research Corp",
     email: "contact@healthcareresearch.com",
     address: "100 Medical Plaza, Healthcare City, HC 12345",
@@ -104,15 +104,16 @@ const TASK_TYPE = [
   "PreferentialLookingTask",
 ] as const;
 
-const taskDescriptions: Record<typeof TASK_TYPE[number], string> = {
-  BubblePoppingTask: "Measure response time and accuracy in popping virtual bubbles",
+const taskDescriptions: Record<(typeof TASK_TYPE)[number], string> = {
+  BubblePoppingTask:
+    "Measure response time and accuracy in popping virtual bubbles",
   DelayedGratificationTask: "Assess impulse control and decision making",
   MotorFollowingTask: "Evaluate motor skills and pattern following ability",
   ButtonTask: "Test reaction time and sequential button pressing accuracy",
   SynchronyTask: "Measure synchronization ability with audio-visual stimuli",
   LanguageSamplingTask: "Collect and analyze speech patterns and vocabulary",
   WheelTask: "Test motor control and timing precision",
-  PreferentialLookingTask: "Track visual attention and preference patterns"
+  PreferentialLookingTask: "Track visual attention and preference patterns",
 };
 
 const surveys: Survey[] = TASK_TYPE.map((taskType, index) => ({
@@ -122,7 +123,9 @@ const surveys: Survey[] = TASK_TYPE.map((taskType, index) => ({
   organizationId: "org_1",
   observerId: "obs_1",
   createdBy: "user_1",
-  createdAt: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString(),
+  createdAt: new Date(
+    Date.now() - (30 - index) * 24 * 60 * 60 * 1000
+  ).toISOString(),
 }));
 
 const files: UploadedFile[] = [
