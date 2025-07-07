@@ -19,15 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@management/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@management/components/ui/dialog";
+import { CustomDialog } from "@management/components/ui/custom-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -380,20 +372,26 @@ export default function ObserversPage() {
           <SidebarTrigger />
           <h2 className="text-3xl font-bold tracking-tight">Observers</h2>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Observer
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Create New Observer</DialogTitle>
-              <DialogDescription>
+        <CustomDialog.Trigger onClick={() => setIsCreateDialogOpen(true)}>
+          <Button variant="default" className="inline-flex items-center">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Observer
+          </Button>
+        </CustomDialog.Trigger>
+        <CustomDialog
+          isOpen={isCreateDialogOpen}
+          onClose={() => setIsCreateDialogOpen(false)}
+        >
+          <CustomDialog.Content
+            className="max-w-2xl"
+            onClose={() => setIsCreateDialogOpen(false)}
+          >
+            <CustomDialog.Header>
+              <CustomDialog.Title>Create New Observer</CustomDialog.Title>
+              <CustomDialog.Description>
                 Add a new observer to your organization.
-              </DialogDescription>
-            </DialogHeader>
+              </CustomDialog.Description>
+            </CustomDialog.Header>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
@@ -442,7 +440,7 @@ export default function ObserversPage() {
                 </Select>
               </div>
             </div>
-            <DialogFooter>
+            <CustomDialog.Footer>
               <Button
                 variant="outline"
                 onClick={() => setIsCreateDialogOpen(false)}
@@ -450,9 +448,9 @@ export default function ObserversPage() {
                 Cancel
               </Button>
               <Button onClick={handleCreateObserver}>Create Observer</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </CustomDialog.Footer>
+          </CustomDialog.Content>
+        </CustomDialog>
       </div>
 
       <Card>
@@ -478,12 +476,20 @@ export default function ObserversPage() {
       </Card>
 
       {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Observer</DialogTitle>
-            <DialogDescription>Update observer information.</DialogDescription>
-          </DialogHeader>
+      <CustomDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+      >
+        <CustomDialog.Content
+          className="max-w-2xl"
+          onClose={() => setIsEditDialogOpen(false)}
+        >
+          <CustomDialog.Header>
+            <CustomDialog.Title>Edit Observer</CustomDialog.Title>
+            <CustomDialog.Description>
+              Update observer information.
+            </CustomDialog.Description>
+          </CustomDialog.Header>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
@@ -532,7 +538,7 @@ export default function ObserversPage() {
               </Select>
             </div>
           </div>
-          <DialogFooter>
+          <CustomDialog.Footer>
             <Button
               variant="outline"
               onClick={() => setIsEditDialogOpen(false)}
@@ -540,9 +546,9 @@ export default function ObserversPage() {
               Cancel
             </Button>
             <Button onClick={handleUpdateObserver}>Update Observer</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </CustomDialog.Footer>
+        </CustomDialog.Content>
+      </CustomDialog>
     </div>
   );
 }
