@@ -1,8 +1,17 @@
 import * as React from "react";
 import { DataTable } from "@management/components/data-table";
 import { AdvancedFilters } from "@management/components/advanced-filters";
-import { Card, CardContent, CardHeader, CardTitle } from "@management/components/ui/card";
-import type { Organisation, FilterOptions, Status } from "@type/management.types";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@management/components/ui/card";
+import type {
+  Organisation,
+  FilterOptions,
+  Status,
+} from "@type/management.types";
 
 interface OrganisationTableProps {
   columns: any;
@@ -11,7 +20,12 @@ interface OrganisationTableProps {
   setFilters: (filters: FilterOptions) => void;
 }
 
-export function OrganisationTable({ columns, data, filters, setFilters }: OrganisationTableProps) {
+export function OrganisationTable({
+  columns,
+  data,
+  filters,
+  setFilters,
+}: OrganisationTableProps) {
   return (
     <Card>
       <CardHeader>
@@ -27,7 +41,7 @@ export function OrganisationTable({ columns, data, filters, setFilters }: Organi
           />
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="w-auto overflow-x-scroll">
         <DataTable
           columns={columns}
           data={data}

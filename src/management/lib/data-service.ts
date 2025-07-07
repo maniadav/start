@@ -1,48 +1,92 @@
 import type { Organisation, Survey, UploadedFile, Observer } from "../../types/management.types"
-import { STORAGE_KEYS } from "./auth"
+import { organisationProfiles, observerProfiles, surveys as dbSurveys, files as dbFiles } from "@data/start.data"
 
-export function getOrganizations(): Organisation[] {
-  if (typeof window === "undefined") return []
-  const orgs = localStorage.getItem(STORAGE_KEYS.ORGANISATIONS)
-  return orgs ? JSON.parse(orgs) : []
+// Transform OrganisationProfile to Organisation
+function transformOrganisation(profile: typeof organisationProfiles[0]): Organisation {
+  return {
+    id: profile.id,
+    name: profile.organizationName,
+    email: profile.email,
+    address: profile.address,
+    status: profile.status,
+    allowedStorage: profile.allowedStorage,
+    createdAt: profile.createdAt,
+    adminId: profile.userId // Using userId as adminId
+  }
 }
 
-export function saveOrganizations(organizations: Organisation[]) {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORAGE_KEYS.ORGANISATIONS, JSON.stringify(organizations))
+// Transform ObserverProfile to Observer
+function transformObserver(profile: typeof observerProfiles[0]): Observer {
+  return {
+    id: profile.id,
+    name: profile.name,
+    email: profile.email,
+    address: profile.address,
+    status: profile.status,
+    organizationId: profile.organizationId,
+    createdAt: profile.createdAt
+  }
+}
+
+// Simulating API calls with Promise-based functions
+export async function fetchOrganizations(): Promise<Organisation[]> {
+  // Simulate API latency
+  await new Promise(resolve => setTimeout(resolve, 100))
+  return organisationProfiles.map(transformOrganisation)
+}
+
+// Sync version for existing code compatibility
+export function getOrganizations(): Organisation[] {
+  return organisationProfiles.map(transformOrganisation)
+}
+
+export async function fetchObservers(): Promise<Observer[]> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  return observerProfiles.map(transformObserver)
 }
 
 export function getObservers(): Observer[] {
-  if (typeof window === "undefined") return []
-  const observers = localStorage.getItem(STORAGE_KEYS.OBSERVERS)
-  return observers ? JSON.parse(observers) : []
+  return observerProfiles.map(transformObserver)
 }
 
-export function saveObservers(observers: Observer[]) {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORAGE_KEYS.OBSERVERS, JSON.stringify(observers))
+export async function fetchSurveys(): Promise<Survey[]> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  return dbSurveys
 }
 
 export function getSurveys(): Survey[] {
-  if (typeof window === "undefined") return []
-  const surveys = localStorage.getItem(STORAGE_KEYS.SURVEYS)
-  return surveys ? JSON.parse(surveys) : []
+  return dbSurveys
 }
 
-export function saveSurveys(surveys: Survey[]) {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORAGE_KEYS.SURVEYS, JSON.stringify(surveys))
+export async function fetchFiles(): Promise<UploadedFile[]> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  return dbFiles
 }
 
 export function getFiles(): UploadedFile[] {
-  if (typeof window === "undefined") return []
-  const files = localStorage.getItem(STORAGE_KEYS.FILES)
-  return files ? JSON.parse(files) : []
+  return dbFiles
 }
 
-export function saveFiles(files: UploadedFile[]) {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORAGE_KEYS.FILES, JSON.stringify(files))
+// Save operations would typically be POST/PUT requests to an API
+export async function saveOrganizations(organizations: Organisation[]): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  // In a real API, this would be a POST/PUT request
+  console.log('Saving organizations:', organizations)
+}
+
+export async function saveObservers(observers: Observer[]): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  console.log('Saving observers:', observers)
+}
+
+export async function saveSurveys(surveys: Survey[]): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  console.log('Saving surveys:', surveys)
+}
+
+export async function saveFiles(files: UploadedFile[]): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  console.log('Saving files:', files)
 }
 
 export function formatFileSize(bytes: number): string {

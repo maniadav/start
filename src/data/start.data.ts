@@ -93,80 +93,93 @@ const observerProfiles: ObserverProfile[] = [
   },
 ];
 
-const surveys: Survey[] = [
-  {
-    id: "1",
-    name: "Patient Satisfaction Survey",
-    description: "Quarterly patient satisfaction data collection",
-    organizationId: "1",
-    observerId: "1",
-    createdBy: "4",
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "2",
-    name: "Student Performance Analysis",
-    description: "Academic performance tracking survey",
-    organizationId: "2",
-    observerId: "2",
-    createdBy: "5",
-    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "3",
-    name: "Staff Feedback Collection",
-    description: "Internal staff feedback and suggestions",
-    organizationId: "1",
-    observerId: "1",
-    createdBy: "4",
-    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
+const TASK_TYPE = [
+  "BubblePoppingTask",
+  "DelayedGratificationTask",
+  "MotorFollowingTask",
+  "ButtonTask",
+  "SynchronyTask",
+  "LanguageSamplingTask",
+  "WheelTask",
+  "PreferentialLookingTask",
+] as const;
+
+const taskDescriptions: Record<typeof TASK_TYPE[number], string> = {
+  BubblePoppingTask: "Measure response time and accuracy in popping virtual bubbles",
+  DelayedGratificationTask: "Assess impulse control and decision making",
+  MotorFollowingTask: "Evaluate motor skills and pattern following ability",
+  ButtonTask: "Test reaction time and sequential button pressing accuracy",
+  SynchronyTask: "Measure synchronization ability with audio-visual stimuli",
+  LanguageSamplingTask: "Collect and analyze speech patterns and vocabulary",
+  WheelTask: "Test motor control and timing precision",
+  PreferentialLookingTask: "Track visual attention and preference patterns"
+};
+
+const surveys: Survey[] = TASK_TYPE.map((taskType, index) => ({
+  id: `task_${index + 1}`,
+  name: taskType,
+  description: taskDescriptions[taskType],
+  organizationId: "org_1",
+  observerId: "obs_1",
+  createdBy: "user_1",
+  createdAt: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString(),
+}));
 
 const files: UploadedFile[] = [
   {
-    id: "1",
-    name: "patient_data_q1.csv",
-    size: 2048576, // 2MB
-    surveyId: "1",
-    organizationId: "1",
-    observerId: "1",
-    uploadedBy: "6",
-    uploadedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    url: "/dummy-files/patient_data_q1.csv",
-  },
-  {
-    id: "2",
-    name: "student_scores_2024.csv",
-    size: 1536000, // 1.5MB
-    surveyId: "2",
-    organizationId: "2",
-    observerId: "2",
-    uploadedBy: "7",
-    uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    url: "/dummy-files/student_scores_2024.csv",
-  },
-  {
-    id: "3",
-    name: "staff_feedback_march.csv",
+    id: "file_1",
+    name: "bubble_popping_session1.json",
     size: 1024000, // 1MB
-    surveyId: "3",
-    organizationId: "1",
-    observerId: "1",
-    uploadedBy: "6",
-    uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    url: "/dummy-files/staff_feedback_march.csv",
+    surveyId: "task_1",
+    organizationId: "org_1",
+    observerId: "obs_1",
+    uploadedBy: "user_3",
+    uploadedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    url: "/data/bubble_popping_session1.json",
   },
   {
-    id: "4",
-    name: "patient_data_q2.csv",
+    id: "file_2",
+    name: "delayed_gratification_results.json",
+    size: 1536000, // 1.5MB
+    surveyId: "task_2",
+    organizationId: "org_1",
+    observerId: "obs_1",
+    uploadedBy: "user_3",
+    uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+    url: "/data/delayed_gratification_results.json",
+  },
+  {
+    id: "file_3",
+    name: "motor_following_data.json",
+    size: 2048576, // 2MB
+    surveyId: "task_3",
+    organizationId: "org_1",
+    observerId: "obs_1",
+    uploadedBy: "user_3",
+    uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    url: "/data/motor_following_data.json",
+  },
+  {
+    id: "file_4",
+    name: "language_sampling_audio.wav",
+    size: 15728640, // 15MB
+    surveyId: "task_6",
+    organizationId: "org_1",
+    observerId: "obs_1",
+    uploadedBy: "user_3",
+    uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    url: "/data/language_sampling_audio.wav",
+  },
+  {
+    id: "file_5",
+    name: "preferential_looking_session.json",
     size: 3072000, // 3MB
-    surveyId: "1",
-    organizationId: "1",
-    observerId: "1",
-    uploadedBy: "6",
+    surveyId: "task_8",
+    organizationId: "org_1",
+    observerId: "obs_1",
+    uploadedBy: "user_3",
     uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    url: "/dummy-files/patient_data_q2.csv",
+    url: "/data/preferential_looking_session.json",
   },
 ];
 
