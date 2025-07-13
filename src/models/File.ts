@@ -8,7 +8,7 @@ export interface IFile extends Document {
   _id: string;
   title: string;
   task_id: (typeof TASK_TYPE)[number];
-  size: number;
+  file_size: number;
   organisation_id: IOrganisationProfile["_id"];
   observer_id: IObserverProfile["_id"];
   child_id: IChild["_id"];
@@ -34,7 +34,7 @@ const FileSchema = new Schema<IFile>(
       },
       trim: true,
     },
-    size: {
+    file_size: {
       type: Number,
       required: [true, "File size is required"],
       min: [0, "File size cannot be negative"],

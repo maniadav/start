@@ -34,9 +34,11 @@ export class MigrationManager {
     if (!mongoose.connection.db) {
       throw new Error("Database connection not established");
     }
-    
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    return collections.some(c => c.name === collectionName);
+
+    const collections = await mongoose.connection.db
+      .listCollections()
+      .toArray();
+    return collections.some((c) => c.name === collectionName);
   }
 
   /**
@@ -47,9 +49,11 @@ export class MigrationManager {
     if (!mongoose.connection.db) {
       throw new Error("Database connection not established");
     }
-    
+
     if (await this.collectionExists(collectionName)) {
-      return await mongoose.connection.db.collection(collectionName).countDocuments();
+      return await mongoose.connection.db
+        .collection(collectionName)
+        .countDocuments();
     }
     return 0;
   }
@@ -62,11 +66,16 @@ export class MigrationManager {
     if (!mongoose.connection.db) {
       throw new Error("Database connection not established");
     }
-    
+
     if (await this.collectionExists(collectionName)) {
       console.log(`📦 Creating backup of collection: ${collectionName}`);
-      const backup = await mongoose.connection.db.collection(collectionName).find({}).toArray();
-      console.log(`✅ Backed up ${backup.length} documents from ${collectionName}`);
+      const backup = await mongoose.connection.db
+        .collection(collectionName)
+        .find({})
+        .toArray();
+      console.log(
+        `✅ Backed up ${backup.length} documents from ${collectionName}`
+      );
       return backup;
     }
     return [];
@@ -80,40 +89,47 @@ export class MigrationManager {
         await connectDB();
 
         console.log("🔍 Checking existing collections...");
-        
+
         // Check if collections already exist
         if (!mongoose.connection.db) {
           throw new Error("Database connection not established");
         }
-        
-        const collections = await mongoose.connection.db.listCollections().toArray();
-        const existingCollections = collections.map(c => c.name);
-        
+
+        const collections = await mongoose.connection.db
+          .listCollections()
+          .toArray();
+        const existingCollections = collections.map((c) => c.name);
+
         console.log("📋 Existing collections:", existingCollections);
 
         // Create indexes only if collections don't exist or need updates
         const modelsToIndex = [
-          { name: 'users', model: User },
-          { name: 'children', model: Child },
-          { name: 'adminprofiles', model: AdminProfile },
-          { name: 'observerprofiles', model: ObserverProfile },
-          { name: 'organisationprofiles', model: OrganisationProfile },
-          { name: 'files', model: File },
+          { name: "users", model: User },
+          { name: "children", model: Child },
+          { name: "adminprofiles", model: AdminProfile },
+          { name: "observerprofiles", model: ObserverProfile },
+          { name: "organisationprofiles", model: OrganisationProfile },
+          { name: "files", model: File },
         ];
 
         for (const { name, model } of modelsToIndex) {
           try {
             if (existingCollections.includes(name)) {
-              console.log(`📊 Collection '${name}' exists, ensuring indexes...`);
+              console.log(
+                `📊 Collection '${name}' exists, ensuring indexes...`
+              );
               await model.createIndexes();
               console.log(`✅ Indexes verified for '${name}'`);
             } else {
-              console.log(`🆕 Creating new collection '${name}' with indexes...`);
+              console.log(
+                `🆕 Creating new collection '${name}' with indexes...`
+              );
               await model.createIndexes();
               console.log(`✅ Collection '${name}' created with indexes`);
             }
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
             console.warn(`⚠️ Error with ${name} indexes:`, errorMessage);
           }
         }
@@ -183,52 +199,138 @@ export class MigrationManager {
     },
     {
       version: "003",
-      description: "Handle existing survey data and create new structure",
+      description: "Setup SurveyData model indexes",
       up: async () => {
         await connectDB();
-        
-        const manager = new MigrationManager();
-        
-        // Check if survey_data collection exists
-        const surveyDataExists = await manager.collectionExists('survey_data');
-        const existingCount = await manager.getCollectionCount('survey_data');
-        
-        console.log(`📊 Survey data collection exists: ${surveyDataExists}`);
-        console.log(`📊 Existing survey records: ${existingCount}`);
-        
-        if (surveyDataExists && existingCount > 0) {
-          console.log("🔄 Existing survey data found, ensuring schema compatibility...");
-          
-          // Update existing documents to match new schema
-          if (mongoose.connection.db) {
-            const result = await mongoose.connection.db.collection('survey_data').updateMany(
-              {},
-              {
-                $set: {
-                  updated_at: new Date(),
-                  // Ensure all required fields exist
-                  no_of_attempt: { $ifNull: ["$no_of_attempt", 0] }
-                }
-              }
-            );
-            console.log(`✅ Updated ${result.modifiedCount} existing survey records`);
-          }
-        } else {
-          console.log("🆕 No existing survey data found, ready for new schema");
-        }
-        
+
+        console.log("� Setting up SurveyData model indexes...");
+
         // Import and create indexes for SurveyData
-        const { SurveyData } = await import('../models/SurveyData');
+        const { SurveyData } = await import("../models/SurveyData");
         await SurveyData.createIndexes();
-        
-        console.log("✅ Survey data schema migration completed");
+
+        console.log("✅ SurveyData indexes created successfully");
       },
       down: async () => {
         await connectDB();
-        
-        console.log("⚠️ Rolling back survey data schema changes...");
-        // In a real scenario, you might want to preserve the old format
-        console.log("⚠️ Survey data rollback completed");
+
+        console.log("⚠️ Rolling back SurveyData indexes...");
+        // In production, you might want to drop the indexes here
+        console.log("⚠️ SurveyData rollback completed");
+      },
+    },
+    {
+      version: "004",
+      description: "Seed database with initial dummy data",
+      up: async () => {
+        await connectDB();
+
+        console.log("🌱 Starting database seeding with dummy data...");
+
+        // Import dummy data
+        const {
+          dummyUsers,
+          hashUserPasswords,
+          dummyAdminProfiles,
+          dummyOrganisationProfiles,
+          dummyObserverProfiles,
+          dummyChildren,
+        } = await import("../models/dummyData");
+
+        // Check if data already exists
+        const userCount = await User.countDocuments();
+        if (userCount > 0) {
+          console.log("📊 Database already contains data, skipping seeding");
+          return;
+        }
+
+        console.log("🔐 Creating users with hashed passwords...");
+        const hashedUsers = await hashUserPasswords();
+        const createdUsers = await User.insertMany(hashedUsers);
+        console.log(`✅ Created ${createdUsers.length} users`);
+
+        // Create admin profiles
+        console.log("👤 Creating admin profiles...");
+        const adminUser = createdUsers.find((u) => u.role === "admin");
+        const adminProfileData = dummyAdminProfiles.map((profile) => ({
+          ...profile,
+          user_id: adminUser?._id,
+        }));
+        const createdAdminProfiles = await AdminProfile.insertMany(
+          adminProfileData
+        );
+        console.log(`✅ Created ${createdAdminProfiles.length} admin profiles`);
+
+        // Create organisation profiles
+        console.log("🏢 Creating organisation profiles...");
+        const orgUsers = createdUsers.filter((u) => u.role === "organisation");
+        const orgProfileData = dummyOrganisationProfiles.map(
+          (profile, index) => ({
+            ...profile,
+            user_id: orgUsers[index]?._id,
+          })
+        );
+        const createdOrgProfiles = await OrganisationProfile.insertMany(
+          orgProfileData
+        );
+        console.log(
+          `✅ Created ${createdOrgProfiles.length} organisation profiles`
+        );
+
+        // Create observer profiles
+        console.log("👁️ Creating observer profiles...");
+        const observerUsers = createdUsers.filter((u) => u.role === "observer");
+        const observerProfileData = dummyObserverProfiles.map(
+          (profile, index) => ({
+            ...profile,
+            user_id: observerUsers[index]?._id,
+            organisation_id:
+              createdOrgProfiles[index % createdOrgProfiles.length]?._id,
+          })
+        );
+        const createdObserverProfiles = await ObserverProfile.insertMany(
+          observerProfileData
+        );
+        console.log(
+          `✅ Created ${createdObserverProfiles.length} observer profiles`
+        );
+
+        // Create children
+        console.log("👶 Creating child records...");
+        const childData = dummyChildren.map((child, index) => ({
+          ...child,
+          observer_id:
+            createdObserverProfiles[index % createdObserverProfiles.length]
+              ?._id,
+          organisation_id:
+            createdOrgProfiles[index % createdOrgProfiles.length]?._id,
+        }));
+        const createdChildren = await Child.insertMany(childData);
+        console.log(`✅ Created ${createdChildren.length} child records`);
+
+        console.log("🎉 Database seeding completed successfully!");
+        console.log(`
+        📈 Summary:
+        - Users: ${createdUsers.length}
+        - Admin Profiles: ${createdAdminProfiles.length}  
+        - Organisation Profiles: ${createdOrgProfiles.length}
+        - Observer Profiles: ${createdObserverProfiles.length}
+        - Children: ${createdChildren.length}
+        `);
+      },
+      down: async () => {
+        await connectDB();
+
+        console.log("🗑️ Removing all seeded data...");
+
+        // Remove in reverse order due to dependencies
+        await Child.deleteMany({});
+        await ObserverProfile.deleteMany({});
+        await OrganisationProfile.deleteMany({});
+        await AdminProfile.deleteMany({});
+        await User.deleteMany({});
+
+        console.log("✅ All seeded data removed");
       },
     },
   ];

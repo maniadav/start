@@ -11,11 +11,9 @@ export interface IChild extends Document {
   organisation_id: IOrganisationProfile["_id"];
   gender: Gender;
   survey_date: Date;
+  attempt: number;
   date_created: Date;
-  // New fields for survey tracking (added in migration 002)
-  last_survey_date?: Date;
-  total_surveys?: number;
-  survey_status?: 'pending' | 'in_progress' | 'completed' | 'paused';
+  survey_status?: "pending" | "in_progress" | "completed" | "paused";
 }
 
 const ChildSchema = new Schema<IChild>(
@@ -49,20 +47,16 @@ const ChildSchema = new Schema<IChild>(
       type: Date,
       required: [true, "Survey date is required"],
     },
-    // Optional fields for survey tracking
-    last_survey_date: {
-      type: Date,
-      default: null,
-    },
-    total_surveys: {
+
+    attempt: {
       type: Number,
       default: 0,
       min: 0,
     },
     survey_status: {
       type: String,
-      enum: ['pending', 'in_progress', 'completed', 'paused'],
-      default: 'pending',
+      enum: ["pending", "in_progress", "completed", "paused", "rejected"],
+      default: "pending",
     },
   },
   {
