@@ -21,7 +21,6 @@ const UserSchema = new Schema<IUser>(
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
       lowercase: true,
       trim: true,
       match: [
@@ -42,7 +41,7 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Index for better query performance
-UserSchema.index({ email: 1 });
+UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ role: 1 });
 
 export const User =

@@ -62,14 +62,14 @@ export interface UserWithProfile extends User {
 
 // Legacy interfaces for backward compatibility
 export interface Organisation {
-  id: string;
+  unique_id: string;
   name: string;
   email: string;
   address: string;
   status: Status;
-  allowedStorage: number; // in MB
-  createdAt: string;
-  adminId: string;
+  joined_on: string;
+  allowedStorage?: number;
+  adminId?: string;
 }
 
 export interface Observer {
@@ -125,4 +125,3 @@ export interface SortOption {
   field: string;
   direction: "asc" | "desc";
 }
-

@@ -5,7 +5,6 @@ import { Status } from "../types/management.types";
 export interface IAdminProfile extends Document {
   _id: string;
   user_id: mongoose.Types.ObjectId;
-  unique_id: string;
   address: string;
   name: string;
   permission: Record<string, any>;
@@ -20,19 +19,9 @@ const AdminProfileSchema = new Schema<IAdminProfile>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User ID is required"],
-    },
-    unique_id: {
-      type: String,
-      required: [true, "Unique ID is required"],
       unique: true,
-      validate: {
-        validator: function (value: string) {
-          return value.startsWith("AD");
-        },
-        message: 'Admin unique ID must start with "AD"',
-      },
-      trim: true,
     },
+
     address: {
       type: String,
       required: [true, "Address is required"],
@@ -66,18 +55,8 @@ const AdminProfileSchema = new Schema<IAdminProfile>(
 );
 
 // Indexes for better query performance
-AdminProfileSchema.index({ user_id: 1 });
-AdminProfileSchema.index({ unique_id: 1 });
+AdminProfileSchema.index({ user_id: 1 }, { unique: true });
 AdminProfileSchema.index({ status: 1 });
-
-// Pre-save middleware to generate unique_id if not provided
-AdminProfileSchema.pre("save", async function (next) {
-  if (!this.unique_id) {
-    const count = await mongoose.model("AdminProfile").countDocuments();
-    this.unique_id = `AD${String(count + 1).padStart(6, "0")}`;
-  }
-  next();
-});
 
 export const AdminProfile =
   mongoose.models.AdminProfile ||

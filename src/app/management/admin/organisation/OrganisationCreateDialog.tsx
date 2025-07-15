@@ -7,14 +7,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@management/components/ui/dialog";
 import { Input } from "@management/components/ui/input";
 import { Label } from "@management/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@management/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@management/components/ui/select";
 import { Textarea } from "@management/components/ui/textarea";
-import { useToast } from "@management/hooks/use-toast";
-import type { Status, Organisation, User } from "@type/management.types";
+import type { Status } from "@type/management.types";
 
 interface OrganisationCreateDialogProps {
   open: boolean;
@@ -34,6 +38,7 @@ interface OrganisationCreateDialogProps {
   adminName: string;
   setAdminName: (v: string) => void;
   handleCreateOrganization: () => void;
+  hasLimitedData?: boolean;
 }
 
 export function OrganisationCreateDialog({
@@ -54,22 +59,26 @@ export function OrganisationCreateDialog({
   adminName,
   setAdminName,
   handleCreateOrganization,
+  hasLimitedData = false,
 }: OrganisationCreateDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          Add Organisation
-        </Button>
-      </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Create New Organisation</DialogTitle>
           <DialogDescription>
-            Add a new organization and assign an admin user.
+            Add a new organization with basic information.
+            {hasLimitedData && (
+              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+                <strong>Note:</strong> Only basic information (Name, Email,
+                Status) will be saved due to API limitations.
+              </div>
+            )}
           </DialogDescription>
         </DialogHeader>
+
         <div className="grid gap-4 py-4">
+          {/* Core Required Fields - Always Available */}
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="org-name">Organisation Name *</Label>
@@ -78,8 +87,10 @@ export function OrganisationCreateDialog({
                 value={orgName}
                 onChange={(e) => setOrgName(e.target.value)}
                 placeholder="Enter organization name"
+                required
               />
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="org-email">Organisation Email *</Label>
               <Input
@@ -88,76 +99,93 @@ export function OrganisationCreateDialog({
                 value={orgEmail}
                 onChange={(e) => setOrgEmail(e.target.value)}
                 placeholder="Enter organization email"
+                required
               />
             </div>
           </div>
+
           <div className="grid gap-2">
-            <Label htmlFor="org-address">Address</Label>
-            <Textarea
-              id="org-address"
-              value={orgAddress}
-              onChange={(e) => setOrgAddress(e.target.value)}
-              placeholder="Enter organization address"
-            />
+            <Label htmlFor="org-status">Status</Label>
+            <Select
+              value={orgStatus}
+              onValueChange={(value: Status) => setOrgStatus(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="deactivated">Deactivated</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="org-status">Status</Label>
-              <Select
-                value={orgStatus}
-                onValueChange={(value: Status) => setOrgStatus(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="deactivated">Deactivated</SelectItem>
-                </SelectContent>
-              </Select>
+
+          {/* Extended Fields - Only Show When Full API is Available */}
+          {!hasLimitedData && (
+            <div className="space-y-4 border-t pt-4">
+              <h4 className="text-sm font-medium text-gray-700">
+                Additional Information
+              </h4>
+
+              <div className="grid gap-2">
+                <Label htmlFor="org-address">Address</Label>
+                <Textarea
+                  id="org-address"
+                  value={orgAddress}
+                  onChange={(e) => setOrgAddress(e.target.value)}
+                  placeholder="Enter organization address"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="org-storage">Allowed Storage (MB)</Label>
+                <Input
+                  id="org-storage"
+                  type="number"
+                  value={orgStorage}
+                  onChange={(e) => setOrgStorage(e.target.value)}
+                  placeholder="2048"
+                  min="1"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-name">Admin Name</Label>
+                  <Input
+                    id="admin-name"
+                    value={adminName}
+                    onChange={(e) => setAdminName(e.target.value)}
+                    placeholder="Enter admin name"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="admin-email">Admin Email</Label>
+                  <Input
+                    id="admin-email"
+                    type="email"
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                    placeholder="Enter admin email"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="org-storage">Allowed Storage (MB)</Label>
-              <Input
-                id="org-storage"
-                type="number"
-                value={orgStorage}
-                onChange={(e) => setOrgStorage(e.target.value)}
-                placeholder="2048"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="admin-name">Admin Name *</Label>
-              <Input
-                id="admin-name"
-                value={adminName}
-                onChange={(e) => setAdminName(e.target.value)}
-                placeholder="Enter admin name"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="admin-email">Admin Email *</Label>
-              <Input
-                id="admin-email"
-                type="email"
-                value={adminEmail}
-                onChange={(e) => setAdminEmail(e.target.value)}
-                placeholder="Enter admin email"
-              />
-            </div>
-          </div>
+          )}
         </div>
+
         <DialogFooter>
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
+            type="button"
           >
             Cancel
           </Button>
-          <Button onClick={handleCreateOrganization}>
+          <Button onClick={handleCreateOrganization} type="button">
             Create Organisation
           </Button>
         </DialogFooter>

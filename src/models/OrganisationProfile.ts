@@ -5,11 +5,11 @@ import { Status } from "../types/management.types";
 export interface IOrganisationProfile extends Document {
   _id: mongoose.Types.ObjectId;
   user_id: IUser["_id"];
-  unique_id: string;
+  email: string;
   address: string;
   name: string;
   status: Status;
-  joined_on: Date;
+  joined_on: Date | null;
   updated_on: Date;
 }
 
@@ -19,18 +19,19 @@ const OrganisationProfileSchema = new Schema<IOrganisationProfile>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User ID is required"],
-    },
-    unique_id: {
-      type: String,
-      required: [true, "Unique ID is required"],
       unique: true,
-      validate: {
-        validator: function (value: string) {
-          return value.startsWith("OG");
-        },
-        message: 'Organisation unique ID must start with "OG"',
-      },
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
       trim: true,
+      lowercase: true,
+      validate: {
+        validator: function (email: string) {
+          return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+        },
+        message: "Please enter a valid email",
+      },
     },
     address: {
       type: String,
@@ -50,7 +51,7 @@ const OrganisationProfileSchema = new Schema<IOrganisationProfile>(
     },
     joined_on: {
       type: Date,
-      default: Date.now,
+      default: null,
       immutable: true,
     },
   },
@@ -61,18 +62,9 @@ const OrganisationProfileSchema = new Schema<IOrganisationProfile>(
 );
 
 // Indexes for better query performance
-OrganisationProfileSchema.index({ user_id: 1 });
-OrganisationProfileSchema.index({ unique_id: 1 });
+OrganisationProfileSchema.index({ user_id: 1 }, { unique: true });
+OrganisationProfileSchema.index({ email: 1 }, { unique: true });
 OrganisationProfileSchema.index({ status: 1 });
-
-// Pre-save middleware to generate unique_id if not provided
-OrganisationProfileSchema.pre("save", async function (next) {
-  if (!this.unique_id) {
-    const count = await mongoose.model("OrganisationProfile").countDocuments();
-    this.unique_id = `OG${String(count + 1).padStart(6, "0")}`;
-  }
-  next();
-});
 
 export const OrganisationProfile =
   mongoose.models.OrganisationProfile ||

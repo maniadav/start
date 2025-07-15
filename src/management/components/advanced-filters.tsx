@@ -1,26 +1,36 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CalendarIcon, Filter } from "lucide-react"
-import { format } from "date-fns"
+import * as React from "react";
+import { CalendarIcon, Filter } from "lucide-react";
+import { format } from "date-fns";
 
-import { Button } from "@management/components/ui/button"
-import { Calendar } from "@management/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@management/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@management/components/ui/select"
-import { Input } from "@management/components/ui/input"
-import { Label } from "@management/components/ui/label"
-import { Badge } from "@management/components/ui/badge"
-import { cn } from "@management/lib/utils"
-import type { FilterOptions, Status } from "@type/management.types"
+import { Button } from "@management/components/ui/button";
+import { Calendar } from "@management/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@management/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@management/components/ui/select";
+import { Input } from "@management/components/ui/input";
+import { Label } from "@management/components/ui/label";
+import { Badge } from "@management/components/ui/badge";
+import { cn } from "@management/lib/utils";
+import type { FilterOptions, Status } from "@type/management.types";
 
 interface AdvancedFiltersProps {
-  filters: FilterOptions
-  onFiltersChange: (filters: FilterOptions) => void
-  showStorageFilter?: boolean
-  showUserCountFilter?: boolean
-  showStatusFilter?: boolean
-  showDateFilter?: boolean
+  filters: FilterOptions;
+  onFiltersChange: (filters: FilterOptions) => void;
+  showStorageFilter?: boolean;
+  showUserCountFilter?: boolean;
+  showStatusFilter?: boolean;
+  showDateFilter?: boolean;
 }
 
 export function AdvancedFilters({
@@ -31,24 +41,24 @@ export function AdvancedFilters({
   showStatusFilter = false,
   showDateFilter = false,
 }: AdvancedFiltersProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  const statusOptions: Status[] = ["active", "pending", "deactivated"]
+  const statusOptions: Status[] = ["active", "pending", "deactivated"];
 
   const updateFilters = (updates: Partial<FilterOptions>) => {
-    onFiltersChange({ ...filters, ...updates })
-  }
+    onFiltersChange({ ...filters, ...updates });
+  };
 
   const clearFilters = () => {
-    onFiltersChange({})
-  }
+    onFiltersChange({});
+  };
 
   const activeFiltersCount = Object.keys(filters).filter((key) => {
-    const value = filters[key as keyof FilterOptions]
-    if (Array.isArray(value)) return value.length > 0
-    if (typeof value === "object" && value !== null) return true
-    return value !== undefined && value !== ""
-  }).length
+    const value = filters[key as keyof FilterOptions];
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "object" && value !== null) return true;
+    return value !== undefined && value !== "";
+  }).length;
 
   return (
     <div className="flex items-center gap-2">
@@ -58,13 +68,16 @@ export function AdvancedFilters({
             <Filter className="mr-2 h-4 w-4" />
             Filters
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 w-5 rounded-full p-0 text-xs">
+              <Badge
+                variant="secondary"
+                className="ml-2 h-5 w-5 rounded-full p-0 text-xs"
+              >
                 {activeFiltersCount}
               </Badge>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80" align="start">
+        <PopoverContent className="w-80 bg-white p-8" align="start">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Filters</h4>
@@ -78,7 +91,11 @@ export function AdvancedFilters({
                 <Label>Status</Label>
                 <Select
                   value={filters.status?.[0] || ""}
-                  onValueChange={(value) => updateFilters({ status: value ? [value as Status] : undefined })}
+                  onValueChange={(value) =>
+                    updateFilters({
+                      status: value ? [value as Status] : undefined,
+                    })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
@@ -104,11 +121,13 @@ export function AdvancedFilters({
                         variant="outline"
                         className={cn(
                           "flex-1 justify-start text-left font-normal",
-                          !filters.dateRange?.from && "text-muted-foreground",
+                          !filters.dateRange?.from && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {filters.dateRange?.from ? format(filters.dateRange.from, "PPP") : "From date"}
+                        {filters.dateRange?.from
+                          ? format(filters.dateRange.from, "PPP")
+                          : "From date"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -133,11 +152,13 @@ export function AdvancedFilters({
                         variant="outline"
                         className={cn(
                           "flex-1 justify-start text-left font-normal",
-                          !filters.dateRange?.to && "text-muted-foreground",
+                          !filters.dateRange?.to && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {filters.dateRange?.to ? format(filters.dateRange.to, "PPP") : "To date"}
+                        {filters.dateRange?.to
+                          ? format(filters.dateRange.to, "PPP")
+                          : "To date"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -193,7 +214,8 @@ export function AdvancedFilters({
                       updateFilters({
                         storageComparison: {
                           operator: filters.storageComparison?.operator ?? "<",
-                          value: e.target.value === "" ? 0 : Number(e.target.value),
+                          value:
+                            e.target.value === "" ? 0 : Number(e.target.value),
                         },
                       })
                     }
@@ -234,7 +256,8 @@ export function AdvancedFilters({
                     onChange={(e) =>
                       updateFilters({
                         userCountComparison: {
-                          operator: filters.userCountComparison?.operator ?? "<",
+                          operator:
+                            filters.userCountComparison?.operator ?? "<",
                           value: Number(e.target.value) || 0,
                         },
                       })
@@ -247,5 +270,5 @@ export function AdvancedFilters({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

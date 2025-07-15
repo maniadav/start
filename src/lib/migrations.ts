@@ -100,7 +100,7 @@ export class MigrationManager {
           .toArray();
         const existingCollections = collections.map((c) => c.name);
 
-        console.log("📋 Existing collections:", existingCollections);
+        console.log("Existing collections:", existingCollections);
 
         // Create indexes only if collections don't exist or need updates
         const modelsToIndex = [
@@ -333,6 +333,355 @@ export class MigrationManager {
         console.log("✅ All seeded data removed");
       },
     },
+    {
+      version: "005",
+      description: "Initialize Counter collection for unique ID generation",
+      up: async () => {
+        await connectDB();
+
+        console.log("🔢 Setting up Counter collection...");
+
+        // Check if counters collection already exists
+        const counterExists = await this.collectionExists("counters");
+        if (counterExists) {
+          console.log(
+            "📊 Counter collection already exists, skipping creation"
+          );
+          return;
+        }
+
+        // Import Counter model
+        const { Counter } = await import("../models/Counter");
+
+        // Create indexes for Counter collection
+        await Counter.createIndexes();
+        console.log("✅ Counter collection indexes created");
+
+        // Initialize counters for different entity types
+        const counters = [
+          { _id: "organisation", sequence_value: 0 },
+          { _id: "observer", sequence_value: 0 },
+          { _id: "child", sequence_value: 0 },
+          { _id: "admin", sequence_value: 0 },
+        ];
+
+        for (const counter of counters) {
+          // Only create if doesn't exist
+          const existing = await Counter.findById(counter._id);
+          if (!existing) {
+            await Counter.create(counter);
+            console.log(`✅ Created counter for '${counter._id}'`);
+          } else {
+            console.log(`📊 Counter for '${counter._id}' already exists`);
+          }
+        }
+
+        console.log("✅ Counter collection setup completed");
+      },
+      down: async () => {
+        await connectDB();
+
+        console.log("🗑️ Removing Counter collection...");
+
+        // Check if collection exists before dropping
+        const counterExists = await this.collectionExists("counters");
+        if (counterExists) {
+          if (mongoose.connection.db) {
+            await mongoose.connection.db.dropCollection("counters");
+            console.log("✅ Counter collection removed");
+          }
+        } else {
+          console.log("⚠️ Counters collection not found, nothing to remove");
+        }
+      },
+    },
+    {
+      version: "006",
+      description: "Remove unique_id field from OrganisationProfile collection",
+      up: async () => {
+        await connectDB();
+
+        console.log(
+          "🔄 Removing unique_id field from organisation_profiles..."
+        );
+
+        // Check if organisation_profiles collection exists
+        const collectionExists = await this.collectionExists(
+          "organisation_profiles"
+        );
+        if (!collectionExists) {
+          console.log(
+            "📊 organisation_profiles collection doesn't exist, skipping"
+          );
+          return;
+        }
+
+        if (mongoose.connection.db) {
+          // Drop the unique_id index first (before removing the field)
+          try {
+            await mongoose.connection.db
+              .collection("organisation_profiles")
+              .dropIndex("unique_id_1");
+            console.log("✅ Dropped unique_id index");
+          } catch (error) {
+            console.log("⚠️ unique_id index not found or already dropped");
+          }
+
+          // Now remove unique_id field from all documents
+          const result = await mongoose.connection.db
+            .collection("organisation_profiles")
+            .updateMany({}, { $unset: { unique_id: "" } });
+
+          console.log(
+            `✅ Removed unique_id field from ${result.modifiedCount} documents`
+          );
+        }
+
+        console.log("✅ unique_id field removal completed");
+      },
+      down: async () => {
+        await connectDB();
+
+        console.log(
+          "⚠️ Rollback: Adding back unique_id field is not recommended"
+        );
+        console.log(
+          "⚠️ This would require regenerating unique IDs for all documents"
+        );
+        console.log("⚠️ Rollback completed (no action taken)");
+      },
+    },
+    {
+      version: "007",
+      description: "Add email field to ObserverProfile and make user_id unique",
+      up: async () => {
+        await connectDB();
+
+        console.log("� Adding email field to ObserverProfile collection...");
+
+        // Check if the collection exists
+        const collectionExists = await this.collectionExists(
+          "observer_profiles"
+        );
+        if (!collectionExists) {
+          console.log(
+            "📊 observer_profiles collection doesn't exist, skipping"
+          );
+          return;
+        }
+
+        const db = mongoose.connection.db;
+        if (!db) {
+          throw new Error("Database connection not available");
+        }
+
+        // Drop the old unique_id index if it exists
+        try {
+          await db.collection("observer_profiles").dropIndex("unique_id_1");
+          console.log("✅ Dropped unique_id index");
+        } catch (error: any) {
+          if (error.code === 27) {
+            console.log("📊 unique_id index doesn't exist, skipping drop");
+          } else {
+            console.log("⚠️ Error dropping unique_id index:", error.message);
+          }
+        }
+
+        // Get all observer profiles that don't have email field
+        const profilesWithoutEmail = await db
+          .collection("observer_profiles")
+          .find({ email: { $exists: false } })
+          .toArray();
+
+        if (profilesWithoutEmail.length === 0) {
+          console.log("📊 All observer profiles already have email field");
+        } else {
+          console.log(
+            `📧 Found ${profilesWithoutEmail.length} profiles without email field`
+          );
+
+          // Update each profile by fetching email from associated user
+          for (const profile of profilesWithoutEmail) {
+            try {
+              const user = await db
+                .collection("users")
+                .findOne({ _id: profile.user_id });
+              if (user && user.email) {
+                await db
+                  .collection("observer_profiles")
+                  .updateOne(
+                    { _id: profile._id },
+                    { $set: { email: user.email } }
+                  );
+                console.log(
+                  `✅ Updated observer profile ${profile._id} with email ${user.email}`
+                );
+              } else {
+                console.log(
+                  `⚠️ No user found for observer profile ${profile._id}`
+                );
+              }
+            } catch (error) {
+              console.log(
+                `❌ Error updating observer profile ${profile._id}:`,
+                error
+              );
+            }
+          }
+        }
+
+        // Remove unique_id field from all documents
+        const unsetResult = await db
+          .collection("observer_profiles")
+          .updateMany({}, { $unset: { unique_id: "" } });
+
+        console.log(
+          `✅ Removed unique_id field from ${unsetResult.modifiedCount} observer profile documents`
+        );
+
+        // Create unique index on email
+        try {
+          await db
+            .collection("observer_profiles")
+            .createIndex({ email: 1 }, { unique: true });
+          console.log("✅ Created unique index on email field");
+        } catch (error: any) {
+          if (error.code === 85) {
+            console.log("📊 Email unique index already exists");
+          } else {
+            console.log("⚠️ Error creating email unique index:", error.message);
+          }
+        }
+
+        console.log("✅ ObserverProfile collection update completed");
+      },
+      down: async () => {
+        await connectDB();
+
+        console.log(
+          "⚠️ Rollback: Adding back unique_id field to ObserverProfile is not recommended"
+        );
+        console.log(
+          "⚠️ This would require regenerating unique IDs for all documents"
+        );
+        console.log("⚠️ Rollback completed (no action taken)");
+      },
+    },
+    {
+      version: "008",
+      description: "Add email field to OrganisationProfile collection",
+      up: async () => {
+        await connectDB();
+
+        console.log(
+          "📧 Adding email field to OrganisationProfile collection..."
+        );
+
+        // Check if the collection exists
+        const collectionExists = await this.collectionExists(
+          "organisation_profiles"
+        );
+        if (!collectionExists) {
+          console.log(
+            "📊 organisation_profiles collection doesn't exist, skipping"
+          );
+          return;
+        }
+
+        const db = mongoose.connection.db;
+        if (!db) {
+          throw new Error("Database connection not available");
+        }
+
+        // Get all organisation profiles that don't have email field
+        const profilesWithoutEmail = await db
+          .collection("organisation_profiles")
+          .find({ email: { $exists: false } })
+          .toArray();
+
+        if (profilesWithoutEmail.length === 0) {
+          console.log("📊 All organisation profiles already have email field");
+          return;
+        }
+
+        console.log(
+          `📧 Found ${profilesWithoutEmail.length} profiles without email field`
+        );
+
+        // Update each profile by fetching email from associated user
+        for (const profile of profilesWithoutEmail) {
+          try {
+            const user = await db
+              .collection("users")
+              .findOne({ _id: profile.user_id });
+            if (user && user.email) {
+              await db
+                .collection("organisation_profiles")
+                .updateOne(
+                  { _id: profile._id },
+                  { $set: { email: user.email } }
+                );
+              console.log(
+                `✅ Updated profile ${profile._id} with email ${user.email}`
+              );
+            } else {
+              console.log(`⚠️ No user found for profile ${profile._id}`);
+            }
+          } catch (error) {
+            console.log(`❌ Error updating profile ${profile._id}:`, error);
+          }
+        }
+
+        // Create unique index on email
+        try {
+          await db
+            .collection("organisation_profiles")
+            .createIndex({ email: 1 }, { unique: true });
+          console.log("✅ Created unique index on email field");
+        } catch (error: any) {
+          if (error.code === 85) {
+            console.log("📊 Email unique index already exists");
+          } else {
+            console.log("⚠️ Error creating email unique index:", error.message);
+          }
+        }
+
+        console.log("✅ Email field addition completed");
+      },
+      down: async () => {
+        await connectDB();
+
+        console.log(
+          "🔄 Removing email field from OrganisationProfile collection..."
+        );
+
+        const db = mongoose.connection.db;
+        if (!db) {
+          throw new Error("Database connection not available");
+        }
+
+        // Drop email index
+        try {
+          await db.collection("organisation_profiles").dropIndex("email_1");
+          console.log("✅ Dropped email index");
+        } catch (error: any) {
+          if (error.code === 27) {
+            console.log("📊 Email index doesn't exist, skipping drop");
+          } else {
+            console.log("⚠️ Error dropping email index:", error.message);
+          }
+        }
+
+        // Remove email field from all documents
+        const result = await db
+          .collection("organisation_profiles")
+          .updateMany({}, { $unset: { email: "" } });
+
+        console.log(
+          `✅ Removed email field from ${result.modifiedCount} documents`
+        );
+      },
+    },
   ];
 
   async getAppliedMigrations(): Promise<string[]> {
@@ -342,33 +691,44 @@ export class MigrationManager {
   }
 
   async runMigrations(): Promise<void> {
-    const appliedVersions = await this.getAppliedMigrations();
+    try {
+      const appliedVersions = await this.getAppliedMigrations();
 
-    for (const migration of this.migrations) {
-      if (!appliedVersions.includes(migration.version)) {
-        console.log(
-          `🔄 Running migration ${migration.version}: ${migration.description}`
-        );
-
-        try {
-          await migration.up();
-
-          // Record successful migration
-          await MigrationModel.create({
-            version: migration.version,
-            description: migration.description,
-          });
-
+      for (const migration of this.migrations) {
+        if (!appliedVersions.includes(migration.version)) {
           console.log(
-            `✅ Migration ${migration.version} completed successfully`
+            `🔄 Running migration ${migration.version}: ${migration.description}`
           );
-        } catch (error) {
-          console.error(`❌ Migration ${migration.version} failed:`, error);
-          throw error;
+
+          try {
+            await migration.up();
+
+            // Record successful migration
+            await MigrationModel.create({
+              version: migration.version,
+              description: migration.description,
+            });
+
+            console.log(
+              `✅ Migration ${migration.version} completed successfully`
+            );
+          } catch (error) {
+            console.error(`❌ Migration ${migration.version} failed:`, error);
+            throw error;
+          }
+        } else {
+          console.log(`⏭️ Migration ${migration.version} already applied`);
         }
-      } else {
-        console.log(`⏭️ Migration ${migration.version} already applied`);
       }
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("EBADRESP")) {
+        console.error("❌ MongoDB connection failed. Please check:");
+        console.error("  - Your internet connection");
+        console.error("  - MongoDB Atlas cluster status");
+        console.error("  - IP whitelist settings in MongoDB Atlas");
+        console.error("  - Connection string in .env.local");
+      }
+      throw error;
     }
   }
 

@@ -2,31 +2,15 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, MoreHorizontal, Plus } from "lucide-react";
+import { ArrowUpDown, Edit, MoreHorizontal } from "lucide-react";
 
 import {
-  getOrganizations,
+  fetchOrganisations,
   saveOrganizations,
   getOccupiedStorage,
-  getObservers,
 } from "@management/lib/data-service";
 import { getUsers, saveUsers } from "@management/lib/auth";
 import { Button } from "@management/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@management/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@management/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,21 +19,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@management/components/ui/dropdown-menu";
-import { Input } from "@management/components/ui/input";
-import { Label } from "@management/components/ui/label";
 import { useToast } from "@management/hooks/use-toast";
 import { Badge } from "@management/components/ui/badge";
 import { Progress } from "@management/components/ui/progress";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@management/components/ui/select";
-import { Textarea } from "@management/components/ui/textarea";
-import { DataTable } from "@management/components/data-table";
-import { AdvancedFilters } from "@management/components/advanced-filters";
 import type {
   Organisation,
   User,
@@ -61,24 +33,51 @@ import { OrganisationCreateDialog } from "./OrganisationCreateDialog";
 import { OrganisationEditDialog } from "./OrganisationEditDialog";
 import { OrganisationTable } from "./OrganisationTable";
 import SidebarTrigger from "@management/SidebarTrigger";
+import { useEffect, useState } from "react";
+import CreateOrganisationPopup from "components/popup/CreateOrganisationPopup";
 
 export default function OrganizationsPage() {
-  const [organizations, setOrganizations] = React.useState(getOrganizations());
-  const [filters, setFilters] = React.useState<FilterOptions>({});
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
-  const [editingOrg, setEditingOrg] = React.useState<Organisation | null>(null);
-  const [orgName, setOrgName] = React.useState("");
-  const [orgEmail, setOrgEmail] = React.useState("");
-  const [orgAddress, setOrgAddress] = React.useState("");
-  const [orgStatus, setOrgStatus] = React.useState<Status>("pending");
-  const [orgStorage, setOrgStorage] = React.useState("2048");
-  const [adminEmail, setAdminEmail] = React.useState("");
-  const [adminName, setAdminName] = React.useState("");
+  const [organizations, setOrganizations] = useState<Organisation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<FilterOptions>({});
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingOrg, setEditingOrg] = useState<Organisation | null>(null);
+  const [orgName, setOrgName] = useState("");
+  const [orgEmail, setOrgEmail] = useState("");
+  const [orgAddress, setOrgAddress] = useState("");
+  const [orgStatus, setOrgStatus] = useState<Status>("pending");
+  const [orgStorage, setOrgStorage] = useState("2048");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminName, setAdminName] = useState("");
+  const [hasLimitedData, setHasLimitedData] = useState(false);
   const { toast } = useToast();
 
   const users = getUsers();
-  const observers = getObservers();
+
+  const loadOrganizations = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchOrganisations();
+      setOrganizations(data);
+      // Check if we have limited data structure
+      if (data.length > 0) {
+        const firstOrg = data[0];
+        // Check if essential fields from full Organisation interface are missing
+        const isLimited =
+          !firstOrg.address || firstOrg.allowedStorage === undefined;
+        setHasLimitedData(isLimited);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to load organizations:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadOrganizations();
+  }, []);
 
   // Filter organizations based on current filters
   const filteredOrganizations = React.useMemo(() => {
@@ -88,7 +87,7 @@ export default function OrganizationsPage() {
       filtered = filtered.filter(
         (org) =>
           org.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-          org.id.toLowerCase().includes(filters.search!.toLowerCase())
+          org.unique_id.toLowerCase().includes(filters.search!.toLowerCase())
       );
     }
 
@@ -98,7 +97,7 @@ export default function OrganizationsPage() {
 
     if (filters.dateRange?.from || filters.dateRange?.to) {
       filtered = filtered.filter((org) => {
-        const orgDate = new Date(org.createdAt);
+        const orgDate = new Date(org.joined_on);
         if (filters.dateRange?.from && orgDate < filters.dateRange.from)
           return false;
         if (filters.dateRange?.to && orgDate > filters.dateRange.to)
@@ -107,9 +106,9 @@ export default function OrganizationsPage() {
       });
     }
 
-    if (filters.storageComparison) {
+    if (filters.storageComparison && !hasLimitedData) {
       filtered = filtered.filter((org) => {
-        const occupied = getOccupiedStorage(org.id) / (1024 * 1024); // Convert to MB
+        const occupied = getOccupiedStorage(org.unique_id) / (1024 * 1024); // Convert to MB
         const { operator, value } = filters.storageComparison!;
         if (operator === "<") return occupied < value;
         if (operator === "=") return Math.abs(occupied - value) < 1;
@@ -118,250 +117,277 @@ export default function OrganizationsPage() {
       });
     }
 
-    // if (filters.userCountComparison) {
-    //   filtered = filtered.filter((org) => {
-    //     const userCount = users.filter((u) => u.organizationId === org.id).length
-    //     const { operator, value } = filters.userCountComparison!
-    //     if (operator === "<") return userCount < value
-    //     if (operator === "=") return userCount === value
-    //     if (operator === ">") return userCount > value
-    //     return true
-    //   })
-    // }
-
     return filtered;
-  }, [organizations, filters, users]);
+  }, [organizations, filters, hasLimitedData]);
 
-  const columns: ColumnDef<Organisation>[] = [
-    {
-      accessorKey: "id",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Org ID
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+  const columns: ColumnDef<Organisation>[] = React.useMemo(
+    () => [
+      {
+        accessorKey: "unique_id",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Org ID
+            </Button>
+          );
+        },
       },
-    },
-    {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Org Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: "name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Org Name
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
       },
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Created At
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: "joined_on",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Joined On
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          const joinedOn = row.getValue("joined_on");
+          return joinedOn
+            ? new Date(joinedOn as string).toLocaleDateString()
+            : "N/A";
+        },
       },
-      cell: ({ row }) => {
-        return new Date(row.getValue("createdAt")).toLocaleDateString();
+      {
+        accessorKey: "email",
+        header: "Org Email",
+        cell: ({ row }) => {
+          const email = row.getValue("email");
+          return email || "N/A";
+        },
       },
-    },
-    {
-      accessorKey: "email",
-      header: "Org Email",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.getValue("status") as Status;
-        return (
-          <Badge
-            variant={
-              status === "active"
-                ? "default"
-                : status === "pending"
-                ? "secondary"
-                : "destructive"
-            }
-          >
-            {status}
-          </Badge>
-        );
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.getValue("status") as Status;
+          if (!status) return "N/A";
+          return (
+            <Badge
+              variant={
+                status === "active"
+                  ? "default"
+                  : status === "pending"
+                  ? "secondary"
+                  : "destructive"
+              }
+            >
+              {status}
+            </Badge>
+          );
+        },
       },
-    },
-    {
-      id: "observers",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            #Observers
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const orgId = row.getValue("id") as string;
-        const observerCount = observers.filter(
-          (o) => o.organizationId === orgId
-        ).length;
-        return observerCount;
-      },
-    },
-    {
-      id: "users",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            #Users
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const orgId = row.getValue("id") as string;
-        // const userCount = users.filter((u) => u.organizationId === orgId).length
-        return 10;
-      },
-    },
-    {
-      id: "occupiedStorage",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Occupied Storage
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const orgId = row.getValue("id") as string;
-        const occupied = getOccupiedStorage(orgId);
-        return formatFileSize(occupied);
-      },
-    },
-    {
-      accessorKey: "allowedStorage",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Allowed Storage
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const allowedMB = row.getValue("allowedStorage") as number;
-        return `${allowedMB}MB`;
-      },
-    },
-    {
-      id: "storageUsage",
-      header: "Usage",
-      cell: ({ row }) => {
-        const orgId = row.getValue("id") as string;
-        const org = row.original;
-        const occupied = getOccupiedStorage(orgId);
-        const allowed = org.allowedStorage * 1024 * 1024; // Convert MB to bytes
-        const percentage = Math.round((occupied / allowed) * 100);
+      // Conditionally include columns based on data availability
+      ...(hasLimitedData
+        ? []
+        : [
+            {
+              id: "observers",
+              header: ({ column }: any) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                  >
+                    #Observers
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                );
+              },
+              cell: ({ row }: any) => {
+                const orgId = row.getValue("user_id") as string;
+                const observerCount = observers.filter(
+                  (o) => o.user_id === orgId
+                ).length;
+                return observerCount;
+              },
+            },
+            {
+              id: "users",
+              header: ({ column }: any) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                  >
+                    #Users
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                );
+              },
+              cell: ({ row }: any) => {
+                const orgId = row.getValue("user_id") as string;
+                // const userCount = users.filter((u) => u.organizationId === orgId).length
+                return 10;
+              },
+            },
+            {
+              id: "occupiedStorage",
+              header: ({ column }: any) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                  >
+                    Occupied Storage
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                );
+              },
+              cell: ({ row }: any) => {
+                const orgId = row.getValue("user_id") as string;
+                const occupied = getOccupiedStorage(orgId);
+                return formatFileSize(occupied);
+              },
+            },
+            {
+              accessorKey: "allowedStorage",
+              header: ({ column }: any) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                  >
+                    Allowed Storage
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                );
+              },
+              cell: ({ row }: any) => {
+                const allowedMB = row.getValue("allowedStorage") as number;
+                return allowedMB ? `${allowedMB}MB` : "N/A";
+              },
+            },
+            {
+              id: "storageUsage",
+              header: "Usage",
+              cell: ({ row }: any) => {
+                const orgId = row.getValue("user_id") as string;
+                const org = row.original;
+                const occupied = getOccupiedStorage(orgId);
+                const allowed = (org.allowedStorage || 100) * 1024 * 1024; // Convert MB to bytes, default to 100MB
+                const percentage = Math.round((occupied / allowed) * 100);
 
-        return (
-          <div className="w-20">
-            <Progress value={percentage} className="h-2" />
-            <span className="text-xs text-muted-foreground">{percentage}%</span>
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const org = row.original;
+                return (
+                  <div className="w-20">
+                    <Progress value={percentage} className="h-2" />
+                    <span className="text-xs text-muted-foreground">
+                      {percentage}%
+                    </span>
+                  </div>
+                );
+              },
+            },
+          ]),
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const org = row.original;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEditOrg(org)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View Details</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => handleEditOrg(org)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>View Details</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
       },
-    },
-  ];
+    ],
+    [hasLimitedData]
+  );
 
   const handleCreateOrganization = () => {
-    if (!orgName || !orgEmail || !adminEmail || !adminName) {
+    if (!orgName || !orgEmail) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Please fill in required fields (Name and Email)",
         variant: "destructive",
       });
       return;
     }
 
-    const newUserId = (users.length + 1).toString();
-    const newOrgId = (organizations.length + 1).toString();
+    // Create organization with basic required fields
+    const newOrgId = `org_${Date.now()}`;
 
     const newOrg: Organisation = {
-      id: newOrgId,
       name: orgName,
       email: orgEmail,
-      address: orgAddress,
+      address: hasLimitedData ? "" : orgAddress,
       status: orgStatus,
-      allowedStorage: Number(orgStorage),
-      adminId: newUserId,
-      createdAt: new Date().toISOString(),
+      joined_on: new Date().toISOString(),
+      ...(hasLimitedData
+        ? {}
+        : {
+            allowedStorage: Number(orgStorage),
+            adminId: `admin_${Date.now()}`,
+          }),
     };
 
-    const newUser: User = {
-      id: newUserId,
-      email: adminEmail,
-      role: "organisation",
-      createdAt: new Date().toISOString(),
-    };
-
+    // Update local state
     const updatedOrgs = [...organizations, newOrg];
-    const updatedUsers = [...users, newUser];
-
     setOrganizations(updatedOrgs);
-    saveOrganizations(updatedOrgs);
-    saveUsers(updatedUsers);
+
+    if (!hasLimitedData) {
+      // Only save if we have full API support
+      const newUser: User = {
+        id: `admin_${Date.now()}`,
+        email: adminEmail,
+        role: "organisation",
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedUsers = [...users, newUser];
+      saveOrganizations(updatedOrgs);
+      saveUsers(updatedUsers);
+    }
 
     toast({
       title: "Organisation created",
@@ -376,9 +402,9 @@ export default function OrganizationsPage() {
     setEditingOrg(org);
     setOrgName(org.name);
     setOrgEmail(org.email);
-    setOrgAddress(org.address);
+    setOrgAddress(org.address || "");
     setOrgStatus(org.status);
-    setOrgStorage(org.allowedStorage.toString());
+    setOrgStorage((org.allowedStorage || 100).toString());
     setIsEditDialogOpen(true);
   };
 
@@ -392,21 +418,29 @@ export default function OrganizationsPage() {
       return;
     }
 
+    // Create updated organization - always allow basic field updates
     const updatedOrg: Organisation = {
       ...editingOrg,
       name: orgName,
       email: orgEmail,
-      address: orgAddress,
       status: orgStatus,
-      allowedStorage: Number(orgStorage),
+      ...(hasLimitedData
+        ? {}
+        : {
+            address: orgAddress,
+            allowedStorage: Number(orgStorage),
+          }),
     };
 
     const updatedOrgs = organizations.map((org) =>
-      org.id === editingOrg.id ? updatedOrg : org
+      org.user_id === editingOrg.user_id ? updatedOrg : org
     );
 
     setOrganizations(updatedOrgs);
-    saveOrganizations(updatedOrgs);
+
+    if (!hasLimitedData) {
+      saveOrganizations(updatedOrgs);
+    }
 
     toast({
       title: "Organisation updated",
@@ -429,15 +463,48 @@ export default function OrganizationsPage() {
   };
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <SidebarTrigger />
-          <h2 className="text-3xl font-bold tracking-tight">Organisation</h2>
+    <>
+      <div className="flex-1 space-y-4 p-4 md:p-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <SidebarTrigger />
+            <h2 className="text-3xl font-bold tracking-tight">Organisation</h2>
+          </div>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            Add Organisation
+          </Button>
         </div>
-        <OrganisationCreateDialog
-          open={isCreateDialogOpen}
-          setOpen={setIsCreateDialogOpen}
+
+        {loading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="text-center">Loading organizations...</div>
+          </div>
+        ) : (
+          <>
+            {hasLimitedData && (
+              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-sm text-yellow-800">
+                  <strong>Limited Data View:</strong> Some columns are hidden
+                  because the API returned limited organization data. Full
+                  storage metrics, user counts, and observer counts are not
+                  available in this view. Create and edit functionality may be
+                  limited.
+                </p>
+              </div>
+            )}
+            <OrganisationTable
+              columns={columns}
+              data={filteredOrganizations}
+              filters={filters}
+              setFilters={setFilters}
+              hasLimitedData={hasLimitedData}
+            />
+          </>
+        )}
+
+        <OrganisationEditDialog
+          open={isEditDialogOpen}
+          setOpen={setIsEditDialogOpen}
           orgName={orgName}
           setOrgName={setOrgName}
           orgEmail={orgEmail}
@@ -448,36 +515,18 @@ export default function OrganizationsPage() {
           setOrgStatus={setOrgStatus}
           orgStorage={orgStorage}
           setOrgStorage={setOrgStorage}
-          adminEmail={adminEmail}
-          setAdminEmail={setAdminEmail}
-          adminName={adminName}
-          setAdminName={setAdminName}
-          handleCreateOrganization={handleCreateOrganization}
+          handleUpdateOrganization={handleUpdateOrganization}
+          hasLimitedData={hasLimitedData}
         />
       </div>
-
-      <OrganisationTable
-        columns={columns}
-        data={filteredOrganizations}
-        filters={filters}
-        setFilters={setFilters}
+      <CreateOrganisationPopup
+        showFilter={isCreateDialogOpen}
+        closeModal={() => setIsCreateDialogOpen(false)}
+        onSuccess={() => {
+          // Refresh the organisations list after successful creation
+          loadOrganizations();
+        }}
       />
-
-      <OrganisationEditDialog
-        open={isEditDialogOpen}
-        setOpen={setIsEditDialogOpen}
-        orgName={orgName}
-        setOrgName={setOrgName}
-        orgEmail={orgEmail}
-        setOrgEmail={setOrgEmail}
-        orgAddress={orgAddress}
-        setOrgAddress={setOrgAddress}
-        orgStatus={orgStatus}
-        setOrgStatus={setOrgStatus}
-        orgStorage={orgStorage}
-        setOrgStorage={setOrgStorage}
-        handleUpdateOrganization={handleUpdateOrganization}
-      />
-    </div>
+    </>
   );
 }

@@ -6,7 +6,7 @@ import { Status } from "../types/management.types";
 export interface IObserverProfile extends Document {
   _id: mongoose.Types.ObjectId;
   user_id: IUser["_id"];
-  unique_id: string;
+  email: string;
   address: string;
   name: string;
   organisation_id: IOrganisationProfile["_id"];
@@ -21,18 +21,19 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User ID is required"],
-    },
-    unique_id: {
-      type: String,
-      required: [true, "Unique ID is required"],
       unique: true,
-      validate: {
-        validator: function (value: string) {
-          return value.startsWith("OB");
-        },
-        message: 'Observer unique ID must start with "OB"',
-      },
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
       trim: true,
+      lowercase: true,
+      validate: {
+        validator: function (email: string) {
+          return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email);
+        },
+        message: "Please enter a valid email",
+      },
     },
     address: {
       type: String,
@@ -55,7 +56,6 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
       enum: ["active", "pending", "blocked"],
       default: "pending",
     },
-
     joined_on: {
       type: Date,
       default: Date.now,
@@ -69,19 +69,10 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
 );
 
 // Indexes for better query performance
-ObserverProfileSchema.index({ user_id: 1 });
-ObserverProfileSchema.index({ unique_id: 1 });
+ObserverProfileSchema.index({ user_id: 1 }, { unique: true });
+ObserverProfileSchema.index({ email: 1 }, { unique: true });
 ObserverProfileSchema.index({ organisation_id: 1 });
 ObserverProfileSchema.index({ status: 1 });
-
-// Pre-save middleware to generate unique_id if not provided
-ObserverProfileSchema.pre("save", async function (next) {
-  if (!this.unique_id) {
-    const count = await mongoose.model("ObserverProfile").countDocuments();
-    this.unique_id = `OB${String(count + 1).padStart(6, "0")}`;
-  }
-  next();
-});
 
 export const ObserverProfile =
   mongoose.models.ObserverProfile ||

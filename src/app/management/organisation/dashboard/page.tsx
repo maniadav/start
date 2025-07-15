@@ -22,7 +22,7 @@ export default function OrgDashboard() {
   const surveys = getSurveys();
   const files = getFiles();
 
-  const userOrg = organizations.find((o) => o.id === member?.profile.id);
+  const userOrg = organizations.find((o) => o.unique_id === member?.profile.id);
   const orgSurveys = surveys.filter(
     (s) => s.organizationId === member?.profile.id
   );

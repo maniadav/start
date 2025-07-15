@@ -92,7 +92,7 @@ export function initializeDummyData() {
     },
   ];
 
-  const organisations: Organisation[] = [
+  const organisations: any[] = [
     {
       id: "1",
       name: "Healthcare Research Corp",

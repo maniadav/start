@@ -18,6 +18,7 @@ interface OrganisationTableProps {
   data: Organisation[];
   filters: FilterOptions;
   setFilters: (filters: FilterOptions) => void;
+  hasLimitedData?: boolean;
 }
 
 export function OrganisationTable({
@@ -25,6 +26,7 @@ export function OrganisationTable({
   data,
   filters,
   setFilters,
+  hasLimitedData = false,
 }: OrganisationTableProps) {
   return (
     <Card>
@@ -34,8 +36,8 @@ export function OrganisationTable({
           <AdvancedFilters
             filters={filters}
             onFiltersChange={setFilters}
-            showStorageFilter
-            showUserCountFilter
+            showStorageFilter={!hasLimitedData}
+            showUserCountFilter={!hasLimitedData}
             showStatusFilter
             showDateFilter
           />

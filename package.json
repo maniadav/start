@@ -25,6 +25,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "face-api.js": "^0.22.2",
+    "jsonwebtoken": "^9.0.2",
     "jszip": "^3.10.1",
     "lucide-react": "^0.525.0",
     "mongoose": "^8.16.3",
