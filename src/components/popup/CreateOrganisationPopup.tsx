@@ -78,18 +78,6 @@ const CreateOrganisationPopup = ({
     try {
       const response = await startApi.organisation.create(formData);
       console.log("Create response:", response);
-      console.log("Response type:", typeof response);
-      console.log("Response has json method:", typeof response.json === 'function');
-      
-      // Handle different response types
-      let result;
-      if (response && typeof response.json === 'function') {
-        result = await response.json();
-      } else {
-        result = response; // If it's already parsed JSON
-      }
-      
-      console.log("Parsed result:", result);
 
       setFormData({ name: "", email: "", address: "" });
       setErrors({});

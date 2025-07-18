@@ -1,11 +1,9 @@
 "use client";
-import { API_ENDPOINT } from "@constants/api.constant";
 import { useToast } from "@management/hooks/use-toast";
 import StartUtilityAPI from "@services/start.utility";
 import { PopupModal } from "components/common/PopupModal";
 import { useMemo, useState } from "react";
-import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
-import { start } from "repl";
+import { FaBuilding, FaSpinner } from "react-icons/fa";
 
 interface DeleteOrganisationPopupProps {
   showFilter: boolean;
@@ -22,49 +20,15 @@ const DeleteOrganisationPopup = ({
   onSuccess,
   organisation_id,
 }: DeleteOrganisationPopupProps) => {
-  const [formData, setFormData] = useState<OrganisationFormData>({
-    name: "",
-    email: "",
-    address: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<OrganisationFormData>>({});
   const startApi = useMemo(() => new StartUtilityAPI(), []);
   const { toast } = useToast();
-  const validateForm = (): boolean => {
-    const newErrors: Partial<OrganisationFormData> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Organisation name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (
-      !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)
-    ) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       const response = await startApi.organisation.delete(organisation_id);
-      console.log("Delete response:", response);
-      console.log("Response type:", typeof response);
-      console.log(
-        "Response has json method:",
-        typeof response.json === "function"
-      );
 
       console.log("Parsed result:", response);
 
@@ -77,7 +41,7 @@ const DeleteOrganisationPopup = ({
       }
       toast({
         title: "Success",
-        description: "Organisation created successfully",
+        description: "Organisation deleted successfully",
       });
     } catch (error) {
       console.error("Error creating organisation:", error);
