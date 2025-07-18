@@ -29,6 +29,11 @@ export function SideBar() {
       icon: Building2,
     },
     {
+      title: "Observer",
+      url: "/management/admin/observer",
+      icon: Eye,
+    },
+    {
       title: "All Files",
       url: "/management/admin/file",
       icon: FileText,
@@ -43,7 +48,7 @@ export function SideBar() {
     },
     {
       title: "Observer",
-      url: "/management/organisation/observers",
+      url: "/management/organisation/observer",
       icon: Eye,
     },
 

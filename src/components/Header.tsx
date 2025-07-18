@@ -18,7 +18,7 @@ export const Header = () => {
   const router = useRouter();
   const { member } = useAuth();
   const handleLogout = () => {
-    if (member?.userId) {
+    if (member?.user_id) {
       setShowPopup(!showPopup);
     } else {
       router.push(`${PAGE_ROUTES.LOGIN.path}`);
@@ -105,13 +105,13 @@ export const Header = () => {
               className="cursor-pointer gap-2 text-white/80 flex items-center px-2 py-1 rounded-full bg-primary hover:bg-black transition-color duration-300 ease-in-out border border-white/20"
             >
               <span className="ml-2 hidden md:block text-sm">
-                {mounted ? `${member?.userId ? "Logout" : "Sign In"}` : ""}
+                {mounted ? `${member?.user_id ? "Logout" : "Sign In"}` : ""}
               </span>
               <CommonIcon
                 icon="ri:logout-circle-r-line"
                 height={20}
                 width={20}
-                rotate={member?.userId ? 120 : 90}
+                rotate={member?.user_id ? 120 : 90}
               />
             </button>
           </div>

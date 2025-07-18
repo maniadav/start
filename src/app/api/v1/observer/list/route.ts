@@ -28,8 +28,8 @@ export async function GET(request: Request) {
     }
 
     let query: any = {};
-    if (role === "observer") {
-      query = { observer_id: user_id };
+    if (role === "organisation") {
+      query = { organisation_id: user_id };
     }
     if (organisationIdParam) {
       query.organisation_id = organisationIdParam;

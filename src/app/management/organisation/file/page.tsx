@@ -1,78 +1,121 @@
-"use client"
+"use client";
 
-import { Download, FileText } from "lucide-react"
-import { getCurrentUser } from "@management/lib/auth"
-import { getFiles, getSurveys, formatFileSize } from "@management/lib/data-service"
-import { Button } from "@management/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@management/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@management/components/ui/table"
-import { Badge } from "@management/components/ui/badge"
-import SidebarTrigger from "@management/SidebarTrigger"
-import { getCurrentMember } from "@utils/auth.utils"
+import * as React from "react";
 
-export default function OrgFilesPage() {
-  const member = getCurrentMember()
-  const files = getFiles().filter((f) => f.organizationId === member?.profile.id)
-  const surveys = getSurveys()
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@management/components/ui/card";
+import type { FilterOptions } from "@type/management.types";
+import SidebarTrigger from "@management/SidebarTrigger";
+import { FileTable } from "./FileTable";
+import { useEffect, useMemo, useState } from "react";
+import LoadingSection from "components/section/loading-section";
+import StartUtilityAPI from "@services/start.utility";
 
-  const handleDownload = (file: any) => {
-    // Simulate file download
-    const link = document.createElement("a")
-    link.href = `data:text/csv;charset=utf-8,Sample CSV content for ${file.name}`
-    link.download = file.name
-    link.click()
-  }
+interface PopupState {
+  type: String | null;
+  isOpen: boolean;
+  observerId: string;
+  data?: any; // Optional data to pass to the popup
+}
+export default function AdminFilesPage() {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Centralized popup state
+  const [popupState, setPopupState] = useState<PopupState>({
+    type: null,
+    isOpen: false,
+    observerId: "",
+    data: null,
+  });
+
+  const nextApi = useMemo(() => new StartUtilityAPI(), []);
+
+  // Helper functions to manage popup state
+  const openPopup = (
+    type: String | null,
+    observerId: string = "",
+    data: any = null
+  ) => {
+    setPopupState({
+      type,
+      isOpen: true,
+      observerId,
+      data,
+    });
+  };
+
+  const closePopup = () => {
+    setPopupState({
+      ...popupState,
+      isOpen: false,
+      type: null,
+    });
+  };
+
+  const loadData = React.useCallback(async () => {
+    try {
+      console.log("Loading data...");
+      setLoading(true);
+      const res = await nextApi.files.list();
+      setData(res.data || []);
+      console.log("Data loaded:", res.data?.length || 0);
+    } catch (error) {
+      console.error("Failed to load data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [nextApi]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleSuccess = React.useCallback(() => {
+    console.log("handleSuccess called - reloading data");
+    loadData();
+  }, [loadData]);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center space-x-2">
         <SidebarTrigger />
-        <h2 className="text-3xl font-bold tracking-tight">File Manager</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          All Uploaded Files
+        </h2>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Organisation Files
-          </CardTitle>
+          <CardTitle>File Management</CardTitle>
+          {/* <FileFilters
+            filters={filters}
+            setFilters={setFilters}
+            surveyFilter={surveyFilter}
+            setSurveyFilter={setSurveyFilter}
+            orgFilter={orgFilter}
+            setOrgFilter={setOrgFilter}
+            observerFilter={observerFilter}
+            setObserverFilter={setObserverFilter}
+            surveys={surveys}
+            data={data}
+            observers={observers}
+          /> */}
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>File Name</TableHead>
-                <TableHead>Survey</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Upload Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {files.map((file) => {
-                const survey = surveys.find((s) => s.id === file.surveyId)
-
-                return (
-                  <TableRow key={file.id}>
-                    <TableCell className="font-medium">{file.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{survey?.name}</Badge>
-                    </TableCell>
-                    <TableCell>{formatFileSize(file.size)}</TableCell>
-                    <TableCell>{new Date(file.uploadedAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" onClick={() => handleDownload(file)}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Download
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
+        <CardContent className="w-auto overflow-x-scroll">
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+              <LoadingSection />
+            </div>
+          ) : (
+            <FileTable data={data} />
+          )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

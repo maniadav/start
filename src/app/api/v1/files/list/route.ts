@@ -24,33 +24,34 @@ export async function GET(request: Request) {
     // Parse query parameters
     const url = new URL(request.url);
     const queryParams = url.searchParams;
-    
+
     // Build filter object based on provided query parameters
     const filter: Record<string, any> = {};
-    
-    if (queryParams.has('task_id')) {
-      filter.task_id = queryParams.get('task_id');
+
+    if (queryParams.has("task_id")) {
+      filter.task_id = queryParams.get("task_id");
     }
-    
-    if (queryParams.has('organisation_id')) {
-      filter.organisation_id = queryParams.get('organisation_id');
+
+    if (queryParams.has("organisation_id")) {
+      filter.organisation_id = queryParams.get("organisation_id");
     }
-    
-    if (queryParams.has('observer_id')) {
-      filter.observer_id = queryParams.get('observer_id');
+
+    if (queryParams.has("observer_id")) {
+      filter.observer_id = queryParams.get("observer_id");
     }
-    
-    if (queryParams.has('child_id')) {
-      filter.child_id = queryParams.get('child_id');
+
+    if (queryParams.has("child_id")) {
+      filter.child_id = queryParams.get("child_id");
     }
-    
-    if (queryParams.has('date_created')) {
-      filter.date_created = queryParams.get('date_created');
+
+    if (queryParams.has("date_created")) {
+      filter.date_created = queryParams.get("date_created");
     }
 
     const files = await FilesModel.find(filter);
 
     const data: any[] = files.map((profile: any) => ({
+      id: profile._id.toString(),
       task_id: profile.task_id,
       file_size: profile.file_size,
       organisation_id: profile.organisation_id,

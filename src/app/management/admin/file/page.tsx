@@ -3,90 +3,82 @@
 import * as React from "react";
 
 import {
-  getFiles,
-  getOrganizations,
-  getSurveys,
-  getObservers,
-} from "@management/lib/data-service";
-import { Button } from "@management/components/ui/button";
-import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@management/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@management/components/ui/dropdown-menu";
-import { Badge } from "@management/components/ui/badge";
-import { DataTable } from "@management/components/data-table";
-import { AdvancedFilters } from "@management/components/advanced-filters";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@management/components/ui/select";
-import { Label } from "@management/components/ui/label";
-import type { UploadedFile, FilterOptions } from "@type/management.types";
+import type { FilterOptions } from "@type/management.types";
 import SidebarTrigger from "@management/SidebarTrigger";
-import { FileFilters } from "./FileFilters";
 import { FileTable } from "./FileTable";
+import { useEffect, useMemo, useState } from "react";
+import LoadingSection from "components/section/loading-section";
+import StartUtilityAPI from "@services/start.utility";
 
+interface PopupState {
+  type: String | null;
+  isOpen: boolean;
+  observerId: string;
+  data?: any; // Optional data to pass to the popup
+}
 export default function AdminFilesPage() {
-  const [files] = React.useState(getFiles());
-  const [filters, setFilters] = React.useState<FilterOptions>({});
-  const [surveyFilter, setSurveyFilter] = React.useState<string>("all");
-  const [orgFilter, setOrgFilter] = React.useState<string>("all");
-  const [observerFilter, setObserverFilter] = React.useState<string>("all");
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const organizations = getOrganizations();
-  const surveys = getSurveys();
-  const observers = getObservers();
+  // Centralized popup state
+  const [popupState, setPopupState] = useState<PopupState>({
+    type: null,
+    isOpen: false,
+    observerId: "",
+    data: null,
+  });
 
-  // Filter files based on current filters
-  const filteredFiles = React.useMemo(() => {
-    let filtered = [...files];
+  const nextApi = useMemo(() => new StartUtilityAPI(), []);
 
-    if (filters.search) {
-      filtered = filtered.filter(
-        (file) =>
-          file.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-          file.id.toLowerCase().includes(filters.search!.toLowerCase())
-      );
+  // Helper functions to manage popup state
+  const openPopup = (
+    type: String | null,
+    observerId: string = "",
+    data: any = null
+  ) => {
+    setPopupState({
+      type,
+      isOpen: true,
+      observerId,
+      data,
+    });
+  };
+
+  const closePopup = () => {
+    setPopupState({
+      ...popupState,
+      isOpen: false,
+      type: null,
+    });
+  };
+
+  const loadData = React.useCallback(async () => {
+    try {
+      console.log("Loading data...");
+      setLoading(true);
+      const res = await nextApi.files.list();
+      setData(res.data || []);
+      console.log("Data loaded:", res.data?.length || 0);
+    } catch (error) {
+      console.error("Failed to load data:", error);
+    } finally {
+      setLoading(false);
     }
+  }, [nextApi]);
 
-    if (surveyFilter !== "all") {
-      filtered = filtered.filter((file) => file.surveyId === surveyFilter);
-    }
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-    if (orgFilter !== "all") {
-      filtered = filtered.filter((file) => file.organizationId === orgFilter);
-    }
-
-    if (observerFilter !== "all") {
-      filtered = filtered.filter((file) => file.observerId === observerFilter);
-    }
-
-    if (filters.dateRange?.from || filters.dateRange?.to) {
-      filtered = filtered.filter((file) => {
-        const fileDate = new Date(file.uploadedAt);
-        if (filters.dateRange?.from && fileDate < filters.dateRange.from)
-          return false;
-        if (filters.dateRange?.to && fileDate > filters.dateRange.to)
-          return false;
-        return true;
-      });
-    }
-
-    return filtered;
-  }, [files, filters, surveyFilter, orgFilter, observerFilter]);
+  const handleSuccess = React.useCallback(() => {
+    console.log("handleSuccess called - reloading data");
+    loadData();
+  }, [loadData]);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -100,7 +92,7 @@ export default function AdminFilesPage() {
       <Card>
         <CardHeader>
           <CardTitle>File Management</CardTitle>
-          <FileFilters
+          {/* <FileFilters
             filters={filters}
             setFilters={setFilters}
             surveyFilter={surveyFilter}
@@ -110,12 +102,18 @@ export default function AdminFilesPage() {
             observerFilter={observerFilter}
             setObserverFilter={setObserverFilter}
             surveys={surveys}
-            organizations={organizations}
+            data={data}
             observers={observers}
-          />
+          /> */}
         </CardHeader>
         <CardContent className="w-auto overflow-x-scroll">
-          <FileTable data={filteredFiles} />
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+              <LoadingSection />
+            </div>
+          ) : (
+            <FileTable data={data} />
+          )}
         </CardContent>
       </Card>
     </div>
