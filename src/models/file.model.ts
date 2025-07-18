@@ -14,7 +14,6 @@ export interface IFile extends Document {
   child_id: IChild["_id"];
   date_created: Date;
   file_url: string;
-  created_at: Date;
   last_updated: Date;
 }
 
@@ -50,7 +49,7 @@ const FileSchema = new Schema<IFile>(
       required: [true, "Observer ID is required"],
     },
     child_id: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Child",
       required: [true, "Child ID is required"],
     },
@@ -65,7 +64,7 @@ const FileSchema = new Schema<IFile>(
     },
   },
   {
-    timestamps: { createdAt: "created_at", updatedAt: "last_updated" },
+    timestamps: { createdAt: "date_created", updatedAt: "last_updated" },
     collection: "files",
   }
 );

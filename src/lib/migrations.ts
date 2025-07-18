@@ -87,22 +87,15 @@ export class MigrationManager {
       description: "Initial schema setup and index creation",
       up: async () => {
         await connectDB();
-
         console.log("🔍 Checking existing collections...");
-
-        // Check if collections already exist
         if (!mongoose.connection.db) {
           throw new Error("Database connection not established");
         }
-
         const collections = await mongoose.connection.db
           .listCollections()
           .toArray();
         const existingCollections = collections.map((c) => c.name);
-
         console.log("Existing collections:", existingCollections);
-
-        // Create indexes only if collections don't exist or need updates
         const modelsToIndex = [
           { name: "users", model: User },
           { name: "children", model: Child },
@@ -111,7 +104,6 @@ export class MigrationManager {
           { name: "organisationprofiles", model: OrganisationProfile },
           { name: "files", model: File },
         ];
-
         for (const { name, model } of modelsToIndex) {
           try {
             if (existingCollections.includes(name)) {
@@ -133,13 +125,10 @@ export class MigrationManager {
             console.warn(`⚠️ Error with ${name} indexes:`, errorMessage);
           }
         }
-
         console.log("✅ Initial schema setup completed");
       },
       down: async () => {
         await connectDB();
-
-        // Drop collections (use with caution)
         if (mongoose.connection.db) {
           await mongoose.connection.db.dropCollection("users").catch(() => {});
           await mongoose.connection.db
@@ -155,8 +144,41 @@ export class MigrationManager {
             .dropCollection("organisationprofiles")
             .catch(() => {});
         }
-
         console.log("⚠️ All collections dropped");
+      },
+    },
+    {
+      version: "009",
+      description: "Seed files collection with dummyFiles if not present",
+      up: async () => {
+        await connectDB();
+        const collectionName = "files";
+        const FilesModel = require("../models/file.model").default;
+        const { dummyFiles, validateDummyFilesConsistency } = require("../models/dummyData/fileData");
+
+        // Check if collection exists and has data
+        const exists = await migrationManager.collectionExists(collectionName);
+        let count = 0;
+        if (exists) {
+          count = await migrationManager.getCollectionCount(collectionName);
+        }
+
+        if (!exists || count === 0) {
+          console.log("📦 Seeding files collection with dummyFiles...");
+          if (!validateDummyFilesConsistency()) {
+            throw new Error("Dummy files validation failed. Aborting seeding.");
+          }
+          const created = await FilesModel.insertMany(dummyFiles);
+          console.log(`✅ Seeded files collection with ${created.length} files`);
+        } else {
+          console.log("📦 Files collection already exists and is not empty. Skipping seeding.");
+        }
+      },
+      down: async () => {
+        await connectDB();
+        const FilesModel = require("../models/file.model").default;
+        await FilesModel.deleteMany({});
+        console.log("🗑️ All seeded files removed from files collection");
       },
     },
     {
@@ -646,6 +668,7 @@ export class MigrationManager {
         );
       },
     },
+
   ];
 
   async getAppliedMigrations(): Promise<string[]> {

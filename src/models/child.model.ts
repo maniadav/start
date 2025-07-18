@@ -4,7 +4,7 @@ import { IOrganisationProfile } from "./organisation.profile.model";
 import { Gender } from "../types/management.types";
 
 export interface IChild extends Document {
-  _id: Schema.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   name: string;
   address: string;
   observer_id: IObserverProfile["_id"];
