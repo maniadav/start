@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       // Use existing user
       user = existingUser;
     } else {
-      const hashedPassword = PasswordUtils.hashPassword("password");
+      const hashedPassword = await PasswordUtils.hashPassword("password");
 
       // Create user
       const newUser = new UserModel({

@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import OrganisationProfileModel from "@models/organisation.profile.model";
 import UserModel from "@models/user.model";
-import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
+import ObserverProfileModel from "@models/observer.profile.model";
+import OrganisationProfileModel from "@models/organisation.profile.model";
 
 export async function POST(request: Request) {
   try {
     await connectDB();
 
     const body = await request.json();
-    const { name, email, address } = body;
+    const { name, email, address, organisation_id } = body;
 
     // Validate required fields
     if (!name || !email || !address) {
@@ -23,9 +23,10 @@ export async function POST(request: Request) {
     }
 
     const authHeader = request.headers.get("authorization");
-    const { verified } = await ProfileUtils.verifyProfile(authHeader || "", [
-      "admin",
-    ]);
+    const { verified, user_id } = await ProfileUtils.verifyProfile(
+      authHeader || "",
+      ["admin", "organisation"]
+    );
 
     if (!verified) {
       return NextResponse.json(
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       // Check if user already has an organisation profile
-      const existingOrgProfile = await OrganisationProfileModel.findOne({
+      const existingOrgProfile = await ObserverProfileModel.findOne({
         user_id: existingUser._id,
       });
 
@@ -57,11 +58,11 @@ export async function POST(request: Request) {
       // Use existing user
       user = existingUser;
     } else {
-      const hashedPassword = PasswordUtils.hashPassword("password");
+      const hashedPassword = await PasswordUtils.hashPassword("password");
 
       // Create user
       const newUser = new UserModel({
-        role: "organisation", // Assuming organisation is a valid role
+        role: "observer",
         email: email.toLowerCase(),
         password: hashedPassword,
       });
@@ -69,14 +70,26 @@ export async function POST(request: Request) {
       user = await newUser.save();
     }
 
+    if (!user_id) {
+      const org = await OrganisationProfileModel.findOne({
+        user_id: organisation_id,
+      });
+      if (!org) {
+        return NextResponse.json(
+          { error: "Organisation not found" },
+          { status: 404 }
+        );
+      }
+    }
     // Create organisation profile
-    const newOrganisationProfile = new OrganisationProfileModel({
+    const newOrganisationProfile = new ObserverProfileModel({
       user_id: user._id,
       email: email.toLowerCase(),
       name: name.trim(),
       address: address.trim(),
       status: "pending",
       joined_on: null, // Will be set when approved
+      organisation_id: organisation_id || user_id, // Assuming organisation_id is the same as user_id
     });
 
     const savedProfile = await newOrganisationProfile.save();
@@ -84,20 +97,21 @@ export async function POST(request: Request) {
     // Return success response with temporary password (in production, send via email)
     return NextResponse.json(
       {
-        message: "Organisation created successfully",
-        organisation: {
+        message: "Observer created successfully",
+        observer: {
           user_id: user._id,
           name: savedProfile.name,
           status: savedProfile.status,
           email: user.email,
           address: savedProfile.address,
+          organisation_id: organisation_id || user_id,
         },
-        tempPassword: tempPassword, // Remove this in production and send via email
+        tempPassword: tempPassword,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating organisation:", error);
+    console.error("Error creating observer:", error);
 
     if (error instanceof TokenUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 401 });
