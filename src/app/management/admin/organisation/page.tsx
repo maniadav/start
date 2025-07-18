@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchOrganisations } from "@management/lib/data-service";
 import { Button } from "@management/components/ui/button";
 import type { Organisation, FilterOptions } from "@type/management.types";
 import { OrganisationTable } from "./OrganisationTable";
 import SidebarTrigger from "@management/SidebarTrigger";
 import CreateOrganisationPopup from "components/popup/CreateOrganisationPopup";
+import StartUtilityAPI from "@services/start.utility";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organisation[]>([]);
@@ -15,14 +16,16 @@ export default function OrganizationsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({});
 
+  const nextApi = useMemo(() => new StartUtilityAPI(), []);
+
   const loadOrganizations = async () => {
     try {
       setLoading(true);
-      const data = await fetchOrganisations();
-      setOrganizations(data);
-      setLoading(false);
+      const res = await nextApi.organisation.list();
+      setOrganizations(res.data || []);
     } catch (error) {
       console.error("Failed to load organizations:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -49,8 +52,8 @@ export default function OrganizationsPage() {
             <div className="text-center">Loading organizations...</div>
           </div>
         ) : (
-          <OrganisationTable 
-            data={organizations} 
+          <OrganisationTable
+            data={organizations}
             filters={filters}
             setFilters={setFilters}
           />
@@ -58,9 +61,8 @@ export default function OrganizationsPage() {
       </div>
       <CreateOrganisationPopup
         showFilter={isCreateDialogOpen}
-        closeModal={() => setIsCreateDialogOpen(false)}
+        closeModal={() => setIsCreateDialogOpen((prev) => !prev)}
         onSuccess={() => {
-          // Refresh the organisations list after successful creation
           loadOrganizations();
         }}
       />

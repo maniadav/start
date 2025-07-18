@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@management/components/ui/button";
 import { Input } from "@management/components/ui/input";
@@ -23,6 +23,7 @@ import {
 } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { redirectToDashboard } from "@utils/auth.utils";
+import StartUtilityAPI from "@services/start.utility";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,45 +31,36 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const nextApi = useMemo(() => new StartUtilityAPI(), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const response = await nextApi.auth.login({ email, password });
+
+      console.log({ response });
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${response.data?.profile?.name || email}!`,
       });
-      
-      const data = await res.json();
 
-      if (res.ok) {
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${data.data?.profile?.name || email}!`,
-        });
+      setLocalStorageValue(LOCALSTORAGE.START_MEMBER, response.data, true);
+      redirectToDashboard(response.data.role, router);
+    } catch (err: any) {
+      // Get error message from the API error response
+      const errorMessage =
+        err.message || err.data?.error || "Invalid email or password";
 
-        setLocalStorageValue(LOCALSTORAGE.START_MEMBER, data.data, true);
-        redirectToDashboard(data.data.role, router);
-      } else {
-        // Improved error handling to catch different error message formats
-        const errorMessage = data.message || data.error || "Invalid email or password";
-        toast({
-          title: "Login failed",
-          description: errorMessage,
-          variant: "destructive",
-        });
-      }
-    } catch (err) {
       toast({
         title: "Login failed",
-        description: "Something went wrong. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   // On mount, check if already logged in and redirect

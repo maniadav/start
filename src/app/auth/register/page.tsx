@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import UtilityAPI from "services/utility";
+import UtilityAPI from "@services/start.utility";
 import {
   emailValidator,
   passwordValidator,

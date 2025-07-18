@@ -1,4 +1,4 @@
-import UtilityAPI from "services/utility";
+import UtilityAPI from "@services/start.utility";
 import axios from "axios";
 // import jwt_decode from "jwt-decode";
 import { getLocalStorageValue } from "utils/localStorage";

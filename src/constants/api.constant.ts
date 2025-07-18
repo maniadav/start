@@ -10,8 +10,20 @@ export const API_ENDPOINT = {
     login: "/auth/login",
     register: "/auth/register",
   },
-  page: {
-    survey: "/survey",
-    content: "/content",
+  organisation: {
+    list: "/organisation/list",
+    create: "/organisation/create",
+  },
+  observer: {
+    list: "/observer/list",
+    create: "/observer/create",
+  },
+  child: {
+    list: "/child/list",
+    create: "/child/create",
+  },
+  files: {
+    list: "/files/list",
+    create: "/files/create",
   },
 };

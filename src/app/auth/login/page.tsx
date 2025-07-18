@@ -2,11 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import UtilityAPI from "@services/utility";
 import { setLocalStorageValue } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import Image from "next/image";
-import { API_ENDPOINT } from "@constants/api.constant";
 import { IconHome } from "components/common/Icons";
 import Link from "next/link";
 import { BASE_URL } from "@constants/config.constant";

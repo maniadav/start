@@ -1,8 +1,11 @@
 "use client";
 import { API_ENDPOINT } from "@constants/api.constant";
+import { useToast } from "@management/hooks/use-toast";
+import StartUtilityAPI from "@services/start.utility";
 import { PopupModal } from "components/common/PopupModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
+import { start } from "repl";
 
 interface CreateOrganisationPopupProps {
   showFilter: boolean;
@@ -28,7 +31,8 @@ const CreateOrganisationPopup = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<OrganisationFormData>>({});
-
+  const startApi = useMemo(() => new StartUtilityAPI(), []);
+  const { toast } = useToast();
   const validateForm = (): boolean => {
     const newErrors: Partial<OrganisationFormData> = {};
 
@@ -72,37 +76,29 @@ const CreateOrganisationPopup = ({
 
     setIsLoading(true);
     try {
-      const response = await fetch("/api/v1/admin/organisation/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create organisation");
-      }
-
+      const response = await startApi.organisation.create(formData);
       const result = await response.json();
 
-      // Reset form
       setFormData({ name: "", email: "", address: "" });
       setErrors({});
-
-      // Call success callback and close modal
-      onSuccess?.();
-      closeModal();
-
-      alert("Organisation created successfully!");
+      onSuccess ? onSuccess() : null;
+      toast.info({
+        title: "Information",
+        description: "Your session expires in 5 minutes",
+        position: "tl", // top-left
+      });
     } catch (error) {
       console.error("Error creating organisation:", error);
-      alert(
-        error instanceof Error ? error.message : "Failed to create organisation"
-      );
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create organisation",
+      });
     } finally {
       setIsLoading(false);
+      closeModal();
     }
   };
 
