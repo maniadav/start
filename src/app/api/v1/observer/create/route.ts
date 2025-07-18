@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import { OrganisationProfile } from "@models/OrganisationProfile";
-import { User } from "@models/User";
-import "@models/User"; // Import User model to register it with Mongoose
-import bcrypt from "bcryptjs";
+import OrganisationProfileModel from "@models/organisation.profile.model";
+import UserModel from "@models/user.model";
+import "@models/user.model"; // Import User model to register it with Mongoose
+import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import { TokenUtilsError } from "@utils/token.utils";
+import { PasswordUtils } from "@utils/password.utils";
 
 export async function POST(request: Request) {
   try {
@@ -20,15 +22,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user with email already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const authHeader = request.headers.get("authorization");
+    const { verified } = await ProfileUtils.verifyProfile(authHeader || "", [
+      "admin",
+    ]);
+
+    if (!verified) {
+      return NextResponse.json(
+        { error: "You don't have permission to access this resource" },
+        { status: 403 }
+      );
+    }
+
+    const existingUser = await UserModel.findOne({
+      email: email.toLowerCase(),
+    });
 
     let user;
     let tempPassword = null;
 
     if (existingUser) {
       // Check if user already has an organisation profile
-      const existingOrgProfile = await OrganisationProfile.findOne({
+      const existingOrgProfile = await OrganisationProfileModel.findOne({
         user_id: existingUser._id,
       });
 
@@ -42,12 +57,10 @@ export async function POST(request: Request) {
       // Use existing user
       user = existingUser;
     } else {
-      // Generate a temporary password (you might want to send this via email)
-      tempPassword = "password";
-      const hashedPassword = await bcrypt.hash(tempPassword, 12);
+      const hashedPassword = PasswordUtils.hashPassword("password");
 
       // Create user
-      const newUser = new User({
+      const newUser = new UserModel({
         role: "organisation", // Assuming organisation is a valid role
         email: email.toLowerCase(),
         password: hashedPassword,
@@ -57,7 +70,7 @@ export async function POST(request: Request) {
     }
 
     // Create organisation profile
-    const newOrganisationProfile = new OrganisationProfile({
+    const newOrganisationProfile = new OrganisationProfileModel({
       user_id: user._id,
       email: email.toLowerCase(),
       name: name.trim(),
@@ -86,11 +99,12 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating organisation:", error);
 
-    if (error instanceof Error && error.message.includes("E11000")) {
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 409 }
-      );
+    if (error instanceof TokenUtilsError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
+
+    if (error instanceof ProfileUtilsError) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
     }
 
     return NextResponse.json(

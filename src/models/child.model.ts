@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IObserverProfile } from "./ObserverProfile";
-import { IOrganisationProfile } from "./OrganisationProfile";
+import { IObserverProfile } from "./observer.profile.model";
+import { IOrganisationProfile } from "./organisation.profile.model";
 import { Gender } from "../types/management.types";
 
 export interface IChild extends Document {
@@ -71,5 +71,6 @@ ChildSchema.index({ organisation_id: 1 });
 ChildSchema.index({ survey_date: 1 });
 ChildSchema.index({ gender: 1 });
 
-export const Child =
+const ChildModel =
   mongoose.models.Child || mongoose.model<IChild>("Child", ChildSchema);
+export default ChildModel;

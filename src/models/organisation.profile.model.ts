@@ -1,24 +1,22 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./User";
-import { IOrganisationProfile } from "./OrganisationProfile";
+import { IUser } from "./user.model";
 import { Status } from "../types/management.types";
 
-export interface IObserverProfile extends Document {
+export interface IOrganisationProfile extends Document {
   _id: mongoose.Types.ObjectId;
   user_id: IUser["_id"];
   email: string;
   address: string;
   name: string;
-  organisation_id: IOrganisationProfile["_id"];
   status: Status;
-  joined_on: Date;
+  joined_on: Date | null;
   updated_on: Date;
 }
 
-const ObserverProfileSchema = new Schema<IObserverProfile>(
+const OrganisationProfileSchema = new Schema<IOrganisationProfile>(
   {
     user_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "User ID is required"],
       unique: true,
@@ -45,11 +43,6 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
       required: [true, "Name is required"],
       trim: true,
     },
-    organisation_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "OrganisationProfile",
-      required: [true, "Organisation ID is required"],
-    },
     status: {
       type: String,
       required: true,
@@ -58,22 +51,24 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
     },
     joined_on: {
       type: Date,
-      default: Date.now,
-      immutable: true, // This prevents the field from being updated
+      default: null,
+      immutable: true,
     },
   },
   {
     timestamps: { createdAt: false, updatedAt: "updated_on" },
-    collection: "observer_profiles",
+    collection: "organisation_profiles",
   }
 );
 
-// Indexes for better query performance
-ObserverProfileSchema.index({ user_id: 1 }, { unique: true });
-ObserverProfileSchema.index({ email: 1 }, { unique: true });
-ObserverProfileSchema.index({ organisation_id: 1 });
-ObserverProfileSchema.index({ status: 1 });
+// Clear any existing model to avoid caching issues
+if (mongoose.models.OrganisationProfile) {
+  delete mongoose.models.OrganisationProfile;
+}
 
-export const ObserverProfile =
-  mongoose.models.ObserverProfile ||
-  mongoose.model<IObserverProfile>("ObserverProfile", ObserverProfileSchema);
+const OrganisationProfileModel = mongoose.model<IOrganisationProfile>(
+  "OrganisationProfile",
+  OrganisationProfileSchema
+);
+
+export default OrganisationProfileModel;

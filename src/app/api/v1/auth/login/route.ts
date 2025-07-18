@@ -1,17 +1,13 @@
 import { NextResponse } from "next/server";
-import {
-  users,
-  MemberProfile,
-  adminProfiles,
-  organisationProfiles,
-  observerProfiles,
-} from "@data/start.data";
-import {
-  AdminProfile,
-  ObserverProfile,
-  OrganisationProfile,
-} from "@type/management.types";
-import { MemberWithProfile, MemberWithProfileFE } from "@type/member.types";
+
+import connectDB from "@lib/mongodb";
+import TokenModel from "@models/token.model";
+import UserModel from "@models/user.model";
+import AdminProfileModel from "@models/admin.profle.model";
+import OrganisationProfileModel from "@models/organisation.profile.model";
+import ObserverProfileModel from "@models/observer.profile.model";
+import { PasswordUtils } from "@utils/password.utils";
+import { TokenUtils } from "@utils/token.utils";
 
 export async function POST(req: Request) {
   try {
@@ -23,124 +19,84 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = users.find((u) => u.email === email);
-    if (!user || user.password !== password) {
+    // Connect to DB and upsert refresh token (rotate)
+    await connectDB();
+
+    const user = await UserModel.findOne({ email: email });
+    let isPasswordValid = false;
+
+    if (user) {
+      isPasswordValid = await PasswordUtils.verifyPassword(
+        password,
+        user.password
+      );
+    }
+
+    if (!user || !isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    const { id, role } = user;
-    console.log("User found:", id, role);
-    let profile:
-      | AdminProfile
-      | OrganisationProfile
-      | ObserverProfile
-      | undefined;
+    const user_id = user._id.toString();
+    const role = user.role;
+    // Generate access and refresh tokens
+    const accessToken = TokenUtils.generateToken(
+      { role, email: user.email },
+      "access"
+    );
+    const refreshToken = TokenUtils.generateToken(
+      { role, email: user.email },
+      "refresh"
+    );
 
-    switch (role) {
-      case MemberProfile.admin:
-        profile = adminProfiles.find((p) => p.userId === id);
-        break;
-      case MemberProfile.organisation:
-        profile = organisationProfiles.find((p) => p.userId === id);
-        break;
-      case MemberProfile.observer:
-        profile = observerProfiles.find((p) => p.userId === id);
-        break;
-      default:
-        profile = undefined;
-    }
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    await TokenModel.findOneAndUpdate(
+      { userId: user_id },
+      {
+        userId: user_id,
+        token: refreshToken,
+        type: "refresh",
+        expiresAt,
+        revoked: false,
+      },
+      { upsert: true, new: true }
+    );
 
-    function getPublicProfile(
-      profile:
-        | AdminProfile
-        | OrganisationProfile
-        | ObserverProfile
-        | null
-        | undefined,
-      role: string
-    ) {
-      if (!profile || Object.keys(profile).length === 0) {
-        return null;
-      }
-      switch (role) {
-        case MemberProfile.admin:
-          const { id, name, address, permissions, createdAt } =
-            profile as AdminProfile;
-          return { id, name, address, permissions, createdAt };
-        case MemberProfile.organisation:
-          const {
-            id: orgId,
-            name: orgName,
-            organizationName,
-            email,
-            address: orgAddress,
-            status,
-            allowedStorage,
-            createdAt: orgCreatedAt,
-            contactPhone,
-            website,
-          } = profile as OrganisationProfile;
-          return {
-            id: orgId,
-            name: orgName,
-            organizationName,
-            email,
-            address: orgAddress,
-            status,
-            allowedStorage,
-            createdAt: orgCreatedAt,
-            contactPhone,
-            website,
-          };
-        case MemberProfile.observer:
-          const {
-            id: obsId,
-            name: obsName,
-            email: obsEmail,
-            address: obsAddress,
-            status: obsStatus,
-            organizationId,
-            createdAt: obsCreatedAt,
-            specialization,
-            certifications,
-          } = profile as ObserverProfile;
-          return {
-            id: obsId,
-            name: obsName,
-            email: obsEmail,
-            address: obsAddress,
-            status: obsStatus,
-            organizationId,
-            createdAt: obsCreatedAt,
-            specialization,
-            certifications,
-          };
-        default:
-          return null;
-      }
+    // Get user profile based on role
+    let profile = null;
+
+    switch (user.role) {
+      case "admin":
+        profile = await AdminProfileModel.findOne({ user_id: user._id }).lean();
+        break;
+      case "organisation":
+        profile = await OrganisationProfileModel.findOne({
+          user_id: user._id,
+        }).lean();
+        break;
+      case "observer":
+        profile = await ObserverProfileModel.findOne({ user_id: user._id })
+          .populate("organisation_id")
+          .lean();
+        break;
     }
 
     if (!profile) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    const publicProfile = getPublicProfile(profile, role);
-    if (!publicProfile) {
-      return NextResponse.json(
-        { error: "Profile data is missing or empty" },
-        { status: 404 }
-      );
-    }
-    const profileData: MemberWithProfileFE = {
-      userId: id,
-      email,
-      role,
-      profile: publicProfile,
+    const data = {
+      user_id: user._id,
+      email: user.email,
+      role: user.role,
+      profile,
+      token: accessToken,
+      rtoken: refreshToken,
     };
-    return NextResponse.json({ data: profileData }, { status: 200 });
+
+    return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

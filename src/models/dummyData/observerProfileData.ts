@@ -1,4 +1,4 @@
-import { IObserverProfile } from '../ObserverProfile';
+import { IObserverProfile } from '../observer.profile.model';
 
 export const dummyObserverProfiles: Partial<IObserverProfile>[] = [
   {

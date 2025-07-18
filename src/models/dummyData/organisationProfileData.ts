@@ -1,4 +1,4 @@
-import { IOrganisationProfile } from "../OrganisationProfile";
+import { IOrganisationProfile } from "../organisation.profile.model";
 
 export const dummyOrganisationProfiles: Partial<IOrganisationProfile>[] = [
   {

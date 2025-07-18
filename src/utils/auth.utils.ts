@@ -4,6 +4,7 @@ import { getLocalStorageValue, removeLocalStorageValue } from "./localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { UserRole, UserWithProfile } from "@type/management.types";
 
+
 export function redirectToDashboard(role: string, router: any) {
   if (role === MemberProfile.admin) {
     router.push(PAGE_ROUTES.MANAGEMENT.ADMIN.DASHBOARD.path);
@@ -36,3 +37,5 @@ export function hasValidRole(
 ): boolean {
   return user ? roles.includes(user.role) : false;
 }
+
+

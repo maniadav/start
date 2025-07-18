@@ -1,4 +1,4 @@
-import { IUser } from "../User";
+import { IUser } from "../user.model";
 
 export const dummyUsers: Partial<IUser>[] = [
   // 1 Admin User

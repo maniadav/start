@@ -1,10 +1,10 @@
 import connectDB from "./mongodb";
-import { User } from "../models/User";
-import { Child } from "../models/Child";
-import { AdminProfile } from "../models/AdminProfile";
-import { ObserverProfile } from "../models/ObserverProfile";
-import { OrganisationProfile } from "../models/OrganisationProfile";
-import { File } from "../models/File";
+import User from "../models/user.model";
+import Child from "../models/child.model";
+import AdminProfile from "../models/admin.profle.model";
+import ObserverProfile from "../models/observer.profile.model";
+import OrganisationProfile from "../models/organisation.profile.model";
+import File from "../models/file.model";
 
 export interface Migration {
   version: string;
@@ -197,28 +197,7 @@ export class MigrationManager {
         console.log("⚠️ Removed survey tracking fields from children");
       },
     },
-    {
-      version: "003",
-      description: "Setup SurveyData model indexes",
-      up: async () => {
-        await connectDB();
 
-        console.log("� Setting up SurveyData model indexes...");
-
-        // Import and create indexes for SurveyData
-        const { SurveyData } = await import("../models/SurveyData");
-        await SurveyData.createIndexes();
-
-        console.log("✅ SurveyData indexes created successfully");
-      },
-      down: async () => {
-        await connectDB();
-
-        console.log("⚠️ Rolling back SurveyData indexes...");
-        // In production, you might want to drop the indexes here
-        console.log("⚠️ SurveyData rollback completed");
-      },
-    },
     {
       version: "004",
       description: "Seed database with initial dummy data",
@@ -242,7 +221,9 @@ export class MigrationManager {
         console.log("🔍 Validating dummy data consistency...");
         const isDataValid = validateDummyDataConsistency();
         if (!isDataValid) {
-          throw new Error("Dummy data validation failed. Cannot proceed with seeding.");
+          throw new Error(
+            "Dummy data validation failed. Cannot proceed with seeding."
+          );
         }
 
         // Check if data already exists
@@ -260,16 +241,18 @@ export class MigrationManager {
         // Create admin profiles
         console.log("👤 Creating admin profiles...");
         const adminUsers = createdUsers.filter((u) => u.role === "admin");
-        
+
         if (adminUsers.length !== dummyAdminProfiles.length) {
-          throw new Error(`Admin user count (${adminUsers.length}) doesn't match admin profile count (${dummyAdminProfiles.length})`);
+          throw new Error(
+            `Admin user count (${adminUsers.length}) doesn't match admin profile count (${dummyAdminProfiles.length})`
+          );
         }
 
         const adminProfileData = dummyAdminProfiles.map((profile, index) => ({
           ...profile,
           user_id: adminUsers[index]._id,
         }));
-        
+
         const createdAdminProfiles = await AdminProfile.insertMany(
           adminProfileData
         );
@@ -278,9 +261,11 @@ export class MigrationManager {
         // Create organisation profiles
         console.log("🏢 Creating organisation profiles...");
         const orgUsers = createdUsers.filter((u) => u.role === "organisation");
-        
+
         if (orgUsers.length !== dummyOrganisationProfiles.length) {
-          throw new Error(`Organisation user count (${orgUsers.length}) doesn't match organisation profile count (${dummyOrganisationProfiles.length})`);
+          throw new Error(
+            `Organisation user count (${orgUsers.length}) doesn't match organisation profile count (${dummyOrganisationProfiles.length})`
+          );
         }
 
         const orgProfileData = dummyOrganisationProfiles.map(
@@ -289,7 +274,7 @@ export class MigrationManager {
             user_id: orgUsers[index]._id,
           })
         );
-        
+
         const createdOrgProfiles = await OrganisationProfile.insertMany(
           orgProfileData
         );
@@ -300,9 +285,11 @@ export class MigrationManager {
         // Create observer profiles
         console.log("👁️ Creating observer profiles...");
         const observerUsers = createdUsers.filter((u) => u.role === "observer");
-        
+
         if (observerUsers.length !== dummyObserverProfiles.length) {
-          throw new Error(`Observer user count (${observerUsers.length}) doesn't match observer profile count (${dummyObserverProfiles.length})`);
+          throw new Error(
+            `Observer user count (${observerUsers.length}) doesn't match observer profile count (${dummyObserverProfiles.length})`
+          );
         }
 
         const observerProfileData = dummyObserverProfiles.map(
@@ -310,21 +297,27 @@ export class MigrationManager {
             ...profile,
             user_id: observerUsers[index]._id,
             // Assign observers to organisations in a round-robin fashion
-            organisation_id: createdOrgProfiles[index % createdOrgProfiles.length]._id,
+            organisation_id:
+              createdOrgProfiles[index % createdOrgProfiles.length]._id,
           })
         );
-        
+
         const createdObserverProfiles = await ObserverProfile.insertMany(
           observerProfileData
         );
         console.log(
           `✅ Created ${createdObserverProfiles.length} observer profiles`
         );
-        
+
         // Log observer-organisation assignments
         createdObserverProfiles.forEach((observer, index) => {
-          const assignedOrg = createdOrgProfiles[index % createdOrgProfiles.length];
-          console.log(`   - ${dummyObserverProfiles[index].name} → ${assignedOrg ? assignedOrg.name : 'Unknown Org'}`);
+          const assignedOrg =
+            createdOrgProfiles[index % createdOrgProfiles.length];
+          console.log(
+            `   - ${dummyObserverProfiles[index].name} → ${
+              assignedOrg ? assignedOrg.name : "Unknown Org"
+            }`
+          );
         });
 
         // Create children

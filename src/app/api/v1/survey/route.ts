@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import { SurveyData } from "@models/SurveyData";
-import { Child } from "@models/Child";
+import { Child } from "@models/child.model";
 
 // GET - Retrieve survey data for a child
 export async function GET(req: Request) {

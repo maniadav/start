@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IOrganisationProfile } from "./OrganisationProfile";
-import { IObserverProfile } from "./ObserverProfile";
-import { IChild } from "./Child";
+import { IOrganisationProfile } from "./organisation.profile.model";
+import { IObserverProfile } from "./observer.profile.model";
+import { IChild } from "./child.model";
 import TASK_TYPE from "../constants/survey.type.constant";
 
 export interface IFile extends Document {
@@ -77,5 +77,6 @@ FileSchema.index({ child_id: 1 });
 FileSchema.index({ task_id: 1 });
 FileSchema.index({ date_created: -1 });
 
-export const File =
+const FileModel =
   mongoose.models.File || mongoose.model<IFile>("File", FileSchema);
+export default FileModel;

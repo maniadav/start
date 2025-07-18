@@ -1,4 +1,4 @@
-import { IChild } from "../Child";
+import { IChild } from "../child.model";
 
 export const dummyChildren: Partial<IChild>[] = [
   {

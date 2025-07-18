@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./User";
+import { IUser } from "./user.model";
 import { Status } from "../types/management.types";
 
 export interface IAdminProfile extends Document {
@@ -7,6 +7,7 @@ export interface IAdminProfile extends Document {
   user_id: mongoose.Types.ObjectId;
   address: string;
   name: string;
+  email: string;
   permission: Record<string, any>;
   status: Status;
   joined_on: Date;
@@ -21,7 +22,11 @@ const AdminProfileSchema = new Schema<IAdminProfile>(
       required: [true, "User ID is required"],
       unique: true,
     },
-
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+    },
     address: {
       type: String,
       required: [true, "Address is required"],
@@ -54,10 +59,8 @@ const AdminProfileSchema = new Schema<IAdminProfile>(
   }
 );
 
-// Indexes for better query performance
-AdminProfileSchema.index({ user_id: 1 }, { unique: true });
-AdminProfileSchema.index({ status: 1 });
-
-export const AdminProfile =
+const AdminProfileModel =
   mongoose.models.AdminProfile ||
   mongoose.model<IAdminProfile>("AdminProfile", AdminProfileSchema);
+
+export default AdminProfileModel;

@@ -2232,12 +2232,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonwebtoken@npm:^9.0.10":
+  version: 9.0.10
+  resolution: "@types/jsonwebtoken@npm:9.0.10"
+  dependencies:
+    "@types/ms": "*"
+    "@types/node": "*"
+  checksum: 370e60879902d769c3dd86dc94cda0bf6149c3514762fa8ed6de873d10de7f0952edf960796a4b89ebc5d81f45abcff21430c1e956b165962ad42c836f3e88c8
+  languageName: node
+  linkType: hard
+
 "@types/mongoose@npm:^5.11.97":
   version: 5.11.97
   resolution: "@types/mongoose@npm:5.11.97"
   dependencies:
     mongoose: "*"
   checksum: 54c896814a92898535eb8965f90308f2661b75f4a53e28405802fbe9f90ba7d37140f151b1e291e08555a1700d3486911104c108ed02a94c6feddeab6bd3bfea
+  languageName: node
+  linkType: hard
+
+"@types/ms@npm:*":
+  version: 2.1.0
+  resolution: "@types/ms@npm:2.1.0"
+  checksum: 532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
   languageName: node
   linkType: hard
 
@@ -6732,6 +6749,7 @@ __metadata:
     "@supabase/supabase-js": ^2.50.0
     "@tanstack/react-table": ^8.21.3
     "@types/bcryptjs": ^3.0.0
+    "@types/jsonwebtoken": ^9.0.10
     "@types/mongoose": ^5.11.97
     "@types/node": ^20
     "@types/react": ^18
