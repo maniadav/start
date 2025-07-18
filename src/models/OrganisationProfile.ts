@@ -66,9 +66,12 @@ OrganisationProfileSchema.index({ user_id: 1 }, { unique: true });
 OrganisationProfileSchema.index({ email: 1 }, { unique: true });
 OrganisationProfileSchema.index({ status: 1 });
 
-export const OrganisationProfile =
-  mongoose.models.OrganisationProfile ||
-  mongoose.model<IOrganisationProfile>(
-    "OrganisationProfile",
-    OrganisationProfileSchema
-  );
+// Clear any existing model to avoid caching issues
+if (mongoose.models.OrganisationProfile) {
+  delete mongoose.models.OrganisationProfile;
+}
+
+export const OrganisationProfile = mongoose.model<IOrganisationProfile>(
+  "OrganisationProfile",
+  OrganisationProfileSchema
+);

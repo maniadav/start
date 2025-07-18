@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       user = existingUser;
     } else {
       // Generate a temporary password (you might want to send this via email)
-      tempPassword = "Password@123";
+      tempPassword = "password";
       const hashedPassword = await bcrypt.hash(tempPassword, 12);
 
       // Create user

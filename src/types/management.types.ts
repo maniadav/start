@@ -62,7 +62,8 @@ export interface UserWithProfile extends User {
 
 // Legacy interfaces for backward compatibility
 export interface Organisation {
-  unique_id: string;
+  unique_id?: string; // Optional for backward compatibility
+  user_id?: string; // From backend API
   name: string;
   email: string;
   address: string;

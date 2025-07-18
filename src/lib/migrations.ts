@@ -235,7 +235,15 @@ export class MigrationManager {
           dummyOrganisationProfiles,
           dummyObserverProfiles,
           dummyChildren,
+          validateDummyDataConsistency,
         } = await import("../models/dummyData");
+
+        // Validate data consistency before seeding
+        console.log("🔍 Validating dummy data consistency...");
+        const isDataValid = validateDummyDataConsistency();
+        if (!isDataValid) {
+          throw new Error("Dummy data validation failed. Cannot proceed with seeding.");
+        }
 
         // Check if data already exists
         const userCount = await User.countDocuments();
@@ -251,11 +259,17 @@ export class MigrationManager {
 
         // Create admin profiles
         console.log("👤 Creating admin profiles...");
-        const adminUser = createdUsers.find((u) => u.role === "admin");
-        const adminProfileData = dummyAdminProfiles.map((profile) => ({
+        const adminUsers = createdUsers.filter((u) => u.role === "admin");
+        
+        if (adminUsers.length !== dummyAdminProfiles.length) {
+          throw new Error(`Admin user count (${adminUsers.length}) doesn't match admin profile count (${dummyAdminProfiles.length})`);
+        }
+
+        const adminProfileData = dummyAdminProfiles.map((profile, index) => ({
           ...profile,
-          user_id: adminUser?._id,
+          user_id: adminUsers[index]._id,
         }));
+        
         const createdAdminProfiles = await AdminProfile.insertMany(
           adminProfileData
         );
@@ -264,12 +278,18 @@ export class MigrationManager {
         // Create organisation profiles
         console.log("🏢 Creating organisation profiles...");
         const orgUsers = createdUsers.filter((u) => u.role === "organisation");
+        
+        if (orgUsers.length !== dummyOrganisationProfiles.length) {
+          throw new Error(`Organisation user count (${orgUsers.length}) doesn't match organisation profile count (${dummyOrganisationProfiles.length})`);
+        }
+
         const orgProfileData = dummyOrganisationProfiles.map(
           (profile, index) => ({
             ...profile,
-            user_id: orgUsers[index]?._id,
+            user_id: orgUsers[index]._id,
           })
         );
+        
         const createdOrgProfiles = await OrganisationProfile.insertMany(
           orgProfileData
         );
@@ -280,20 +300,32 @@ export class MigrationManager {
         // Create observer profiles
         console.log("👁️ Creating observer profiles...");
         const observerUsers = createdUsers.filter((u) => u.role === "observer");
+        
+        if (observerUsers.length !== dummyObserverProfiles.length) {
+          throw new Error(`Observer user count (${observerUsers.length}) doesn't match observer profile count (${dummyObserverProfiles.length})`);
+        }
+
         const observerProfileData = dummyObserverProfiles.map(
           (profile, index) => ({
             ...profile,
-            user_id: observerUsers[index]?._id,
-            organisation_id:
-              createdOrgProfiles[index % createdOrgProfiles.length]?._id,
+            user_id: observerUsers[index]._id,
+            // Assign observers to organisations in a round-robin fashion
+            organisation_id: createdOrgProfiles[index % createdOrgProfiles.length]._id,
           })
         );
+        
         const createdObserverProfiles = await ObserverProfile.insertMany(
           observerProfileData
         );
         console.log(
           `✅ Created ${createdObserverProfiles.length} observer profiles`
         );
+        
+        // Log observer-organisation assignments
+        createdObserverProfiles.forEach((observer, index) => {
+          const assignedOrg = createdOrgProfiles[index % createdOrgProfiles.length];
+          console.log(`   - ${dummyObserverProfiles[index].name} → ${assignedOrg ? assignedOrg.name : 'Unknown Org'}`);
+        });
 
         // Create children
         console.log("👶 Creating child records...");
@@ -333,68 +365,7 @@ export class MigrationManager {
         console.log("✅ All seeded data removed");
       },
     },
-    {
-      version: "005",
-      description: "Initialize Counter collection for unique ID generation",
-      up: async () => {
-        await connectDB();
 
-        console.log("🔢 Setting up Counter collection...");
-
-        // Check if counters collection already exists
-        const counterExists = await this.collectionExists("counters");
-        if (counterExists) {
-          console.log(
-            "📊 Counter collection already exists, skipping creation"
-          );
-          return;
-        }
-
-        // Import Counter model
-        const { Counter } = await import("../models/Counter");
-
-        // Create indexes for Counter collection
-        await Counter.createIndexes();
-        console.log("✅ Counter collection indexes created");
-
-        // Initialize counters for different entity types
-        const counters = [
-          { _id: "organisation", sequence_value: 0 },
-          { _id: "observer", sequence_value: 0 },
-          { _id: "child", sequence_value: 0 },
-          { _id: "admin", sequence_value: 0 },
-        ];
-
-        for (const counter of counters) {
-          // Only create if doesn't exist
-          const existing = await Counter.findById(counter._id);
-          if (!existing) {
-            await Counter.create(counter);
-            console.log(`✅ Created counter for '${counter._id}'`);
-          } else {
-            console.log(`📊 Counter for '${counter._id}' already exists`);
-          }
-        }
-
-        console.log("✅ Counter collection setup completed");
-      },
-      down: async () => {
-        await connectDB();
-
-        console.log("🗑️ Removing Counter collection...");
-
-        // Check if collection exists before dropping
-        const counterExists = await this.collectionExists("counters");
-        if (counterExists) {
-          if (mongoose.connection.db) {
-            await mongoose.connection.db.dropCollection("counters");
-            console.log("✅ Counter collection removed");
-          }
-        } else {
-          console.log("⚠️ Counters collection not found, nothing to remove");
-        }
-      },
-    },
     {
       version: "006",
       description: "Remove unique_id field from OrganisationProfile collection",
