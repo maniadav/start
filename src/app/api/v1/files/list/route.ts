@@ -58,7 +58,6 @@ export async function GET(request: Request) {
       child_id: profile.child_id,
       date_created: profile.date_created,
       file_url: profile.file_url,
-      created_at: profile.created_at,
       last_updated: profile.last_updated,
     }));
 

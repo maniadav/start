@@ -1,26 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import UserModel from "@models/user.model";
-import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
-import { PasswordUtils } from "@utils/password.utils";
-import ObserverProfileModel from "@models/observer.profile.model";
-import OrganisationProfileModel from "@models/organisation.profile.model";
+import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import FilesModel from "@models/file.model";
 
 export async function POST(request: Request) {
   try {
     await connectDB();
-
-    const body = await request.json();
-    const { name, email, address, organisation_id } = body;
-
-    // Validate required fields
-    if (!name || !email || !address) {
-      return NextResponse.json(
-        { error: "Name, email, and address are required" },
-        { status: 400 }
-      );
-    }
 
     const authHeader = request.headers.get("authorization");
     const { verified, user_id } = await ProfileUtils.verifyProfile(
@@ -35,83 +21,58 @@ export async function POST(request: Request) {
       );
     }
 
-    const existingUser = await UserModel.findOne({
-      email: email.toLowerCase(),
-    });
+    const body = await request.json();
+    const {
+      title,
+      task_id,
+      file_size,
+      organisation_id,
+      observer_id,
+      child_id,
+      file_url,
+    } = body;
 
-    let user;
-    let tempPassword = null;
-
-    if (existingUser) {
-      // Check if user already has an organisation profile
-      const existingOrgProfile = await ObserverProfileModel.findOne({
-        user_id: existingUser._id,
-      });
-
-      if (existingOrgProfile) {
-        return NextResponse.json(
-          { error: "User with this email already exists" },
-          { status: 409 }
-        );
-      }
-
-      // Use existing user
-      user = existingUser;
-    } else {
-      const hashedPassword = await PasswordUtils.hashPassword("password");
-
-      // Create user
-      const newUser = new UserModel({
-        role: "observer",
-        email: email.toLowerCase(),
-        password: hashedPassword,
-      });
-
-      user = await newUser.save();
+    // Validate required fields
+    if (!task_id || !file_url || !file_size) {
+      return NextResponse.json(
+        { error: "Task ID, file URL, and file size are required" },
+        { status: 400 }
+      );
     }
 
-    if (!user_id) {
-      const org = await OrganisationProfileModel.findOne({
-        user_id: organisation_id,
-      });
-      if (!org) {
-        return NextResponse.json(
-          { error: "Organisation not found" },
-          { status: 404 }
-        );
-      }
-    }
-    // Create organisation profile
-    const newOrganisationProfile = new ObserverProfileModel({
-      user_id: user._id,
-      email: email.toLowerCase(),
-      name: name.trim(),
-      address: address.trim(),
-      status: "pending",
-      joined_on: null, // Will be set when approved
-      organisation_id: organisation_id || user_id, // Assuming organisation_id is the same as user_id
+    // Create new file record
+    const newFile = new FilesModel({
+      title: title || null,
+      task_id,
+      file_size,
+      organisation_id: organisation_id || user_id, // Use provided org ID or default to user_id
+      observer_id: observer_id || null,
+      child_id: child_id || null,
+      file_url,
+      date_created: new Date(),
+      last_updated: new Date(),
     });
 
-    const savedProfile = await newOrganisationProfile.save();
+    const savedFile = await newFile.save();
 
-    // Return success response with temporary password (in production, send via email)
     return NextResponse.json(
       {
-        message: "Observer created successfully",
-        observer: {
-          user_id: user._id,
-          name: savedProfile.name,
-          status: savedProfile.status,
-          email: user.email,
-          address: savedProfile.address,
-          organisation_id: organisation_id || user_id,
+        message: "File record created successfully",
+        data: {
+          task_id: savedFile.task_id,
+          file_size: savedFile.file_size,
+          organisation_id: savedFile.organisation_id,
+          observer_id: savedFile.observer_id,
+          child_id: savedFile.child_id,
+          date_created: savedFile.date_created,
+          file_url: savedFile.file_url,
+          last_updated: savedFile.last_updated,
         },
-        tempPassword: tempPassword,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating observer:", error);
+    console.error("Error creating file record:", error);
 
     if (error instanceof TokenUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 401 });
@@ -122,7 +83,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Failed to create organisation" },
+      { error: "Failed to create file record" },
       { status: 500 }
     );
   }
