@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Delete, Edit, MoreHorizontal, View } from "lucide-react";
 import { DataTable } from "@management/components/data-table";
 import { AdvancedFilters } from "@management/components/advanced-filters";
 import {
@@ -30,7 +30,7 @@ interface OrganisationTableProps {
   filters: FilterOptions;
   setFilters: (filters: FilterOptions) => void;
   hasLimitedData?: boolean;
-  onEditOrg?: (org: Organisation) => void;
+  handleOrgActions: (action: string, observer_id: string) => void;
 }
 
 export function OrganisationTable({
@@ -38,7 +38,7 @@ export function OrganisationTable({
   filters,
   setFilters,
   hasLimitedData = false,
-  onEditOrg,
+  handleOrgActions,
 }: OrganisationTableProps) {
   const columns: ColumnDef<Organisation>[] = React.useMemo(
     () => [
@@ -130,30 +130,51 @@ export function OrganisationTable({
           const org = row.original;
 
           return (
-            <DropdownMenu >
+            <DropdownMenu>
               <DropdownMenuTrigger asChild className="bg-white p-8">
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-white py-2">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                {onEditOrg && (
-                  <DropdownMenuItem onClick={() => onEditOrg(org)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </DropdownMenuItem>
-                )}
+
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>View Details</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleOrgActions("view", org.unique_id || org.user_id || "")
+                  }
+                >
+                  <View className="mr-2 h-4 w-4" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleOrgActions("edit", org.unique_id || org.user_id || "")
+                  }
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Details
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleOrgActions(
+                      "delete",
+                      org.unique_id || org.user_id || ""
+                    )
+                  }
+                >
+                  <Delete className="mr-2 h-4 w-4" />
+                  Delete Organisation
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
         },
       },
     ],
-    [onEditOrg]
+    []
   );
 
   return (

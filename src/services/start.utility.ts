@@ -45,6 +45,11 @@ class StartUtilityAPI {
         data
       );
     },
+    delete: (organisation_id: string) => {
+      return this.api.delete(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.organisation.delete}/${organisation_id}`
+      );
+    },
   };
 
   /**

@@ -13,6 +13,7 @@ export const API_ENDPOINT = {
   organisation: {
     list: "/organisation/list",
     create: "/organisation/create",
+    delete: "/organisation/delete",
   },
   observer: {
     list: "/observer/list",

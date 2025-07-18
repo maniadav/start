@@ -34,7 +34,7 @@ class StartAPI {
     if (member?.token) {
       this.headers = {
         ...this.headers,
-        "Authorization": `Bearer ${member.token}`,
+        Authorization: `Bearer ${member.token}`,
       };
     }
   }
@@ -137,7 +137,7 @@ class StartAPI {
         );
         this.headers = {
           ...this.headers,
-          "Authorization": `Bearer ${data.newToken}`,
+          Authorization: `Bearer ${data.newToken}`,
         };
 
         // Retry the request with the new token

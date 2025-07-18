@@ -77,15 +77,33 @@ const CreateOrganisationPopup = ({
     setIsLoading(true);
     try {
       const response = await startApi.organisation.create(formData);
-      const result = await response.json();
+      console.log("Create response:", response);
+      console.log("Response type:", typeof response);
+      console.log("Response has json method:", typeof response.json === 'function');
+      
+      // Handle different response types
+      let result;
+      if (response && typeof response.json === 'function') {
+        result = await response.json();
+      } else {
+        result = response; // If it's already parsed JSON
+      }
+      
+      console.log("Parsed result:", result);
 
       setFormData({ name: "", email: "", address: "" });
       setErrors({});
-      onSuccess ? onSuccess() : null;
-      toast.info({
-        title: "Information",
-        description: "Your session expires in 5 minutes",
-        position: "tl", // top-left
+      console.log("onSuccess is function:", typeof onSuccess === "function");
+      if (onSuccess) {
+        console.log("Calling onSuccess...");
+        onSuccess();
+        console.log("onSuccess called successfully");
+      } else {
+        console.log("onSuccess is not provided or falsy");
+      }
+      toast({
+        title: "Success",
+        description: "Organisation created successfully",
       });
     } catch (error) {
       console.error("Error creating organisation:", error);
