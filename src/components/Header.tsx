@@ -49,7 +49,7 @@ export const Header = () => {
         border-b border-white/10 glassmorphism`}
         style={{ border: "1.5px solid rgba(255,255,255,0.12)" }}
       >
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 pr-4">
           <Image
             src={`${BASE_URL}/icons/start-rounded-96.png`}
             alt="START Logo"
@@ -61,18 +61,26 @@ export const Header = () => {
             START
           </span>
         </Link>
-        <ul className="hidden md:flex gap-4 items-center text-white/90 font-medium">
+        <ul className="hidden md:flex gap-6 items-center text-white/90 font-medium">
           {Object.values(NAV_ROUTES).map((route) => (
             <li key={route.path} className="relative group">
               <Link
                 href={route.path}
-                className={`transition rounded-none px-3 py-1 uppercase
-                  ${pathname === route.path ? "text-primary font-bold" : ""}`}
+                className={`flex items-center gap-1 transition rounded-lg px-2 py-1.5 hover:bg-white/10
+                  ${pathname === route.path ? "text-primary font-bold bg-white/10" : ""}`}
               >
-                {route.label}
+                {/* {route.icon && (
+                  <CommonIcon
+                    icon={route.icon}
+                    height={18}
+                    width={18}
+                    className={pathname === route.path ? "text-primary" : ""}
+                  />
+                )} */}
+                <span className="uppercase">{route.label}</span>
                 <span
                   className={`absolute left-0 -bottom-0.5 h-[2px] w-full bg-primary origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100
-                    ${pathname === route.path ? "hidden" : ""}`}
+                    ${pathname === route.path ? "scale-x-100" : ""}`}
                   aria-hidden="true"
                 />
               </Link>

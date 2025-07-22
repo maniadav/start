@@ -3,18 +3,22 @@ export const NAV_ROUTES = {
   HOME: {
     label: "Home",
     path: "/",
+    icon: "material-symbols:home-outline",
   },
   SURVEY: {
     label: "Survey",
     path: "/survey",
+    icon: "material-symbols:list-alt-outline",
   },
   ABOUT: {
     label: "About",
     path: "/about",
+    icon: "material-symbols:info-outline",
   },
   DATA: {
     label: "Data",
     path: "/content",
+    icon: "material-symbols:database",
   },
 };
 

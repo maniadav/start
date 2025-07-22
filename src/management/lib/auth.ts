@@ -72,7 +72,6 @@ export function getUserWithProfile(userId: string): UserWithProfile | null {
       profile = getOrganizationProfile(userId) || undefined;
       break;
     case "observer":
-    case "surveyor":
       profile = getObserverProfile(userId) || undefined;
       break;
   }
@@ -94,7 +93,7 @@ export function getUserWithProfile(userId: string): UserWithProfile | null {
       const orgProfile = profile as OrganisationProfile;
       userWithProfile.organizationId = orgProfile.id;
     }
-    if ((user.role === "observer" || user.role === "surveyor") && profile) {
+    if (user.role === "observer" && profile) {
       const obsProfile = profile as ObserverProfile;
       userWithProfile.organizationId = obsProfile.organizationId;
       userWithProfile.observerId = obsProfile.id;
@@ -140,7 +139,6 @@ export function getUserWithProfileOptimized(
       profile = getOrganizationProfile(user.id) || undefined;
       break;
     case "observer":
-    case "surveyor":
       profile = getObserverProfile(user.id) || undefined;
       break;
   }
@@ -157,7 +155,7 @@ export function getUserWithProfileOptimized(
       const orgProfile = profile as OrganisationProfile;
       userWithProfile.organizationId = orgProfile.id;
     }
-    if ((role === "observer" || role === "surveyor") && profile) {
+    if (role === "observer" && profile) {
       const obsProfile = profile as ObserverProfile;
       userWithProfile.organizationId = obsProfile.organizationId;
       userWithProfile.observerId = obsProfile.id;

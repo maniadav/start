@@ -1,8 +1,11 @@
 "use client";
-
-import { API_ENDPOINT } from "@constants/api.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 import { LOCALSTORAGE } from "@constants/storage.constant";
-import { getLocalStorageValue } from "@utils/localStorage";
+import { clearEntireIndexedDB } from "@utils/indexDB";
+import {
+  clearLocalStorageValue,
+  getLocalStorageValue,
+} from "@utils/localStorage";
 
 /**
  * StartAPI Class for handling Next.js internal API routes
@@ -123,8 +126,9 @@ class StartAPI {
     if (!response.ok) {
       // Handle unauthorized case
       if (response.status === 401) {
-        localStorage.clear();
-        window.location.href = API_ENDPOINT.auth.login;
+        clearLocalStorageValue();
+        await clearEntireIndexedDB();
+        window.location.href = PAGE_ROUTES.LOGIN.path;
       }
 
       // Handle token refresh case

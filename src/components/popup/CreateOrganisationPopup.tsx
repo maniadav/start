@@ -1,11 +1,9 @@
 "use client";
-import { API_ENDPOINT } from "@constants/api.constant";
 import { useToast } from "@management/hooks/use-toast";
 import StartUtilityAPI from "@services/start.utility";
 import { PopupModal } from "components/common/PopupModal";
 import { useMemo, useState } from "react";
 import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
-import { start } from "repl";
 
 interface CreateOrganisationPopupProps {
   showFilter: boolean;
