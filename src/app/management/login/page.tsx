@@ -121,22 +121,6 @@ export default function LoginPage() {
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
-
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <p className="text-sm font-medium mb-2">Demo Accounts:</p>
-            <div className="space-y-1 text-xs">
-              <p>
-                <strong>Admin:</strong> admin@example.com
-              </p>
-              <p>
-                <strong>Org Admin:</strong> organisation@example.com
-              </p>
-              <p>
-                <strong>Observer:</strong> observer@example.com
-              </p>
-              <p className="text-muted-foreground mt-2">Password: password</p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

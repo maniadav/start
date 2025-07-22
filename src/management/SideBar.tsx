@@ -1,6 +1,18 @@
 "use client";
 
-import { Building2, FileText, Home, Upload, Users, Eye } from "lucide-react";
+import {
+  Building2,
+  FileText,
+  Home,
+  Upload,
+  LayoutDashboard,
+  Users,
+  Eye,
+  UploadCloudIcon,
+  NotebookPen,
+  ArrowLeftFromLine,
+  CircleArrowOutUpLeft,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserNav } from "./UserNav";
@@ -19,9 +31,14 @@ export function SideBar() {
 
   const adminItems = [
     {
+      title: "Home",
+      url: "/",
+      icon: CircleArrowOutUpLeft,
+    },
+    {
       title: "Dashboard",
       url: "/management/admin/dashboard",
-      icon: Home,
+      icon: LayoutDashboard,
     },
     {
       title: "Organisation",
@@ -42,9 +59,14 @@ export function SideBar() {
 
   const orgAdminItems = [
     {
+      title: "Home",
+      url: "/",
+      icon: CircleArrowOutUpLeft,
+    },
+    {
       title: "Dashboard",
       url: "/management/organisation/dashboard",
-      icon: Home,
+      icon: LayoutDashboard,
     },
     {
       title: "Observer",
@@ -61,19 +83,29 @@ export function SideBar() {
 
   const observerItems = [
     {
-      title: "Dashboard",
-      url: "/observer",
-      icon: Home,
+      title: "Home",
+      url: "/",
+      icon: CircleArrowOutUpLeft,
     },
     {
-      title: "Users",
-      url: "/observer/users",
+      title: "Dashboard",
+      url: "/management/observer/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Child",
+      url: "/management/observer/child",
       icon: Users,
     },
     {
-      title: "Files",
-      url: "/observer/file",
-      icon: FileText,
+      title: "Upload Survey",
+      url: "/management/observer/upload",
+      icon: UploadCloudIcon,
+    },
+    {
+      title: "Start Survey",
+      url: "/management/observer/survey",
+      icon: NotebookPen,
     },
   ];
 
@@ -105,7 +137,7 @@ export function SideBar() {
         </div>
         {!collapsed && (
           <div>
-            <p className="text-sm font-semibold">START Manager</p>
+            <p className="text-sm font-semibold">START Management</p>
             <p className="text-xs text-muted-foreground capitalize">
               {member.role.replace("_", " ")}
             </p>

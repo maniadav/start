@@ -112,7 +112,7 @@ export function AppSidebar() {
             <FileText className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold">START Manager</p>
+            <p className="text-sm font-semibold">START Management</p>
             <p className="text-xs text-muted-foreground capitalize">
               {member.role.replace("_", " ")}
             </p>

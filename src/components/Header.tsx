@@ -66,8 +66,8 @@ export const Header = () => {
             <li key={route.path} className="relative group">
               <Link
                 href={route.path}
-                className={`flex items-center gap-1 transition rounded-lg px-2 py-1.5 hover:bg-white/10
-                  ${pathname === route.path ? "text-primary font-bold bg-white/10" : ""}`}
+                className={`flex items-center gap-1 transition rounded-lg px-2 py-1.5
+                  ${pathname === route.path ? "text-primary font-bold" : ""}`}
               >
                 {/* {route.icon && (
                   <CommonIcon

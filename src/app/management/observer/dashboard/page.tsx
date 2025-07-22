@@ -1,7 +1,6 @@
 "use client";
 
 import { FileText, Upload } from "lucide-react";
-import { getCurrentUser } from "@management/lib/auth";
 import {
   getOrganizations,
   getSurveys,
@@ -15,22 +14,19 @@ import {
   CardTitle,
 } from "@management/components/ui/card";
 import SidebarTrigger from "@management/SidebarTrigger";
+import { getCurrentMember } from "@utils/auth.utils";
 
 export default function OrgDashboard() {
-  const user = getCurrentUser();
+  const member = getCurrentMember();
   const organizations = getOrganizations();
   const surveys = getSurveys();
   const files = getFiles();
 
-  const userOrg = organizations.find(
-    (o) => o.unique_id === user?.organizationId
-  );
+  const userOrg = organizations.find((o) => o.unique_id === member?.profile.id);
   const orgSurveys = surveys.filter(
-    (s) => s.organizationId === user?.organizationId
+    (s) => s.organizationId === member?.profile.id
   );
-  const orgFiles = files.filter(
-    (f) => f.organizationId === user?.organizationId
-  );
+  const orgFiles = files.filter((f) => f.organizationId === member?.profile.id);
 
   const stats = [
     {
@@ -61,7 +57,7 @@ export default function OrgDashboard() {
         <SidebarTrigger />
         <div>
           <h2 className="text-3xl font-bold tracking-tight">
-            Organisation Dashboard
+            Observer Dashboard
           </h2>
           <p className="text-muted-foreground">{userOrg?.name}</p>
         </div>

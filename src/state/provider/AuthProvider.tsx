@@ -44,11 +44,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
+  // survey specific routes
+  const surveyRoutes = useMemo(() => [PAGE_ROUTES.SURVEY.path], []);
+
   const showFooter = footerRoutes.includes(path);
 
   useEffect(() => {
     if (!member?.user_id && !publicRoutes.includes(currentPath)) {
       router.push(PAGE_ROUTES.LOGIN.path);
+    }
+    if (surveyRoutes.includes(currentPath) && !user?.childID) {
+      router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
     }
     setLoading(false);
   }, [member, router, path, publicRoutes, currentPath]);

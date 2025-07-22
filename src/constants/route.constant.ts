@@ -68,6 +68,14 @@ export const PAGE_ROUTES = {
     },
     OBSERVER: {
       DASHBOARD: { label: "Dashboard", path: "/management/admin/dashboard" },
+      SURVEY_UPLOAD: {
+        label: "Upload Survey",
+        path: "/management/observer/upload",
+      },
+      CHILD: {
+        label: "CHILD",
+        path: "/management/observer/child",
+      },
     },
   },
 };

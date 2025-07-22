@@ -1,14 +1,17 @@
 "use client";
 import { BASE_URL } from "@constants/config.constant";
+import { PAGE_ROUTES } from "@constants/route.constant";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
 import SurveyTable from "components/SurveyTable";
 import UserComp from "components/UserComp";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const ContentPage = () => {
   const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
+
 
   return (
     <div className="">

@@ -24,13 +24,13 @@ export default function OrgnisationLayout({
       return;
     }
 
-    if (!hasValidRole(member, ["organisation"])) {
+    if (!hasValidRole(member, ["observer"])) {
       router.push(PAGE_ROUTES.LOGIN.path);
       return;
     }
   }, [member, router]);
 
-  if (!member || !hasValidRole(member, ["organisation"])) {
+  if (!member || !hasValidRole(member, ["observer"])) {
     return null;
   }
 
