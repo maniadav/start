@@ -12,35 +12,27 @@ export async function POST(request: Request) {
     await connectDB();
 
     const body = await request.json();
-    const { name, email, address, organisation_id } = body;
+    const { name, email, address, organisation_id, password } = body;
 
     // Validate required fields
-    if (!name || !email || !address) {
+    if (!name || !email || !address || !password) {
       return NextResponse.json(
-        { error: "Name, email, and address are required" },
+        { error: "Name, email, address, and password are required" },
         { status: 400 }
       );
     }
 
     const authHeader = request.headers.get("authorization");
-    const { verified, user_id } = await ProfileUtils.verifyProfile(
-      authHeader || "",
-      ["admin", "organisation"]
-    );
-
-    if (!verified) {
-      return NextResponse.json(
-        { error: "You don't have permission to access this resource" },
-        { status: 403 }
-      );
-    }
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
+      "admin",
+      "organisation",
+    ]);
 
     const existingUser = await UserModel.findOne({
       email: email.toLowerCase(),
     });
 
     let user;
-    let tempPassword = null;
 
     if (existingUser) {
       // Check if user already has an organisation profile
@@ -58,7 +50,7 @@ export async function POST(request: Request) {
       // Use existing user
       user = existingUser;
     } else {
-      const hashedPassword = await PasswordUtils.hashPassword("password");
+      const hashedPassword = await PasswordUtils.hashPassword(password);
 
       // Create user
       const newUser = new UserModel({
@@ -81,8 +73,8 @@ export async function POST(request: Request) {
         );
       }
     }
-    // Create organisation profile
-    const newOrganisationProfile = new ObserverProfileModel({
+    // Create observer profile
+    const newObserverProfile = new ObserverProfileModel({
       user_id: user._id,
       email: email.toLowerCase(),
       name: name.trim(),
@@ -92,7 +84,7 @@ export async function POST(request: Request) {
       organisation_id: organisation_id || user_id, // Assuming organisation_id is the same as user_id
     });
 
-    const savedProfile = await newOrganisationProfile.save();
+    const savedProfile = await newObserverProfile.save();
 
     // Return success response with temporary password (in production, send via email)
     return NextResponse.json(
@@ -106,7 +98,7 @@ export async function POST(request: Request) {
           address: savedProfile.address,
           organisation_id: organisation_id || user_id,
         },
-        tempPassword: tempPassword,
+        tempPassword: password,
       },
       { status: 201 }
     );

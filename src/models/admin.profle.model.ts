@@ -54,7 +54,7 @@ const AdminProfileSchema = new Schema<IAdminProfile>(
     },
   },
   {
-    timestamps: { createdAt: false, updatedAt: "updated_on" },
+    timestamps: { updatedAt: "updated_on" },
     collection: "admin_profiles",
   }
 );

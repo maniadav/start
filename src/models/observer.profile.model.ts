@@ -68,12 +68,6 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
   }
 );
 
-// Indexes for better query performance
-ObserverProfileSchema.index({ user_id: 1 }, { unique: true });
-ObserverProfileSchema.index({ email: 1 }, { unique: true });
-ObserverProfileSchema.index({ organisation_id: 1 });
-ObserverProfileSchema.index({ status: 1 });
-
 const ObserverProfileModel =
   mongoose.models.ObserverProfile ||
   mongoose.model<IObserverProfile>("ObserverProfile", ObserverProfileSchema);

@@ -1,6 +1,13 @@
 import UserModel from "@models/user.model";
 import { TokenUtils } from "./token.utils";
 
+// Environment-aware logger function
+const logger = (message: string, data?: any) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[PROFILE-UTILS] ${message}`, data || "");
+  }
+};
+
 export class ProfileUtilsError extends Error {
   constructor(message = "Profile verification error") {
     super(message);
@@ -10,19 +17,20 @@ export class ProfileUtilsError extends Error {
 
 export class ProfileUtils {
   static async verifyProfile(
-    tokenHeader: string,
-    validRoles: Array<"admin" | "organisation">
+    tokenHeader: string | null,
+    validRoles: Array<"admin" | "organisation" | "observer">
   ) {
-    const token = tokenHeader?.split(" ")[1] || "";
-
     try {
-      const { role, email } = await TokenUtils.verifyToken(token, "access");
+      const { role, email } = await TokenUtils.verifyToken(
+        tokenHeader,
+        "access"
+      );
 
       if (!role || !email) {
         throw new ProfileUtilsError("Token missing role or email");
       }
 
-      console.log("[PROFILE-UTILS] Verifying profile for role:", role);
+      logger(`Verifying profile for role: ${role}`);
 
       const user = await UserModel.findOne({ email });
 
@@ -30,18 +38,26 @@ export class ProfileUtils {
         throw new ProfileUtilsError("User not found");
       }
 
-      console.log("[PROFILE-UTILS] Found user", validRoles.includes(user.role));
+      logger(`Found user with role: ${user.role}`, {
+        hasValidRole: validRoles.includes(user.role),
+      });
 
       if (!validRoles.includes(user.role)) {
         throw new ProfileUtilsError("User does not have a valid role");
       }
 
-      console.log("[PROFILE-UTILS] User has a valid role:", user.role);
+      logger(`Authentication successful for user with role: ${user.role}`);
 
-      return { role: user.role, verified: true, email, user_id: user._id };
+      return { role: user.role, email, user_id: user._id };
     } catch (err) {
+      logger(
+        `Authentication error`,
+        err instanceof Error ? err.message : "Unknown error"
+      );
       throw new ProfileUtilsError(
-        "Something went wrong during profile verification"
+        err instanceof Error && process.env.NODE_ENV !== "production"
+          ? `Profile verification failed: ${err.message}`
+          : "Something went wrong during profile verification"
       );
     }
   }

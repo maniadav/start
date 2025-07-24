@@ -9,21 +9,18 @@ export async function GET(request: Request) {
     await connectDB();
 
     const authHeader = request.headers.get("authorization");
-    const { verified } = await ProfileUtils.verifyProfile(authHeader || "", [
-      "admin",
-      "organisation",
-    ]);
+    const { user_id, role } = await ProfileUtils.verifyProfile(
+      authHeader || "",
+      ["admin", "organisation"]
+    );
 
-    if (!verified) {
-      return NextResponse.json(
-        { error: "You don't have permission to access this resource" },
-        { status: 403 }
-      );
-    }
-
-    // Parse query parameters
     const url = new URL(request.url);
     const queryParams = url.searchParams;
+
+    // Get pagination parameters
+    const page = parseInt(queryParams.get("page") || "1", 10);
+    const limit = parseInt(queryParams.get("limit") || "50", 10);
+    const skip = (page - 1) * limit;
 
     // Build filter object based on provided query parameters
     const filter: Record<string, any> = {};
@@ -32,7 +29,11 @@ export async function GET(request: Request) {
       filter.task_id = queryParams.get("task_id");
     }
 
-    if (queryParams.has("organisation_id")) {
+    if (role === "organisation") {
+      // Organizations can only see their own files
+      filter.organisation_id = user_id;
+    } else if (queryParams.has("organisation_id")) {
+      // Admins can filter by any organization
       filter.organisation_id = queryParams.get("organisation_id");
     }
 
@@ -48,21 +49,41 @@ export async function GET(request: Request) {
       filter.date_created = queryParams.get("date_created");
     }
 
-    const files = await FilesModel.find(filter);
+    // Get total count for pagination
+    const totalCount = await FilesModel.countDocuments(filter);
 
-    const data: any[] = files.map((profile: any) => ({
-      id: profile._id.toString(),
-      task_id: profile.task_id,
-      file_size: profile.file_size,
-      organisation_id: profile.organisation_id,
-      observer_id: profile.observer_id,
-      child_id: profile.child_id,
-      date_created: profile.date_created,
-      file_url: profile.file_url,
-      last_updated: profile.last_updated,
+    // Add sorting by date and implement pagination
+    const files = await FilesModel.find(filter)
+      .sort({ date_created: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const data = files.map((file) => ({
+      id: file._id.toString(),
+      task_id: file.task_id || null,
+      file_size: file.file_size || 0,
+      organisation_id: file.organisation_id || null,
+      observer_id: file.observer_id || null,
+      child_id: file.child_id || null,
+      date_created: file.date_created || new Date(),
+      file_url: file.file_url || "",
+      last_updated: file.last_updated || file.date_created || new Date(),
     }));
 
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        count: data.length,
+        total: totalCount,
+        pagination: {
+          page,
+          limit,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+        data,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     if (error instanceof TokenUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 401 });
@@ -72,8 +93,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 403 });
     }
 
+    console.error("Error fetching files:", error);
     return NextResponse.json(
-      { error: "Failed to fetch organisation profiles" },
+      { error: "Failed to fetch file list" },
       { status: 500 }
     );
   }

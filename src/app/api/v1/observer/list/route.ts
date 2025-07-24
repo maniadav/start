@@ -15,17 +15,10 @@ export async function GET(request: Request) {
     await connectDB();
 
     const authHeader = request.headers.get("authorization");
-    const { role, email, verified, user_id } = await ProfileUtils.verifyProfile(
+    const { role, user_id } = await ProfileUtils.verifyProfile(
       authHeader || "",
       ["admin", "organisation"]
     );
-
-    if (!verified) {
-      return NextResponse.json(
-        { error: "You don't have permission to access this resource" },
-        { status: 403 }
-      );
-    }
 
     let query: any = {};
     if (role === "organisation") {

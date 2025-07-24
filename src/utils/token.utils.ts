@@ -23,10 +23,15 @@ export class TokenUtils {
   }
 
   static async verifyToken(
-    token: string,
+    authHeader: string | undefined | null,
     type: "access" | "refresh"
   ): Promise<{ role: string; email: string }> {
     try {
+      const token = authHeader?.split(" ")[1];
+
+      if (!token) {
+        throw new TokenUtilsError("Token is required for verification");
+      }
       console.log("Verifying token:");
       const decoded = jwt.verify(token, this.JWT_SECRET) as any;
 
