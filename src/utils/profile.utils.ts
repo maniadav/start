@@ -1,5 +1,5 @@
 import UserModel from "@models/user.model";
-import { TokenUtils } from "./token.utils";
+import { TokenUtils, TokenUtilsError } from "./token.utils";
 
 // Environment-aware logger function
 const logger = (message: string, data?: any) => {
@@ -9,9 +9,11 @@ const logger = (message: string, data?: any) => {
 };
 
 export class ProfileUtilsError extends Error {
-  constructor(message = "Profile verification error") {
+  public statusCode: number;
+  constructor(message = "Profile verification error", statusCode = 401) {
     super(message);
     this.name = "ProfileUtilsError";
+    this.statusCode = statusCode;
   }
 }
 
@@ -54,6 +56,9 @@ export class ProfileUtils {
         `Authentication error`,
         err instanceof Error ? err.message : "Unknown error"
       );
+      if (err instanceof TokenUtilsError) {
+        throw err;
+      }
       throw new ProfileUtilsError(
         err instanceof Error && process.env.NODE_ENV !== "production"
           ? `Profile verification failed: ${err.message}`

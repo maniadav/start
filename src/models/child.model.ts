@@ -10,9 +10,10 @@ export interface IChild extends Document {
   observer_id: IObserverProfile["_id"];
   organisation_id: IOrganisationProfile["_id"];
   gender: Gender;
+  date_joined: Date;
+  survey_note: string; // Note for the survey
   survey_date: Date;
-  attempt: number;
-  date_created: Date;
+  survey_attempt: number; // Number of attempts made for the survey
   survey_status?: "pending" | "in_progress" | "completed" | "paused";
 }
 
@@ -43,12 +44,15 @@ const ChildSchema = new Schema<IChild>(
       required: [true, "Gender is required"],
       enum: ["male", "female", "other"],
     },
-    survey_date: {
-      type: Date,
-      required: [true, "Survey date is required"],
+    survey_note: {
+      type: String,
+      default: "",
     },
-
-    attempt: {
+    date_joined: {
+      type: Date,
+      default: Date.now,
+    },
+    survey_attempt: {
       type: Number,
       default: 0,
       min: 0,
@@ -60,7 +64,6 @@ const ChildSchema = new Schema<IChild>(
     },
   },
   {
-    timestamps: { createdAt: "date_created" },
     collection: "children",
   }
 );

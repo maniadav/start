@@ -132,22 +132,63 @@ class StartAPI {
       }
 
       // Handle token refresh case
-      if (response.status === 498 && data.newToken) {
+      if (response.status === 498) {
+        // Try to get a new access token using refresh token
         const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
-        localStorage.removeItem(LOCALSTORAGE.START_MEMBER);
-        localStorage.setItem(
-          LOCALSTORAGE.START_MEMBER,
-          JSON.stringify({ ...member, token: data.newToken })
-        );
-        this.headers = {
-          ...this.headers,
-          Authorization: `Bearer ${data.newToken}`,
-        };
-
-        // Retry the request with the new token
-        // Note: This would require storing the original request details
-        // For now, we'll just return the data with the new token
-        return data as T;
+        const refreshToken = member?.rToken;
+        if (refreshToken) {
+          try {
+            const tokenResponse = await fetch(
+              `${window.location.origin}/api/v1/auth/get-access-token`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken }),
+              }
+            );
+            const tokenData = await tokenResponse.json();
+            if (tokenResponse.ok && tokenData.accessToken) {
+              // Update local storage and headers
+              localStorage.setItem(
+                LOCALSTORAGE.START_MEMBER,
+                JSON.stringify({ ...member, token: tokenData.accessToken })
+              );
+              this.headers = {
+                ...this.headers,
+                Authorization: `Bearer ${tokenData.accessToken}`,
+              };
+              // Retry the original request
+              // Note: Only supports GET/POST/PUT/DELETE as implemented
+              // You may want to refactor for more generic retry logic
+              // For GET requests
+              if (response.url.includes("GET")) {
+                return await this.get<T>(new URL(response.url).pathname);
+              }
+              // For POST requests
+              if (response.url.includes("POST")) {
+                return await this.post<T>(new URL(response.url).pathname, data);
+              }
+              // For PUT requests
+              if (response.url.includes("PUT")) {
+                return await this.put<T>(new URL(response.url).pathname, data);
+              }
+              // For DELETE requests
+              if (response.url.includes("DELETE")) {
+                return await this.delete<T>(new URL(response.url).pathname);
+              }
+            }
+          } catch (e) {
+            // If refresh fails, logout
+            clearLocalStorageValue();
+            await clearEntireIndexedDB();
+            window.location.href = PAGE_ROUTES.LOGIN.path;
+          }
+        } else {
+          // No refresh token, logout
+          clearLocalStorageValue();
+          await clearEntireIndexedDB();
+          window.location.href = PAGE_ROUTES.LOGIN.path;
+        }
       }
 
       throw {
