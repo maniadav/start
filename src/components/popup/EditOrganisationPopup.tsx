@@ -1,15 +1,15 @@
 "use client";
 import { useToast } from "@management/hooks/use-toast";
 import StartUtilityAPI from "@services/start.utility";
-import { PopupModal } from "components/common/PopupModal";
 import { useMemo, useState } from "react";
-import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
+import { FaBuilding, FaEnvelope, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
 
 interface CreateOrganisationPopupProps {
   showFilter: boolean;
   closeModal: any;
   onSuccess?: () => void;
+  organisation_id: string;
 }
 
 interface OrganisationFormData {
@@ -18,10 +18,11 @@ interface OrganisationFormData {
   address: string;
 }
 
-const CreateOrganisationPopup = ({
+const EditOrganisationPopup = ({
   showFilter,
   closeModal,
   onSuccess,
+  organisation_id,
 }: CreateOrganisationPopupProps) => {
   const [formData, setFormData] = useState<OrganisationFormData>({
     name: "",
@@ -75,8 +76,11 @@ const CreateOrganisationPopup = ({
 
     setIsLoading(true);
     try {
-      const response = await startApi.organisation.create(formData);
-      console.log("Create response:", response);
+      const response = await startApi.organisation.update(
+        organisation_id,
+        formData
+      );
+      console.log("Edit response:", response);
 
       setFormData({ name: "", email: "", address: "" });
       setErrors({});
@@ -109,14 +113,13 @@ const CreateOrganisationPopup = ({
 
   return (
     <PopupContainter>
-      {" "}
       <div className="relative bg-white rounded-xl shadow-2xl p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
           <FaBuilding className="w-8 h-8 text-primary shrink-0" />
           <div className="flex flex-col gap-1 w-full">
             <h3 className="text-2xl font-bold text-gray-900">
-              Create Organisation
+              Edit Organisation
             </h3>
             <p className="text-gray-600 mt-1 text-base md:text-sm">
               Add a new organisation to the system
@@ -227,7 +230,7 @@ const CreateOrganisationPopup = ({
               ) : (
                 <>
                   <FaBuilding />
-                  Create Organisation
+                  Edit Organisation
                 </>
               )}
             </button>
@@ -238,4 +241,4 @@ const CreateOrganisationPopup = ({
   );
 };
 
-export default CreateOrganisationPopup;
+export default EditOrganisationPopup;

@@ -31,14 +31,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const nextApi = useMemo(() => new StartUtilityAPI(), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const response = await nextApi.auth.login({ email, password });
+      const START_API = new StartUtilityAPI();
+      const response = await START_API.auth.login({ email, password });
 
       console.log({ response });
       toast({

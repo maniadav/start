@@ -14,6 +14,7 @@ export const API_ENDPOINT = {
     list: "/organisation/list",
     create: "/organisation/create",
     delete: "/organisation/delete",
+    update: "/organisation/update",
   },
   observer: {
     list: "/observer/list",

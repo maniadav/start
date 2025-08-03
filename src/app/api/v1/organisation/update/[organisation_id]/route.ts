@@ -5,7 +5,7 @@ import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils } from "@utils/profile.utils";
 import UserModel from "@models/user.model";
 
-export async function DELETE(
+export async function PUT(
   request: Request,
   { params }: { params: { organisation_id: string } }
 ) {
@@ -23,7 +23,7 @@ export async function DELETE(
     }
 
     const authHeader = request.headers.get("authorization");
-    const { role } = await ProfileUtils.verifyProfile(authHeader || "", [
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
       "admin",
     ]);
 

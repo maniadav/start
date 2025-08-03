@@ -9,6 +9,7 @@ import SidebarTrigger from "@management/SidebarTrigger";
 import CreateOrganisationPopup from "components/popup/CreateOrganisationPopup";
 import StartUtilityAPI from "@services/start.utility";
 import DeleteOrganisationPopup from "components/popup/DeleteOrganisationPopup";
+import EditOrganisationPopup from "components/popup/EditOrganisationPopup";
 interface PopupState {
   type: String | null;
   isOpen: boolean;
@@ -28,8 +29,6 @@ export default function OrganizationsPage() {
     observerId: "",
     data: null,
   });
-
-  const nextApi = useMemo(() => new StartUtilityAPI(), []);
 
   // Helper functions to manage popup state
   const openPopup = (
@@ -54,10 +53,12 @@ export default function OrganizationsPage() {
   };
 
   const loadOrganisations = React.useCallback(async () => {
+    setLoading(true);
     try {
       console.log("Loading organisations...");
-      setLoading(true);
-      const res = await nextApi.organisation.list();
+
+      const START_API = new StartUtilityAPI();
+      const res = await START_API.organisation.list();
       setOrganizations(res.data || []);
       console.log("Organisations loaded:", res.data?.length || 0);
     } catch (error) {
@@ -65,7 +66,7 @@ export default function OrganizationsPage() {
     } finally {
       setLoading(false);
     }
-  }, [nextApi]);
+  }, []);
 
   useEffect(() => {
     loadOrganisations();
@@ -131,7 +132,8 @@ export default function OrganizationsPage() {
         />
       )}
       
-      {popupState.type === 'edit' && (
+      */}
+      {popupState.type === "edit" && (
         <EditOrganisationPopup
           showFilter={popupState.isOpen}
           closeModal={closePopup}
@@ -140,10 +142,9 @@ export default function OrganizationsPage() {
             closePopup();
           }}
           organisation_id={popupState.observerId}
-          data={popupState.data}
+          // data={popupState.data}
         />
       )}
-      */}
     </>
   );
 }
