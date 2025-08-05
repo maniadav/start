@@ -1,8 +1,6 @@
 "use client";
-
 import type React from "react";
-
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@management/components/ui/button";
 import { Input } from "@management/components/ui/input";
@@ -12,10 +10,8 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@management/components/ui/card";
 import Image from "next/image";
-import { useToast } from "@management/hooks/use-toast";
 import { APP_CONFIG } from "@constants/config.constant";
 import {
   getLocalStorageValue,
@@ -24,13 +20,13 @@ import {
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { redirectToDashboard } from "@utils/auth.utils";
 import StartUtilityAPI from "@services/start.utility";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,10 +37,7 @@ export default function LoginPage() {
       const response = await START_API.auth.login({ email, password });
 
       console.log({ response });
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${response.data?.profile?.name || email}!`,
-      });
+      toast.success("Login successful");
 
       setLocalStorageValue(LOCALSTORAGE.START_MEMBER, response.data, true);
       redirectToDashboard(response.data.role, router);
@@ -52,12 +45,7 @@ export default function LoginPage() {
       // Get error message from the API error response
       const errorMessage =
         err.message || err.data?.error || "Invalid email or password";
-
-      toast({
-        title: "Login failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -85,9 +73,7 @@ export default function LoginPage() {
               />
             </div>
           </div>
-          {/* <CardTitle className="text-2xl">
-            <strong className="text-primary">START</strong> Management
-          </CardTitle> */}
+
           <CardDescription>
             Sign in to your <strong className="text-primary">START</strong>{" "}
             account to continue
