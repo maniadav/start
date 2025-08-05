@@ -9,17 +9,10 @@ export async function POST(request: Request) {
     await connectDB();
 
     const authHeader = request.headers.get("authorization");
-    const { verified, user_id } = await ProfileUtils.verifyProfile(
-      authHeader || "",
-      ["admin", "organisation"]
-    );
-
-    if (!verified) {
-      return NextResponse.json(
-        { error: "You don't have permission to access this resource" },
-        { status: 403 }
-      );
-    }
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
+      "admin",
+      "organisation",
+    ]);
 
     const body = await request.json();
     const {

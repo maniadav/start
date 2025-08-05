@@ -12,7 +12,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@management/components/ui/card";
+} from "components/ui/card";
 import SidebarTrigger from "@management/SidebarTrigger";
 import { getCurrentMember } from "@utils/auth.utils";
 

@@ -3,14 +3,14 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@management/components/ui/button";
-import { Input } from "@management/components/ui/input";
+import { Input } from "components/ui/input";
 import { Label } from "@management/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@management/components/ui/card";
+} from "components/ui/card";
 import Image from "next/image";
 import { APP_CONFIG } from "@constants/config.constant";
 import {
@@ -73,7 +73,6 @@ export default function LoginPage() {
               />
             </div>
           </div>
-
           <CardDescription>
             Sign in to your <strong className="text-primary">START</strong>{" "}
             account to continue

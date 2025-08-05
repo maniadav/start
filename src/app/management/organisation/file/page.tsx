@@ -7,7 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@management/components/ui/card";
+} from "components/ui/card";
 import type { FilterOptions } from "@type/management.types";
 import SidebarTrigger from "@management/SidebarTrigger";
 import { FileTable } from "./FileTable";

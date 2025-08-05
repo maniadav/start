@@ -16,7 +16,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@management/components/ui/card";
+} from "components/ui/card";
 import { FileText } from "lucide-react";
 import { useAuth } from "state/provider/AuthProvider";
 import UserComp from "components/UserComp";

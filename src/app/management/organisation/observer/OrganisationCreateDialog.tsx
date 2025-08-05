@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@management/components/ui/dialog";
-import { Input } from "@management/components/ui/input";
+import { Input } from "components/ui/input";
 import { Label } from "@management/components/ui/label";
 import {
   Select,

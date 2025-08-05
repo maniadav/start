@@ -10,6 +10,9 @@ import CreateOrganisationPopup from "components/popup/CreateOrganisationPopup";
 import StartUtilityAPI from "@services/start.utility";
 import DeleteOrganisationPopup from "components/popup/DeleteOrganisationPopup";
 import EditOrganisationPopup from "components/popup/EditOrganisationPopup";
+import { Card, CardHeader, CardTitle } from "components/ui/card";
+import { Input } from "components/ui/input";
+import { Search, ArrowRight } from "lucide-react";
 interface PopupState {
   type: String | null;
   isOpen: boolean;
@@ -21,6 +24,15 @@ export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organisation[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterOptions>({});
+  // Get organisation_id from query param
+  const [organisationId, setOrganisationId] = useState<string | null>(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const orgId = params.get("organisation_id");
+      if (orgId) setOrganisationId(orgId);
+    }
+  }, []);
 
   // Centralized popup state
   const [popupState, setPopupState] = useState<PopupState>({
@@ -52,15 +64,22 @@ export default function OrganizationsPage() {
     });
   };
 
-  const loadOrganisations = React.useCallback(async () => {
+  const loadOrganisations = React.useCallback(async (searchOrgId?: string) => {
     setLoading(true);
     try {
       console.log("Loading organisations...");
-
       const START_API = new StartUtilityAPI();
-      const res = await START_API.organisation.list();
+      // Pass organisation_id as param if present
+      const params = searchOrgId ? { organisation_id: searchOrgId } : {};
+      const res = await START_API.organisation.list(params);
       setOrganizations(res.data || []);
       console.log("Organisations loaded:", res.data?.length || 0);
+      // Update URL query param if searching
+      if (searchOrgId) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("organisation_id", searchOrgId);
+        window.history.replaceState({}, "", url.toString());
+      }
     } catch (error) {
       console.error("Failed to load organizations:", error);
     } finally {
@@ -93,14 +112,51 @@ export default function OrganizationsPage() {
             <div className="text-center">Loading organizations...</div>
           </div>
         ) : (
-          <OrganisationTable
-            data={organizations}
-            filters={filters}
-            setFilters={setFilters}
-            handleOrgActions={(action, organisation_id) =>
-              openPopup(action, organisation_id)
-            }
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Organisation Management</CardTitle>
+              <div className="flex items-center gap-2">
+                {/* <AdvancedFilters
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  showStorageFilter={!hasLimitedData}
+                  showUserCountFilter={!hasLimitedData}
+                  showStatusFilter
+                  showDateFilter
+                /> */}
+              </div>
+            </CardHeader>
+            <div className="flex items-center py-4 px-4 gap-2">
+              <div className="flex flex-1 max-w-sm relative">
+                <div className="relative flex-grow">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by organisation ID..."
+                    value={organisationId || ""}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = event.target.value;
+                      setOrganisationId(value);
+                    }}
+                    className="pl-8 bg-white rounded-r-none"
+                  />
+                </div>
+                <Button
+                  onClick={() => loadOrganisations(organisationId || undefined)}
+                  className="rounded-l-none"
+                >
+                  Search
+                </Button>
+              </div>
+            </div>
+            <OrganisationTable
+              data={organizations}
+              filters={filters}
+              setFilters={setFilters}
+              handleOrgActions={(action, organisation_id) =>
+                openPopup(action, organisation_id)
+              }
+            />
+          </Card>
         )}
       </div>
 

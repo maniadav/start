@@ -13,7 +13,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@management/components/ui/card";
+} from "components/ui/card";
 import {
   Table,
   TableBody,

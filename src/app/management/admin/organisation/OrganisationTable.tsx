@@ -1,14 +1,9 @@
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Delete, Edit, MoreHorizontal, View } from "lucide-react";
-import { DataTable } from "@management/components/data-table";
+import { DataTable } from "components/ui/data-table";
 import { AdvancedFilters } from "@management/components/advanced-filters";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@management/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { Button } from "@management/components/ui/button";
 import {
   DropdownMenu,
@@ -35,9 +30,6 @@ interface OrganisationTableProps {
 
 export function OrganisationTable({
   data,
-  filters,
-  setFilters,
-  hasLimitedData = false,
   handleOrgActions,
 }: OrganisationTableProps) {
   const columns: ColumnDef<Organisation>[] = React.useMemo(
@@ -178,28 +170,14 @@ export function OrganisationTable({
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Organisation Management</CardTitle>
-        <div className="flex items-center gap-2">
-          <AdvancedFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            showStorageFilter={!hasLimitedData}
-            showUserCountFilter={!hasLimitedData}
-            showStatusFilter
-            showDateFilter
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="w-auto overflow-x-scroll">
-        <DataTable
-          columns={columns}
-          data={data}
-          searchKey="name"
-          searchPlaceholder="Search by name..."
-        />
-      </CardContent>
-    </Card>
+    <CardContent className="w-auto overflow-x-scroll">
+ 
+      <DataTable
+        columns={columns}
+        data={data}
+        searchKey="name"
+        searchPlaceholder="Search by name..."
+      />
+    </CardContent>
   );
 }

@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@management/components/ui/select";
-import { Input } from "@management/components/ui/input";
+import { Input } from "components/ui/input";
 import { Label } from "@management/components/ui/label";
 import { Badge } from "@management/components/ui/badge";
 import { cn } from "@management/lib/utils";
