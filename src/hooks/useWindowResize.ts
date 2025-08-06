@@ -20,17 +20,19 @@ export const useWindowResize = () => {
   });
 
   useEffect(() => {
-    // Set initial dimensions only once
-    const initWidth = window.innerWidth;
-    const initHeight = window.innerHeight;
+    // Set initial dimensions only once on mount
+    if (initialDimensions.width === 0 && initialDimensions.height === 0) {
+      const initWidth = window.innerWidth;
+      const initHeight = window.innerHeight;
 
-    setInitialDimensions({ width: initWidth, height: initHeight });
-    setWindowState({
-      isLandscape: initWidth > initHeight,
-      isWindowResized: false,
-      width: initWidth,
-      height: initHeight,
-    });
+      setInitialDimensions({ width: initWidth, height: initHeight });
+      setWindowState({
+        isLandscape: initWidth > initHeight,
+        isWindowResized: false,
+        width: initWidth,
+        height: initHeight,
+      });
+    }
 
     // Check if current state is full screen
     const isFullScreen = () => {
@@ -46,11 +48,11 @@ export const useWindowResize = () => {
       const currentWidth = window.innerWidth;
       const currentHeight = window.innerHeight;
 
-      // Check if window has been resized (width increased or decreased)
+      // Check if window width has decreased
       // but exclude full screen scenarios
       const hasResized =
         !isFullScreen() &&
-        (currentWidth !== initWidth || currentHeight !== initHeight);
+        currentWidth < initialDimensions.width;
 
       setWindowState({
         isLandscape: currentWidth > currentHeight,
@@ -77,7 +79,7 @@ export const useWindowResize = () => {
       document.removeEventListener("mozfullscreenchange", handleResize);
       document.removeEventListener("MSFullscreenChange", handleResize);
     };
-  }, []); // Empty dependency array to run only once
+  }, [initialDimensions]); // Include initialDimensions in dependency array
 
   return {
     ...windowState,
