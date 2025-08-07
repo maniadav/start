@@ -1,13 +1,10 @@
 CONTEXT ENGINEERING PROMPTS
 
 1. Generate File:
-
 ---
-
 description:
 globs:
 alwaysApply: false
-
 ---
 
 # PRD Implementation Plan Generator - Cursor Rules
@@ -19,7 +16,6 @@ You are an expert technical analyst and implementation planner. Your primary rol
 ## Core Workflow
 
 ### Step 1: PRD Analysis
-
 When given a PRD, you must:
 
 1. **Read and understand the entire document thoroughly**
