@@ -6,16 +6,20 @@ This document outlines the scope for an integrated platform focused on early ASD
 
 ## 2. Aims
 
-2.1. To provide a scalable, secure browser based platform that can be used for direct assessment to quantify ASD related dimension.
+### 2.1. Assessment Platform
 
-2.2. To establish a secure pipeline for:
+To provide a scalable, secure browser based platform that can be used for direct assessment to quantify ASD related dimension.
+
+### 2.2. Secure Pipeline
+
+To establish a secure pipeline for:
 
 - Systematic data collection
 - Clinical analysis
 - Research insights
 - Data protection and privacy
 
-  2.3. To deliver an integrated solution that is:
+### 2.3. Solution Integration
 
 - User-friendly for non-specialist health workers
 - Deployable in naturalistic environments (home or routine health-care settings)
@@ -25,7 +29,7 @@ This document outlines the scope for an integrated platform focused on early ASD
 
 ## 3. Technical Requirements
 
-3.1. **Frontend Compatibility**
+### 3.1. Frontend Compatibility
 
 - Modern browsers (Chrome, Firefox, Safari, Edge)
 - Progressive Web App capabilities
@@ -34,20 +38,20 @@ This document outlines the scope for an integrated platform focused on early ASD
 - Optimized for tablet and desktop views
 - Offline-first architecture
 
-  3.2. **API Requirements**
+### 3.2. API Requirements
 
 - RESTful API design
 - JWT-based authentication
 - Role-based access control
 - Rate limiting and security measures
 
-  3.3. **Language Support**
+### 3.3. Language Support
 
 - API Documentation: English
 - User Interface: Multi-language support
 - Data Storage: Unicode compliant
 
-  3.4. **Security Requirements**
+### 3.4. Security Requirements
 
 - End-to-end encryption for sensitive data
 - Token-based authentication
@@ -205,14 +209,15 @@ graph LR
 
 ### 7.3. Permission Matrix
 
+
 | Resource Type | Admin | Organisation | Observer | Public |
-| ------------- | ----- | ------------ | -------- | ------ |
-| System Config | ✓     | ✗            | ✗        | ✗      |
-| Organisation  | ✓     | Read Only    | ✗        | ✗      |
-| Observer      | ✓     | ✓            | Self     | ✗      |
-| Child         | ✓     | ✓            | Assigned | ✗      |
-| Files         | ✓     | Own Org      | Own      | ✗      |
-| Health Check  | ✓     | ✓            | ✓        | ✓      |
+| --------------- | ------- | -------------- | ---------- | -------- |
+| System Config | ✓    | ✗           | ✗       | ✗     |
+| Organisation  | ✓    | Read Only    | ✗       | ✗     |
+| Observer      | ✓    | ✓           | Self     | ✗     |
+| Child         | ✓    | ✓           | Assigned | ✗     |
+| Files         | ✓    | Own Org      | Own      | ✗     |
+| Health Check  | ✓    | ✓           | ✓       | ✓     |
 
 ### 7.4 Observer Task Assessment Flow
 
@@ -248,14 +253,14 @@ graph TD
 
 ## 8. Security Measures
 
-### 8.1. **Authentication**
+### 8.1. Authentication
 
 - JWT-based token system
 - Refresh token rotation
 - Session management
 - Brute force protection
 
-### 8.2. **Authorization**
+### 8.2. Authorization
 
 - Role-based access control
 - Resource-level permissions
