@@ -19,7 +19,7 @@ export const API_ENDPOINT = {
     verify_reset_token: "/auth/verify-reset-token",
     reset_password: "/auth/reset-password",
     updateProfile: "/auth/update-profile",
-    passwordUpdate: "/auth/password-update",
+    update_password: "/auth/password-update",
   },
   user: {
     list: "/user/list",

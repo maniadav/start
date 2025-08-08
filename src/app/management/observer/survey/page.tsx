@@ -1,15 +1,4 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
-import { setLocalStorageValue } from "@utils/localStorage";
-import { LOCALSTORAGE } from "@constants/storage.constant";
-import Image from "next/image";
-import { IconHome } from "components/common/Icons";
-import Link from "next/link";
-import { BASE_URL } from "@constants/config.constant";
-import { useSurveyContext } from "state/provider/SurveytProvider";
-import { PAGE_ROUTES } from "@constants/route.constant";
 import SidebarTrigger from "@management/SidebarTrigger";
 import {
   Card,
@@ -17,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "components/ui/card";
-import { FileText } from "lucide-react";
 import { useAuth } from "state/provider/AuthProvider";
 import UserComp from "components/UserComp";
 import SurveyTable from "components/SurveyTable";

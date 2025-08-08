@@ -62,6 +62,12 @@ class StartUtilityAPI {
         data
       );
     },
+    updatePassword: (data: { token: string; password: string }) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.update_password}`,
+        data
+      );
+    },
   };
 
   /**

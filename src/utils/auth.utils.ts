@@ -10,7 +10,7 @@ export function redirectToDashboard(role: string, router: any) {
   } else if (role === MemberProfile.organisation) {
     router.push(PAGE_ROUTES.MANAGEMENT.ORGANISATION.DASHBOARD.path);
   } else {
-    router.push(PAGE_ROUTES.SURVEY.path);
+    router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.DASHBOARD.path);
   }
 }
 

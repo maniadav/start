@@ -4,7 +4,10 @@ import {
 } from "@utils/localStorage";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import LOCALSTORAGE from "@constants/storage.constant";
+import { LOCALSTORAGE } from "@constants/storage.constant";
+import toast from "react-hot-toast";
+import { passwordValidator } from "@helper/validator";
+import StartUtilityAPI from "@services/start.utility";
 
 const UserPasswordUpdate = () => {
   const formData: FormDataType = {};
@@ -17,15 +20,7 @@ const UserPasswordUpdate = () => {
     setResponseBody({ ...responseBody, [name]: value });
   };
 
-  function userLogout() {
-    removeLocalStorageValue(LOCALSTORAGE.MFA_ACCESS_TOKEN);
-    router.push("/login");
-  }
-
   const handlePasswordUpdate = async () => {
-    const user_data = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
-    const unique: string = user_data?.uniqueID || "";
-
     if (responseBody.newPassword !== responseBody?.newPassword2) {
       toast.error("Password didn't match!");
       return;
@@ -36,15 +31,15 @@ const UserPasswordUpdate = () => {
       return;
     }
 
-    let patientAPI = new UtilityAPI();
+    let START_API = new StartUtilityAPI();
     try {
       const data: any = {
         oldPassword: responseBody.oldPassword,
-        newPassword: responseBody.newPassword,
+        password: responseBody.newPassword,
       };
 
       toast("updating...");
-      const res = await patientAPI.updatePassword(data);
+      const res = await START_API.auth.updatePassword(data);
       toast(res.data.message);
       if (res.status === 200) {
         router.push("/");
@@ -117,7 +112,7 @@ const UserPasswordUpdate = () => {
 
         <button
           onClick={() => handlePasswordUpdate()}
-          className=" text-white bg-gradient-to-br from-green-700 to-green-900 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+          className=" text-white bg-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
         >
           Update Password
         </button>

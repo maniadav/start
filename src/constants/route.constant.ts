@@ -76,7 +76,7 @@ export const PAGE_ROUTES = {
       OBSERVER: { label: "Organisation", path: "/management/org/obs" },
     },
     OBSERVER: {
-      DASHBOARD: { label: "Dashboard", path: "/management/admin/dashboard" },
+      DASHBOARD: { label: "Dashboard", path: "/management/observer/dashboard" },
       SURVEY_UPLOAD: {
         label: "Upload Survey",
         path: "/management/observer/upload",

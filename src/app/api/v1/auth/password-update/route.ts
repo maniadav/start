@@ -3,6 +3,7 @@ import connectDB from "@lib/mongodb";
 import UserModel from "@models/user.model";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
+import { ValidatorUtils } from "@helper/validator";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,12 @@ export async function POST(req: Request) {
         { error: "Both old password and new password are required" },
         { status: 400 }
       );
+    }
+
+    const validatorMessage = ValidatorUtils.validatePassword(password);
+
+    if (validatorMessage) {
+      return NextResponse.json({ error: validatorMessage }, { status: 400 });
     }
 
     const authHeader = req.headers.get("authorization");

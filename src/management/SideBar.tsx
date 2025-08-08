@@ -12,6 +12,7 @@ import {
   NotebookPen,
   ArrowLeftFromLine,
   CircleArrowOutUpLeft,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -107,6 +108,11 @@ export function SideBar() {
       url: "/management/observer/survey",
       icon: NotebookPen,
     },
+    {
+      title: "Settings",
+      url: "/management/observer/settings",
+      icon: Settings,
+    },
   ];
 
   interface MenuItem {
@@ -168,16 +174,7 @@ export function SideBar() {
           );
         })}
       </nav>
-      {/* Collapse/Expand Icon
-      <div
-        className={cn(
-          "flex justify-center items-center border-t p-2",
-          collapsed ? "justify-center mt-2" : "justify-end ml-2 mt-2"
-        )}
-      >
-        <SidebarTrigger />
-      </div> */}
-      {/* Logout at Bottom */}
+
       <div className="mt-auto border-t p-2 flex justify-center">
         <UserNav />
       </div>
