@@ -162,6 +162,11 @@ class StartUtilityAPI {
         data
       );
     },
+    fetch: (child_id: any) => {
+      return this.api.get(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.child.fetch}/${child_id}`
+      );
+    },
   };
 
   /**

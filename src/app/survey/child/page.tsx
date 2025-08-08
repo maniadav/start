@@ -39,6 +39,7 @@ const LoginPage = () => {
   };
 
   const handleFormSubmit = async () => {
+    // Validation checks
     if (!formData.childName.trim()) {
       toast.error("Oops! Don't forget to enter the child's name.");
       return;
@@ -56,14 +57,26 @@ const LoginPage = () => {
       return;
     }
 
-    try {
-      setLocalStorageValue(LOCALSTORAGE.START_USER, formData, true);
-      dispatch({ type: "RESET_SURVEY_DATA" });
-      router.push(PAGE_ROUTES.SURVEY.path);
-    } catch (error) {
-      console.error("API call error:", error);
-      toast.error("Something went wrong. Please try again!");
-    }
+    // Use toast.promise for better user feedback
+    toast.promise(
+      (async () => {
+        try {
+          setLocalStorageValue(LOCALSTORAGE.START_USER, formData, true);
+          dispatch({ type: "RESET_SURVEY_DATA" });
+          await new Promise((resolve) => setTimeout(resolve, 800)); // Brief delay for UX
+          router.push(PAGE_ROUTES.SURVEY.path);
+          return "success";
+        } catch (error) {
+          console.error("API call error:", error);
+          throw new Error("Something went wrong. Please try again!");
+        }
+      })(),
+      {
+        loading: "Setting up your session...",
+        success: "All set! Redirecting to survey...",
+        error: (err) => `${err.message}`,
+      }
+    );
   };
 
   return (

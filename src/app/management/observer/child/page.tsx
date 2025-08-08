@@ -1,25 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { setLocalStorageValue } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import Image from "next/image";
-import { IconHome } from "components/common/Icons";
-import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
 import { BASE_URL } from "@constants/config.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import SidebarTrigger from "@management/SidebarTrigger";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "components/ui/card";
-import { FileText } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useAuth } from "state/provider/AuthProvider";
 import { Button } from "@management/components/ui/button";
+import ChildForm from "./ChildForm";
+import ChildSearch from "./ChildSearch";
+import StartUtilityAPI from "@services/start.utility";
 
 interface LoginDataType {
   childID: string;
@@ -27,26 +23,71 @@ interface LoginDataType {
   childGender: string;
   childDOB: string;
   observerID: string;
+  childAddress: string;
 }
 
+const generateUniqueID = () => {
+  const uuid = uuidv4();
+  return `ch${uuid.substring(0, 8)}`.toUpperCase();
+};
+
 const LoginPage = () => {
-  const { member, user } = useAuth();
+  const [data, setData] = useState<any>(null);
+  const { member, user: childData } = useAuth();
   const [formData, setFormData] = useState<LoginDataType>({
-    childID: user?.childID || "",
-    childName: user?.childName || "",
-    childGender: user?.childGender || "",
-    childDOB: user?.childDOB || "",
+    childID: childData?.childID || "",
+    childName: childData?.childName || "",
+    childGender: childData?.childGender || "",
+    childDOB: childData?.childDOB || "",
     observerID: member?.user_id || "",
+    childAddress: childData?.childAddress || "",
   });
+  const START_API = new StartUtilityAPI();
+  // Set initial data from state
+  useEffect(() => {
+    if (childData) {
+      setData(childData);
+    }
+  }, [childData]);
+
+  // Generate a unique ID if none exists
+  // useEffect(() => {
+  //   if (!formData.childID) {
+  //     const newID = generateUniqueID();
+  //     setFormData((prev) => ({ ...prev, childID: newID }));
+  //   }
+  // }, [formData.childID, formData.observerID, member?.user_id]);
 
   const router = useRouter();
   const { dispatch } = useSurveyContext();
+
+  const handleDataFetch = async ({ childID }: any) => {
+    try {
+      const response = await START_API.child.fetch(childID);
+      if (response.success) {
+        setData(response.data.profile);
+        toast.success("Child details fetched successfully!");
+      } else {
+        toast.error("Failed to fetch child details. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching child details:", error);
+      toast.error("An error occurred while fetching child details.");
+    }
+  };
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const regenerateChildID = () => {
+    setFormData((prev) => ({
+      ...prev,
+      childID: generateUniqueID(),
+    }));
   };
 
   const handleFormSubmit = async () => {
@@ -62,13 +103,21 @@ const LoginPage = () => {
       toast.error("Oops! Don't forget to enter the child's date of birth.");
       return;
     }
+    if (!formData.childAddress?.trim()) {
+      toast.error("Please enter the child's address.");
+      return;
+    }
     if (!formData.observerID.trim()) {
       toast.error("Hey there! Your Observer ID is missing.");
       return;
     }
 
     try {
-      setLocalStorageValue(LOCALSTORAGE.START_USER, formData, true);
+      const response = await START_API.child.create({
+        ...formData,
+      });
+      console.log(response);
+      setLocalStorageValue(LOCALSTORAGE.START_USER, response.profile, true);
       dispatch({ type: "RESET_SURVEY_DATA" });
       router.push(PAGE_ROUTES.SURVEY.path);
     } catch (error) {
@@ -104,7 +153,7 @@ const LoginPage = () => {
                 <div className="ml-3">
                   <p className="text-sm text-red-700 font-medium">
                     <strong>WARNING:</strong>{" "}
-                    {user?.childID
+                    {childData?.childID
                       ? `Download or upload the survey data before removing the child`
                       : `You must add a child in order to start the survey.`}
                   </p>
@@ -116,7 +165,7 @@ const LoginPage = () => {
         <div className="w-full flex items-center justify-end px-12 gap-4 ">
           <Button
             variant={"default"}
-            disabled={!user?.childID}
+            disabled={!childData?.childID}
             className="flex items-center gap-2"
           >
             <svg
@@ -138,7 +187,7 @@ const LoginPage = () => {
           </Button>
           <Button
             variant={"outline"}
-            disabled={!user?.childID}
+            disabled={!childData?.childID}
             className="flex items-center gap-2"
           >
             <svg
@@ -173,130 +222,31 @@ const LoginPage = () => {
                 Ready for Some Magic?
               </h1>
               <p className="text-gray-400 mt-2">
-                {`Let’s help your little star shine brighter!`}
+                {`Let's help your little star shine brighter!`}
               </p>
 
               <div className="w-full flex-1 mt-8">
                 <div className="mx-auto max-w-2xl">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Child Name Input */}
-                    <div className="mt-4">
-                      <label className="block text-gray-600 text-sm font-bold mb-2">
-                        {`What's Your Star's Name?`}
-                      </label>
-                      <input
-                        className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                        type="text"
-                        placeholder="Enter Child's Name"
-                        id="childName"
-                        name="childName"
-                        value={formData.childName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <ChildSearch handleDataFetch={handleDataFetch} />
 
-                    {/* Child ID Input */}
-                    <div className="mt-4">
-                      <label className="block text-gray-600 text-sm font-bold mb-2">
-                        {`What's Your Star's ID?`}
-                      </label>
-                      <input
-                        className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                        type="text"
-                        placeholder="Enter Child's ID"
-                        id="childID"
-                        name="childID"
-                        value={formData.childID}
-                        onChange={handleInputChange}
-                      />
+                  <div className="relative my-12">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300"></div>
                     </div>
-
-                    {/* Child DOB Input */}
-                    <div className="mt-4">
-                      <label className="block text-gray-600 text-sm font-bold mb-2">
-                        {`What's Your Star's Date of Birth?`}
-                      </label>
-                      <input
-                        className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                        type="date"
-                        id="childDOB"
-                        name="childDOB"
-                        value={formData.childDOB}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-
-                    {/* Child Gender Input */}
-                    <div className="mt-4">
-                      <label
-                        htmlFor="childGender"
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                      >
-                        {`What's Your Superstar's Gender?`}
-                      </label>
-                      <select
-                        id="childGender"
-                        name="childGender"
-                        value={formData.childGender}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                      >
-                        <option value="" disabled>
-                          Select Gender
-                        </option>
-                        <option value="male">Prince (Male)</option>
-                        <option value="female">Princess (Female)</option>
-                        <option value="other">Unique Star (Other)</option>
-                      </select>
-                    </div>
-
-                    {/* Observer ID */}
-                    <div className="mt-4 col-span-2">
-                      <label className="block text-gray-700 text-sm font-bold mb-2">
-                        Your Observer ID
-                      </label>
-                      <p className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white">
-                        {formData.observerID}
-                      </p>
+                    <div className="relative flex justify-center">
+                      <span className="bg-white px-4 text-sm font-medium text-primary uppercase">
+                        or add a new child
+                      </span>
                     </div>
                   </div>
 
-                  {/* Submit Button */}
-                  <button
-                    onClick={handleFormSubmit}
-                    className="mt-5 tracking-wide font-semibold bg-primary text-gray-100 w-full py-3 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                  >
-                    <svg
-                      className="w-6 h-6 -ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="8.5" cy="7" r="4" />
-                      <path d="M20 8v6M23 11h-6" />
-                    </svg>
-                    <span className="ml-3">Let’s Start the Test!</span>
-                  </button>
-                  <p className="mt-6 text-xs text-gray-600 text-center">
-                    By proceeding, you agree to our{" "}
-                    <a
-                      href="#"
-                      className="border-b border-gray-500 border-dotted"
-                    >
-                      Terms of Service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      href="#"
-                      className="border-b border-gray-500 border-dotted"
-                    >
-                      Privacy Policy
-                    </a>
-                    .
-                  </p>
+                  <ChildForm
+                    data={data}
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                    regenerateChildID={regenerateChildID}
+                    handleFormSubmit={handleFormSubmit}
+                  />
                 </div>
               </div>
             </div>

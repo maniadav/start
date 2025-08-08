@@ -73,12 +73,9 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error updating password:", error);
 
-    if (error instanceof TokenUtilsError) {
-      return NextResponse.json(
-        { error: (error as TokenUtilsError).message },
-        { status: 401 }
-      );
-    }
+      if (err instanceof TokenUtilsError) {
+        throw err;
+      }
 
     return NextResponse.json(
       { error: "Failed to update password" },

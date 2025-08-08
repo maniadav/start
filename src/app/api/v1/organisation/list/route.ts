@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import OrganisationProfileModel from "@models/organisation.profile.model";
-import { TokenUtils, TokenUtilsError } from "@utils/token.utils";
+import TokenUtils, {  TokenUtilsError } from "@utils/token.utils";
 import AdminProfileModel from "@models/admin.profle.model";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 
@@ -37,9 +37,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    if (error instanceof TokenUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
+      if (error instanceof TokenUtilsError) {
+        throw error;
+      }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

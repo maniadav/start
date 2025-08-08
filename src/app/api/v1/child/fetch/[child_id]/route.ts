@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils } from "@utils/profile.utils";
-import ChildPorfileModel from "@models/user.model";
-
+import ChildModel from "@models/child.model";
 export async function GET(
   request: Request,
   { params }: { params: { child_id: string } }
@@ -13,7 +11,8 @@ export async function GET(
 
     const { child_id } = params;
     const body = await request.json();
-    const { details, files } = body;
+    // implement the logic to extract file details
+    const { files } = body;
 
     if (!child_id) {
       return NextResponse.json(
@@ -21,40 +20,40 @@ export async function GET(
         { status: 400 }
       );
     }
-    // Validate required fields
-    if (!details && !files) {
-      return NextResponse.json(
-        { error: "missing requirements" },
-        { status: 400 }
-      );
-    }
 
     const authHeader = request.headers.get("authorization");
-    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
-      "admin",
-    ]);
+    const { user_id, role } = await ProfileUtils.verifyProfile(
+      authHeader || "",
+      ["admin", "observer"]
+    );
 
-    const existingProfile = await ChildPorfileModel.findOne({
+    // Create a query that filters by observer_id only if role is not admin
+    const query = {
       user_id: child_id,
-      oberser_id: user_id,
-    });
+      ...(role !== "admin" && { observer_id: user_id }),
+    };
+
+    const existingProfile = await ChildModel.findOne(query);
 
     if (!existingProfile) {
       return NextResponse.json({ error: "Child not found" }, { status: 404 });
     }
 
     const data = {
-      child_id: existingProfile.user_id || null,
-      child_name: existingProfile.name || null,
-      child_address: existingProfile.address || null,
-      child_gender: existingProfile.gender || null,
-      observer_id: existingProfile.observer_id || null,
-      organisation_id: existingProfile.organisation_id || null,
-      survey_date: existingProfile.survey_date || null,
-      survey_note: existingProfile.survey_note || null,
-      survey_status: existingProfile.survey_status || null,
-      survey_attempt: existingProfile.survey_attempt || null,
-      date_joined: existingProfile.date_joined || null,
+      profile: {
+        childID: existingProfile.user_id || null,
+        childDOB: existingProfile.dob || null,
+        childName: existingProfile.name || null,
+        childAddress: existingProfile.address || null,
+        childGender: existingProfile.gender || null,
+        observerID: existingProfile.observer_id || null,
+        organisationID: existingProfile.organisation_id || null,
+        surveyDate: existingProfile.survey_date || null,
+        surveyNote: existingProfile.survey_note || null,
+        surveyStatus: existingProfile.survey_status || null,
+        surveyAttempt: existingProfile.survey_attempt || null,
+        dateJoined: existingProfile.date_joined || null,
+      },
     };
 
     return NextResponse.json(

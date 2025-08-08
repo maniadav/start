@@ -5,8 +5,10 @@ import { Gender } from "../types/management.types";
 
 export interface IChild extends Document {
   _id: mongoose.Types.ObjectId;
+  user_id: string;
   name: string;
   address: string;
+  dob: string; // Date of Birth in ISO format
   observer_id: IObserverProfile["_id"];
   organisation_id: IOrganisationProfile["_id"];
   gender: Gender;
@@ -19,6 +21,14 @@ export interface IChild extends Document {
 
 const ChildSchema = new Schema<IChild>(
   {
+    user_id: {
+      type: String,
+      required: [true, "Unique Id is required"],
+    },
+    dob: {
+      type: String,
+      required: [true, "Date of Birth is required"],
+    },
     name: {
       type: String,
       required: [true, "Name is required"],

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import "@models/user.model";
-import { ProfileUtilsError } from "@utils/profile.utils";
-import { TokenUtils, TokenUtilsError } from "@utils/token.utils";
+import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import { TokenUtilsError } from "@utils/token.utils";
 import ChildProfileModel from "@models/child.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 
@@ -11,10 +10,10 @@ export async function POST(request: Request) {
     await connectDB();
 
     const body = await request.json();
-    const { child_id, child_name, child_address, child_gender } = body;
+    const { childID, childName, childAddress, childGender, childDOB } = body;
 
-    // Validate required fields
-    if (!child_id || !child_name || !child_gender) {
+    // Validate required fieldsi
+    if (!childID || !childName || !childGender) {
       return NextResponse.json(
         { error: "Child ID, Name and Gender are required" },
         { status: 400 }
@@ -22,9 +21,12 @@ export async function POST(request: Request) {
     }
 
     const authHeader = request.headers.get("authorization");
-    const { email } = await TokenUtils.verifyToken(authHeader || "", "access");
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
+      "observer",
+    ]);
+
     const observerProfile = await ObserverProfileModel.findOne({
-      email: email,
+      user_id: user_id,
     });
 
     if (!observerProfile) {
@@ -35,9 +37,11 @@ export async function POST(request: Request) {
     }
 
     const newUser = new ChildProfileModel({
-      name: child_name.trim(),
-      address: child_address?.trim() || "",
-      gender: child_gender,
+      name: childName.trim(),
+      address: childAddress?.trim() || "",
+      gender: childGender,
+      dob: childDOB,
+      user_id: childID.trim(),
       observer_id: observerProfile._id,
       organisation_id: observerProfile.organisation_id,
       survey_note: "",
@@ -52,28 +56,30 @@ export async function POST(request: Request) {
       {
         message: "Profile created successfully",
         profile: {
-          child_id: child._id,
-          child_name: child.name,
-          child_gender: child.gender,
-          child_address: child.address,
-          survey_status: child.survey_status,
-          survey_attempt: child.survey_attempt,
-          survey_note: child.survey_note || "",
-          survey_date: child.survey_date,
-          date_joined: child.date_joined,
+          childID: child.user_id || null,
+          childDOB: child.dob || null,
+          childName: child.name || null,
+          childAddress: child.address || null,
+          childGender: child.gender || null,
+          observerID: child.observer_id || null,
+          organisationID: child.organisation_id || null,
+          surveyDate: child.survey_date || null,
+          surveyNote: child.survey_note || null,
+          surveyStatus: child.survey_status || null,
+          surveyAttempt: child.survey_attempt || null,
+          dateJoined: child.date_joined || null,
         },
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating child:", error);
-
+    console.error("[child/create] Error creating child profile:", error);
     if (error instanceof TokenUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+      throw error;
     }
 
     if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
+      throw error;
     }
 
     return NextResponse.json(

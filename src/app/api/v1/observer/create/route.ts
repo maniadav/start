@@ -105,9 +105,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating observer:", error);
 
-    if (error instanceof TokenUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
+      if (error instanceof TokenUtilsError) {
+        throw error;
+      }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

@@ -40,6 +40,9 @@ export const API_ENDPOINT = {
   child: {
     list: "/child/list",
     create: "/child/create",
+    fetch: "/child/fetch",
+    update: "/child/update",
+    delete: "/child/delete",
   },
   files: {
     list: "/files/list",

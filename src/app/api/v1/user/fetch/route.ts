@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import UserModel from "@models/user.model";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
-import { TokenUtils, TokenUtilsError } from "@utils/token.utils";
+import TokenUtils, {  TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
@@ -45,9 +45,9 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error retrieving profile:", error);
 
-    if (error instanceof TokenUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
+      if (error instanceof TokenUtilsError) {
+        throw error;
+      }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

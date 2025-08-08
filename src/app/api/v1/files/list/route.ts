@@ -85,9 +85,9 @@ export async function GET(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    if (error instanceof TokenUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
-    }
+      if (error instanceof TokenUtilsError) {
+        throw error;
+      }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });
