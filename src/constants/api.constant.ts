@@ -5,10 +5,27 @@ export const API_CONFIG = {
 
 // All the API endpoints are defined here
 export const API_ENDPOINT = {
+  utility: {
+    upload_image: "/utility/upload-image",
+    upload_files: "/utility/upload-files",
+    download_files: "/utility/download-files",
+    delete_files: "/utility/delete-files",
+  },
   health: "/api/health", // Health check endpoint
   auth: {
     login: "/auth/login",
     register: "/auth/register",
+    request_password_reset: "/auth/request-password-reset",
+    verify_reset_token: "/auth/verify-reset-token",
+    reset_password: "/auth/reset-password",
+    updateProfile: "/auth/update-profile",
+    passwordUpdate: "/auth/password-update",
+  },
+  user: {
+    list: "/user/list",
+    create: "/user/create",
+    delete: "/user/delete",
+    update: "/user/update",
   },
   organisation: {
     list: "/organisation/list",

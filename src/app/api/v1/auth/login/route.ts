@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-
 import connectDB from "@lib/mongodb";
 import TokenModel from "@models/token.model";
 import UserModel from "@models/user.model";
@@ -7,7 +6,7 @@ import AdminProfileModel from "@models/admin.profle.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import { PasswordUtils } from "@utils/password.utils";
-import { TokenUtils } from "@utils/token.utils";
+import TokenUtils from "@utils/token.utils";
 
 export async function POST(req: Request) {
   try {

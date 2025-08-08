@@ -42,7 +42,6 @@ export default function LoginPage() {
       setLocalStorageValue(LOCALSTORAGE.START_MEMBER, response.data, true);
       redirectToDashboard(response.data.role, router);
     } catch (err: any) {
-      // Get error message from the API error response
       const errorMessage =
         err.message || err.data?.error || "Invalid email or password";
       toast.error(errorMessage);
@@ -51,7 +50,6 @@ export default function LoginPage() {
     }
   };
 
-  // On mount, check if already logged in and redirect
   useEffect(() => {
     const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
     if (member && member.userId && member.role) {

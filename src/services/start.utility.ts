@@ -12,6 +12,24 @@ class StartUtilityAPI {
   }
 
   /**
+   * Utility related API methods
+   */
+  public utility = {
+    uploadImage: (data: FormData) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.utility.upload_image}`,
+        data
+      );
+    },
+    uploadFile: (data: FormData) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.utility.upload_files}`,
+        data
+      );
+    },
+  };
+
+  /**
    * Authentication related API methods
    */
   public auth = {
@@ -25,6 +43,52 @@ class StartUtilityAPI {
       return this.api.post(
         `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.register}`,
         data
+      );
+    },
+    requestPasswordReset: (data: { email: string }) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.request_password_reset}`,
+        data
+      );
+    },
+    verifyResetToken: (token: string) => {
+      return this.api.get(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.verify_reset_token}/${token}`
+      );
+    },
+    resetPassword: (data: { token: string; password: string }) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.reset_password}`,
+        data
+      );
+    },
+  };
+
+  /**
+   * User related API methods
+   */
+  public user = {
+    list: (params?: any) => {
+      return this.api.get(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.user.list}`,
+        params
+      );
+    },
+    create: (data: any) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.user.create}`,
+        data
+      );
+    },
+    update: (data: any) => {
+      return this.api.put(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.user.update}`,
+        data
+      );
+    },
+    delete: (user_id: string) => {
+      return this.api.delete(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.user.delete}/${user_id}`
       );
     },
   };

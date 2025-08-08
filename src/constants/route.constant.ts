@@ -1,3 +1,5 @@
+import path from "path";
+
 // header navigation
 export const NAV_ROUTES = {
   HOME: {
@@ -28,7 +30,14 @@ export const PAGE_ROUTES = {
     label: "Home",
     path: "/",
   },
-
+  AUTH: {
+    LOGIN: { label: "Login", path: "/management/login" },
+    REGISTER: { label: "Register", path: "/management/register" },
+    RESET_PASSWORD: {
+      label: "Reset Password",
+      path: "/auth/reset-password",
+    },
+  },
   ABOUT: {
     label: "About",
     path: "/about",

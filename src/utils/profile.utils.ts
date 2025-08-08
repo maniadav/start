@@ -1,5 +1,5 @@
 import UserModel from "@models/user.model";
-import { TokenUtils, TokenUtilsError } from "./token.utils";
+import TokenUtils, { TokenUtilsError } from "./token.utils";
 
 // Environment-aware logger function
 const logger = (message: string, data?: any) => {
