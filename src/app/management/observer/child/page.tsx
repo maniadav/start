@@ -48,6 +48,7 @@ const LoginPage = () => {
     if (childData) {
       setData((prev: any) => ({ ...prev, childData }));
     }
+    console.log("Child Data:", childData);
   }, [childData]);
 
   // Generate a unique ID if none exists
