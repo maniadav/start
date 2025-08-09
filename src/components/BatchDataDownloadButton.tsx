@@ -25,7 +25,7 @@ export const handleBatchDownload = async () => {
     // Add each survey entry to the ZIP
     Object.keys(survey).forEach((id) => {
       const data = survey[id];
-      const rawfileName = `child_${user.childID}_observer_${user.observerID}_${id}_${formattedDate}`;
+      const rawfileName = `child_${user.childId}_observer_${user.observerId}_${id}_${formattedDate}`;
       const fileName = `${rawfileName}.csv`;
 
       if (id === MotorFollowingContent.id) {
@@ -54,7 +54,7 @@ export const handleBatchDownload = async () => {
     const zipUrl = URL.createObjectURL(zipBlob);
     const zipLink = document.createElement("a");
     zipLink.href = zipUrl;
-    zipLink.download = `start_child_id_${user.childID}_observer_id_${user.observerID}_${formattedDate}.zip`;
+    zipLink.download = `start_child_id_${user.childId}_observer_id_${user.observerId}_${formattedDate}.zip`;
     zipLink.click();
     URL.revokeObjectURL(zipUrl); // Clean up memory
   }

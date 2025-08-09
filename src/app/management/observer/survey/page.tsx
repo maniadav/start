@@ -1,25 +1,29 @@
 "use client";
 import SidebarTrigger from "@management/SidebarTrigger";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useAuth } from "state/provider/AuthProvider";
 import UserComp from "components/UserComp";
 import SurveyTable from "components/SurveyTable";
+import { PAGE_ROUTES } from "@constants/route.constant";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface LoginDataType {
   childID: string;
   childName: string;
   childGender: string;
-  childDOB: string;
+  childDob: string;
   observerID: string;
 }
 
 const SurveyPage = () => {
   const { user } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    if (!user || !user?.userId) {
+      router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
+    }
+  }, [router, user]);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">

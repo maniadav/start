@@ -158,7 +158,7 @@ const LanguageSamplingTask = ({ isSurvey = false }) => {
           <AudioRecorder
             handleCloseGame={handleCloseGame}
             child_id_3456_observer_id_k88888_SynchronyTask_2025-06-09
-            filename={`child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${attempt}_audio`}
+            filename={`child_${user.childId}_observer_${user.observerId}_${TaskContent.id}_${attempt}_audio`}
             attempt={attempt}
           />
         </div>

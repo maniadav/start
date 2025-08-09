@@ -20,7 +20,7 @@ function DataDownloadButton({ id }: { id: string }) {
 
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    const fileName = `child_${user.childID}_observer_${user.observerID}_${id}_${formattedDate}`;
+    const fileName = `child_${user.childId}_observer_${user.observerId}_${id}_${formattedDate}`;
 
     const data = survey[id];
 

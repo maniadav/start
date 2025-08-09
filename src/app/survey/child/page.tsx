@@ -15,7 +15,7 @@ interface LoginDataType {
   childID: string;
   childName: string;
   childGender: string;
-  childDOB: string;
+  childDob: string;
   observerID: string;
 }
 
@@ -24,7 +24,7 @@ const LoginPage = () => {
     childID: "",
     childName: "",
     childGender: "",
-    childDOB: "",
+    childDob: "",
     observerID: "",
   });
 
@@ -44,15 +44,15 @@ const LoginPage = () => {
       toast.error("Oops! Don't forget to enter the child's name.");
       return;
     }
-    if (!formData.childID.trim()) {
+    if (!formData.childId.trim()) {
       toast.error("Oops! Don't forget to enter the child's ID.");
       return;
     }
-    if (!formData.childDOB.trim()) {
+    if (!formData.childDob.trim()) {
       toast.error("Oops! Don't forget to enter the child's date of birth.");
       return;
     }
-    if (!formData.observerID.trim()) {
+    if (!formData.observerId.trim()) {
       toast.error("Hey there! Your Observer ID is missing.");
       return;
     }
@@ -144,7 +144,7 @@ const LoginPage = () => {
                       placeholder="Enter Child's ID"
                       id="childID"
                       name="childID"
-                      value={formData.childID}
+                      value={formData.childId}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -157,9 +157,9 @@ const LoginPage = () => {
                     <input
                       className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                       type="date"
-                      id="childDOB"
-                      name="childDOB"
-                      value={formData.childDOB}
+                      id="childDob"
+                      name="childDob"
+                      value={formData.childDob}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -197,7 +197,7 @@ const LoginPage = () => {
                       placeholder="Enter Your ID"
                       id="observerID"
                       name="observerID"
-                      value={formData.observerID}
+                      value={formData.observerId}
                       onChange={handleInputChange}
                     />
                   </div>

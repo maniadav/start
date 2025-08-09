@@ -4,7 +4,7 @@ import { getCurrentMember, getCurrentUser } from "@utils/auth.utils";
 export const getInitialSurveyState = () => {
   const user = getCurrentUser() || {};
   const member = getCurrentMember() || {};
-  const { childID, childDOB, childGender } = user;
+  const { childID, childDob, childGender } = user;
   const { userId: observerID } = member;
 
   const createTaskData = (assessment_id: string): any => ({
@@ -14,7 +14,7 @@ export const getInitialSurveyState = () => {
     attempt2: {},
     attempt3: {},
     userId: childID,
-    userDob: childDOB,
+    userDob: childDob,
     userGender: childGender,
     observerID,
   });

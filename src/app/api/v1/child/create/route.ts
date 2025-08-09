@@ -23,11 +23,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const { childID, childName, childAddress, childGender, childDOB } = body;
+    const { childId, childName, childAddress, childGender, childDob } = body;
 
     // validation with specific error messages
     const validationErrors = [];
-    if (!childID || typeof childID !== "string" || !childID.trim()) {
+    if (!childId || typeof childId !== "string" || !childId.trim()) {
       validationErrors.push(
         "Child ID is required and must be a non-empty string"
       );
@@ -45,13 +45,17 @@ export async function POST(request: Request) {
         "Child gender is required and must be one of: male, female, other"
       );
     }
-    if (childDOB && isNaN(new Date(childDOB).getTime())) {
+    if (childDob && isNaN(new Date(childDob).getTime())) {
       validationErrors.push("Child date of birth must be a valid date format");
     }
 
     if (validationErrors.length > 0) {
       return NextResponse.json(
-        { error: "Validation failed", details: validationErrors },
+        {
+          error: "Validation failed",
+          message: "missing required details",
+          details: validationErrors,
+        },
         { status: 400 }
       );
     }
@@ -71,7 +75,7 @@ export async function POST(request: Request) {
 
     // Check if child ID already exists
     const existingChild = await ChildProfileModel.findOne({
-      user_id: childID.trim(),
+      user_id: childId.trim(),
     });
 
     if (existingChild) {
@@ -100,8 +104,8 @@ export async function POST(request: Request) {
       name: childName.trim(),
       address: childAddress?.trim() || "",
       gender: childGender.toLowerCase(),
-      dob: childDOB ? new Date(childDOB) : null,
-      user_id: childID.trim(),
+      dob: childDob ? new Date(childDob) : null,
+      user_id: childId.trim(),
       observer_id: observerProfile._id,
       organisation_id: observerProfile.organisation_id,
       survey_note: "",
@@ -122,8 +126,8 @@ export async function POST(request: Request) {
         message: "Profile created successfully",
         profile: {
           id: child._id.toString(),
-          childID: child.user_id,
-          childDOB: child.dob,
+          childId: child.user_id,
+          childDob: child.dob,
           childName: child.name,
           childAddress: child.address,
           childGender: child.gender,
@@ -139,7 +143,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error: any) {
-
     console.error(
       "[child/create] Error creating child profile:",
       error.statusCode || 500,

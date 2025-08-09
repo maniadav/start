@@ -98,7 +98,7 @@ export default function MotorFollowingTask({
   const stopTimerFuncRef = useRef<() => any>();
   const { user } = useAuth();
   // Generate a unique image file name
-  const imagefile = `child_${user.childID}_observer_${user.observerID}_${TaskContent.id}_${currentAttempt}_image`;
+  const imagefile = `child_${user.childId}_observer_${user.observerId}_${TaskContent.id}_${currentAttempt}_image`;
   // require for updated movement data
   useEffect(() => {
     ballCoordinatesRef.current = ballCoordinates;

@@ -9,9 +9,7 @@ const ChildForm = ({
 }: any) => {
   return (
     <div>
-      {" "}
       <div className="grid grid-cols-2 gap-4">
-        {/* Child Name Input */}
         <div className="mt-4">
           <label className="block text-gray-600 text-sm font-bold mb-2">
             {`What's Your Star's Name?`}
@@ -39,7 +37,7 @@ const ChildForm = ({
               placeholder="Auto-generated unique ID"
               id="childID"
               name="childID"
-              value={data?.childID || formData.childID}
+              value={data?.childId || formData.childId}
               onChange={handleInputChange}
             />
             <button
@@ -78,9 +76,9 @@ const ChildForm = ({
           <input
             className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
             type="date"
-            id="childDOB"
-            name="childDOB"
-            value={data?.childDOB || formData.childDOB}
+            id="childDob"
+            name="childDob"
+            value={data?.childDob || formData.childDob}
             onChange={handleInputChange}
           />
         </div>
@@ -129,12 +127,12 @@ const ChildForm = ({
             Your Observer ID
           </label>
           <p className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white">
-            {data?.observerID || formData.observerID}
+            {data?.observerId || formData.observerId}
           </p>
         </div>
       </div>
       <button
-        disabled={data?.childID}
+        disabled={data?.childId}
         onClick={() => handleFormSubmit()}
         className="mt-5 tracking-wide font-semibold bg-primary text-gray-100 w-full py-3 rounded-lg hover:bg-primary/80 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
       >

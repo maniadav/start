@@ -18,11 +18,11 @@ import ChildSearch from "./ChildSearch";
 import StartUtilityAPI from "@services/start.utility";
 
 interface LoginDataType {
-  childID: string;
+  childId: string;
   childName: string;
   childGender: string;
-  childDOB: string;
-  observerID: string;
+  childDob: string;
+  observerId: string;
   childAddress: string;
 }
 
@@ -35,40 +35,40 @@ const LoginPage = () => {
   const [data, setData] = useState<any>(null);
   const { member, user: childData } = useAuth();
   const [formData, setFormData] = useState<LoginDataType>({
-    childID: childData?.childID || "",
+    childId: childData?.childId || "",
     childName: childData?.childName || "",
     childGender: childData?.childGender || "",
-    childDOB: childData?.childDOB || "",
-    observerID: member?.user_id || "",
+    childDob: childData?.childDob || "",
+    observerId: member?.userId || "",
     childAddress: childData?.childAddress || "",
   });
   const START_API = new StartUtilityAPI();
   // Set initial data from state
   useEffect(() => {
     if (childData) {
-      setData(childData);
+      setData((prev: any) => ({ ...prev, childData }));
     }
   }, [childData]);
 
   // Generate a unique ID if none exists
   // useEffect(() => {
-  //   if (!formData.childID) {
+  //   if (!formData.childId) {
   //     const newID = generateUniqueID();
-  //     setFormData((prev) => ({ ...prev, childID: newID }));
+  //     setFormData((prev) => ({ ...prev, childId: newID }));
   //   }
-  // }, [formData.childID, formData.observerID, member?.user_id]);
+  // }, [formData.childId, formData.observerId, member?.user_id]);
 
   const router = useRouter();
   const { dispatch } = useSurveyContext();
 
-  const handleDataFetch = async ({ childID }: any) => {
+  const handleDataFetch = async ({ childId }: any) => {
     try {
-      const response = await START_API.child.fetch(childID);
+      const response = await START_API.child.fetch(childId);
       if (response.success) {
         setData(response.data.profile);
-        toast.success("Child details fetched successfully!");
+        toast.success(response.message || "Child details fetched successfully");
       } else {
-        toast.error("Failed to fetch child details. Please try again.");
+        toast.error(response.message || "Failed to fetch child details");
       }
     } catch (error) {
       console.error("Error fetching child details:", error);
@@ -86,7 +86,7 @@ const LoginPage = () => {
   const regenerateChildID = () => {
     setFormData((prev) => ({
       ...prev,
-      childID: generateUniqueID(),
+      childId: generateUniqueID(),
     }));
   };
 
@@ -95,20 +95,16 @@ const LoginPage = () => {
       toast.error("Oops! Don't forget to enter the child's name.");
       return;
     }
-    if (!formData.childID.trim()) {
+    if (!formData.childId.trim()) {
       toast.error("Oops! Don't forget to enter the child's ID.");
       return;
     }
-    if (!formData.childDOB.trim()) {
+    if (!formData.childDob.trim()) {
       toast.error("Oops! Don't forget to enter the child's date of birth.");
       return;
     }
     if (!formData.childAddress?.trim()) {
       toast.error("Please enter the child's address.");
-      return;
-    }
-    if (!formData.observerID.trim()) {
-      toast.error("Hey there! Your Observer ID is missing.");
       return;
     }
 
@@ -119,7 +115,7 @@ const LoginPage = () => {
       console.log(response);
       setLocalStorageValue(LOCALSTORAGE.START_USER, response.profile, true);
       dispatch({ type: "RESET_SURVEY_DATA" });
-      router.push(PAGE_ROUTES.SURVEY.path);
+      router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path);
     } catch (error) {
       console.error("API call error:", error);
       toast.error("Something went wrong. Please try again!");
@@ -153,7 +149,7 @@ const LoginPage = () => {
                 <div className="ml-3">
                   <p className="text-sm text-red-700 font-medium">
                     <strong>WARNING:</strong>{" "}
-                    {childData?.childID
+                    {childData?.childId
                       ? `Download or upload the survey data before removing the child`
                       : `You must add a child in order to start the survey.`}
                   </p>
@@ -165,7 +161,7 @@ const LoginPage = () => {
         <div className="w-full flex items-center justify-end px-12 gap-4 ">
           <Button
             variant={"default"}
-            disabled={!childData?.childID}
+            disabled={!childData?.childId}
             className="flex items-center gap-2"
           >
             <svg
@@ -187,7 +183,7 @@ const LoginPage = () => {
           </Button>
           <Button
             variant={"outline"}
-            disabled={!childData?.childID}
+            disabled={!childData?.childId}
             className="flex items-center gap-2"
           >
             <svg

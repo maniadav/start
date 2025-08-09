@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!member?.userId && !publicRoutes.includes(currentPath)) {
       router.push(PAGE_ROUTES.LOGIN.path);
     }
-    if (surveyRoutes.includes(currentPath) && !user?.childID) {
+    if (surveyRoutes.includes(currentPath) && !user?.childId) {
       router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
     }
     setLoading(false);

@@ -42,7 +42,7 @@ export async function GET(
     const data = {
       profile: {
         childID: existingProfile.user_id || null,
-        childDOB: existingProfile.dob || null,
+        childDob: existingProfile.dob || null,
         childName: existingProfile.name || null,
         childAddress: existingProfile.address || null,
         childGender: existingProfile.gender || null,

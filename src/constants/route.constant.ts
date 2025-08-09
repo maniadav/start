@@ -85,6 +85,10 @@ export const PAGE_ROUTES = {
         label: "CHILD",
         path: "/management/observer/child",
       },
+      SURVEY: {
+        label: "Survey",
+        path: "/management/observer/survey",
+      },
     },
   },
 };
