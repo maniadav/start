@@ -77,7 +77,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -100,10 +100,14 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              className="w-full"
+              disabled={isLoading}
+              onClick={(e) => handleSubmit(e)}
+            >
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>

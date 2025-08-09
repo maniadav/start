@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const showFooter = footerRoutes.includes(path);
 
   useEffect(() => {
-    if (!member?.user_id && !publicRoutes.includes(currentPath)) {
+    if (!member?.userId && !publicRoutes.includes(currentPath)) {
       router.push(PAGE_ROUTES.LOGIN.path);
     }
     if (surveyRoutes.includes(currentPath) && !user?.childID) {

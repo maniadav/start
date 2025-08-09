@@ -4,26 +4,82 @@ import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
 import ChildProfileModel from "@models/child.model";
 import ObserverProfileModel from "@models/observer.profile.model";
+import mongoose from "mongoose";
 
 export async function POST(request: Request) {
+  let session = null;
+
   try {
     await connectDB();
 
-    const body = await request.json();
-    const { childID, childName, childAddress, childGender, childDOB } = body;
-
-    // Validate required fieldsi
-    if (!childID || !childName || !childGender) {
+    // Parse request body safely
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
       return NextResponse.json(
-        { error: "Child ID, Name and Gender are required" },
+        { error: "Invalid JSON in request body" },
         { status: 400 }
       );
     }
 
+    const { childID, childName, childAddress, childGender, childDOB } = body;
+
+    // validation with specific error messages
+    const validationErrors = [];
+    if (!childID || typeof childID !== "string" || !childID.trim()) {
+      validationErrors.push(
+        "Child ID is required and must be a non-empty string"
+      );
+    }
+    if (!childName || typeof childName !== "string" || !childName.trim()) {
+      validationErrors.push(
+        "Child name is required and must be a non-empty string"
+      );
+    }
+    if (
+      !childGender ||
+      !["male", "female", "other"].includes(childGender.toLowerCase())
+    ) {
+      validationErrors.push(
+        "Child gender is required and must be one of: male, female, other"
+      );
+    }
+    if (childDOB && isNaN(new Date(childDOB).getTime())) {
+      validationErrors.push("Child date of birth must be a valid date format");
+    }
+
+    if (validationErrors.length > 0) {
+      return NextResponse.json(
+        { error: "Validation failed", details: validationErrors },
+        { status: 400 }
+      );
+    }
+
+    // Authenticate and verify observer
     const authHeader = request.headers.get("authorization");
-    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
+    if (!authHeader) {
+      return NextResponse.json(
+        { error: "Authorization header is required" },
+        { status: 401 }
+      );
+    }
+
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader, [
       "observer",
     ]);
+
+    // Check if child ID already exists
+    const existingChild = await ChildProfileModel.findOne({
+      user_id: childID.trim(),
+    });
+
+    if (existingChild) {
+      return NextResponse.json(
+        { error: "Child ID already exists" },
+        { status: 409 }
+      );
+    }
 
     const observerProfile = await ObserverProfileModel.findOne({
       user_id: user_id,
@@ -36,11 +92,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // Start a session for transaction
+    session = await mongoose.startSession();
+    session.startTransaction();
+
     const newUser = new ChildProfileModel({
       name: childName.trim(),
       address: childAddress?.trim() || "",
-      gender: childGender,
-      dob: childDOB,
+      gender: childGender.toLowerCase(),
+      dob: childDOB ? new Date(childDOB) : null,
       user_id: childID.trim(),
       observer_id: observerProfile._id,
       organisation_id: observerProfile.organisation_id,
@@ -52,38 +112,60 @@ export async function POST(request: Request) {
 
     const child = await newUser.save();
 
+    // Log success
+    console.log(
+      `[child/create] Child profile created successfully: ${child.user_id}`
+    );
+
     return NextResponse.json(
       {
         message: "Profile created successfully",
         profile: {
-          childID: child.user_id || null,
-          childDOB: child.dob || null,
-          childName: child.name || null,
-          childAddress: child.address || null,
-          childGender: child.gender || null,
-          observerID: child.observer_id || null,
-          organisationID: child.organisation_id || null,
-          surveyDate: child.survey_date || null,
-          surveyNote: child.survey_note || null,
-          surveyStatus: child.survey_status || null,
-          surveyAttempt: child.survey_attempt || null,
-          dateJoined: child.date_joined || null,
+          id: child._id.toString(),
+          childID: child.user_id,
+          childDOB: child.dob,
+          childName: child.name,
+          childAddress: child.address,
+          childGender: child.gender,
+          observerID: child.observer_id.toString(),
+          organisationId: child.organisation_id.toString(),
+          surveyDate: child.survey_date,
+          surveyNote: child.survey_note,
+          surveyStatus: child.survey_status,
+          surveyAttempt: child.survey_attempt,
+          dateJoined: child.date_joined,
         },
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("[child/create] Error creating child profile:", error);
+  } catch (error: any) {
+
+    console.error(
+      "[child/create] Error creating child profile:",
+      error.statusCode || 500,
+      error.message || error
+    );
+
     if (error instanceof TokenUtilsError) {
-      throw error;
+      return NextResponse.json(
+        { error: "Authentication error", message: error.message },
+        { status: error.statusCode || 401 }
+      );
     }
 
     if (error instanceof ProfileUtilsError) {
-      throw error;
+      return NextResponse.json(
+        { error: "Profile error", message: error.message },
+        { status: error.statusCode || 400 }
+      );
     }
 
+    // Don't expose internal error details to client
     return NextResponse.json(
-      { error: "Failed to create child" },
+      {
+        error: "Failed to create child profile",
+        requestId: Date.now().toString(36),
+      },
       { status: 500 }
     );
   }

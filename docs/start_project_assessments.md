@@ -39,8 +39,8 @@ Every assessment captures the following base metrics:
 | `attempt{n}_screenHeight` | Device screen height (pixels) |
 | `attempt{n}_screenWidth` | Device screen width (pixels) |
 | `attempt{n}_deviceType` | Type of device used |
-| `userID` | Unique user identifier |
-| `userDOB` | User's date of birth |
+| `userId` | Unique user identifier |
+| `userDob` | User's date of birth |
 | `userGender` | User's gender |
 
 ## Task-Specific Metrics

@@ -26,8 +26,8 @@ These fields are shared across all tasks:
 | `attempt<attempt_number>_screenHeight`      | Device Screen height in pixel                              |
 | `attempt<attempt_number>_screenWidth`       | Device Screen width in pixel                               |
 | `attempt<attempt_number>_deviceType`        | Device Type                                                |
-| `userID`                                    | Unique identifier for the user                             |
-| `userDOB`                                   | Date of birth of the user                                  |
+| `userId`                                    | Unique identifier for the user                             |
+| `userDob`                                   | Date of birth of the user                                  |
 | `userGender`                                | Gender of the user                                         |
 
 ## Assessment Specific Data Metrics

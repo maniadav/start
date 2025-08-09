@@ -13,8 +13,8 @@ export const getInitialSurveyState = () => {
     attempt1: {},
     attempt2: {},
     attempt3: {},
-    userID: childID,
-    userDOB: childDOB,
+    userId: childID,
+    userDob: childDOB,
     userGender: childGender,
     observerID,
   });
