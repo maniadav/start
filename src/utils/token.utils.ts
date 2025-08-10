@@ -1,9 +1,13 @@
+import { HttpStatusCode } from "enums/HttpStatusCode";
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import type { StringValue } from "ms";
 // Custom error classes for better error handling
 class TokenUtilsError extends Error {
   public statusCode: number;
-  constructor(message = "Token error", statusCode: number = 498) {
+  constructor(
+    message = "Token error",
+    statusCode: number = HttpStatusCode.Forbidden
+  ) {
     super(message);
     this.name = "TokenUtilsError";
     this.statusCode = statusCode;
@@ -53,7 +57,10 @@ class TokenUtils {
           : tokenOrHeader;
 
       if (!token) {
-        throw new TokenUtilsError("Token is required for verification", 401);
+        throw new TokenUtilsError(
+          "Token is required for verification",
+          HttpStatusCode.Unauthorized
+        );
       }
       const decoded = jwt.verify(token, this.JWT_SECRET, {
         ignoreExpiration: false,
@@ -64,29 +71,47 @@ class TokenUtils {
       }; // Use JwtPayload and extend with custom payload
 
       if (decoded.type !== type) {
-        throw new TokenUtilsError(`Not a valid token type`, 401);
+        throw new TokenUtilsError(
+          `Not a valid token type`,
+          HttpStatusCode.Unauthorized
+        );
       }
 
       const { role, email } = decoded;
       if (!role || !email) {
-        throw new TokenUtilsError("Token missing required credentials", 401);
+        throw new TokenUtilsError(
+          "Token missing required credentials",
+          HttpStatusCode.Unauthorized
+        );
       }
       return { role, email };
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
-        // If access token expired, send 498 to trigger refresh on frontend
+        // If access token expired, send HttpStatusCode.Forbidden to trigger refresh on frontend
         if (type === "access") {
-          throw new TokenUtilsError(`Expired access token`, 498);
+          throw new TokenUtilsError(
+            `Expired access token`,
+            HttpStatusCode.Forbidden
+          );
         }
-        // If refresh token expired, send 401 (invalid)
+        // If refresh token expired, send HttpStatusCode.Unauthorized); (invalid)
         if (type === "refresh") {
-          throw new TokenUtilsError(`Expired refresh token`, 401);
+          throw new TokenUtilsError(
+            `Expired refresh token`,
+            HttpStatusCode.Unauthorized
+          );
         }
       }
       if (err instanceof jwt.JsonWebTokenError) {
-        throw new TokenUtilsError(`Invalid ${type} token: ${err.message}`, 401);
+        throw new TokenUtilsError(
+          `Invalid ${type} token: ${err.message}`,
+          HttpStatusCode.Unauthorized
+        );
       }
-      throw new TokenUtilsError(`Token verification failed`, 401);
+      throw new TokenUtilsError(
+        `Token verification failed`,
+        HttpStatusCode.Unauthorized
+      );
     }
   }
 }

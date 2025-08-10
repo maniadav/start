@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
     if (!refreshHeader) {
       return NextResponse.json(
         { error: "Refresh token required" },
-        { status: 401 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

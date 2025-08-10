@@ -4,6 +4,7 @@ import OrganisationProfileModel from "@models/organisation.profile.model";
 import UserModel from "@models/user.model";
 import { ProfileUtils } from "@utils/profile.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 /**
  * Deletes an observer and associated data
@@ -26,7 +27,7 @@ export async function DELETE(
     if (!observer_id || observer_id.trim() === "") {
       return NextResponse.json(
         { error: "Observer ID is required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

@@ -6,6 +6,7 @@ import {
   clearLocalStorageValue,
   getLocalStorageValue,
 } from "@utils/localStorage";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 /**
  * StartAPI Class for handling Next.js internal API routes
@@ -124,15 +125,15 @@ class StartAPI {
     const data = await response.json();
 
     if (!response.ok) {
-      // Handle unauthorized case
-      if (response.status === 401) {
+      // invalid refresh tokenU
+      if (response.status === HttpStatusCode.Unauthorized) {
         clearLocalStorageValue();
         await clearEntireIndexedDB();
         window.location.href = PAGE_ROUTES.LOGIN.path;
       }
 
       // Handle token refresh case
-      if (response.status === 498) {
+      if (response.status === HttpStatusCode.Forbidden) {
         // Try to get a new access token using refresh token
         const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
         const refreshToken = member?.rToken;

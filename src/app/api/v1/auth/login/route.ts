@@ -7,6 +7,7 @@ import OrganisationProfileModel from "@models/organisation.profile.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import { PasswordUtils } from "@utils/password.utils";
 import TokenUtils from "@utils/token.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
     } catch (e) {
       return NextResponse.json(
         { error: "Invalid JSON in request body" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -27,14 +28,14 @@ export async function POST(req: Request) {
     if (!email || typeof email !== "string" || !email.trim()) {
       return NextResponse.json(
         { error: "Valid email is required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
     if (!password || typeof password !== "string") {
       return NextResponse.json(
         { error: "Password is required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
     if (!user || !isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
-        { status: 401 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -119,7 +120,7 @@ export async function POST(req: Request) {
       default:
         return NextResponse.json(
           { error: "Invalid user role" },
-          { status: 400 }
+          { status: HttpStatusCode.BadRequest }
         );
     }
 

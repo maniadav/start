@@ -4,6 +4,7 @@ import OrganisationProfileModel from "@models/organisation.profile.model";
 import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils } from "@utils/profile.utils";
 import UserModel from "@models/user.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function DELETE(
   request: Request,
@@ -18,7 +19,7 @@ export async function DELETE(
     if (!organisation_id) {
       return NextResponse.json(
         { error: "Organisation ID is required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

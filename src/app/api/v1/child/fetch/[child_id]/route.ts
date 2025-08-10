@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import { ProfileUtils } from "@utils/profile.utils";
 import ChildModel from "@models/child.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
+
 export async function GET(
   request: Request,
   { params }: { params: { child_id: string } }
@@ -17,7 +19,7 @@ export async function GET(
     if (!child_id) {
       return NextResponse.json(
         { error: "Child ID is required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

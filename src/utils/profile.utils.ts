@@ -1,5 +1,6 @@
 import UserModel from "@models/user.model";
 import TokenUtils, { TokenUtilsError } from "./token.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 // Environment-aware logger function
 const logger = (message: string, data?: any) => {
@@ -10,7 +11,10 @@ const logger = (message: string, data?: any) => {
 
 export class ProfileUtilsError extends Error {
   public statusCode: number;
-  constructor(message = "Profile verification error", statusCode = 401) {
+  constructor(
+    message = "Profile verification error",
+    statusCode = HttpStatusCode.Forbidden
+  ) {
     super(message);
     this.name = "ProfileUtilsError";
     this.statusCode = statusCode;

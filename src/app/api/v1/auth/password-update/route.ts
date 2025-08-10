@@ -4,6 +4,7 @@ import UserModel from "@models/user.model";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { ValidatorUtils } from "@helper/validator";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(req: Request) {
   try {
@@ -11,14 +12,17 @@ export async function POST(req: Request) {
     if (!oldPassword || !password) {
       return NextResponse.json(
         { error: "Both old password and new password are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
     const validatorMessage = ValidatorUtils.validatePassword(password);
 
     if (validatorMessage) {
-      return NextResponse.json({ error: validatorMessage }, { status: 400 });
+      return NextResponse.json(
+        { error: validatorMessage },
+        { status: HttpStatusCode.BadRequest }
+      );
     }
 
     const authHeader = req.headers.get("authorization");
@@ -43,7 +47,7 @@ export async function POST(req: Request) {
     if (!isOldPasswordValid) {
       return NextResponse.json(
         { error: "Invalid old password" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -73,9 +77,9 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error updating password:", error);
 
-      if (err instanceof TokenUtilsError) {
-        throw err;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     return NextResponse.json(
       { error: "Failed to update password" },

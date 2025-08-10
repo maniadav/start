@@ -412,7 +412,7 @@ This API is structured to support a medical research platform focused on early d
 1. Global error interceptor for common errors:
 
    - 401 -> Token refresh/Login
-   - 403 -> Permission denied
+   - 403 -> Permission denied, Invalid Access Token
    - 404 -> Not found page
    - 500 -> Error page
 

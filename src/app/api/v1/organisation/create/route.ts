@@ -6,6 +6,7 @@ import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     if (!name || !email || !address) {
       return NextResponse.json(
         { error: "Name, email, and address are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -92,9 +93,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating organisation:", error);
 
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

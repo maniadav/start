@@ -4,6 +4,7 @@ import UserModel from "@models/user.model";
 import TokenModel from "@models/token.model";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
     if (!token || !password) {
       return NextResponse.json(
         { error: "Token and password are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
     if (!tokenDoc) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 401 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -76,10 +77,7 @@ export async function POST(req: Request) {
     console.error("Error in password reset:", error);
 
     if (error instanceof TokenUtilsError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.statusCode || 401 }
-      );
+      throw error;
     }
 
     return NextResponse.json(

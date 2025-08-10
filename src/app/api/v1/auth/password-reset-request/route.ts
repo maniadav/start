@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import UserModel from "@models/user.model";
 import TokenUtils from "@utils/token.utils";
-import TempTokenModel from "@models/temp.token.model";
+import TempTokenModel from "@models/temp-token.model";
 import { BASE_URL } from "@constants/config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { sendGmail } from "@utils/gmail.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 interface RequestBody {
   email?: string;
@@ -17,7 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (!email) {
       return NextResponse.json(
         { message: "Please provide an email address." },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

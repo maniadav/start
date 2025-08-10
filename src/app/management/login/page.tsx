@@ -101,7 +101,7 @@ export default function LoginPage() {
               />
             </div>
             <Button
-              className="w-full"
+              className="w-full cursor-pointer"
               disabled={isLoading}
               onClick={(e) => handleSubmit(e)}
             >

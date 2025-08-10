@@ -3,6 +3,7 @@ import connectDB from "@lib/mongodb";
 import { TokenUtilsError } from "@utils/token.utils";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import FilesModel from "@models/file.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     if (!task_id || !file_url || !file_size) {
       return NextResponse.json(
         { error: "Task ID, file URL, and file size are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -67,9 +68,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating file record:", error);
 
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

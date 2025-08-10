@@ -6,6 +6,7 @@ import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     if (!name || !email || !address || !password) {
       return NextResponse.json(
         { error: "Name, email, address, and password are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -105,9 +106,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating observer:", error);
 
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

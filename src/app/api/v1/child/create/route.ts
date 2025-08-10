@@ -5,6 +5,7 @@ import { TokenUtilsError } from "@utils/token.utils";
 import ChildProfileModel from "@models/child.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import mongoose from "mongoose";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   let session = null;
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
     } catch (e) {
       return NextResponse.json(
         { error: "Invalid JSON in request body" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
           message: "missing required details",
           details: validationErrors,
         },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
     if (!authHeader) {
       return NextResponse.json(
         { error: "Authorization header is required" },
-        { status: 401 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -150,10 +151,7 @@ export async function POST(request: Request) {
     );
 
     if (error instanceof TokenUtilsError) {
-      return NextResponse.json(
-        { error: "Authentication error", message: error.message },
-        { status: error.statusCode || 401 }
-      );
+      throw error;
     }
 
     if (error instanceof ProfileUtilsError) {

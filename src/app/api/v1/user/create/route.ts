@@ -6,6 +6,7 @@ import { ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { ModelUtils, Role } from "@utils/model.utils";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     if (!name || !email || !address || !role || !password) {
       return NextResponse.json(
         { error: "Name, email, address, role, and password are required" },
-        { status: 400 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
@@ -94,9 +95,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating organisation:", error);
 
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     if (error instanceof ProfileUtilsError) {
       return NextResponse.json({ error: error.message }, { status: 403 });
