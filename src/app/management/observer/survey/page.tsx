@@ -20,7 +20,7 @@ const SurveyPage = () => {
   const { user } = useAuth();
   const router = useRouter();
   useEffect(() => {
-    if (!user || !user?.userId) {
+    if (!user || !user?.childId) {
       router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
     }
   }, [router, user]);

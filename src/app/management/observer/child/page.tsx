@@ -108,12 +108,15 @@ const LoginPage = () => {
       toast.error("Please enter the child's address.");
       return;
     }
+    if (!formData.childGender?.trim()) {
+      toast.error("Please enter the child's address.");
+      return;
+    }
 
     try {
       const response = await START_API.child.create({
         ...formData,
       });
-      console.log(response);
       setLocalStorageValue(LOCALSTORAGE.START_USER, response.profile, true);
       dispatch({ type: "RESET_SURVEY_DATA" });
       router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path);
@@ -224,7 +227,7 @@ const LoginPage = () => {
 
               <div className="w-full flex-1 mt-8">
                 <div className="mx-auto max-w-2xl">
-                  <ChildSearch handleDataFetch={handleDataFetch} />
+                  {!data && <ChildSearch handleDataFetch={handleDataFetch} />}
 
                   <div className="relative my-12">
                     <div className="absolute inset-0 flex items-center">
@@ -232,7 +235,9 @@ const LoginPage = () => {
                     </div>
                     <div className="relative flex justify-center">
                       <span className="bg-white px-4 text-sm font-medium text-primary uppercase">
-                        or add a new child
+                        {data
+                          ? "removed child in order to add new one"
+                          : " or add a new child"}
                       </span>
                     </div>
                   </div>

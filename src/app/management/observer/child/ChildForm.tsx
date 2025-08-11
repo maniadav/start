@@ -1,5 +1,4 @@
 import React from "react";
-import { compareAsc, format } from "date-fns";
 
 const ChildForm = ({
   data,
@@ -9,7 +8,6 @@ const ChildForm = ({
   handleFormSubmit,
 }: any) => {
   return (
-    console.log("Rendering ChildForm with data:", data),
     <div>
       <div className="grid grid-cols-2 gap-4">
         <div className="mt-4">
@@ -88,15 +86,6 @@ const ChildForm = ({
             onChange={handleInputChange}
             disabled={!!data}
           />
-
-          <div className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white">
-            <p>
-              {data?.childDob
-                ? format(new Date(data.childDob), "yyyy-MM-dd")
-                : "N/A"}
-              {data?.childDob || "will check"}
-            </p>
-          </div>
         </div>
 
         {/* Child Gender Input */}
@@ -151,7 +140,7 @@ const ChildForm = ({
       </div>
       <button
         disabled={!!data}
-        onClick={() => handleFormSubmit()}
+        onClick={() => handleFormSubmit(formData)}
         className="mt-5 tracking-wide font-semibold bg-primary text-gray-100 w-full py-3 rounded-lg hover:bg-primary/80 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
       >
         <svg

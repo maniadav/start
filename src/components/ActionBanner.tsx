@@ -51,7 +51,10 @@ const ActionBanner = () => {
                     </a>
                   </Link>
                 ) : (
-                  <Link href={PAGE_ROUTES.SURVEY.path} legacyBehavior>
+                  <Link
+                    href={PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path}
+                    legacyBehavior
+                  >
                     <a className="capitalize flex gap-2 flex-row w-full items-center justify-center px-5 py-3 text-sm font-medium text-center text-gray-200 border border-gray-200 rounded-lg sm:w-auto hover:bg-gray-700 focus:ring-4 focus:ring-gray-100 bg-primary">
                       <IconSurvey width="1.5" height="1.5" />
                       <p>{languageContent.buttons.startSurvey}</p>

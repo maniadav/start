@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       name: childName.trim(),
       address: childAddress?.trim() || "",
       gender: childGender.toLowerCase(),
-      dob: childDob ? new Date(childDob) : null,
+      dob: childDob,
       user_id: childId.trim(),
       observer_id: observerProfile._id,
       organisation_id: observerProfile.organisation_id,
