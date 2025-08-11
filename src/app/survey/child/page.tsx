@@ -12,7 +12,7 @@ import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
 
 interface LoginDataType {
-  childID: string;
+  childId: string;
   childName: string;
   childGender: string;
   childDob: string;
@@ -21,7 +21,7 @@ interface LoginDataType {
 
 const LoginPage = () => {
   const [formData, setFormData] = useState<LoginDataType>({
-    childID: "",
+    childId: "",
     childName: "",
     childGender: "",
     childDob: "",
@@ -142,8 +142,8 @@ const LoginPage = () => {
                       className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                       type="text"
                       placeholder="Enter Child's ID"
-                      id="childID"
-                      name="childID"
+                      id="childId"
+                      name="childId"
                       value={formData.childId}
                       onChange={handleInputChange}
                     />

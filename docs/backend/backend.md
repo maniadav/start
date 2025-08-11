@@ -254,10 +254,9 @@ This API is structured to support a medical research platform focused on early d
 
 ### `GET /api/v1/child/fetch/{child_id}`
 
-- **Description:** Fetch a child profile by ID (admin only).
+- **Description:** Fetch a child profile by ID.
 - **Path:** `child_id`
-- **Body:** `{ details?, files? }`
-- **Authentication:** Bearer access token (admin)
+- **Authentication:** Bearer access token (admin/observer)
 - **Response:** Child profile or error
 
 ---

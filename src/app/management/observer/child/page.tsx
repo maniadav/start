@@ -65,17 +65,19 @@ const LoginPage = () => {
   const { dispatch } = useSurveyContext();
 
   const handleDataFetch = async ({ childId }: any) => {
+    if (!childId) {
+      toast.error("Please enter a valid Child ID.");
+      return;
+    }
     try {
+      toast("Fetching child details...");
       const response = await START_API.child.fetch(childId);
-      if (response.success) {
-        setData(response.data.profile);
-        toast.success(response.message || "Child details fetched successfully");
-      } else {
-        toast.error(response.message || "Failed to fetch child details");
-      }
-    } catch (error) {
+      setData(response.data);
+      setLocalStorageValue(LOCALSTORAGE.START_USER, response.data, true);
+      toast.success(response.message || "Child details fetched successfully");
+    } catch (error: any) {
       console.error("Error fetching child details:", error);
-      toast.error("An error occurred while fetching child details.");
+      toast.error(error?.message || "Failed to fetch child details");
     }
   };
 

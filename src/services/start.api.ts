@@ -194,7 +194,7 @@ class StartAPI {
 
       throw {
         status: response.status,
-        message: data.error || "Something went wrong",
+        message: data.error || data.message || "client: Something went wrong",
         data,
       };
     }

@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
-const ChildSearch = ({ handleDataFetch }: any) => {
+interface ChildSearchProps {
+  handleDataFetch: ({ childId }: { childId: string }) => void;
+}
+
+const ChildSearch = ({ handleDataFetch }: ChildSearchProps) => {
+  const [childId, setChildId] = useState("");
+
   return (
     <div className="w-full mt-5">
       <h3 className="text-md font-semibold text-gray-700 mb-3">
@@ -13,11 +19,13 @@ const ChildSearch = ({ handleDataFetch }: any) => {
           placeholder="Enter Child ID"
           id="fetchChildID"
           name="fetchChildID"
+          value={childId}
+          onChange={(e) => setChildId(e.target.value)}
         />
         <button
           type="button"
           className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition duration-200"
-          onClick={() => handleDataFetch()}
+          onClick={() => handleDataFetch({ childId })}
         >
           <div className="flex items-center gap-2">
             <svg

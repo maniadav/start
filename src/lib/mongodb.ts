@@ -55,3 +55,20 @@ async function connectDB() {
 }
 
 export default connectDB;
+
+const toObjectIdSafe = (
+  value:
+    | string
+    | number
+    | mongoose.mongo.BSON.ObjectId
+    | Uint8Array<ArrayBufferLike>
+    | mongoose.mongo.BSON.ObjectIdLike
+) => {
+  if (!value) return value; 
+  if (mongoose.Types.ObjectId.isValid(value)) {
+    return new mongoose.Types.ObjectId(value);
+  }
+  return value; 
+};
+
+export { toObjectIdSafe };

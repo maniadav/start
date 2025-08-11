@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface LoginDataType {
-  childID: string;
+  childId: string;
   childName: string;
   childGender: string;
   childDob: string;
