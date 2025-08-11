@@ -5,7 +5,7 @@ export const getInitialSurveyState = () => {
   const user = getCurrentUser() || {};
   const member = getCurrentMember() || {};
   const { childID, childDob, childGender } = user;
-  const { userId: observerID } = member;
+  const { userId: observerId } = member;
 
   const createTaskData = (assessment_id: string): any => ({
     assessment_id,
@@ -16,7 +16,7 @@ export const getInitialSurveyState = () => {
     userId: childID,
     userDob: childDob,
     userGender: childGender,
-    observerID,
+    observerId,
   });
 
   return TASK_TYPE.reduce((state, taskId) => {

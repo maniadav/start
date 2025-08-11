@@ -13,7 +13,7 @@ interface LoginDataType {
   childName: string;
   childGender: string;
   childDob: string;
-  observerID: string;
+  observerId: string;
 }
 
 const SurveyPage = () => {

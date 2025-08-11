@@ -16,7 +16,7 @@ interface LoginDataType {
   childName: string;
   childGender: string;
   childDob: string;
-  observerID: string;
+  observerId: string;
 }
 
 const LoginPage = () => {
@@ -25,7 +25,7 @@ const LoginPage = () => {
     childName: "",
     childGender: "",
     childDob: "",
-    observerID: "",
+    observerId: "",
   });
 
   const router = useRouter();
@@ -195,8 +195,8 @@ const LoginPage = () => {
                       className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                       type="text"
                       placeholder="Enter Your ID"
-                      id="observerID"
-                      name="observerID"
+                      id="observerId"
+                      name="observerId"
                       value={formData.observerId}
                       onChange={handleInputChange}
                     />

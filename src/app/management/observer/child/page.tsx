@@ -9,13 +9,14 @@ import { v4 as uuidv4 } from "uuid";
 import { BASE_URL } from "@constants/config.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import SidebarTrigger from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@management/SidebarTrigger";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useAuth } from "state/provider/AuthProvider";
 import { Button } from "@management/components/ui/button";
 import ChildForm from "./ChildForm";
 import ChildSearch from "./ChildSearch";
 import StartUtilityAPI from "@services/start.utility";
+import ChildRemovePopup from "components/popup/ChildRemovePopup";
 
 interface LoginDataType {
   childId: string;
@@ -33,6 +34,7 @@ const generateUniqueID = () => {
 
 const LoginPage = () => {
   const [data, setData] = useState<any>(null);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const { member, user: childData } = useAuth();
   const [formData, setFormData] = useState<LoginDataType>({
     childId: childData?.childId || "",
@@ -127,11 +129,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center space-x-2">
-        <SidebarTrigger />
-        <h2 className="text-3xl font-bold tracking-tight">Add Child</h2>
-      </div>
+    <div className="p-4 md:p-8">
+      <SidebarTriggerComp title="Child Management" />
+      <ChildRemovePopup
+        showFilter={showPopup}
+        closeModal={() => setShowPopup(!showPopup)}
+      />
 
       <Card>
         <CardHeader>
@@ -166,6 +169,7 @@ const LoginPage = () => {
           <Button
             variant={"default"}
             disabled={!childData?.childId}
+            onClick={() => setShowPopup(true)}
             className="flex items-center gap-2"
           >
             <svg

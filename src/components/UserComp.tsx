@@ -1,9 +1,10 @@
 "use client";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
+import { useAuth } from "state/provider/AuthProvider";
 
 const ContentPage = () => {
-  const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
+  const { user } = useAuth();
 
   return (
     <div className="flex justify-center items-center p-8 lg:p-12">

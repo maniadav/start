@@ -48,7 +48,7 @@ export async function GET(
         childName: existingProfile.name || null,
         childAddress: existingProfile.address || null,
         childGender: existingProfile.gender || null,
-        observerID: existingProfile.observer_id || null,
+        observerId: existingProfile.observer_id || null,
         organisationId: existingProfile.organisation_id || null,
         surveyDate: existingProfile.survey_date || null,
         surveyNote: existingProfile.survey_note || null,

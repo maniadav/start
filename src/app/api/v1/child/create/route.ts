@@ -132,7 +132,7 @@ export async function POST(request: Request) {
           childName: child.name,
           childAddress: child.address,
           childGender: child.gender,
-          observerID: child.observer_id.toString(),
+          observerId: child.observer_id.toString(),
           organisationId: child.organisation_id.toString(),
           surveyDate: child.survey_date,
           surveyNote: child.survey_note,

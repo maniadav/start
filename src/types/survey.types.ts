@@ -49,7 +49,7 @@ export interface SurveyDataType {
   userId: string;
   userDob: string;
   userGender: string;
-  observerID: string;
+  observerId: string;
   attempt1: Partial<SurveyAttemptDataType>;
   attempt2: Partial<SurveyAttemptDataType>;
   attempt3: Partial<SurveyAttemptDataType>;
