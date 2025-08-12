@@ -7,17 +7,17 @@ import React, {
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { getLocalStorageValue } from "@utils/localStorage";
+import { LOCALSTORAGE } from "@constants/storage.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import AuthContext from "state/context/AuthContext";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import LoadingSection from "components/section/loading-section";
-import { getCurrentMember, getCurrentUser } from "@utils/auth.utils";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
-  const user = getCurrentUser();
-  const member = getCurrentMember();
+  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
   const router = useRouter();
   const path = usePathname();
   const currentPath = path.split("?")[0];
@@ -44,27 +44,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  // survey specific routes
-  const surveyRoutes = useMemo(() => [PAGE_ROUTES.SURVEY.path], []);
-
   const showFooter = footerRoutes.includes(path);
 
   useEffect(() => {
-    if (!member?.userId && !publicRoutes.includes(currentPath)) {
-      router.push(PAGE_ROUTES.LOGIN.path);
-    }
-    if (surveyRoutes.includes(currentPath) && !user?.childId) {
-      router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
+    if (!user?.childID && !publicRoutes.includes(currentPath)) {
+      router.push(PAGE_ROUTES.LOGIN.path); // Redirect to login if not authenticated
     }
     setLoading(false);
-  }, [member, router, path, publicRoutes, currentPath]);
+  }, [user, router, path, publicRoutes, currentPath]);
 
   if (loading) {
     return <LoadingSection />;
   }
 
   return (
-    <AuthContext.Provider value={{ user, member }}>
+    <AuthContext.Provider value={{ user }}>
       <>
         {showFooter && <Header />}
         {children}

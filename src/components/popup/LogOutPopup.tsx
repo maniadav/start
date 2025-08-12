@@ -1,9 +1,11 @@
 "use client";
-import { PAGE_ROUTES } from "@constants/route.constant";
+import { API_ENDPOINT } from "@constants/api.constant";
 import { IndexDB_Storage } from "@constants/storage.constant";
-import { removeIndexedDBValue } from "@utils/indexDB";
+import { clearEntireIndexedDB, removeIndexedDBValue } from "@utils/indexDB";
 import { clearLocalStorageValue } from "@utils/localStorage";
-import { handleBatchDownload } from "components/BatchDataDownloadButton";
+import BatchDataDownloadButton, {
+  handleBatchDownload,
+} from "components/BatchDataDownloadButton";
 import { PopupModal } from "components/common/PopupModal";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,7 +37,7 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
       clearLocalStorageValue();
 
       dispatch({ type: "RESET_SURVEY_DATA" });
-      router.push(`${PAGE_ROUTES.LOGIN.path}`);
+      router.push(`${API_ENDPOINT.auth.login}`);
     } catch (err) {
       console.error("Data cleanup error:", err);
       alert("Failed to clear data. Please try again.");

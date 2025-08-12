@@ -36,8 +36,8 @@ const commonDataMetrics = [
     description: "Device Screen width in pixels",
   },
   { key: "attempt<attempt_number>_deviceType", description: "Device Type" },
-  { key: "userId", description: "Unique identifier for the user" },
-  { key: "userDob", description: "Date of birth of the user" },
+  { key: "userID", description: "Unique identifier for the user" },
+  { key: "userDOB", description: "Date of birth of the user" },
   { key: "userGender", description: "Gender of the user" },
 ];
 

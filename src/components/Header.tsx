@@ -9,10 +9,6 @@ import LanguageToggle from "./LanguageToggle";
 import { BASE_URL } from "@constants/config.constant";
 import LogOutPopupModal from "./popup/LogOutPopup";
 import { NAV_ROUTES, PAGE_ROUTES } from "@constants/route.constant";
-import {
-  clearLocalStorageValue,
-  removeLocalStorageValue,
-} from "@utils/localStorage";
 
 export const Header = () => {
   const [mounted, setMounted] = useState(false);
@@ -20,17 +16,12 @@ export const Header = () => {
   const pathname = usePathname();
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const router = useRouter();
-  const { member } = useAuth();
+  const { user } = useAuth();
   const handleLogout = () => {
-    if (member?.userId) {
-      if (member.role === "observer") {
-        setShowPopup(!showPopup);
-      } else {
-        clearLocalStorageValue();
-        router.push(`${PAGE_ROUTES.AUTH.LOGIN.path}`);
-      }
+    if (user?.childID) {
+      setShowPopup(!showPopup);
     } else {
-      router.push(`${PAGE_ROUTES.AUTH.LOGIN.path}`);
+      router.push(`${PAGE_ROUTES.LOGIN.path}`);
     }
   };
 
@@ -58,7 +49,7 @@ export const Header = () => {
         border-b border-white/10 glassmorphism`}
         style={{ border: "1.5px solid rgba(255,255,255,0.12)" }}
       >
-        <Link href="/" className="flex items-center gap-2 pr-4">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src={`${BASE_URL}/icons/start-rounded-96.png`}
             alt="START Logo"
@@ -70,26 +61,18 @@ export const Header = () => {
             START
           </span>
         </Link>
-        <ul className="hidden md:flex gap-6 items-center text-white/90 font-medium">
+        <ul className="hidden md:flex gap-4 items-center text-white/90 font-medium">
           {Object.values(NAV_ROUTES).map((route) => (
             <li key={route.path} className="relative group">
               <Link
                 href={route.path}
-                className={`flex items-center gap-1 transition rounded-lg px-2 py-1.5
+                className={`transition rounded-none px-3 py-1 uppercase
                   ${pathname === route.path ? "text-primary font-bold" : ""}`}
               >
-                {/* {route.icon && (
-                  <CommonIcon
-                    icon={route.icon}
-                    height={18}
-                    width={18}
-                    className={pathname === route.path ? "text-primary" : ""}
-                  />
-                )} */}
-                <span className="uppercase">{route.label}</span>
+                {route.label}
                 <span
                   className={`absolute left-0 -bottom-0.5 h-[2px] w-full bg-primary origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100
-                    ${pathname === route.path ? "scale-x-100" : ""}`}
+                    ${pathname === route.path ? "hidden" : ""}`}
                   aria-hidden="true"
                 />
               </Link>
@@ -101,14 +84,14 @@ export const Header = () => {
           <div className="flex gap-2 relative group">
             <button className="flex items-center px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition border border-white/20">
               <Image
-                src={member?.profile.image || `${BASE_URL}/svg/user.svg`}
+                src={user?.profile || `${BASE_URL}/svg/user.svg`}
                 alt="User"
                 className="rounded-full h-8 w-8 object-cover border border-gray-400"
                 width={32}
                 height={32}
               />
               <span className="ml-2 hidden md:block text-sm text-white/80">
-                {mounted ? `Hi, ${member?.profile.name || "user"}` : ""}
+                {mounted ? `Hi, ${user?.childName || "user"}` : ""}
               </span>
               {/* <CommonIcon
                 icon="material-symbols:arrow-drop-up"
@@ -122,13 +105,13 @@ export const Header = () => {
               className="cursor-pointer gap-2 text-white/80 flex items-center px-2 py-1 rounded-full bg-primary hover:bg-black transition-color duration-300 ease-in-out border border-white/20"
             >
               <span className="ml-2 hidden md:block text-sm">
-                {mounted ? `${member?.userId ? "Logout" : "Sign In"}` : ""}
+                {mounted ? `${user?.childID ? "Logout" : "Sign In"}` : ""}
               </span>
               <CommonIcon
                 icon="ri:logout-circle-r-line"
                 height={20}
                 width={20}
-                rotate={member?.userId ? 120 : 90}
+                rotate={user?.childID ? 120 : 90}
               />
             </button>
           </div>

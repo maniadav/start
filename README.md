@@ -1,22 +1,6 @@
 # START Project
 
-The START project is a modern web application built for early detection of autism risk by non-specialist health workers in low-resource settings. This mobile-first, progressive web app (PWA) provides a modular, open-source platform for conducting various assessments.
-
-## Tech Stack
-
-- **Framework**: [Next.js](https://nextjs.org/) with TypeScript
-- **Styling**: [TailwindCSS](https://tailwindcss.com/)
-- **PWA Support**: Full offline capability with service workers
-- **Deployment**: Supports both standard deployment and GitHub Pages
-
-## Key Features
-
-- 🔄 Multiple assessment types with retry capabilities
-- 📱 Responsive design optimized for tablets and mobile devices
-- 🔌 Offline-first architecture
-- 🎯 Real-time data collection and analysis
-- 🌐 Multi-language support
-- 📊 Comprehensive data export functionality
+The START project aims to develop a mobile, modular, open-source platform for early detection of autism risk by non-specialist health workers in low-resource settings.
 
 ## Field Study Results
 
@@ -26,9 +10,11 @@ Results from the field study in India using the app are available:
 - [Individual Component Results 1](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0265587)
 - [Individual Component Results 2](https://arxiv.org/abs/2111.04064)
 
+The code for the START app is available for free on GitHub: [START Repository](https://github.com/Manishyadav514/START).
+
 ## Project Overview
 
-The initial phase of the project was supported by the [Medical Research Council UK](http://www.mrc.ac.uk) Global Challenge Research Fund and focused on India. The START platform combines parent reports and direct child assessments to detect autism risk in children aged 2-5 years.
+The initial phase of the project was supported by the [Medical Research Council UK](http://www.mrc.ac.uk) Global Challenge Research Fund and focused on India. The START platform uses a combination of parent reports and direct child assessments to detect autism risk in children aged 2-5 years. The tablet-based assessment includes several small tests, questionnaires, and observations, briefly described [here](/overview).
 
 ## Integration with STREAM
 
@@ -62,8 +48,8 @@ These fields are shared across all tasks:
 | `attempt<attempt_number>_screenHeight`      | Device Screen height in pixel                              |
 | `attempt<attempt_number>_screenWidth`       | Device Screen width in pixel                               |
 | `attempt<attempt_number>_deviceType`        | Device Type                                                |
-| `userId`                                    | Unique identifier for the user                             |
-| `userDob`                                   | Date of birth of the user                                  |
+| `userID`                                    | Unique identifier for the user                             |
+| `userDOB`                                   | Date of birth of the user                                  |
 | `userGender`                                | Gender of the user                                         |
 
 ## Assessment Specific Data Metrics
@@ -131,80 +117,15 @@ Each task has additional specific fields required for different purposes:
 | `attempt<attempt_number>_gazeDirection` | Direction of gaze movement (**left** or **right**)          |
 | `attempt<attempt_number>_gazeVidType`   | Type of video used for gaze tracking (social or non-social) |
 
-# Development
-
-## Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/Manishyadav514/START.git
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-## Project Structure
-
-```
-src/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   ├── content/           # Content pages
-│   ├── management/        # Management interface
-│   ├── survey/           # Survey components
-│   ├── task/             # Assessment tasks
-│   └── testing/          # Testing utilities
-├── components/           # Shared components
-├── constants/            # Configuration constants
-├── hooks/               # Custom React hooks
-├── lib/                 # Core utilities
-├── models/              # Data models
-├── services/            # External service integrations
-├── state/              # State management
-└── utils/              # Helper utilities
-
-public/                  # Static assets
-├── audio/              # Audio files
-├── gif/                # GIF animations
-├── icons/              # App icons
-├── image/              # Static images
-├── model/              # ML models
-├── svg/                # SVG assets
-└── video/              # Video content
-```
-
 # Deployment
+## Deployment on gh-pages
 
-## Standard Deployment
-
-The app can be built and deployed to any hosting platform that supports Next.js applications:
-
-```bash
-# Build the application
-npm run build
-
-# Start production server
-npm start
-```
-
-## GitHub Pages Deployment
-
-1. Configure base URL in `config.constant.ts`:
-
+1. Assets will be fetched from URLs related to your GitHub account. Update the base URL in your config constant accordingly, for example:
    ```ts
    export const BASE_URL = "/start";
    ```
+2. Set the `isGithub` flag to `true` in your `next.config.mjs` file.
+3. Update asset paths in `public/manifest.json` to use the correct base path (e.g., `/<your_github_repo>/icons/icon-192.png`).
+4. Ensure all static assets and routes reference the correct base path for GitHub Pages deployment.
+5. Deploy your app to GitHub Pages as usual.
 
-2. Enable GitHub Pages settings:
-
-   - Set `isGithub` flag to `true` in `next.config.mjs`
-   - Update asset paths in `public/manifest.json`
-   - Configure GitHub repository settings
-
-3. Deploy:
-   ```bash
-   npm run deploy
-   ```

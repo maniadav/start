@@ -9,11 +9,11 @@ interface msgPopUp {
   showFilter: boolean;
   onRequestClose?: any;
   onProcessComplete: any;
-  showPopupActionButton: boolean;
+  reAttemptUrl: string | null;
 }
 const VidProcessingPopup = ({
   showFilter,
-  showPopupActionButton,
+  reAttemptUrl,
   taskID,
   attempt,
 }: msgPopUp) => {
@@ -26,7 +26,7 @@ const VidProcessingPopup = ({
           <div className="relative bg-white rounded-lg shadow ">
             <div className="p-4 md:p-5 space-y-4">
               <MediaPipeHandler
-                showAction={showPopupActionButton}
+                reAttemptUrl={reAttemptUrl}
                 showFilter={showFilter}
                 attempt={attempt}
                 taskID={taskID}

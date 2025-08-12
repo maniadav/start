@@ -32,17 +32,13 @@ export const PopupModal = ({
     <div
       role="dialog"
       aria-modal="true"
-      className={`inset-0 fixed w-screen h-screen z-[9999] flex items-center justify-center ${
+      className={`inset-0 fixed w-screen h-screen z-[9999] bg-black bg-opacity-60 transition-all duration-500 ease-linear flex items-center justify-center ${
         show
-          ? "opacity-100 pointer-events-auto bg-black bg-opacity-60"
-          : "opacity-0 pointer-events-none bg-black bg-opacity-0"
-      } transition-all duration-500 ease-linear`}
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
+      }`}
       style={{ pointerEvents: show ? "auto" : "none" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget && onRequestClose) {
-          onRequestClose();
-        }
-      }}
+      onClick={() => onRequestClose && onRequestClose()}
     >
       <div
         className={`relative transition-transform duration-500 ease-linear w-full h-full ${getSlideClass()} ${

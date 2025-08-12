@@ -38,12 +38,11 @@ export const SurveyReducer = (state: SurveyState, action: Action): any => {
       return { ...state, ...action.payload };
 
     case "UPDATE_SURVEY_DATA":
-      console.log("action.attempt", action.attempt);
       return {
         ...state,
         [action.task]: {
           ...state[action.task],
-          noOfAttempt: action?.attempt,
+          noOfAttempt: action.attempt,
           [`attempt${action.attempt}`]: {
             ...state[action.task]?.[`attempt${action?.attempt}`],
             ...action.data,

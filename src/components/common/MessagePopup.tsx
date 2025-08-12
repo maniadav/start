@@ -7,13 +7,13 @@ interface msgPopUp {
   onRequestClose?: any;
   msg: string;
   testName: string;
-  showAction?: boolean;
+  reAttemptUrl: string | null;
 }
 const MessagePopup = ({
   showFilter,
   msg,
   testName,
-  showAction = false,
+  reAttemptUrl,
 }: msgPopUp) => {
   const router = useRouter();
 
@@ -64,11 +64,11 @@ const MessagePopup = ({
               >
                 Go to Dashboard
               </button>
-              {showAction && (
+              {reAttemptUrl && (
                 <button
                   onClick={() => {
                     if (window.location) {
-                      window.location.reload();
+                      window.location.href = reAttemptUrl;
                     }
                   }}
                   className={`cursor-pointer ms-3 text-gray-200 bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5`}
