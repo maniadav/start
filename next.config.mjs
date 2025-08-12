@@ -1,7 +1,7 @@
 import withSerwist from "@serwist/next";
 
 const isGithub = false;
-const disableSerwist = true; // set to true to disable Serwist caching for localhost
+const disableSerwist = false; // set to true to disable Serwist caching for localhost
 
 const nextConfig = {
   output: isGithub ? "export" : undefined,
