@@ -41,3 +41,40 @@ export interface Coordinate {
   x: number;
   y: number;
 }
+
+// common data in each survey
+export interface SurveyDataType {
+  assessmentID: string;
+  noOfAttempt: number;
+  userId: string;
+  userDob: string;
+  userGender: string;
+  observerId: string;
+  attempt1: Partial<SurveyAttemptDataType>;
+  attempt2: Partial<SurveyAttemptDataType>;
+  attempt3: Partial<SurveyAttemptDataType>;
+}
+
+export interface SurveyAttemptDataType {
+  timeTaken: string;
+  timeLimit: string;
+  endTime: string;
+  startTime: string;
+  closedWithTimeout: boolean;
+  screenHeight: string;
+  screenWidth: string;
+  deviceType: string;
+  closedMidWay: boolean;
+}
+
+//SURVEY RELATED SPECIFIC DATA TYPES in addion to the common data types
+// delayed gratification survey data
+export interface DGTAttemptDataType extends SurveyAttemptDataType {}
+
+export interface TimerDataType {
+  startTime: string;
+  endTime: string;
+  timeLimit: number;
+  isTimeOver: boolean;
+  timeTaken: number;
+}

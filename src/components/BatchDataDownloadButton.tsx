@@ -4,13 +4,18 @@ import { getLocalStorageValue } from "@utils/localStorage";
 import React from "react";
 import JSZip from "jszip";
 import { FaDownload } from "react-icons/fa6";
+import { downloadMediaUtilities } from "@utils/download.utils";
+import {
+  LanguageSamplingContent,
+  MotorFollowingContent,
+} from "@constants/tasks.constant";
 
 export const handleBatchDownload = async () => {
   const survey: any = await getIndexedDBValue(
     IndexDB_Storage.surveyDB,
     IndexDB_Storage.surveyData
   );
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
 
@@ -20,17 +25,36 @@ export const handleBatchDownload = async () => {
     // Add each survey entry to the ZIP
     Object.keys(survey).forEach((id) => {
       const data = survey[id];
-      const fileName = `child_id_${user.childID}_${id}_${formattedDate}.csv`;
+      const rawfileName = `child_${user.childId}_observer_${user.observerId}_${id}_${formattedDate}`;
+      const fileName = `${rawfileName}.csv`;
+
+      if (id === MotorFollowingContent.id) {
+        try {
+          const imageCount = downloadMediaUtilities("image", fileName);
+        } catch (error) {
+          console.error("Error downloading images:", error);
+        }
+      }
+
+      if (id === LanguageSamplingContent.id) {
+        try {
+          const audioCount = downloadMediaUtilities("audio", fileName);
+        } catch (error) {
+          console.error("Error downloading audio files:", error);
+        }
+      }
       const csvContent = generateCsv(data);
       zip.file(fileName, csvContent);
     });
+
+    //  downlaod media files seperately
 
     // Generate and download ZIP
     const zipBlob = await zip.generateAsync({ type: "blob" });
     const zipUrl = URL.createObjectURL(zipBlob);
     const zipLink = document.createElement("a");
     zipLink.href = zipUrl;
-    zipLink.download = `start_child_id_${user.childID}_observer_id_${user.observerID}_${formattedDate}.zip`;
+    zipLink.download = `start_child_id_${user.childId}_observer_id_${user.observerId}_${formattedDate}.zip`;
     zipLink.click();
     URL.revokeObjectURL(zipUrl); // Clean up memory
   }

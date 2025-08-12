@@ -10,23 +10,23 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  webpack: (config) => {
-    // rule for .task files
-    config.module.rules.push({
-      test: /\.task$/,
-      type: "asset/resource",
-      generator: {
-        filename: "static/[hash][ext][query]", // Custom output path
-      },
-    });
-    return config;
-  },
+  // webpack: (config) => {
+  //   // rule for .task files
+  //   config.module.rules.push({
+  //     test: /\.task$/,
+  //     type: "asset/resource",
+  //     generator: {
+  //       filename: "static/[hash][ext][query]", // Custom output path
+  //     },
+  //   });
+  //   return config;
+  // },
 };
 
 const configExport = disableSerwist
   ? nextConfig
   : withSerwist({
-      swSrc: "src/app/sw.ts",
+      swSrc: "src/pwa/pwa.sw.ts",
       swDest: "public/sw.js",
     })(nextConfig);
 

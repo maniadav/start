@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { IndexDB_Storage } from "@constants/storage.constant";
-import DepthEstimation from "app/wheel-task/DepthEstimation";
+import DepthEstimation from "app/task/wheel-task/DepthEstimation";
 import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { BASE_URL } from "@constants/config.constant";
@@ -34,21 +34,12 @@ const Page = () => {
 
   return (
     <div className="w-screen h-screen">
-      {/* <TouchPressureComponent /> */}
-      {/* <video
-        className="h-full w-full rounded-lg bg-gray-800"
-        id="webcam"
-        src={vidSRC}
-        autoPlay
-        playsInline
-      ></video> */}
       <PopupModal show={true}>
         <MediaPipeHandler
           showFilter={true}
-          reAttemptUrl={"reAttemptUrl"}
+          showAction={true}
           attempt={0}
           taskID={TasksConstant.PreferentialLookingTask.id}
-          // videoURL={`${BASE_URL}/large.mp4`}
         />
       </PopupModal>
     </div>

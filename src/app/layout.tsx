@@ -6,7 +6,8 @@ import { AuthProvider } from "state/provider/AuthProvider";
 import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
-import ServiceWorkerUpdater from "../components/ServiceWorkerUpdater";
+import ServiceWorkerUpdater from "../pwa/ServiceWorkerUpdater";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,19 +28,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SurveyProvider>
-      <LanguageProvider>
-        <html lang={"en"}>
+    <html lang={"en"}>
+      <SurveyProvider>
+        <LanguageProvider>
           <body className={inter.className}>
             <GameWrapper>
               <AuthProvider>
                 <ServiceWorkerUpdater />
                 {children}
+                <Toaster />
               </AuthProvider>
             </GameWrapper>
           </body>
-        </html>
-      </LanguageProvider>
-    </SurveyProvider>
+        </LanguageProvider>
+      </SurveyProvider>
+    </html>
   );
 }

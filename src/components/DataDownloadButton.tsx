@@ -1,4 +1,9 @@
 import { IndexDB_Storage, LOCALSTORAGE } from "@constants/storage.constant";
+import {
+  LanguageSamplingContent,
+  MotorFollowingContent,
+} from "@constants/tasks.constant";
+import { downloadMediaUtilities } from "@utils/download.utils";
 import { getIndexedDBValue } from "@utils/indexDB";
 import { getLocalStorageValue } from "@utils/localStorage";
 import React from "react";
@@ -11,14 +16,26 @@ function DataDownloadButton({ id }: { id: string }) {
       IndexDB_Storage.surveyDB,
       IndexDB_Storage.surveyData
     );
-    const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+    const user = getLocalStorageValue(LOCALSTORAGE.START_USER, true);
 
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    const fileName = `child_id_${user.childID}_observer_id_${user.observerID}_${id}_${formattedDate}`;
+    const fileName = `child_${user.childId}_observer_${user.observerId}_${id}_${formattedDate}`;
 
     const data = survey[id];
-    // downloadDictionaryAsFiles(data.attempt1, fileName);
+
+    const mediaTypeMap: Record<string, "image" | "audio"> = {
+      [MotorFollowingContent.id]: "image",
+      [LanguageSamplingContent.id]: "audio",
+    };
+
+    const mediaType = mediaTypeMap[id];
+
+    if (mediaType) {
+      const mediaCount = await downloadMediaUtilities(mediaType, fileName);
+      console.log(`${mediaType} files downloaded: ${mediaCount}`);
+    }
+
     jsonToCsv(data, fileName);
   };
 

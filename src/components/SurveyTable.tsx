@@ -103,14 +103,7 @@ const SurveyTable = () => {
                                   <button
                                     onClick={() =>
                                       router.push(
-                                        `/${
-                                          TasksConstant[items].surveyRoute
-                                        }?attempt=${
-                                          parseInt(
-                                            state?.[items]?.noOfAttempt || 0,
-                                            10
-                                          ) + 1
-                                        }`
+                                        `/${TasksConstant[items].surveyRoute}`
                                       )
                                     }
                                     className="cursor-pointer"
@@ -139,7 +132,7 @@ const SurveyTable = () => {
                 <div className="mt-12 flex flex-col justify-center gap-y-5 sm:mt-10 sm:flex-row sm:gap-y-0 sm:gap-x-6">
                   <Link
                     className="group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900 animate-fade-in-left"
-                    href={PAGE_ROUTES.UPLOAD.path}
+                    href={PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY_UPLOAD.path}
                   >
                     <FaUpload />
                     <span className="ml-3">Upload Survey</span>

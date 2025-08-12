@@ -1,9 +1,10 @@
 "use client";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { getLocalStorageValue } from "@utils/localStorage";
+import { useAuth } from "state/provider/AuthProvider";
 
 const ContentPage = () => {
-  const user = getLocalStorageValue(LOCALSTORAGE.LOGGED_IN_USER, true);
+  const { user } = useAuth();
 
   return (
     <div className="flex justify-center items-center p-8 lg:p-12">
@@ -18,12 +19,12 @@ const ContentPage = () => {
           <div className="flex flex-row gap-2 items-center align-middle">
             <h3 className="text-base md:text-lg font-semibold">User ID:</h3>
             <p className="capitalize text-xs md:text-sm">
-              {user?.childID ?? "1232"}
+              {user?.childId ?? "1232"}
             </p>
           </div>
           <div className="flex flex-row gap-2 items-center align-middle">
             <h3 className="text-base md:text-lg font-semibold">DOB:</h3>
-            <p className="text-xs md:text-sm">{user?.childDOB || "23/23/25"}</p>
+            <p className="text-xs md:text-sm">{user?.childDob || "23/23/25"}</p>
           </div>
           <div className="capitalize flex flex-row gap-2 items-center align-middle">
             <h3 className="text-base md:text-lg font-semibold">Gender:</h3>
@@ -31,7 +32,7 @@ const ContentPage = () => {
           </div>
           <div className="capitalize flex flex-row gap-2 items-center align-middle">
             <h3 className="text-base md:text-lg font-semibold">Observer ID:</h3>
-            <p className="capitalize text-xs md:text-sm">{user?.observerID}</p>
+            <p className="capitalize text-xs md:text-sm">{user?.observerId}</p>
           </div>
         </div>
         <div className="bg-sky-500 p-0.5 rounded-b-lg"></div>

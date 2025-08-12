@@ -1,0 +1,19 @@
+import { IAdminProfile } from "../admin.profle.model";
+
+export const dummyAdminProfiles: Partial<IAdminProfile>[] = [
+  {
+    // user_id will be set when users are created
+    address: "123 Research Center, New Delhi, India 110001",
+    name: "System Administrator",
+    email: "admin@example.com",
+    permission: {
+      manage_users: true,
+      manage_organizations: true,
+      manage_system: true,
+      view_all_data: true,
+      export_data: true,
+      manage_migrations: true,
+    },
+    status: "active",
+  },
+];
