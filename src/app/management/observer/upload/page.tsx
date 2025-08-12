@@ -1,56 +1,109 @@
-import React from "react";
-import Link from "next/link";
-import { PAGE_ROUTES } from "@constants/route.constant";
+"use client";
+import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "components/ui/card";
 import Upload from "./Upload";
+import {
+  Tabs,
+  TabsTrigger,
+  TabsList,
+  TabsContent,
+} from "@management/components/ui/tabs";
 
-const Page = () => {
+const UploadPage = () => {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Breadcrumb */}
-      <nav
-        className="text-sm mb-4 text-gray-500 flex items-center gap-2"
-        aria-label="Breadcrumb"
-      >
-        <Link
-          href={PAGE_ROUTES.HOME.path}
-          className="hover:underline text-primary font-semibold"
-        >
-          Home
-        </Link>
-        <span className="mx-1">/</span>
-        <Link
-          href={PAGE_ROUTES.SURVEY.path}
-          className="hover:underline text-primary font-semibold"
-        >
-          Survey
-        </Link>
-        <span className="mx-1">/</span>
-        <span className="text-gray-700">Upload</span>
-      </nav>
+    <div className="p-4 md:p-8">
+      <SidebarTriggerComp title="Uplaod Files" />
 
-      {/* Back Button */}
-      <Link
-        href={PAGE_ROUTES.SURVEY.path}
-        className="inline-flex items-center mb-6 text-primary hover:underline font-medium"
-      >
-        <span className="mr-2 text-lg">←</span> Back to Survey
-      </Link>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4 mt-4 rounded">
+              <div className="flex items-center">
+                <svg
+                  className="h-6 w-6 text-red-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700 font-medium">
+                    <strong>WARNING:</strong>{" "}
+                    {`upload the files you have downloaded`}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="upload-files" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 gap-2">
+              <TabsTrigger value="upload-files">Upload Own Files</TabsTrigger>
+              <TabsTrigger value="recorded-data">
+                Upload from Current Recorded Data
+              </TabsTrigger>
+              <TabsTrigger value="file-records">File Records</TabsTrigger>
+            </TabsList>
 
-      {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-extrabold text-primary mb-4 leading-tight">
-        Upload Your Survey Data
-      </h1>
+            <TabsContent value="upload-files" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload Files</CardTitle>
+                  <CardDescription>
+                    Upload JSON or CSV files for your tasks. Files will be
+                    automatically associated with tasks based on their names.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>zip upload section</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-      {/* Content */}
-      <p className="text-lg text-gray-700 mb-8 font-serif">
-        Easily upload your completed survey files here. Make sure your data is
-        accurate and complete before submitting. If you have any questions,
-        please refer to the survey instructions or contact support.
-      </p>
+            <TabsContent value="recorded-data" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recorded Data</CardTitle>
+                  <CardDescription>
+                    Upload files from current recorded data sessions.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Upload />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-      <Upload />
+            <TabsContent value="file-records" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>File Records</CardTitle>
+                  <CardDescription>
+                    View and manage all uploaded files with download options.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>File records table</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default Page;
+export default UploadPage;

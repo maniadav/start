@@ -127,6 +127,12 @@ flowchart TD
     API--response--> B
 ```
 
+## Database Hierarchy
+
+```
+
+```
+
 ## 6. Role Hierarchy and Permissions
 
 ### 6.1. System Administrator (Admin)
@@ -209,15 +215,14 @@ graph LR
 
 ### 7.3. Permission Matrix
 
-
 | Resource Type | Admin | Organisation | Observer | Public |
-| --------------- | ------- | -------------- | ---------- | -------- |
-| System Config | ✓    | ✗           | ✗       | ✗     |
-| Organisation  | ✓    | Read Only    | ✗       | ✗     |
-| Observer      | ✓    | ✓           | Self     | ✗     |
-| Child         | ✓    | ✓           | Assigned | ✗     |
-| Files         | ✓    | Own Org      | Own      | ✗     |
-| Health Check  | ✓    | ✓           | ✓       | ✓     |
+| ------------- | ----- | ------------ | -------- | ------ |
+| System Config | ✓     | ✗            | ✗        | ✗      |
+| Organisation  | ✓     | Read Only    | ✗        | ✗      |
+| Observer      | ✓     | ✓            | Self     | ✗      |
+| Child         | ✓     | ✓            | Assigned | ✗      |
+| Files         | ✓     | Own Org      | Own      | ✗      |
+| Health Check  | ✓     | ✓            | ✓        | ✓      |
 
 ### 7.4 Observer Task Assessment Flow
 

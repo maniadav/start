@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       gender: childGender.toLowerCase(),
       dob: childDob,
       user_id: childId.trim(),
-      observer_id: observerProfile._id,
+      observer_id: observerProfile.user_id,
       organisation_id: observerProfile.organisation_id,
       survey_note: "",
       date_joined: new Date(),
