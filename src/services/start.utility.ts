@@ -185,6 +185,12 @@ class StartUtilityAPI {
         data
       );
     },
+    upload: (data: any) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.files.upload}`,
+        data
+      );
+    },
   };
 }
 

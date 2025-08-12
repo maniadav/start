@@ -1,9 +1,7 @@
 "use client";
-
 import type React from "react";
-
-import { useState, useCallback } from "react";
-import { FiUpload, FiCheckCircle, FiAlertCircle, FiFile } from "react-icons/fi";
+import { useState } from "react";
+import { FiCheckCircle, FiAlertCircle, FiFile } from "react-icons/fi";
 
 import {
   Card,
@@ -16,6 +14,7 @@ import {
 import TASK_TYPE from "@constants/survey.type.constant";
 import FileDropZone from "components/common/FileDropZone";
 import Button from "components/common/Button";
+import StartUtilityAPI from "@services/start.utility";
 
 interface FileWithTask {
   file: File;
@@ -49,7 +48,8 @@ export default function Upload() {
   };
 
   // Upload a single file
-  const uploadFile = async (fileWithTask: FileWithTask): Promise<boolean> => {
+
+  const uploadFile = async (fileWithTask: FileWithTask): Promise<any> => {
     if (!fileWithTask.taskType) {
       alert(
         `Upload Failed: Could not determine task type for ${fileWithTask.file.name}`
@@ -61,31 +61,18 @@ export default function Upload() {
     const formData = new FormData();
     formData.append("file", fileWithTask.file);
     formData.append("taskType", fileWithTask.taskType);
-
+    setUploading(true);
     try {
-      // In a real app, you would replace this with your actual API endpoint
-      // const response = await fetch('/api/upload', {
-      //   method: 'POST',
-      //   body: formData
-      // })
+      console.log("Loading organisations...");
+      const START_API = new StartUtilityAPI();
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // if (!response.ok) throw new Error('Upload failed')
-
-      alert(
-        `Upload Successful: ${fileWithTask.file.name} uploaded for ${fileWithTask.taskType}`
-      );
-
-      return true;
+      const res = await START_API.files.upload(formData);
+      setFiles(res.data || []);
+      console.log("files data", res.data?.length || 0);
     } catch (error) {
-      alert(
-        `Upload Failed: Error uploading ${fileWithTask.file.name}: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-      return false;
+      console.error("Failed to load files:", error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -109,6 +96,24 @@ export default function Upload() {
           ...prev,
           [taskType]: true,
         }));
+
+        // Remove successfully uploaded files for this task
+        setFiles((prev) => prev.filter((f) => f.taskType !== taskType));
+
+        alert(
+          `Task Upload Complete: All files for ${taskType} uploaded successfully`
+        );
+      } else {
+        // Remove only the successfully uploaded files
+        const successfulUploads = taskFiles.filter(
+          (_, index) => results[index]
+        );
+        setFiles((prev) => prev.filter((f) => !successfulUploads.includes(f)));
+
+        const successCount = results.filter(Boolean).length;
+        alert(
+          `Partial Upload: ${successCount}/${taskFiles.length} files uploaded for ${taskType}`
+        );
       }
     } finally {
       setUploading(false);
@@ -127,12 +132,14 @@ export default function Upload() {
     try {
       const results = await Promise.all(files.map(uploadFile));
 
-      // Update uploaded tasks
+      // Update uploaded tasks and track successful uploads
       const newUploadedTasks: Record<string, boolean> = {};
+      const successfulUploads: FileWithTask[] = [];
 
       files.forEach((fileWithTask, index) => {
         if (fileWithTask.taskType && results[index]) {
           newUploadedTasks[fileWithTask.taskType] = true;
+          successfulUploads.push(fileWithTask);
         }
       });
 
@@ -141,9 +148,15 @@ export default function Upload() {
         ...newUploadedTasks,
       }));
 
-      // Remove uploaded files
-      const successfulUploads = files.filter((_, index) => results[index]);
+      // Remove successfully uploaded files from the list
       setFiles((prev) => prev.filter((f) => !successfulUploads.includes(f)));
+
+      // Show summary
+      const successCount = successfulUploads.length;
+      const totalCount = files.length;
+      alert(
+        `Upload Summary: ${successCount}/${totalCount} files uploaded successfully`
+      );
     } finally {
       setUploading(false);
     }

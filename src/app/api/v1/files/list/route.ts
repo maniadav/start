@@ -3,6 +3,7 @@ import connectDB from "@lib/mongodb";
 import { TokenUtilsError } from "@utils/token.utils";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import FilesModel from "@models/file.model";
+import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
     const authHeader = request.headers.get("authorization");
     const { user_id, role } = await ProfileUtils.verifyProfile(
       authHeader || "",
-      ["admin", "organisation"]
+      ["admin", "organisation", "observer"]
     );
 
     const url = new URL(request.url);
@@ -82,15 +83,15 @@ export async function GET(request: Request) {
         },
         data,
       },
-      { status: 200 }
+      { status: HttpStatusCode.Ok }
     );
   } catch (error) {
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
+    if (error instanceof TokenUtilsError) {
+      throw error;
+    }
 
     if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
+      throw error;
     }
 
     console.error("Error fetching files:", error);

@@ -11,7 +11,7 @@ export interface IFile extends Document {
   file_size: number;
   organisation_id: IOrganisationProfile["_id"];
   observer_id: IObserverProfile["_id"];
-  child_id: IChild["_id"];
+  child_id: IChild["user_id"];
   date_created: Date;
   file_url: string;
   last_updated: Date;
@@ -49,7 +49,7 @@ const FileSchema = new Schema<IFile>(
       required: [true, "Observer ID is required"],
     },
     child_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Child",
       required: [true, "Child ID is required"],
     },

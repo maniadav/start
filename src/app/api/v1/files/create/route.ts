@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const authHeader = request.headers.get("authorization");
     const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
       "admin",
-      "organisation",
+      "observer",
     ]);
 
     const body = await request.json();
@@ -30,6 +30,24 @@ export async function POST(request: Request) {
     if (!task_id || !file_url || !file_size) {
       return NextResponse.json(
         { error: "Task ID, file URL, and file size are required" },
+        { status: HttpStatusCode.BadRequest }
+      );
+    }
+    if (!organisation_id || organisation_id.trim() === "") {
+      return NextResponse.json(
+        { error: "organisation_id is required" },
+        { status: HttpStatusCode.BadRequest }
+      );
+    }
+    if (!observer_id || observer_id.trim() === "") {
+      return NextResponse.json(
+        { error: "observer_id is required" },
+        { status: HttpStatusCode.BadRequest }
+      );
+    }
+    if (!child_id || child_id.trim() === "") {
+      return NextResponse.json(
+        { error: "child_id is required" },
         { status: HttpStatusCode.BadRequest }
       );
     }
