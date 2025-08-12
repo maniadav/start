@@ -7,6 +7,7 @@ interface iconPropsType {
   flip?: "horizontal" | "vertical";
   rotate?: any;
   click?: (click: any) => any;
+  className?: string;
 }
 
 const CommonIcon = ({
@@ -16,6 +17,7 @@ const CommonIcon = ({
   flip,
   rotate,
   click,
+  className,
 }: iconPropsType) => {
   return (
     <Icon
@@ -24,6 +26,7 @@ const CommonIcon = ({
       width={width || 24}
       flip={flip}
       rotate={rotate}
+      className={className}
       onClick={() => {
         click && click(true);
       }}

@@ -1,20 +1,26 @@
+import path from "path";
+
 // header navigation
 export const NAV_ROUTES = {
   HOME: {
     label: "Home",
     path: "/",
+    icon: "material-symbols:home-outline",
   },
   SURVEY: {
     label: "Survey",
     path: "/survey",
+    icon: "material-symbols:list-alt-outline",
   },
   ABOUT: {
     label: "About",
     path: "/about",
+    icon: "material-symbols:info-outline",
   },
   DATA: {
     label: "Data",
     path: "/content",
+    icon: "material-symbols:database",
   },
 };
 
@@ -24,7 +30,14 @@ export const PAGE_ROUTES = {
     label: "Home",
     path: "/",
   },
-
+  AUTH: {
+    LOGIN: { label: "Login", path: "/management/login" },
+    REGISTER: { label: "Register", path: "/management/register" },
+    RESET_PASSWORD: {
+      label: "Reset Password",
+      path: "/auth/reset-password",
+    },
+  },
   ABOUT: {
     label: "About",
     path: "/about",
@@ -39,7 +52,7 @@ export const PAGE_ROUTES = {
   },
   LOGIN: {
     label: "Login",
-    path: "/auth/login",
+    path: "/management/login",
   },
   SURVEY: {
     label: "Survey",
@@ -48,5 +61,34 @@ export const PAGE_ROUTES = {
   UPLOAD: {
     label: "Upload",
     path: "/survey/upload",
+  },
+  MANAGEMENT: {
+    USER: { label: "Upload", path: "/management/upload" },
+    ADMIN: {
+      DASHBOARD: { label: "Dashboard", path: "/management/admin/dashboard" },
+      ORGANISATION: { label: "Organisation", path: "/management/admin/org" },
+    },
+    ORGANISATION: {
+      DASHBOARD: {
+        label: "Dashboard",
+        path: "/management/organisation/dashboard",
+      },
+      OBSERVER: { label: "Organisation", path: "/management/org/obs" },
+    },
+    OBSERVER: {
+      DASHBOARD: { label: "Dashboard", path: "/management/observer/dashboard" },
+      SURVEY_UPLOAD: {
+        label: "Upload Survey",
+        path: "/management/observer/upload",
+      },
+      CHILD: {
+        label: "CHILD",
+        path: "/management/observer/child",
+      },
+      SURVEY: {
+        label: "Survey",
+        path: "/management/observer/survey",
+      },
+    },
   },
 };

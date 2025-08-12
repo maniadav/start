@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "types": ["@serwist/next/typings"],
+    "types": ["@serwist/next/typings", "node"],
     "lib": ["dom", "dom.iterable", "esnext", "webworker"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -22,17 +22,21 @@
     "baseUrl": "./src",
     "paths": {
       "@components/*": ["comp/*"],
+      "@management/*": ["management/*"],
+      "@pages/*": ["pages/*"],
       "@utils/*": ["utils/*"],
       "@store/*": ["store/*"],
-      "@types/*": ["types/*"],
+      "@type/*": ["types/*"],
       "@services/*": ["services/*"],
       "@models/*": ["models/*"],
+      "@lib/*": ["lib/*"],
       "@hooks/*": ["hooks/*"],
       "@middleware/*": ["middleware/*"],
       "@helper/*": ["helper/*"],
       "@assets/*": ["assets/*"],
       "@constants/*": ["constants/*"],
-      "@context/*": ["context/*"]
+      "@context/*": ["context/*"],
+      "@data/*": ["data/*"]
     }
   },
   "include": [

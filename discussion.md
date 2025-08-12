@@ -1,0 +1,1 @@
+1. on organiation delete: Delete associated observers and files and child?

@@ -46,10 +46,10 @@ export interface Coordinate {
 export interface SurveyDataType {
   assessmentID: string;
   noOfAttempt: number;
-  userID: string;
-  userDOB: string;
+  userId: string;
+  userDob: string;
   userGender: string;
-  observerID: string;
+  observerId: string;
   attempt1: Partial<SurveyAttemptDataType>;
   attempt2: Partial<SurveyAttemptDataType>;
   attempt3: Partial<SurveyAttemptDataType>;
