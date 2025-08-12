@@ -224,42 +224,134 @@ graph LR
 | Files         | ✓     | Own Org      | Own      | ✗      |
 | Health Check  | ✓     | ✓            | ✓        | ✓      |
 
-### 7.4 Observer Task Assessment Flow
+### 7.4 Observer App Interaction Flow
 
 ```mermaid
-
 graph TD
-    %% Main flow
-    Observer[Observer] --> Login
-    Login[Login page] --> ChildAdded{"`Child Added`"}
-    Login --> RestorePass
-    ChildAdded --yes--> DashBoard
-    ChildAdded -- no --> AddChild
+    %% --- Main & Login Flow ---
+    observer("Observer") --> login["Login Page"];
+    login --> checkChild{"Child Session Active?"};
+    login --> restorePass["Restore Password"];
+    restorePass --> emailVerification["Email Verification"];
 
-    %% Restore Password
-    RestorePass[Restore Password] --> EmailVerification[Email verification]
+    %% --- Main Navigation Hub (Dashboard) ---
+    dashboard["Dashboard / Page Navigation"];
+    dashboard --> analytics["Analytics"];
+    dashboard --> settingsPage["Settings"];
+    dashboard --> surveyPage["Survey Page"];
+    dashboard --> uploadFiles["Upload Files Page"];
+    dashboard --> childManagement["Child Management Page"];
 
-    %% Add Child Path
-    AddChild[Add Child] -->DashBoard
+    %% --- Post-Login Routing ---
+    checkChild -- Yes --> dashboard;
+    checkChild -- No --> childManagement;
 
-    %% observer management dashbaord
-    DashBoard --> UploadFiles
-    DashBoard --> SurveyPage
-    DashBoard --> ChildManagement
+    %% --- Survey Page Flow ---
+    surveyPage --> testSelection["Select from available tasks"];
+    testSelection --> sampleTask["Instructions & Sample"];
+    sampleTask --> mainTask["Main Task"];
+    mainTask --> videoRecord{"Video Recorded?"};
+    videoRecord -- Yes --> processVideo[Process Video];
+    videoRecord -- No --> popUp[Save Data Pop-up];
+    processVideo --> popUp;
+    popUp -- "Saves Data" --> newTask{"Start Another Task?"};
+    newTask -- Yes --> sampleTask;
+    newTask -- No --> surveyPage;
+    surveyPage --> downloadSurveyData;
 
+    %% --- Upload Files Flow ---
+    uploadFiles --> uploadedFromDownload["From Downloaded Files"];
+    uploadFiles --> uploadFromRecordedData["From Recorded Data"];
 
+    %% --- Child Management Flow ---
+    childManagement -- "Search by ID" --> childAdded;
+    childManagement -- "Add Manually" --> childAdded;
 
-    SurveyPage[Survey Page] --> TestSelection
-    TestSelection[Select a task<br/>among avaliable task] --> SampleTask
-    SampleTask[Instruction & Sample ] --> MainTask
-    MainTask[Main Task] --> VideoRecord
-    VideoRecord{"`Video Recorded?`"}--yes--> ProcessVideo
-    ProcessVideo --> PopUp
-    VideoRecord -- no --> PopUp
-    PopUp -- saves data -->  NewTask
-    NewTask{"`Create a New Task?`"} -- yes --> SampleTask
-    NewTask -- no --> SurveyPage
+    childAdded{"Child Added / Selected"} --> removeChild[Remove Child];
+    childAdded --> downloadSurveyData;
+    childAdded --> dashboard;
 
+    removeChild --> popUp1{"Unsaved Data Alert!"};
+    popUp1 -- "Upload Data & Remove" --> uploadFiles;
+    popUp1 -- "Discard & Remove" --> childManagement;
+    popUp1 --> downloadSurveyData;
+
+    %% --- Shared Utility Node ---
+    downloadSurveyData["Download Survey Data"];
+
+    %% --- Styling ---
+    style downloadSurveyData fill:#cc0000,stroke:#600,stroke-width:2px,color:#fff;
+```
+
+### 7.5 Organisation App Interaction Flow
+
+```mermaid
+graph LR
+    %% --- Entry & Login Flow ---
+    orgUser("Organisation User") --> login["Login Page"];
+    login --> orgDashboard["Organisation Dashboard"];
+
+    %% --- Main Dashboard Hub & Navigation ---
+    orgDashboard -- "Manage Observers" --> observerManagement["Observer Management"];
+    orgDashboard -- "Manage Files" --> fileManagement["File Management"];
+    orgDashboard -- "View Analytics" --> analyticsPage["Analytics"];
+    orgDashboard -- "Account Settings" --> settingsPage["Settings"];
+
+    %% --- Observer Management Details ---
+    observerManagement --> listObservers["List All Observers"];
+    observerManagement --> addEditObserver["Add / Edit Observer Details"];
+    observerManagement --> deleteObserver["Delete Observer"];
+
+    %% --- File Management Details ---
+    fileManagement --> listDeleteFiles["List & Delete Own Files"];
+    fileManagement --> filterFiles["Filter Files by Observer, Child, or Date"];
+    fileManagement --> downloadData["Download Files (All or Filtered)"];
+
+    %% --- Analytics Details ---
+    analyticsPage --> viewReports["View Reports & Visualizations"];
+
+    %% --- Styling for Download Node ---
+    style downloadData fill:#cc0000,stroke:#600,stroke-width:2px,color:#fff;
+```
+
+### 7.6 Admin App Interaction Flow
+
+```mermaid
+graph LR
+    %% --- Entry & Login Flow ---
+    adminUser("Admin User") --> login["Login Page"];
+    login --> adminDashboard["Admin Dashboard"];
+
+    %% --- Main Dashboard Hub & Navigation ---
+    adminDashboard -- "Manage Organisations" --> orgManagement["Organisation Management"];
+    adminDashboard -- "Manage Observers" --> observerManagement["Observer Management"];
+    adminDashboard -- "Manage Files" --> fileManagement["File Management"];
+    adminDashboard -- "View Analytics" --> analyticsPage["Analytics"];
+    adminDashboard -- "System Settings" --> systemConfig["System Configuration"];
+
+    %% --- Organisation Management Details ---
+    orgManagement --> listOrgs["List / Search Organisations"];
+    orgManagement --> addEditOrg["Add / Edit Organisation"];
+    orgManagement --> deleteOrg["Delete Organisation"];
+    orgManagement --> toggleOrgStatus["Activate / Deactivate Organisation"];
+
+    %% --- Observer Management (Admin Oversight) ---
+    observerManagement --> adminListObservers["List All Observers"];
+    observerManagement --> adminEditObserver["Add / Edit Any Observer"];
+
+    %% --- File Management (Admin Oversight) ---
+    fileManagement --> adminListFiles["List All Files"];
+    fileManagement --> adminFilterFiles["Filter Files (by Org, Observer, etc.)"];
+    fileManagement --> adminDownload["Download Any File"];
+
+    %% --- System Configuration Details ---
+    systemConfig --> editFileServer["Edit File Storage Server"];
+    systemConfig --> manageApiKeys["Manage API Keys"];
+    systemConfig --> editEmailTemplates["Edit Email Templates"];
+
+    %% --- Styling for critical/destructive actions ---
+    style deleteOrg fill:#ff9999,stroke:#cc0000;
+    style systemConfig fill:#e6e0ff,stroke:#5a4fcf;
 ```
 
 ## 8. Security Measures
