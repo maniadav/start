@@ -233,14 +233,20 @@ graph TD
     Observer[Observer] --> Login
     Login[Login page] --> ChildAdded{"`Child Added`"}
     Login --> RestorePass
-    ChildAdded --yes--> SurveyPage
+    ChildAdded --yes--> DashBoard
     ChildAdded -- no --> AddChild
 
     %% Restore Password
     RestorePass[Restore Password] --> EmailVerification[Email verification]
 
     %% Add Child Path
-    AddChild[Add Child] -->SurveyPage
+    AddChild[Add Child] -->DashBoard
+
+    %% observer management dashbaord
+    DashBoard --> UploadFiles
+    DashBoard --> SurveyPage
+    DashBoard --> ChildManagement
+
 
 
     SurveyPage[Survey Page] --> TestSelection
