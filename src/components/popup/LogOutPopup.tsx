@@ -74,14 +74,14 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    className="cursor-pointer w-full p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all flex flex-col items-center md:flex-row md:items-center gap-3"
+                    className="cursor-pointer w-full p-4 bg-white rounded-lg border-2 border-red-300 hover:border-red-500 hover:bg-blue-50 transition-all duration-200 flex flex-col items-center md:flex-row md:items-center gap-3 shadow-md hover:shadow-lg hover:scale-105 transform"
                     onClick={() => handleBatchDownload()}
                   >
                     <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
                       <FaDownload className="w-8 h-8 md:w-6 md:h-6 text-blue-600" />
                     </div>
                     <div className="text-left w-full">
-                      <span className="block font-semibold text-base md:text-sm">
+                      <span className="block font-semibold text-base md:text-sm text-blue-800">
                         Download Locally
                       </span>
                       <span className="text-sm text-gray-600">
@@ -90,16 +90,18 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
                     </div>
                   </button>
                   <button
-                    className="cursor-pointer w-full p-4 bg-white rounded-lg border border-blue-200 hover:border-blue-400 transition-all flex flex-col items-center md:flex-row md:items-center gap-3"
+                    className="cursor-pointer w-full p-4 bg-white rounded-lg border-2 border-red-300 hover:border-red-500 hover:bg-blue-50 transition-all duration-200 flex flex-col items-center md:flex-row md:items-center gap-3 shadow-md hover:shadow-lg hover:scale-105 transform"
                     onClick={() => {
-                      alert("yet to connect with server");
+                      router.push(
+                        PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY_UPLOAD.path
+                      );
                     }}
                   >
                     <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
                       <FaUpload className="w-8 h-8 md:w-6 md:h-6 text-blue-600" />
                     </div>
                     <div className="text-left w-full">
-                      <span className="block font-semibold text-base md:text-sm">
+                      <span className="block font-semibold text-base md:text-sm text-blue-800">
                         Upload to Server
                       </span>
                       <span className="text-sm text-gray-600">
@@ -115,13 +117,13 @@ const LogOutPopupModal = ({ showFilter, closeModal }: msgPopUp) => {
             <div className="flex flex-col md:flex-row justify-end gap-3">
               <button
                 onClick={closeModal}
-                className="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors w-full md:w-auto"
+                className="px-6 py-3 text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg w-full md:w-auto"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleSecureLogout()}
-                className="px-5 py-2.5 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
+                className="px-6 py-3 text-white bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 w-full md:w-auto justify-center shadow-lg hover:shadow-xl hover:scale-105 transform"
               >
                 <FaSignOutAlt />
                 {isCleaningData ? "Cleaning..." : "Logout"}

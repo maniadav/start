@@ -9,10 +9,7 @@ import LanguageToggle from "./LanguageToggle";
 import { BASE_URL } from "@constants/config.constant";
 import LogOutPopupModal from "./popup/LogOutPopup";
 import { NAV_ROUTES, PAGE_ROUTES } from "@constants/route.constant";
-import {
-  clearLocalStorageValue,
-  removeLocalStorageValue,
-} from "@utils/localStorage";
+import { clearLocalStorageValue } from "@utils/localStorage";
 
 export const Header = () => {
   const [mounted, setMounted] = useState(false);
@@ -78,14 +75,6 @@ export const Header = () => {
                 className={`flex items-center gap-1 transition rounded-lg px-2 py-1.5
                   ${pathname === route.path ? "text-primary font-bold" : ""}`}
               >
-                {/* {route.icon && (
-                  <CommonIcon
-                    icon={route.icon}
-                    height={18}
-                    width={18}
-                    className={pathname === route.path ? "text-primary" : ""}
-                  />
-                )} */}
                 <span className="uppercase">{route.label}</span>
                 <span
                   className={`absolute left-0 -bottom-0.5 h-[2px] w-full bg-primary origin-left transition-transform duration-300 scale-x-0 group-hover:scale-x-100
@@ -110,12 +99,6 @@ export const Header = () => {
               <span className="ml-2 hidden md:block text-sm text-white/80">
                 {mounted ? `Hi, ${member?.profile.name || "user"}` : ""}
               </span>
-              {/* <CommonIcon
-                icon="material-symbols:arrow-drop-up"
-                height={25}
-                width={25}
-                rotate={90}
-              /> */}
             </button>
             <button
               onClick={handleLogout}
