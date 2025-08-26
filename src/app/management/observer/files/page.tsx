@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import SidebarTrigger from "@management/SidebarTrigger";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingSection from "components/section/loading-section";
 import StartUtilityAPI from "@services/start.utility";
 import { FileTable } from "app/management/admin/file/FileTable";
@@ -18,8 +18,9 @@ const ObserverFilesPage = () => {
       const START_API = new StartUtilityAPI();
 
       const res = await START_API.files.list();
-      setData(res.data || []);
-      console.log("files data", res.data?.length || 0);
+
+      setData(res.data.files || []);
+      console.log("files data", res || 0);
     } catch (error) {
       console.error("Failed to load files:", error);
     } finally {

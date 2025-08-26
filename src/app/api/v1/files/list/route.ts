@@ -1,19 +1,25 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import { TokenUtilsError } from "@utils/token.utils";
-import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import { ProfileUtils } from "@utils/profile.utils";
 import FilesModel from "@models/file.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import {
+  handleApiError,
+  createSuccessResponse,
+  createErrorResponse,
+} from "@utils/errorHandler";
 
 export async function GET(request: Request) {
   try {
     await connectDB();
 
     const authHeader = request.headers.get("authorization");
-    const { user_id, role } = await ProfileUtils.verifyProfile(
-      authHeader || "",
-      ["admin", "organisation", "observer"]
-    );
+
+    const { user_id, role } = await ProfileUtils.verifyProfile(authHeader, [
+      "admin",
+      "organisation",
+      "observer",
+    ]);
 
     const url = new URL(request.url);
     const queryParams = url.searchParams;
@@ -26,28 +32,32 @@ export async function GET(request: Request) {
     // Build filter object based on provided query parameters
     const filter: Record<string, any> = {};
 
-    if (queryParams.has("task_id")) {
-      filter.task_id = queryParams.get("task_id");
+    if (queryParams.has("taskId")) {
+      filter.task_id = queryParams.get("taskId");
     }
 
     if (role === "organisation") {
       // Organizations can only see their own files
       filter.organisation_id = user_id;
-    } else if (queryParams.has("organisation_id")) {
+    } else if (queryParams.has("organisationId")) {
       // Admins can filter by any organization
-      filter.organisation_id = queryParams.get("organisation_id");
+      filter.organisation_id = queryParams.get("organisationId");
     }
 
-    if (queryParams.has("observer_id")) {
-      filter.observer_id = queryParams.get("observer_id");
+    if (role === "observer") {
+      // Observers can only see their own files
+      filter.observer_id = user_id;
+    } else if (queryParams.has("observerId")) {
+      // Admins can filter by any observer
+      filter.observer_id = queryParams.get("observerId");
     }
 
-    if (queryParams.has("child_id")) {
-      filter.child_id = queryParams.get("child_id");
+    if (queryParams.has("childId")) {
+      filter.child_id = queryParams.get("childId");
     }
 
-    if (queryParams.has("date_created")) {
-      filter.date_created = queryParams.get("date_created");
+    if (queryParams.has("dateCreated")) {
+      filter.date_created = queryParams.get("dateCreated");
     }
 
     // Get total count for pagination
@@ -71,33 +81,18 @@ export async function GET(request: Request) {
       last_updated: file.last_updated || file.date_created || new Date(),
     }));
 
-    return NextResponse.json(
+    return createSuccessResponse(
       {
-        success: true,
-        count: data.length,
-        total: totalCount,
-        pagination: {
-          page,
-          limit,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        data,
+        files: data,
+        total: data.length,
+        page: page || 1,
+        limit: limit || 10,
       },
-      { status: HttpStatusCode.Ok }
+      HttpStatusCode.Ok,
+      "Files retrieved successfully"
     );
   } catch (error) {
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      throw error;
-    }
-
-    console.error("Error fetching files:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch file list" },
-      { status: 500 }
-    );
+    // Use the global error handler for consistent error responses
+    return handleApiError(error);
   }
 }

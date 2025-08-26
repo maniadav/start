@@ -73,7 +73,7 @@ class TokenUtils {
       if (decoded.type !== type) {
         throw new TokenUtilsError(
           `Not a valid token type`,
-          HttpStatusCode.Unauthorized
+          HttpStatusCode.Forbidden
         );
       }
 
@@ -81,20 +81,20 @@ class TokenUtils {
       if (!role || !email) {
         throw new TokenUtilsError(
           "Token missing required credentials",
-          HttpStatusCode.Unauthorized
+          HttpStatusCode.Forbidden
         );
       }
       return { role, email };
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
-        // If access token expired, send HttpStatusCode.Forbidden to trigger refresh on frontend
+        // If access token expired, send HttpStatusCode.Unauthorized
         if (type === "access") {
           throw new TokenUtilsError(
             `Expired access token`,
             HttpStatusCode.Forbidden
           );
         }
-        // If refresh token expired, send HttpStatusCode.Unauthorized); (invalid)
+        // If refresh token expired, send HttpStatusCode.Forbidden
         if (type === "refresh") {
           throw new TokenUtilsError(
             `Expired refresh token`,
@@ -103,14 +103,22 @@ class TokenUtils {
         }
       }
       if (err instanceof jwt.JsonWebTokenError) {
+        // For refresh tokens, return UNA on invalid token
+        if (type === "refresh") {
+          throw new TokenUtilsError(
+            `Invalid refresh token: ${err.message}`,
+            HttpStatusCode.Unauthorized
+          );
+        }
+        // For other token types, return Unauthorized
         throw new TokenUtilsError(
           `Invalid ${type} token: ${err.message}`,
-          HttpStatusCode.Unauthorized
+          HttpStatusCode.Forbidden
         );
       }
       throw new TokenUtilsError(
         `Token verification failed`,
-        HttpStatusCode.Unauthorized
+        HttpStatusCode.Forbidden
       );
     }
   }

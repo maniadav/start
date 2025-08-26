@@ -94,6 +94,11 @@ export function SideBar() {
       icon: LayoutDashboard,
     },
     {
+      title: "Uploaded Files",
+      url: "/management/observer/files",
+      icon: FileText,
+    },
+    {
       title: "Child",
       url: "/management/observer/child",
       icon: Users,

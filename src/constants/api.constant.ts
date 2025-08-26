@@ -48,5 +48,6 @@ export const API_ENDPOINT = {
     list: "/files/list",
     create: "/files/create",
     upload: "/files/upload-file",
+    aws: "/files/upload/aws",
   },
 };

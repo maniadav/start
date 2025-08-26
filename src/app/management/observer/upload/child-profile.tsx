@@ -8,10 +8,9 @@ import {
   Eye,
   Building2,
 } from "lucide-react";
-import { useAuth } from "state/provider/AuthProvider";
 
-const ChildProfile = () => {
-  const { user } = useAuth();
+const ChildProfile = ({ user }: { user: any }) => {
+  
   return (
     <div className="w-full">
       <div className="grid grid-cols-2 gap-6">

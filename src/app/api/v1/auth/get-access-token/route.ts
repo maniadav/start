@@ -4,9 +4,7 @@ import { HttpStatusCode } from "enums/HttpStatusCode";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const refreshHeader =
-      request.headers.get("authorization") || body.refreshToken;
+    const refreshHeader = request.headers.get("authorization");
     if (!refreshHeader) {
       return NextResponse.json(
         { error: "Refresh token required" },
@@ -26,8 +24,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ accessToken }, { status: 200 });
   } catch (err) {
     if (err instanceof TokenUtilsError) {
-      throw err;
+      return NextResponse.json(
+        {
+          error: err.message,
+          code: err.name,
+        },
+        { status: err.statusCode }
+      );
     }
+
     return NextResponse.json(
       { error: "Failed to generate access token" },
       { status: 500 }

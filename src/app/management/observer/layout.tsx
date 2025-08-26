@@ -30,22 +30,39 @@ export default function OrgnisationLayout({
   );
 
   useEffect(() => {
+    // Prevent infinite redirects by checking if we're already on the target route
+    if (!hasValidRole(member, ["observer"])) {
+      if (path !== PAGE_ROUTES.LOGIN.path) {
+        router.push(PAGE_ROUTES.LOGIN.path);
+      }
+      return;
+    }
+
+    // Check if user has required metadata for protected routes
     if (!user || !user?.childId) {
       if (protectedRoutes.includes(currentPath)) {
-        router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
+        if (path !== PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path) {
+          router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
+        }
         return;
       }
     }
-  }, [router, user, currentPath, protectedRoutes]);
+  }, [member, router, user, currentPath, protectedRoutes, path]);
 
-  useEffect(() => {
-    if (!hasValidRole(member, ["observer"])) {
-      router.push(PAGE_ROUTES.LOGIN.path);
-      return;
-    }
-  }, [member, router]);
+  // Show loading state while checking authentication
+  if (!member) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!member || !hasValidRole(member, ["observer"])) {
+  // Check role after member is loaded
+  if (!hasValidRole(member, ["observer"])) {
     return null;
   }
 

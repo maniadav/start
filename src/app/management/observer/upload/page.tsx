@@ -19,6 +19,12 @@ import { AlertTriangle } from "lucide-react";
 import ChildProfile from "./child-profile";
 
 const UploadPage = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="p-4 md:p-8">
       <SidebarTriggerComp title="Uplaod Files" />
@@ -46,7 +52,7 @@ const UploadPage = () => {
             </div>
           </div>
 
-          <ChildProfile />
+          <ChildProfile user={user} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="upload-files" className="w-full">
@@ -82,7 +88,7 @@ const UploadPage = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Upload />
+                  <Upload user={user} />
                 </CardContent>
               </Card>
             </TabsContent>

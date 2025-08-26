@@ -1,107 +1,82 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import { TokenUtilsError } from "@utils/token.utils";
-import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import { ProfileUtils } from "@utils/profile.utils";
 import FilesModel from "@models/file.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import { S3Service } from "@services/aws.s3.service";
 import AppConfig from "../../../../../../config/app.config";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import {
+  handleApiError,
+  createSuccessResponse,
+  createErrorResponse,
+} from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
     await connectDB();
 
-    // 1. Authentication & Authorization
     const authHeader = request.headers.get("authorization");
-    const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
+
+    const { user_id } = await ProfileUtils.verifyProfile(authHeader, [
       "observer",
     ]);
 
     // 2. Parse multipart form data
     const formData = await request.formData();
-    console.log("=== Form Data Debug ===");
-    console.log("FormData object:", formData);
-    
-    // Log all form data entries
-    for (const [key, value] of formData.entries()) {
-      console.log(`Key: "${key}", Value:`, value);
-      if (value instanceof File) {
-        console.log(`  File: ${value.name}, Size: ${value.size}, Type: ${value.type}`);
-      }
-    }
-    
     const title = formData.get("title") as string;
-    const task_id = formData.get("task_id") as string;
-    const child_id = formData.get("child_id") as string;
-    const organisation_id = formData.get("organisation_id") as string;
+    const taskId = formData.get("taskId") as string;
+    const childId = formData.get("childId") as string;
+    const organisationId = formData.get("organisationId") as string;
     const file = formData.get("file") as File;
-    
-    console.log("=== Parsed Values ===");
-    console.log("title:", title);
-    console.log("task_id:", task_id);
-    console.log("child_id:", child_id);
-    console.log("organisation_id:", organisation_id);
-    console.log("file:", file);
-    console.log("file instanceof File:", file instanceof File);
-    console.log("=== End Debug ===");
 
     // 3. Validate required fields
-    if (!title || !task_id || !child_id || !organisation_id || !file) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "MISSING_REQUIRED_FIELDS",
-            message:
-              "Title, task_id, child_id, organisation_id, and file are required",
-          },
-        },
-        { status: HttpStatusCode.BadRequest }
+    if (!title || !taskId || !childId || !organisationId || !file) {
+      return createErrorResponse(
+        "MISSING_REQUIRED_FIELDS",
+        "Title, taskId, childId, organisationId, and file are required",
+        HttpStatusCode.BadRequest
       );
     }
 
     // 4. Validate file
     if (!(file instanceof File) || file.size === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_FILE",
-            message: "Invalid file provided",
-          },
-        },
-        { status: HttpStatusCode.BadRequest }
+      return createErrorResponse(
+        "INVALID_FILE",
+        "Invalid file provided",
+        HttpStatusCode.BadRequest
       );
     }
 
     // 5. Check file size limit from config
     const maxFileSize = AppConfig.UPLOAD.MAX_FILE_SIZE;
     if (file.size > maxFileSize) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: {
-            code: "FILE_TOO_LARGE",
-            message: `File size exceeds maximum limit of ${maxFileSize / 1024 / 1024}MB`
-          }
-        },
-        { status: HttpStatusCode.PayloadTooLarge }
+      return createErrorResponse(
+        "FILE_TOO_LARGE",
+        `File size exceeds maximum limit of ${maxFileSize / 1024 / 1024}MB`,
+        HttpStatusCode.PayloadTooLarge
       );
     }
 
-    // 6. Validate file type from config
-    const allowedMimeTypes = AppConfig.UPLOAD.ALLOWED_FILE_TYPES;
-    if (!allowedMimeTypes.includes(file.type)) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: {
-            code: "UNSUPPORTED_FILE_TYPE",
-            message: "File type not supported"
-          }
-        },
-        { status: HttpStatusCode.UnsupportedMediaType }
+    // 6. Validate file type - support CSV and JSON files
+    const allowedMimeTypes = [
+      ...AppConfig.UPLOAD.ALLOWED_FILE_TYPES,
+      "text/csv",
+      "application/json",
+      "text/plain", // For CSV files that might be detected as text/plain
+    ];
+
+    // Also check file extension as fallback
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const isAllowedExtension =
+      fileExtension === "csv" || fileExtension === "json";
+    const isAllowedMimeType = allowedMimeTypes.includes(file.type);
+
+    if (!isAllowedMimeType && !isAllowedExtension) {
+      return createErrorResponse(
+        "UNSUPPORTED_FILE_TYPE",
+        `File type not supported. Got: ${file.type}, extension: ${fileExtension}. Allowed: CSV and JSON files.`,
+        HttpStatusCode.UnsupportedMediaType
       );
     }
 
@@ -111,47 +86,47 @@ export async function POST(request: Request) {
     });
 
     if (!observerProfile) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "OBSERVER_NOT_FOUND",
-            message: "Observer not found",
-          },
-        },
-        { status: HttpStatusCode.NotFound }
+      return createErrorResponse(
+        "OBSERVER_NOT_FOUND",
+        "Observer not found",
+        HttpStatusCode.NotFound
+      );
+    }
+
+    // 8. Validate organisation access
+    if (observerProfile.organisation_id?.toString() !== organisationId) {
+      return createErrorResponse(
+        "ORGANISATION_MISMATCH",
+        "Observer does not have access to this organisation",
+        HttpStatusCode.Forbidden
       );
     }
 
     // 9. Upload file to S3
     const s3Service = new S3Service();
     const fileBuffer = Buffer.from(await file.arrayBuffer());
-    
+
     let s3Key: string;
     try {
       s3Key = await s3Service.uploadFile(fileBuffer, file.name, file.type);
     } catch (uploadError) {
-      console.error("S3 upload error:", uploadError);
-      return NextResponse.json(
-        { 
-          success: false,
-          error: {
-            code: "S3_UPLOAD_FAILED",
-            message: uploadError instanceof Error ? uploadError.message : "Failed to upload file to S3"
-          }
-        },
-        { status: HttpStatusCode.InternalServerError }
+      return createErrorResponse(
+        "S3_UPLOAD_FAILED",
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Failed to upload file to S3",
+        HttpStatusCode.InternalServerError
       );
     }
 
     // 10. Create file record in database
     const newFile = new FilesModel({
       title,
-      task_id,
+      task_id: taskId,
       file_size: file.size,
       organisation_id: observerProfile.organisation_id,
       observer_id: user_id,
-      child_id,
+      child_id: childId,
       file_url: s3Key, // Store S3 key instead of public URL
       date_created: new Date(),
       last_updated: new Date(),
@@ -159,47 +134,16 @@ export async function POST(request: Request) {
 
     const savedFile = await newFile.save();
 
-    // 11. Return success response
-    return NextResponse.json(
+    return createSuccessResponse(
       {
-        success: true,
-        data: {
-          file_id: savedFile._id,
-          s3_key: savedFile.file_url, // Return S3 key instead of public URL
-          message: "File uploaded successfully"
-        }
+        file_id: savedFile._id,
+        s3_key: savedFile.file_url, // Return S3 key instead of public URL
       },
-      { status: HttpStatusCode.Created }
+      HttpStatusCode.Ok,
+      "File uploaded successfully"
     );
   } catch (error) {
-    console.error("Error in file upload:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "AUTHENTICATION_ERROR",
-            message: error.message,
-          },
-        },
-        { status: HttpStatusCode.Forbidden }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to upload file",
-        },
-      },
-      { status: HttpStatusCode.InternalServerError }
-    );
+    // Use the global error handler for all unhandled errors
+    return handleApiError(error);
   }
 }

@@ -191,6 +191,12 @@ class StartUtilityAPI {
         data
       );
     },
+    aws: (data: any) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.files.aws}`,
+        data
+      );
+    },
   };
 }
 

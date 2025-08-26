@@ -15,7 +15,7 @@ import { HttpStatusCode } from "enums/HttpStatusCode";
 class StartAPI {
   private static instance: StartAPI;
   private headers: HeadersInit = {
-    "Content-Type": "application/json",
+    // Don't set Content-Type by default - let it be set per request based on data type
   };
   // Singleton pattern to ensure only one instance exists
   public static getInstance(): StartAPI {
@@ -35,12 +35,31 @@ class StartAPI {
    */
   private updateHeaders(): void {
     const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
+
     if (member?.token) {
       this.headers = {
         ...this.headers,
         Authorization: `Bearer ${member.token}`,
       };
     }
+  }
+
+  /**
+   * Get appropriate headers for the request based on data type
+   */
+  private getRequestHeaders(data?: any): HeadersInit {
+    const headers: HeadersInit = { ...this.headers };
+
+    // Set Content-Type based on data type
+    if (data instanceof FormData) {
+      // Don't set Content-Type for FormData - browser will set it automatically with boundary
+      delete (headers as any)["Content-Type"];
+    } else if (data && typeof data === "object") {
+      // For JSON data, set application/json
+      (headers as any)["Content-Type"] = "application/json";
+    }
+
+    return headers;
   }
 
   /**
@@ -67,7 +86,7 @@ class StartAPI {
       credentials: "same-origin",
     });
 
-    return this.handleResponse<T>(response);
+    return this.handleResponse<T>(response, { method: "GET", url: endpoint });
   }
 
   /**
@@ -75,14 +94,25 @@ class StartAPI {
    */
   public async post<T = any>(endpoint: string, data?: any): Promise<T> {
     this.updateHeaders();
+
+    const headers = this.getRequestHeaders(data);
+
     const response = await fetch(`${window.location.origin}${endpoint}`, {
       method: "POST",
-      headers: this.headers,
+      headers,
       credentials: "same-origin",
-      body: data ? JSON.stringify(data) : undefined,
+      body: data
+        ? data instanceof FormData
+          ? data
+          : JSON.stringify(data)
+        : undefined,
     });
 
-    return this.handleResponse<T>(response);
+    return this.handleResponse<T>(response, {
+      method: "POST",
+      url: endpoint,
+      data,
+    });
   }
 
   /**
@@ -90,14 +120,25 @@ class StartAPI {
    */
   public async put<T = any>(endpoint: string, data?: any): Promise<T> {
     this.updateHeaders();
+
+    const headers = this.getRequestHeaders(data);
+
     const response = await fetch(`${window.location.origin}${endpoint}`, {
       method: "PUT",
-      headers: this.headers,
+      headers,
       credentials: "same-origin",
-      body: data ? JSON.stringify(data) : undefined,
+      body: data
+        ? data instanceof FormData
+          ? data
+          : JSON.stringify(data)
+        : undefined,
     });
 
-    return this.handleResponse<T>(response);
+    return this.handleResponse<T>(response, {
+      method: "PUT",
+      url: endpoint,
+      data,
+    });
   }
 
   /**
@@ -111,13 +152,19 @@ class StartAPI {
       credentials: "same-origin",
     });
 
-    return this.handleResponse<T>(response);
+    return this.handleResponse<T>(response, {
+      method: "DELETE",
+      url: endpoint,
+    });
   }
 
   /**
    * Handle API response and error cases
    */
-  private async handleResponse<T>(response: Response): Promise<T> {
+  private async handleResponse<T>(
+    response: Response,
+    originalRequest?: { method: string; url: string; data?: any }
+  ): Promise<T> {
     if (response.status === 204) {
       return {} as T;
     }
@@ -125,7 +172,8 @@ class StartAPI {
     const data = await response.json();
 
     if (!response.ok) {
-      // invalid refresh tokenU
+      // invalid refresh token
+      console.log("response.status", response.status);
       if (response.status === HttpStatusCode.Unauthorized) {
         clearLocalStorageValue();
         await clearEntireIndexedDB();
@@ -134,21 +182,35 @@ class StartAPI {
 
       // Handle token refresh case
       if (response.status === HttpStatusCode.Forbidden) {
+        console.log("403 Forbidden detected, attempting token refresh...");
         // Try to get a new access token using refresh token
         const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
-        const refreshToken = member?.rToken;
+        const refreshToken = member?.rtoken;
+        console.log("Refresh token available:", !!refreshToken);
+
         if (refreshToken) {
           try {
+            console.log("Calling token refresh endpoint...");
             const tokenResponse = await fetch(
               `${window.location.origin}/api/v1/auth/get-access-token`,
               {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ refreshToken }),
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${refreshToken}`,
+                },
               }
             );
             const tokenData = await tokenResponse.json();
+            console.log("Token refresh response:", {
+              status: tokenResponse.status,
+              data: tokenData,
+            });
+
             if (tokenResponse.ok && tokenData.accessToken) {
+              console.log(
+                "Token refresh successful, updating headers and retrying..."
+              );
               // Update local storage and headers
               localStorage.setItem(
                 LOCALSTORAGE.START_MEMBER,
@@ -158,33 +220,49 @@ class StartAPI {
                 ...this.headers,
                 Authorization: `Bearer ${tokenData.accessToken}`,
               };
-              // Retry the original request
-              // Note: Only supports GET/POST/PUT/DELETE as implemented
-              // You may want to refactor for more generic retry logic
-              // For GET requests
-              if (response.url.includes("GET")) {
-                return await this.get<T>(new URL(response.url).pathname);
+
+              // Retry the original request with the new token
+              if (originalRequest) {
+                console.log(
+                  "Retrying request with new token:",
+                  originalRequest
+                );
+                switch (originalRequest.method) {
+                  case "GET":
+                    return await this.get<T>(originalRequest.url);
+                  case "POST":
+                    return await this.post<T>(
+                      originalRequest.url,
+                      originalRequest.data
+                    );
+                  case "PUT":
+                    return await this.put<T>(
+                      originalRequest.url,
+                      originalRequest.data
+                    );
+                  case "DELETE":
+                    return await this.delete<T>(originalRequest.url);
+                  default:
+                    throw new Error(
+                      `Unsupported method: ${originalRequest.method}`
+                    );
+                }
               }
-              // For POST requests
-              if (response.url.includes("POST")) {
-                return await this.post<T>(new URL(response.url).pathname, data);
-              }
-              // For PUT requests
-              if (response.url.includes("PUT")) {
-                return await this.put<T>(new URL(response.url).pathname, data);
-              }
-              // For DELETE requests
-              if (response.url.includes("DELETE")) {
-                return await this.delete<T>(new URL(response.url).pathname);
-              }
+            } else {
+              console.error("Token refresh failed:", {
+                status: tokenResponse.status,
+                data: tokenData,
+              });
             }
           } catch (e) {
+            console.error("Token refresh failed:", e);
             // If refresh fails, logout
             clearLocalStorageValue();
             await clearEntireIndexedDB();
             window.location.href = PAGE_ROUTES.LOGIN.path;
           }
         } else {
+          console.log("No refresh token available, logging out...");
           // No refresh token, logout
           clearLocalStorageValue();
           await clearEntireIndexedDB();

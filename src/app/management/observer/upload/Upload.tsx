@@ -14,6 +14,7 @@ import {
 import TASK_TYPE from "@constants/survey.type.constant";
 import FileDropZone from "components/common/FileDropZone";
 import Button from "components/common/Button";
+import { useToast } from "@management/hooks/use-toast";
 import StartUtilityAPI from "@services/start.utility";
 
 interface FileWithTask {
@@ -21,7 +22,8 @@ interface FileWithTask {
   taskType: string | null;
 }
 
-export default function Upload() {
+export default function Upload({ user }: { user: any }) {
+  const { toast } = useToast();
   const [files, setFiles] = useState<FileWithTask[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadedTasks, setUploadedTasks] = useState<Record<string, boolean>>(
@@ -46,9 +48,11 @@ export default function Upload() {
         const isAllowedExtension = /\.(json|csv)$/i.test(file.name);
 
         if (!isAllowedExtension) {
-          alert(
-            `Invalid file type: ${file.name}. Only JSON and CSV files are accepted.`
-          );
+          toast({
+            variant: "destructive",
+            title: "Invalid File Type",
+            description: `${file.name}. Only JSON and CSV files are accepted.`,
+          });
           return null;
         }
         return { file, taskType: detectTaskType(file.name) };
@@ -57,26 +61,56 @@ export default function Upload() {
     setFiles((prev) => [...prev, ...newFiles]);
   };
 
-  // Upload a single file
-
+  // Upload a single file using the AWS route
   const uploadFile = async (fileWithTask: FileWithTask): Promise<boolean> => {
     if (!fileWithTask.taskType) {
-      alert(
-        `Upload Failed: Could not determine task type for ${fileWithTask.file.name}`
-      );
+      toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description: `Could not determine task type for ${fileWithTask.file.name}`,
+      });
+      return false;
+    }
+
+    // Extract user metadata for the upload
+    const { organisationId, childId } = user;
+
+    if (!organisationId || !childId) {
+      toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description:
+          "Missing required user metadata (organisationId or childId)",
+      });
       return false;
     }
 
     const formData = new FormData();
     formData.append("file", fileWithTask.file);
-    formData.append("taskType", fileWithTask.taskType);
+    formData.append("title", fileWithTask.file.name);
+    formData.append("taskId", fileWithTask.taskType);
+    formData.append("childId", childId);
+    formData.append("organisationId", organisationId);
 
     try {
+      // Use StartUtilityAPI which handles authentication and token refresh automatically
       const START_API = new StartUtilityAPI();
-      await START_API.files.upload(formData);
+      const result = await START_API.files.aws(formData);
+
+      console.log(
+        `File ${fileWithTask.file.name} uploaded successfully:`,
+        result
+      );
       return true;
     } catch (error) {
       console.error(`Failed to upload ${fileWithTask.file.name}:`, error);
+      toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description: `${fileWithTask.file.name}: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      });
       return false;
     }
   };
@@ -86,7 +120,11 @@ export default function Upload() {
     const taskFiles = files.filter((f) => f.taskType === taskType);
 
     if (taskFiles.length === 0) {
-      alert(`No Files: No files found for ${taskType}`);
+      toast({
+        variant: "destructive",
+        title: "No Files",
+        description: `No files found for ${taskType}`,
+      });
       return;
     }
 
@@ -105,9 +143,10 @@ export default function Upload() {
         // Remove successfully uploaded files for this task
         setFiles((prev) => prev.filter((f) => f.taskType !== taskType));
 
-        alert(
-          `Task Upload Complete: All files for ${taskType} uploaded successfully`
-        );
+        toast({
+          title: "Task Upload Complete",
+          description: `All files for ${taskType} uploaded successfully`,
+        });
       } else {
         // Remove only the successfully uploaded files
         const successfulUploads = taskFiles.filter(
@@ -116,9 +155,11 @@ export default function Upload() {
         setFiles((prev) => prev.filter((f) => !successfulUploads.includes(f)));
 
         const successCount = results.filter(Boolean).length;
-        alert(
-          `Partial Upload: ${successCount}/${taskFiles.length} files uploaded for ${taskType}`
-        );
+        toast({
+          variant: "destructive",
+          title: "Partial Upload",
+          description: `${successCount}/${taskFiles.length} files uploaded for ${taskType}`,
+        });
       }
     } finally {
       setUploading(false);
@@ -128,7 +169,11 @@ export default function Upload() {
   // Bulk upload all files
   const uploadAllFiles = async () => {
     if (files.length === 0) {
-      alert("No Files: Please add files before uploading");
+      toast({
+        variant: "destructive",
+        title: "No Files",
+        description: "Please add files before uploading",
+      });
       return;
     }
 
@@ -159,9 +204,10 @@ export default function Upload() {
       // Show summary
       const successCount = successfulUploads.length;
       const totalCount = files.length;
-      alert(
-        `Upload Summary: ${successCount}/${totalCount} files uploaded successfully`
-      );
+      toast({
+        title: "Upload Summary",
+        description: `${successCount}/${totalCount} files uploaded successfully`,
+      });
     } finally {
       setUploading(false);
     }
@@ -177,6 +223,9 @@ export default function Upload() {
     return files.filter((f) => f.taskType === taskType);
   };
 
+  // Check if user has required metadata
+  const hasRequiredMetadata = user?.organisationId && user?.childId;
+
   return (
     <div className="container mx-auto py-8 px-4 ">
       {/* File Upload Area */}
@@ -189,7 +238,16 @@ export default function Upload() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FileDropZone onFilesSelected={handleFilesSelected} />
+          {!hasRequiredMetadata ? (
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-yellow-800">
+                ⚠️ Missing required metadata. Please ensure you have
+                organisationId and childId configured.
+              </p>
+            </div>
+          ) : (
+            <FileDropZone onFilesSelected={handleFilesSelected} />
+          )}
         </CardContent>
       </Card>
 
@@ -228,7 +286,7 @@ export default function Upload() {
           <CardFooter>
             <Button
               onClick={uploadAllFiles}
-              disabled={uploading}
+              disabled={uploading || !hasRequiredMetadata}
               className="w-full"
             >
               {uploading ? "Uploading..." : "Bulk Upload All Files"}
@@ -279,7 +337,12 @@ export default function Upload() {
                   <Button
                     variant={hasFiles ? "default" : "outline"}
                     size="sm"
-                    disabled={!hasFiles || uploading || isUploaded}
+                    disabled={
+                      !hasFiles ||
+                      uploading ||
+                      isUploaded ||
+                      !hasRequiredMetadata
+                    }
                     onClick={() => uploadTask(taskType)}
                   >
                     {isUploaded
@@ -296,7 +359,7 @@ export default function Upload() {
         <CardFooter>
           <Button
             onClick={uploadAllFiles}
-            disabled={uploading || files.length === 0}
+            disabled={uploading || files.length === 0 || !hasRequiredMetadata}
             className="w-full"
           >
             {uploading ? "Uploading..." : "Bulk Upload All Files"}
