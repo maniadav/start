@@ -48,6 +48,12 @@ export class ProfileUtils {
         hasValidRole: validRoles.includes(user.role),
       });
 
+      if (user?.status === "inactive") {
+        throw new ProfileUtilsError(
+          "Profile is inactive. Please contact admin."
+        );
+      }
+
       if (!validRoles.includes(user.role)) {
         throw new ProfileUtilsError("User does not have a valid role");
       }

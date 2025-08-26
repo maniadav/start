@@ -129,7 +129,7 @@ const ChildForm = ({
           />
         </div>
         {/* Observer ID */}
-        <div className="mt-4 col-span-2">
+        <div className="mt-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Your Observer ID
           </label>
@@ -137,9 +137,16 @@ const ChildForm = ({
             {data?.observerId || formData.observerId}
           </p>
         </div>
+        <div className="mt-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Your Organisation ID
+          </label>
+          <p className="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white">
+            {data?.organisationId || formData.organisationId}
+          </p>
+        </div>
       </div>
       <button
-        disabled={!!data}
         onClick={() => handleFormSubmit(formData)}
         className="mt-5 tracking-wide font-semibold bg-primary text-gray-100 w-full py-3 rounded-lg hover:bg-primary/80 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
       >

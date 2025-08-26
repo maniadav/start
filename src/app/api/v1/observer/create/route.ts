@@ -13,10 +13,10 @@ export async function POST(request: Request) {
     await connectDB();
 
     const body = await request.json();
-    const { name, email, address, organisation_id, password } = body;
+    const { name, email, address } = body;
 
     // Validate required fields
-    if (!name || !email || !address || !password) {
+    if (!name || !email || !address) {
       return NextResponse.json(
         { error: "Name, email, address, and password are required" },
         { status: HttpStatusCode.BadRequest }
@@ -25,7 +25,6 @@ export async function POST(request: Request) {
 
     const authHeader = request.headers.get("authorization");
     const { user_id } = await ProfileUtils.verifyProfile(authHeader || "", [
-      "admin",
       "organisation",
     ]);
 
@@ -51,7 +50,7 @@ export async function POST(request: Request) {
       // Use existing user
       user = existingUser;
     } else {
-      const hashedPassword = await PasswordUtils.hashPassword(password);
+      const hashedPassword = await PasswordUtils.hashPassword("password");
 
       // Create user
       const newUser = new UserModel({
@@ -62,18 +61,6 @@ export async function POST(request: Request) {
 
       user = await newUser.save();
     }
-
-    if (!user_id) {
-      const org = await OrganisationProfileModel.findOne({
-        user_id: organisation_id,
-      });
-      if (!org) {
-        return NextResponse.json(
-          { error: "Organisation not found" },
-          { status: 404 }
-        );
-      }
-    }
     // Create observer profile
     const newObserverProfile = new ObserverProfileModel({
       user_id: user._id,
@@ -81,8 +68,8 @@ export async function POST(request: Request) {
       name: name.trim(),
       address: address.trim(),
       status: "pending",
-      joined_on: null, // Will be set when approved
-      organisation_id: organisation_id || user_id, // Assuming organisation_id is the same as user_id
+      joined_on: null,
+      organisation_id: user_id, // Assuming organisation_id is the same as user_id
     });
 
     const savedProfile = await newObserverProfile.save();
@@ -97,9 +84,8 @@ export async function POST(request: Request) {
           status: savedProfile.status,
           email: user.email,
           address: savedProfile.address,
-          organisation_id: organisation_id || user_id,
+          organisation_id: user_id,
         },
-        tempPassword: password,
       },
       { status: 201 }
     );
@@ -115,7 +101,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Failed to create organisation" },
+      { error: "Failed to create observer" },
       { status: 500 }
     );
   }

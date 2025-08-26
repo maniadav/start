@@ -1,13 +1,14 @@
 "use client";
 
 import type React from "react";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider } from "@management/SidebarProvider";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { cn } from "@management/lib/utils";
 import { SideBar } from "@management/SideBar";
+import { useAuth } from "state/provider/AuthProvider";
 
 export default function OrgnisationLayout({
   children,
@@ -16,13 +17,28 @@ export default function OrgnisationLayout({
 }) {
   const router = useRouter();
   const member = getCurrentMember();
+  const { user } = useAuth();
+  const path = usePathname();
+  const currentPath = path.split("?")[0];
+
+  const protectedRoutes = useMemo(
+    () => [
+      PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path,
+      PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY_UPLOAD.path,
+    ],
+    []
+  );
 
   useEffect(() => {
-    if (!member) {
-      router.push(PAGE_ROUTES.LOGIN.path);
-      return;
+    if (!user || !user?.childId) {
+      if (protectedRoutes.includes(currentPath)) {
+        router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.CHILD.path);
+        return;
+      }
     }
+  }, [router, user, currentPath, protectedRoutes]);
 
+  useEffect(() => {
     if (!hasValidRole(member, ["observer"])) {
       router.push(PAGE_ROUTES.LOGIN.path);
       return;

@@ -25,6 +25,7 @@ interface LoginDataType {
   childDob: string;
   observerId: string;
   childAddress: string;
+  organisationId: string;
 }
 
 const generateUniqueID = () => {
@@ -43,7 +44,10 @@ const LoginPage = () => {
     childDob: childData?.childDob || "",
     observerId: member?.userId || "",
     childAddress: childData?.childAddress || "",
+    organisationId: member?.organisationId || childData?.organisationId || "",
   });
+
+  const router = useRouter();
   const START_API = new StartUtilityAPI();
   // Set initial data from state
   useEffect(() => {
@@ -61,7 +65,6 @@ const LoginPage = () => {
   //   }
   // }, [formData.childId, formData.observerId, member?.user_id]);
 
-  const router = useRouter();
   const { dispatch } = useSurveyContext();
 
   const handleDataFetch = async ({ childId }: any) => {
@@ -96,6 +99,10 @@ const LoginPage = () => {
   };
 
   const handleFormSubmit = async () => {
+    if (!!data) {
+      router.push(PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path);
+      return;
+    }
     if (!formData.childName.trim()) {
       toast.error("Oops! Don't forget to enter the child's name.");
       return;
