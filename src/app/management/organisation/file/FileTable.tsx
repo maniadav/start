@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataTable } from "components/ui/data-table";
+import { DataTable } from "components/table/data-table";
 import { Badge } from "@management/components/ui/badge";
 import { Button } from "@management/components/ui/button";
 import {
