@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       filters.observer_id = user_id;
     } else if (role === "organisation") {
       // Organisation users can access files from their organisation
-      if (organisationId) {
+      if (organisationId && organisationId !== "all") {
         filters.organisation_id = organisationId;
       } else {
         filters.organisation_id = { $exists: true };
@@ -49,20 +49,34 @@ export async function GET(request: NextRequest) {
     }
     // Admin users can access all files
 
-    if (observerId) filters.observer_id = observerId;
-    if (organisationId) filters.organisation_id = organisationId;
-    if (taskId) filters.task_id = taskId;
+    // Only add filters if they have valid values
+    if (observerId && observerId.trim() !== "")
+      filters.observer_id = observerId;
+    if (
+      organisationId &&
+      organisationId.trim() !== "" &&
+      organisationId !== "all"
+    )
+      filters.organisation_id = organisationId;
+    if (taskId && taskId.trim() !== "") filters.task_id = taskId;
+
     if (dateStart || dateEnd) {
       filters.date_created = {};
-      if (dateStart) filters.date_created.$gte = new Date(dateStart);
-      if (dateEnd) filters.date_created.$lte = new Date(dateEnd);
+      if (dateStart && dateStart.trim() !== "")
+        filters.date_created.$gte = new Date(dateStart);
+      if (dateEnd && dateEnd.trim() !== "")
+        filters.date_created.$lte = new Date(dateEnd);
     }
+
     if (fileSizeMin || fileSizeMax) {
       filters.file_size = {};
-      if (fileSizeMin) filters.file_size.$gte = parseInt(fileSizeMin);
-      if (fileSizeMax) filters.file_size.$lte = parseInt(fileSizeMax);
+      if (fileSizeMin && !isNaN(parseInt(fileSizeMin)))
+        filters.file_size.$gte = parseInt(fileSizeMin);
+      if (fileSizeMax && !isNaN(parseInt(fileSizeMax)))
+        filters.file_size.$lte = parseInt(fileSizeMax);
     }
-    if (searchTerm) {
+
+    if (searchTerm && searchTerm.trim() !== "") {
       filters.$or = [
         { title: { $regex: searchTerm, $options: "i" } },
         { task_id: { $regex: searchTerm, $options: "i" } },
@@ -141,15 +155,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { filters } = body;
 
-    // Validate filters object
-    if (!filters || typeof filters !== "object") {
-      return createErrorResponse(
-        "INVALID_FILTERS",
-        "Filters object is required and must be an object",
-        HttpStatusCode.BadRequest
-      );
-    }
-
     // Build filter object for database query with proper typing
     const dbFilters: Record<string, any> = {};
 
@@ -157,8 +162,8 @@ export async function POST(request: NextRequest) {
     if (role === "observer") {
       dbFilters.observer_id = user_id;
     } else if (role === "organisation") {
-      if (filters.organisationId && filters.organisationId !== "all") {
-        dbFilters.organisation_id = filters.organisationId;
+      if (filters?.organisationId && filters?.organisationId !== "all") {
+        dbFilters.organisation_id = filters?.organisationId;
       } else {
         // Get user's organisation from profile instead of placeholder
         dbFilters.organisation_id = user_id;
@@ -166,29 +171,38 @@ export async function POST(request: NextRequest) {
     }
     // Admin users can access all files (no additional filters needed)
 
-    // Apply other filters
-    if (filters?.observerId) dbFilters.observer_id = filters.observerId;
-    if (filters?.organisationId)
+    // Apply other filters - only include if they have valid values
+    if (filters?.observerId && filters?.observerId.trim() !== "")
+      dbFilters.observer_id = filters?.observerId;
+    if (
+      filters?.organisationId &&
+      filters?.organisationId.trim() !== "" &&
+      filters?.organisationId !== "all"
+    )
       dbFilters.organisation_id = filters?.organisationId;
-    if (filters?.taskId) dbFilters.task_id = filters?.taskId;
+    if (filters?.taskId && filters?.taskId.trim() !== "")
+      dbFilters.task_id = filters?.taskId;
+
     if (filters?.dateStart || filters?.dateEnd) {
       dbFilters.date_created = {};
-      if (filters?.dateStart)
+      if (filters?.dateStart && filters?.dateStart.trim() !== "")
         dbFilters.date_created.$gte = new Date(filters?.dateStart);
-      if (filters?.dateEnd)
+      if (filters?.dateEnd && filters?.dateEnd.trim() !== "")
         dbFilters.date_created.$lte = new Date(filters?.dateEnd);
     }
+
     if (filters?.fileSizeMin || filters?.fileSizeMax) {
       dbFilters.file_size = {};
-      if (filters?.fileSizeMin)
+      if (filters?.fileSizeMin && !isNaN(parseInt(filters?.fileSizeMin)))
         dbFilters.file_size.$gte = parseInt(filters?.fileSizeMin);
-      if (filters?.fileSizeMax)
+      if (filters?.fileSizeMax && !isNaN(parseInt(filters?.fileSizeMax)))
         dbFilters.file_size.$lte = parseInt(filters?.fileSizeMax);
     }
-    if (filters?.searchTerm) {
+
+    if (filters?.searchTerm && filters?.searchTerm.trim() !== "") {
       dbFilters.$or = [
-        { title: { $regex: filters?.searchTerm, $options: "i" } },
-        { task_id: { $regex: filters?.searchTerm, $options: "i" } },
+        { title: { $regex: filters.searchTerm, $options: "i" } },
+        { task_id: { $regex: filters.searchTerm, $options: "i" } },
       ];
     }
 

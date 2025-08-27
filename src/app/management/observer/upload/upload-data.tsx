@@ -37,6 +37,9 @@ interface TaskData {
 export default function UploadData({ user }: { user: any }) {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [uploadingTasks, setUploadingTasks] = useState<Record<string, boolean>>(
+    {}
+  );
   const [uploadedTasks, setUploadedTasks] = useState<Record<string, boolean>>(
     {}
   );
@@ -141,7 +144,8 @@ export default function UploadData({ user }: { user: any }) {
       return;
     }
 
-    setUploading(true);
+    // Set individual task loading state
+    setUploadingTasks((prev) => ({ ...prev, [taskType]: true }));
 
     try {
       // Create CSV file from task data
@@ -192,7 +196,8 @@ export default function UploadData({ user }: { user: any }) {
         }`,
       });
     } finally {
-      setUploading(false);
+      // Clear individual task loading state
+      setUploadingTasks((prev) => ({ ...prev, [taskType]: false }));
     }
   };
 
@@ -330,7 +335,7 @@ export default function UploadData({ user }: { user: any }) {
                         variant="outline"
                         size="sm"
                         onClick={() => downloadTaskCSV(taskType)}
-                        disabled={uploading}
+                        disabled={uploading || uploadingTasks[taskType]}
                       >
                         <FiDownload className="h-4 w-4 mr-1" />
                         Preview
@@ -346,6 +351,7 @@ export default function UploadData({ user }: { user: any }) {
                       disabled={
                         !taskStatus.hasData ||
                         uploading ||
+                        uploadingTasks[taskType] ||
                         isUploaded ||
                         !hasRequiredMetadata
                       }
@@ -353,7 +359,7 @@ export default function UploadData({ user }: { user: any }) {
                     >
                       {isUploaded
                         ? "Uploaded"
-                        : uploading
+                        : uploadingTasks[taskType]
                         ? "Uploading..."
                         : "Upload"}
                     </Button>
