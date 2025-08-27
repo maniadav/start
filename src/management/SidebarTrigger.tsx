@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import { useSidebar } from "./SidebarProvider";
 import { cn } from "./lib/utils";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";

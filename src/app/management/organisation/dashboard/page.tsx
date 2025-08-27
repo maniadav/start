@@ -2,49 +2,84 @@
 
 import { FileText, Upload } from "lucide-react";
 import {
-  getOrganizations,
-  getSurveys,
-  getFiles,
-} from "@management/lib/data-service";
-import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "components/ui/card";
-import SidebarTrigger from "@management/SidebarTrigger";
-import { getCurrentMember } from "@utils/auth.utils";
+import SidebarTrigger, { SidebarTriggerComp } from "@management/SidebarTrigger";
 
 export default function OrgDashboard() {
-  const member = getCurrentMember();
-  const organizations = getOrganizations();
-  const surveys = getSurveys();
-  const files = getFiles();
+  // Dummy data for the dashboard
+  const dummySurveys = [
+    {
+      id: "1",
+      name: "Child Development Survey 2024",
+      description: "Annual assessment of cognitive development",
+      createdAt: "2024-01-15",
+      organizationId: "org-123",
+    },
+    {
+      id: "2",
+      name: "Language Skills Assessment",
+      description: "Evaluation of communication abilities",
+      createdAt: "2024-01-10",
+      organizationId: "org-123",
+    },
+    {
+      id: "3",
+      name: "Motor Skills Evaluation",
+      description: "Physical coordination assessment",
+      createdAt: "2024-01-05",
+      organizationId: "org-123",
+    },
+  ];
 
-  const userOrg = organizations.find((o) => o.unique_id === member?.profile.id);
-  const orgSurveys = surveys.filter(
-    (s) => s.organizationId === member?.profile.id
-  );
-  const orgFiles = files.filter((f) => f.organizationId === member?.profile.id);
+  const dummyFiles = [
+    {
+      id: "1",
+      name: "survey_results_jan_2024.csv",
+      size: 2048576, // 2MB
+      organizationId: "org-123",
+      surveyId: "1",
+      uploadedAt: "2024-01-16",
+    },
+    {
+      id: "2",
+      name: "language_assessment_data.csv",
+      size: 1536000, // 1.5MB
+      organizationId: "org-123",
+      surveyId: "2",
+      uploadedAt: "2024-01-12",
+    },
+    {
+      id: "3",
+      name: "motor_skills_results.csv",
+      size: 1048576, // 1MB
+      organizationId: "org-123",
+      surveyId: "3",
+      uploadedAt: "2024-01-08",
+    },
+  ];
 
   const stats = [
     {
       title: "Active Surveys",
-      value: orgSurveys.length,
+      value: dummySurveys.length,
       description: "Surveys in your organization",
       icon: FileText,
     },
     {
       title: "Uploaded Files",
-      value: orgFiles.length,
+      value: dummyFiles.length,
       description: "CSV files uploaded",
       icon: Upload,
     },
     {
       title: "Total Size",
       value: `${Math.round(
-        orgFiles.reduce((acc, f) => acc + f.size, 0) / 1024 / 1024
+        dummyFiles.reduce((acc, f) => acc + f.size, 0) / 1024 / 1024
       )}MB`,
       description: "Storage used",
       icon: FileText,
@@ -52,18 +87,10 @@ export default function OrgDashboard() {
   ];
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center space-x-2">
-        <SidebarTrigger />
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Organisation Dashboard
-          </h2>
-          <p className="text-muted-foreground">{userOrg?.name}</p>
-        </div>
-      </div>
+    <div className="w-full flex flex-col gap-4 p-4 md:p-8">
+      <SidebarTriggerComp title="Observer Dashboard" />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="pb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -92,7 +119,7 @@ export default function OrgDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {orgSurveys.slice(0, 5).map((survey) => (
+              {dummySurveys.map((survey) => (
                 <div key={survey.id} className="flex items-center space-x-4">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
@@ -119,8 +146,8 @@ export default function OrgDashboard() {
           </CardHeader>
           <CardContent className="w-auto overflow-x-scroll">
             <div className="space-y-4">
-              {orgFiles.slice(0, 5).map((file) => {
-                const survey = surveys.find((s) => s.id === file.surveyId);
+              {dummyFiles.map((file) => {
+                const survey = dummySurveys.find((s) => s.id === file.surveyId);
                 return (
                   <div key={file.id} className="flex items-center space-x-4">
                     <Upload className="h-4 w-4 text-muted-foreground" />

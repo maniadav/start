@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import type { Organisation, FilterOptions } from "@type/management.types";
 import { OrganisationTable } from "./OrganisationTable";
 import SidebarTrigger from "@management/SidebarTrigger";

@@ -4,7 +4,7 @@ import * as React from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@management/lib/utils";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 
 // Custom carousel implementation to replace embla-carousel-react
 interface CarouselApi {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "./slot";
+import { Slot } from "../../management/components/ui/slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@management/lib/utils";

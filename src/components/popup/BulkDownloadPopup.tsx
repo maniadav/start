@@ -1,10 +1,21 @@
-import React, { useState, useMemo } from 'react';
-import { Button } from "@management/components/ui/button";
+import React, { useState, useMemo } from "react";
+import { Button } from "@components/ui/button";
 import { Input } from "components/ui/input";
 import { Badge } from "@management/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { PopupModal } from "components/common/PopupModal";
-import { Download, Filter, X, Calendar, User, Building, FileText, HardDrive, CheckCircle, Clock } from "lucide-react";
+import {
+  Download,
+  Filter,
+  X,
+  Calendar,
+  User,
+  Building,
+  FileText,
+  HardDrive,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 
 interface BulkDownloadPopupProps {
   show: boolean;
@@ -13,16 +24,25 @@ interface BulkDownloadPopupProps {
   onDownload: (filters: any) => Promise<void>;
 }
 
-export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownloadPopupProps) {
+export function BulkDownloadPopup({
+  show,
+  onClose,
+  data,
+  onDownload,
+}: BulkDownloadPopupProps) {
   // Filter states
   const [selectedObserver, setSelectedObserver] = useState<string>("all");
-  const [selectedOrganization, setSelectedOrganization] = useState<string>("all");
+  const [selectedOrganization, setSelectedOrganization] =
+    useState<string>("all");
   const [selectedTask, setSelectedTask] = useState<string>("all");
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
     start: "",
     end: "",
   });
-  const [fileSizeRange, setFileSizeRange] = useState<{ min: number; max: number }>({
+  const [fileSizeRange, setFileSizeRange] = useState<{
+    min: number;
+    max: number;
+  }>({
     min: 0,
     max: Infinity,
   });
@@ -56,7 +76,10 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
       }
 
       // Organization filter
-      if (selectedOrganization !== "all" && file.organisation_id !== selectedOrganization) {
+      if (
+        selectedOrganization !== "all" &&
+        file.organisation_id !== selectedOrganization
+      ) {
         return false;
       }
 
@@ -66,10 +89,16 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
       }
 
       // Date range filter
-      if (dateRange.start && new Date(file.date_created) < new Date(dateRange.start)) {
+      if (
+        dateRange.start &&
+        new Date(file.date_created) < new Date(dateRange.start)
+      ) {
         return false;
       }
-      if (dateRange.end && new Date(file.date_created) > new Date(dateRange.end)) {
+      if (
+        dateRange.end &&
+        new Date(file.date_created) > new Date(dateRange.end)
+      ) {
         return false;
       }
 
@@ -77,13 +106,23 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
       if (fileSizeRange.min > 0 && file.file_size < fileSizeRange.min) {
         return false;
       }
-      if (fileSizeRange.max !== Infinity && file.file_size > fileSizeRange.max) {
+      if (
+        fileSizeRange.max !== Infinity &&
+        file.file_size > fileSizeRange.max
+      ) {
         return false;
       }
 
       return true;
     }).length;
-  }, [data, selectedObserver, selectedOrganization, selectedTask, dateRange, fileSizeRange]);
+  }, [
+    data,
+    selectedObserver,
+    selectedOrganization,
+    selectedTask,
+    dateRange,
+    fileSizeRange,
+  ]);
 
   // Clear all filters
   const clearAllFilters = () => {
@@ -117,26 +156,27 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
     try {
       const filters = {
         observerId: selectedObserver !== "all" ? selectedObserver : undefined,
-        organisationId: selectedOrganization !== "all" ? selectedOrganization : undefined,
+        organisationId:
+          selectedOrganization !== "all" ? selectedOrganization : undefined,
         taskId: selectedTask !== "all" ? selectedTask : undefined,
         dateStart: dateRange.start || undefined,
         dateEnd: dateRange.end || undefined,
         fileSizeMin: fileSizeRange.min > 0 ? fileSizeRange.min : undefined,
-        fileSizeMax: fileSizeRange.max !== Infinity ? fileSizeRange.max : undefined,
+        fileSizeMax:
+          fileSizeRange.max !== Infinity ? fileSizeRange.max : undefined,
       };
 
       await onDownload(filters);
       setDownloadStatus("Download initiated successfully!");
-      
+
       // Close popup after successful download
       setTimeout(() => {
         onClose();
         setDownloadStatus("");
         setIsDownloading(false);
       }, 2000);
-
     } catch (error) {
-      console.error('Bulk download error:', error);
+      console.error("Bulk download error:", error);
       setDownloadStatus("Failed to initiate download. Please try again.");
     } finally {
       setIsDownloading(false);
@@ -153,7 +193,7 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
         <div className="border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Download className="h-5 w-5 text-blue-600" />
+              <Download className="h-5 w-5 text-primary" />
               Bulk Download Files
             </h3>
             <Button
@@ -162,7 +202,7 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
               onClick={onClose}
               className="h-8 w-8 p-0"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 text-primary font-bold" />
             </Button>
           </div>
         </div>
@@ -174,15 +214,17 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
               <Filter className="h-4 w-4" />
               Download Criteria
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Observer Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Observer</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Observer
+                </label>
                 <select
                   value={selectedObserver}
                   onChange={(e) => setSelectedObserver(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 >
                   <option value="all">All Observers</option>
                   {uniqueObservers.map((observer) => (
@@ -195,11 +237,13 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
 
               {/* Organization Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Organization</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Organization
+                </label>
                 <select
                   value={selectedOrganization}
                   onChange={(e) => setSelectedOrganization(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 >
                   <option value="all">All Organizations</option>
                   {uniqueOrganizations.map((org) => (
@@ -212,11 +256,13 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
 
               {/* Task Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Task ID</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Task ID
+                </label>
                 <select
                   value={selectedTask}
                   onChange={(e) => setSelectedTask(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 >
                   <option value="all">All Tasks</option>
                   {uniqueTasks.map((task) => (
@@ -228,21 +274,30 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
               </div>
 
               {/* Date Range */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Date Range</label>
+              <div className="space-y-2 col-span-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Date Range
+                </label>
                 <div className="flex gap-2">
                   <Input
                     type="date"
                     value={dateRange.start}
-                    onChange={(e) => setDateRange((prev) => ({ ...prev, start: e.target.value }))}
-                    className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onChange={(e) =>
+                      setDateRange((prev) => ({
+                        ...prev,
+                        start: e.target.value,
+                      }))
+                    }
+                    className="text-sm border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
                     placeholder="Start Date"
                   />
                   <Input
                     type="date"
                     value={dateRange.end}
-                    onChange={(e) => setDateRange((prev) => ({ ...prev, end: e.target.value }))}
-                    className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onChange={(e) =>
+                      setDateRange((prev) => ({ ...prev, end: e.target.value }))
+                    }
+                    className="text-sm border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
                     placeholder="End Date"
                   />
                 </div>
@@ -250,31 +305,45 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
 
               {/* File Size Range */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">File Size (MB)</label>
+                <label className="text-sm font-medium text-gray-700">
+                  File Size (MB)
+                </label>
                 <div className="flex gap-2">
                   <Input
                     type="number"
                     placeholder="Min"
-                    value={fileSizeRange.min === 0 ? "" : fileSizeRange.min / (1024 * 1024)}
+                    value={
+                      fileSizeRange.min === 0
+                        ? ""
+                        : fileSizeRange.min / (1024 * 1024)
+                    }
                     onChange={(e) =>
                       setFileSizeRange((prev) => ({
                         ...prev,
-                        min: e.target.value ? parseFloat(e.target.value) * 1024 * 1024 : 0,
+                        min: e.target.value
+                          ? parseFloat(e.target.value) * 1024 * 1024
+                          : 0,
                       }))
                     }
-                    className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="text-sm border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
                   />
                   <Input
                     type="number"
                     placeholder="Max"
-                    value={fileSizeRange.max === Infinity ? "" : fileSizeRange.max / (1024 * 1024)}
+                    value={
+                      fileSizeRange.max === Infinity
+                        ? ""
+                        : fileSizeRange.max / (1024 * 1024)
+                    }
                     onChange={(e) =>
                       setFileSizeRange((prev) => ({
                         ...prev,
-                        max: e.target.value ? parseFloat(e.target.value) * 1024 * 1024 : Infinity,
+                        max: e.target.value
+                          ? parseFloat(e.target.value) * 1024 * 1024
+                          : Infinity,
                       }))
                     }
-                    className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="text-sm border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
                   />
                 </div>
               </div>
@@ -291,11 +360,7 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
               </div>
 
               {hasActiveFilters && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearAllFilters}
-                >
+                <Button variant="outline" size="sm" onClick={clearAllFilters}>
                   Clear Filters
                 </Button>
               )}
@@ -319,9 +384,9 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
                   )}
                 </div>
               </div>
-              
+
               <div className="text-right">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-primary">
                   {filteredDataCount}
                 </div>
                 <div className="text-xs text-gray-500">files</div>
@@ -331,17 +396,19 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
 
           {/* Download Status */}
           {downloadStatus && (
-            <div className={`p-3 rounded-lg ${
-              downloadStatus.includes('successfully') 
-                ? 'bg-green-50 text-green-800 border border-green-200' 
-                : downloadStatus.includes('Failed') 
-                ? 'bg-red-50 text-red-800 border border-red-200'
-                : 'bg-blue-50 text-blue-800 border border-blue-200'
-            }`}>
+            <div
+              className={`p-3 rounded-lg ${
+                downloadStatus.includes("successfully")
+                  ? "bg-green-50 text-green-800 border border-green-200"
+                  : downloadStatus.includes("Failed")
+                  ? "bg-red-50 text-red-800 border border-red-200"
+                  : "bg-red-50 text-red-800 border border-red-200"
+              }`}
+            >
               <div className="flex items-center gap-2">
-                {downloadStatus.includes('successfully') ? (
+                {downloadStatus.includes("successfully") ? (
                   <CheckCircle className="h-4 w-4" />
-                ) : downloadStatus.includes('Failed') ? (
+                ) : downloadStatus.includes("Failed") ? (
                   <X className="h-4 w-4" />
                 ) : (
                   <Clock className="h-4 w-4" />
@@ -360,7 +427,7 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
             >
               Cancel
             </Button>
-            
+
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -369,11 +436,11 @@ export function BulkDownloadPopup({ show, onClose, data, onDownload }: BulkDownl
               >
                 Reset
               </Button>
-              
+
               <Button
                 onClick={handleBulkDownload}
                 disabled={isDownloading || filteredDataCount === 0}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-primary hover:bg-red-700 text-white"
               >
                 {isDownloading ? (
                   <>

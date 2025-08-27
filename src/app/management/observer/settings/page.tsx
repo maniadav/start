@@ -1,19 +1,7 @@
 "use client";
 
-import { FileText, Upload } from "lucide-react";
-import {
-  getOrganizations,
-  getSurveys,
-  getFiles,
-} from "@management/lib/data-service";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "components/ui/card";
-import SidebarTrigger from "@management/SidebarTrigger";
+import { Card, CardContent, CardHeader } from "components/ui/card";
+import { SidebarTriggerComp } from "@management/SidebarTrigger";
 import { useState } from "react";
 import UserProfileUpdate from "components/user/user-profile-update";
 import UserPasswordUpdate from "components/user/user-password-update";
@@ -39,15 +27,8 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center space-x-2">
-        <SidebarTrigger />
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Observer Settings
-          </h2>
-        </div>
-      </div>
+    <div className="p-4 md:p-8">
+      <SidebarTriggerComp title="Observer Settings" />
       <Card>
         <CardHeader>
           <div className="flex overflow-x-auto pb-2 hide-scrollbar">

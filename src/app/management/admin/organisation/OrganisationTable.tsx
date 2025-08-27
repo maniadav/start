@@ -4,7 +4,7 @@ import { ArrowUpDown, Delete, Edit, MoreHorizontal, View } from "lucide-react";
 import { DataTable } from "components/table/data-table";
 import { AdvancedFilters } from "@management/components/advanced-filters";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,

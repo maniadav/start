@@ -94,7 +94,7 @@ export function SideBar() {
       icon: LayoutDashboard,
     },
     {
-      title: "Uploaded Files",
+      title: "File Manager",
       url: "/management/observer/files",
       icon: FileText,
     },
@@ -168,8 +168,8 @@ export function SideBar() {
                 collapsed ? "justify-center" : "gap-3"
               } px-2 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-muted text-muted-foreground"
+                  ? "bg-primary text-white"
+                  : "hover:bg-gray-200 text-muted-foreground"
               }`}
               title={collapsed ? item.title : undefined}
             >

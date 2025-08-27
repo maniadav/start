@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import { PopupModal } from "@components/common/PopupModal";
 import { SortAsc, SortDesc, X } from "lucide-react";
 import { FileRequestBody } from "../../hooks/files/useFileFilters";
@@ -129,76 +129,6 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
                 >
                   <SortDesc className="mr-2 h-4 w-4" />
                   Newest First
-                </Button>
-              </div>
-            </div>
-
-            {/* Task ID Sort */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">
-                Task ID
-              </label>
-              <div className="space-y-2">
-                <Button
-                  variant={
-                    requestBody.sortField === "task_id" && requestBody.sortDirection === "asc"
-                      ? "default"
-                      : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleSort("task_id", "asc")}
-                  className="w-full justify-start"
-                >
-                  <SortAsc className="mr-2 h-4 w-4" />
-                  A to Z
-                </Button>
-                <Button
-                  variant={
-                    requestBody.sortField === "task_id" && requestBody.sortDirection === "desc"
-                      ? "default"
-                      : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleSort("task_id", "desc")}
-                  className="w-full justify-start"
-                >
-                  <SortDesc className="mr-2 h-4 w-4" />
-                  Z to A
-                </Button>
-              </div>
-            </div>
-
-            {/* Child ID Sort */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">
-                Child ID
-              </label>
-              <div className="space-y-2">
-                <Button
-                  variant={
-                    requestBody.sortField === "child_id" && requestBody.sortDirection === "asc"
-                      ? "default"
-                      : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleSort("child_id", "asc")}
-                  className="w-full justify-start"
-                >
-                  <SortAsc className="mr-2 h-4 w-4" />
-                  A to Z
-                </Button>
-                <Button
-                  variant={
-                    requestBody.sortField === "child_id" && requestBody.sortDirection === "desc"
-                      ? "default"
-                      : "outline"
-                  }
-                  size="sm"
-                  onClick={() => handleSort("child_id", "desc")}
-                  className="w-full justify-start"
-                >
-                  <SortDesc className="mr-2 h-4 w-4" />
-                  Z to A
                 </Button>
               </div>
             </div>

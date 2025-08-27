@@ -25,8 +25,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@management/components/ui/dropdown-menu";
-import { Button } from "@management/components/ui/button";
-import { Filter, Eye, Edit, Download, Trash2 } from "lucide-react";
+import { Button } from "@components/ui/button";
+import {
+  Filter,
+  Eye,
+  Edit,
+  Download,
+  Trash2,
+  EllipsisVertical,
+  Ellipsis,
+} from "lucide-react";
 import { formatFileSize } from "@management/lib/data-service";
 
 interface FileData {
@@ -124,52 +132,52 @@ export function FileTable({
         );
       },
     },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const file = row.original;
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <Filter className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>File Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+    // {
+    //   id: "actions",
+    //   header: "Actions",
+    //   cell: ({ row }) => {
+    //     const file = row.original;
+    //     return (
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger asChild>
+    //           <Button variant="ghost" className="h-8 w-8 p-0">
+    //             <span className="sr-only">Open menu</span>
+    //             <Ellipsis className="h-4 w-4" />
+    //           </Button>
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent align="end" className="w-48 bg-white">
+    //           <DropdownMenuLabel>File Actions</DropdownMenuLabel>
+    //           <DropdownMenuSeparator />
 
-              <DropdownMenuItem onClick={() => onViewFile?.(file)}>
-                <Eye className="mr-2 h-4 w-4" />
-                View Details
-              </DropdownMenuItem>
+    //           <DropdownMenuItem onClick={() => onViewFile?.(file)}>
+    //             <Eye className="mr-2 h-4 w-4" />
+    //             View Details
+    //           </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => onEditFile?.(file)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Details
-              </DropdownMenuItem>
+    //           <DropdownMenuItem onClick={() => onEditFile?.(file)}>
+    //             <Edit className="mr-2 h-4 w-4" />
+    //             Edit Details
+    //           </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => onDownloadFile?.(file)}>
-                <Download className="mr-2 h-4 w-4" />
-                Download File
-              </DropdownMenuItem>
+    //           <DropdownMenuItem onClick={() => onDownloadFile?.(file)}>
+    //             <Download className="mr-2 h-4 w-4" />
+    //             Download File
+    //           </DropdownMenuItem>
 
-              <DropdownMenuSeparator />
+    //           <DropdownMenuSeparator />
 
-              <DropdownMenuItem
-                onClick={() => onDeleteFile?.(file)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete File
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
+    //           <DropdownMenuItem
+    //             onClick={() => onDeleteFile?.(file)}
+    //             className="text-red-600 focus:text-red-600"
+    //           >
+    //             <Trash2 className="mr-2 h-4 w-4" />
+    //             Delete File
+    //           </DropdownMenuItem>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     );
+    //   },
+    // },
   ];
 
   // Initialize table

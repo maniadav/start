@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Badge } from "@management/components/ui/badge";
 import {

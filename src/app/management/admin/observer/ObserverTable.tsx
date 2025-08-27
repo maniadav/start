@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "components/ui/card";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,

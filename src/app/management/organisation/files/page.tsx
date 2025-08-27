@@ -23,7 +23,6 @@ const ObserverFilesPage = () => {
   // Use custom hooks
   const {
     requestBody,
-    updateField,
     updateFields,
     resetAll,
     hasActiveFiltersOrSorts,
@@ -49,7 +48,7 @@ const ObserverFilesPage = () => {
 
   return (
     <div className="p-4 md:p-8">
-      <SidebarTriggerComp title="File Manager" />
+      <SidebarTriggerComp title="Uplaod Files" />
 
       <Card>
         <CardHeader>

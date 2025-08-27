@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { PopupModal } from "@components/common/PopupModal";
 import { Filter, X } from "lucide-react";
@@ -133,27 +133,6 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
               </select>
             </div>
 
-            {/* Date Range */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Date Range
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  type="date"
-                  value={requestBody.dateStart || ""}
-                  onChange={(e) => onUpdate({ dateStart: e.target.value })}
-                  className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <Input
-                  type="date"
-                  value={requestBody.dateEnd || ""}
-                  onChange={(e) => onUpdate({ dateEnd: e.target.value })}
-                  className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
             {/* File Size Range */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
@@ -181,7 +160,8 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                   type="number"
                   placeholder="Max"
                   value={
-                    requestBody.fileSizeMax === Infinity || !requestBody.fileSizeMax
+                    requestBody.fileSizeMax === Infinity ||
+                    !requestBody.fileSizeMax
                       ? ""
                       : requestBody.fileSizeMax / (1024 * 1024)
                   }
@@ -192,6 +172,27 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                         : Infinity,
                     })
                   }
+                  className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Date Range */}
+            <div className="space-y-2 col-span-2">
+              <label className="text-sm font-medium text-gray-700">
+                Date Range
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  value={requestBody.dateStart || ""}
+                  onChange={(e) => onUpdate({ dateStart: e.target.value })}
+                  className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <Input
+                  type="date"
+                  value={requestBody.dateEnd || ""}
+                  onChange={(e) => onUpdate({ dateEnd: e.target.value })}
                   className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>

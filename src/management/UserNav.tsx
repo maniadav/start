@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@management/components/ui/dropdown-menu";
-import { Button } from "@management/components/ui/button";
+import { Button } from "@components/ui/button";
 import { Avatar, AvatarFallback } from "@management/components/ui/avatar";
 import { useAuth } from "state/provider/AuthProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";

@@ -13,7 +13,7 @@ import {
   TabsTrigger,
   TabsList,
   TabsContent,
-} from "@management/components/ui/tabs";
+} from "@components/ui/tabs";
 import { useAuth } from "state/provider/AuthProvider";
 import { AlertTriangle } from "lucide-react";
 import ChildProfile from "./child-profile";
