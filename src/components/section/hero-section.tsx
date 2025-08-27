@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
-import InstallButton from "./button/AppDownload";
+import InstallButton from "../button/AppDownload";
 import Link from "next/link";
 import { BASE_URL } from "@constants/config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 
-const LandingBanner = () => {
+const HeroSection = () => {
   const { languageContent } = useLanguageProvider();
   return (
     <header className="relative flex h-screen overflow-hidden">
@@ -87,4 +87,4 @@ const LandingBanner = () => {
   );
 };
 
-export default LandingBanner;
+export default HeroSection;

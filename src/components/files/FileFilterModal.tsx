@@ -3,7 +3,7 @@ import { Button } from "@management/components/ui/button";
 import { Input } from "@components/ui/input";
 import { PopupModal } from "@components/common/PopupModal";
 import { Filter, X } from "lucide-react";
-import { FileRequestBody } from "../hooks/useFileFilters";
+import { FileRequestBody } from "../../hooks/files/useFileFilters";
 
 interface FileFilterModalProps {
   show: boolean;

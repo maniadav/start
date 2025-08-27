@@ -1,11 +1,11 @@
 import React from "react";
-import SurveyDataDetails from "./SurveyDataDetails";
+import ContentDescription from "./content-description";
 
 const HomePage = () => {
   return (
     <div className="w-full p-8">
       <div className="container mx-auto py-20 px-4 text-black">
-        <SurveyDataDetails />
+        <ContentDescription />
       </div>
     </div>
   );

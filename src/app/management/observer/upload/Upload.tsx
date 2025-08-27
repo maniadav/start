@@ -95,7 +95,7 @@ export default function Upload({ user }: { user: any }) {
     try {
       // Use StartUtilityAPI which handles authentication and token refresh automatically
       const START_API = new StartUtilityAPI();
-      const result = await START_API.files.aws(formData);
+      const result = await START_API.files.upload(formData);
 
       console.log(
         `File ${fileWithTask.file.name} uploaded successfully:`,

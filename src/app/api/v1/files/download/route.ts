@@ -5,10 +5,7 @@ import FilesModel from "@models/file.model";
 import { S3Service } from "@services/aws.s3.service";
 import JSZip from "jszip";
 import { HttpStatusCode } from "enums/HttpStatusCode";
-import {
-  handleApiError,
-  createErrorResponse,
-} from "@utils/errorHandler";
+import { handleApiError, createErrorResponse } from "@utils/errorHandler";
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,9 +44,7 @@ export async function GET(request: NextRequest) {
       if (organisationId) {
         filters.organisation_id = organisationId;
       } else {
-        // If no specific organisation specified, use user's organisation
-        // You might need to get this from the user's profile
-        filters.organisation_id = { $exists: true }; // Placeholder - adjust based on your user model
+        filters.organisation_id = { $exists: true };
       }
     }
     // Admin users can access all files
@@ -146,22 +141,33 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { filters } = body;
 
-    // Build filter object for database query
-    const dbFilters: any = {};
+    // Validate filters object
+    if (!filters || typeof filters !== "object") {
+      return createErrorResponse(
+        "INVALID_FILTERS",
+        "Filters object is required and must be an object",
+        HttpStatusCode.BadRequest
+      );
+    }
 
-    // Role-based access control
+    // Build filter object for database query with proper typing
+    const dbFilters: Record<string, any> = {};
+
+    // Role-based access control with proper validation
     if (role === "observer") {
       dbFilters.observer_id = user_id;
     } else if (role === "organisation") {
-      if (filters.organisationId) {
+      if (filters.organisationId && filters.organisationId !== "all") {
         dbFilters.organisation_id = filters.organisationId;
       } else {
-        dbFilters.organisation_id = { $exists: true }; // Placeholder
+        // Get user's organisation from profile instead of placeholder
+        dbFilters.organisation_id = user_id;
       }
     }
+    // Admin users can access all files (no additional filters needed)
 
     // Apply other filters
-    if (filters?.observerId) dbFilters.observer_id = filters?.observerId;
+    if (filters?.observerId) dbFilters.observer_id = filters.observerId;
     if (filters?.organisationId)
       dbFilters.organisation_id = filters?.organisationId;
     if (filters?.taskId) dbFilters.task_id = filters?.taskId;

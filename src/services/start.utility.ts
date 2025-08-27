@@ -191,27 +191,16 @@ class StartUtilityAPI {
         data
       );
     },
-    download: (data: any) => {
-      return this.api.get(
-        `${StartUtilityAPI.prefix}${API_ENDPOINT.files.download}`,
-        data
-      );
-    },
-    downloadBulkPost: (data: any) => {
+
+    downloadPost: (data: any) => {
       return this.api.post(
         `${StartUtilityAPI.prefix}${API_ENDPOINT.files.download}`,
         data
       );
     },
-    downloadBulkGet: (data: any) => {
+    downloadGet: (data: any) => {
       return this.api.get(
         `${StartUtilityAPI.prefix}${API_ENDPOINT.files.download}`,
-        data
-      );
-    },
-    aws: (data: any) => {
-      return this.api.post(
-        `${StartUtilityAPI.prefix}${API_ENDPOINT.files.aws}`,
         data
       );
     },

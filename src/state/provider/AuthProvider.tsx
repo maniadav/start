@@ -9,8 +9,8 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import AuthContext from "state/context/AuthContext";
-import Header from "components/Header";
-import Footer from "components/Footer";
+import Header from "@components/section/header";
+import Footer from "@components/section/footer";
 import LoadingSection from "components/section/loading-section";
 import { getCurrentMember, getCurrentUser } from "@utils/auth.utils";
 

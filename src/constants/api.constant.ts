@@ -47,8 +47,7 @@ export const API_ENDPOINT = {
   files: {
     list: "/files/list",
     create: "/files/create",
-    upload: "/files/upload-file",
-    aws: "/files/upload/aws",
-    download: "/files/download/bulk",
+    upload: "/files/upload",
+    download: "/files/download",
   },
 };

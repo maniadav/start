@@ -1,6 +1,6 @@
 import "./globals.css";
-import ActionBanner from "components/ActionBanner";
-import LandingBanner from "components/LandingBanner";
+import ActionBanner from "@components/section/action-section";
+import LandingBanner from "@components/section/hero-section";
 
 export default function Home() {
   return (

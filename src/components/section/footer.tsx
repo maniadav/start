@@ -1,10 +1,10 @@
 import React from "react";
-import CommonIcon from "./common/CommonIcon";
+import CommonIcon from "../common/CommonIcon";
 import Image from "next/image";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
-import CacheResetButton from "./button/CacheResetButton";
+import CacheResetButton from "../button/CacheResetButton";
 
 const SOCIAL_LINKS = [
   {
@@ -97,8 +97,13 @@ const Footer = () => {
           <li key={PAGE_ROUTES.CONTENT.path} className="capitalize">
             <Link href={PAGE_ROUTES.CONTENT.path}>check data format</Link>
           </li>
-          <li key={PAGE_ROUTES.SURVEY.path} className="capitalize">
-            <Link href={PAGE_ROUTES.SURVEY.path}>ready for the survey?</Link>
+          <li
+            key={PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path}
+            className="capitalize"
+          >
+            <Link href={PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path}>
+              ready for the survey?
+            </Link>
           </li>
         </ul>
       </div>

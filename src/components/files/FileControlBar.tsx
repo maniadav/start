@@ -9,7 +9,7 @@ import {
   RotateCcw,
   Search,
 } from "lucide-react";
-import { FileRequestBody } from "../hooks/useFileFilters";
+import { FileRequestBody } from "../../hooks/files/useFileFilters";
 
 interface FileControlBarProps {
   requestBody: FileRequestBody;

@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@management/components/ui/button";
 import { PopupModal } from "@components/common/PopupModal";
 import { SortAsc, SortDesc, X } from "lucide-react";
-import { FileRequestBody } from "../hooks/useFileFilters";
+import { FileRequestBody } from "../../hooks/files/useFileFilters";
 
 interface FileSortModalProps {
   show: boolean;

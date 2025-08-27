@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import CommonIcon from "./common/CommonIcon";
+import CommonIcon from "../common/CommonIcon";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "state/provider/AuthProvider";
 import Link from "next/link";
-import LanguageToggle from "./LanguageToggle";
+import LanguageToggle from "../LanguageToggle";
 import { BASE_URL } from "@constants/config.constant";
-import LogOutPopupModal from "./popup/LogOutPopup";
+import LogOutPopupModal from "../popup/LogOutPopup";
 import { NAV_ROUTES, PAGE_ROUTES } from "@constants/route.constant";
 import { clearLocalStorageValue } from "@utils/localStorage";
 
@@ -49,7 +49,7 @@ export const Header = () => {
         className={`max-w-[900px] w-full mt-4 mx-2 flex items-center justify-between rounded-3xl px-4 py-2 transition-all duration-300 pointer-events-auto
         ${
           scrolled
-            ? "backdrop-blur-lg bg-black/50 shadow-2xl"
+            ? "backdrop-blur-lg bg-black/60 shadow-2xl"
             : "backdrop-blur-md bg-black/30 shadow-lg"
         }
         border-b border-white/10 glassmorphism`}

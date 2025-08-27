@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { FileRequestBody } from "./useFileFilters";
 import StartUtilityAPI from "@services/start.utility";
-import { API_ENDPOINT } from "@constants/api.constant";
 import { toast } from "react-hot-toast"; // Or your library of choice
 
 // Assuming StartUtilityAPI is your API wrapper
@@ -17,7 +16,7 @@ export const useFileOperations = () => {
 
       try {
         const START_API = new StartUtilityAPI();
-        const prepareData = await START_API.files.downloadBulkPost(requestBody);
+        const prepareData = await START_API.files.downloadPost(requestBody);
 
         // We no longer need downloadUrl, so we don't extract it.
         const { totalFiles, estimatedSize } = prepareData;
@@ -40,9 +39,7 @@ export const useFileOperations = () => {
         // =================================================================
         // STEP 2: Use the URL to fetch the actual zip file
         // =================================================================
-        const downloadResponse = await START_API.files.downloadBulkGet(
-          requestBody
-        );
+        const downloadResponse = await START_API.files.downloadGet(requestBody);
 
         // The downloadBulkGet now returns a Response object for ZIP files
         if (!downloadResponse.ok) {

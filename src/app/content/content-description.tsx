@@ -162,7 +162,7 @@ const TABLE_HEADER_CLASS =
 const TABLE_CELL_CLASS = "p-2 border-b border-gray-100";
 const TABLE_KEY_CLASS = "font-mono text-blue-700 whitespace-nowrap";
 
-const SurveyDataDetails = () => {
+const ContentDescription = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg min-h-screen mt-8 mb-8">
       <h1 className="text-3xl font-extrabold mb-2 text-primary">
@@ -256,4 +256,4 @@ const SurveyDataDetails = () => {
   );
 };
 
-export default SurveyDataDetails;
+export default ContentDescription;

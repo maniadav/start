@@ -1,29 +1,5 @@
 import path from "path";
 
-// header navigation
-export const NAV_ROUTES = {
-  HOME: {
-    label: "Home",
-    path: "/",
-    icon: "material-symbols:home-outline",
-  },
-  SURVEY: {
-    label: "Survey",
-    path: "/survey",
-    icon: "material-symbols:list-alt-outline",
-  },
-  ABOUT: {
-    label: "About",
-    path: "/about",
-    icon: "material-symbols:info-outline",
-  },
-  DATA: {
-    label: "Data",
-    path: "/content",
-    icon: "material-symbols:database",
-  },
-};
-
 // all the page routes are defined here
 export const PAGE_ROUTES = {
   HOME: {
@@ -90,5 +66,29 @@ export const PAGE_ROUTES = {
         path: "/management/observer/survey",
       },
     },
+  },
+};
+
+// header navigation
+export const NAV_ROUTES = {
+  HOME: {
+    label: "Home",
+    path: PAGE_ROUTES.HOME.path,
+    icon: "material-symbols:home-outline",
+  },
+  SURVEY: {
+    label: "Survey",
+    path: PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path,
+    icon: "material-symbols:list-alt-outline",
+  },
+  ABOUT: {
+    label: "About",
+    path: PAGE_ROUTES.ABOUT.path,
+    icon: "material-symbols:info-outline",
+  },
+  DATA: {
+    label: "Data",
+    path: PAGE_ROUTES.CONTENT.path,
+    icon: "material-symbols:database",
   },
 };

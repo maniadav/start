@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { IconSurvey } from "./common/Icons";
+import { IconSurvey } from "../common/Icons";
 import Image from "next/image";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
 import { BASE_URL } from "@constants/config.constant";
@@ -9,7 +9,7 @@ import { PAGE_ROUTES } from "@constants/route.constant";
 import { useAuth } from "state/provider/AuthProvider";
 import { MemberProfile } from "@data/start.data";
 
-const ActionBanner = () => {
+const ActionSection = () => {
   const { languageContent } = useLanguageProvider();
   const { member } = useAuth();
 
@@ -81,4 +81,4 @@ const ActionBanner = () => {
   );
 };
 
-export default ActionBanner;
+export default ActionSection;
