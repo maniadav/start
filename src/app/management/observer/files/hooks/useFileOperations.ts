@@ -1,32 +1,84 @@
 import { useCallback } from "react";
 import { FileRequestBody } from "./useFileFilters";
+import StartUtilityAPI from "@services/start.utility";
+import { API_ENDPOINT } from "@constants/api.constant";
+import { toast } from "react-hot-toast"; // Or your library of choice
 
+// Assuming StartUtilityAPI is your API wrapper
 export const useFileOperations = () => {
   // Handle bulk download
-  const handleBulkDownload = useCallback(async (requestBody: FileRequestBody) => {
-    try {
-      const response = await fetch("/api/v1/files/download/bulk", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
 
-      if (!response.ok) {
-        throw new Error("Failed to initiate bulk download");
+  // ...
+
+  const handleBulkDownload = useCallback(
+    async (requestBody: FileRequestBody) => {
+      // 1. Announce the start and get a unique ID for the toast
+      const toastId = toast.loading("Preparing your download...");
+
+      try {
+        const START_API = new StartUtilityAPI();
+        const prepareData = await START_API.files.downloadBulkPost(requestBody);
+
+        // We no longer need downloadUrl, so we don't extract it.
+        const { totalFiles, estimatedSize } = prepareData;
+
+        toast.loading(
+          `Found ${totalFiles} files (${estimatedSize}). Starting download...`,
+          {
+            id: toastId,
+          }
+        );
+
+        // 2. Update the toast with progress, replacing the old `confirm` dialog
+        toast.loading(
+          `Found ${totalFiles} files (${estimatedSize}). Starting download...`,
+          {
+            id: toastId,
+          }
+        );
+
+        // =================================================================
+        // STEP 2: Use the URL to fetch the actual zip file
+        // =================================================================
+        const downloadResponse = await START_API.files.downloadBulkGet(
+          requestBody
+        );
+
+        // The downloadBulkGet now returns a Response object for ZIP files
+        if (!downloadResponse.ok) {
+          throw new Error("Failed to download the zip file.");
+        }
+
+        const blob = await downloadResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `bulk_download_${
+          new Date().toISOString().split("T")[0]
+        }.zip`;
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        // 3. Update the toast to a final success message
+        toast.success("Download has started successfully!", {
+          id: toastId,
+          duration: 4000, // Keep the success message on screen a bit longer
+        });
+      } catch (error: any) {
+        console.error("Bulk download error:", error);
+        // 4. On ANY error, update the toast to show a failure message
+        toast.error(error.message || "An unexpected error occurred.", {
+          id: toastId,
+        });
       }
-
-      const result = await response.json();
-      console.log("Bulk download initiated:", result);
-
-      // You can show a success message or redirect to download status page
-      alert(`Bulk download initiated successfully! Job ID: ${result.jobId}`);
-    } catch (error) {
-      console.error("Bulk download error:", error);
-      throw error;
-    }
-  }, []);
+    },
+    []
+  );
 
   // Action handlers for file operations
   const handleViewFile = useCallback((file: any) => {

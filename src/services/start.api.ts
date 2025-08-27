@@ -169,6 +169,14 @@ class StartAPI {
       return {} as T;
     }
 
+    // Check if response is binary (like ZIP files)
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/zip")) {
+      // For ZIP files, return the response object directly so we can call .blob() on it
+      return response as T;
+    }
+
+    // For JSON responses, parse as usual
     const data = await response.json();
 
     if (!response.ok) {

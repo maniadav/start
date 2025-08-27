@@ -49,5 +49,6 @@ export const API_ENDPOINT = {
     create: "/files/create",
     upload: "/files/upload-file",
     aws: "/files/upload/aws",
+    download: "/files/download/bulk",
   },
 };

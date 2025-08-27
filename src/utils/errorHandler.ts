@@ -3,22 +3,6 @@ import { TokenUtilsError } from "./token.utils";
 import { ProfileUtilsError } from "./profile.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 
-/**
- * Global API Error Handler
- *
- * This utility provides consistent error handling across all API routes.
- * It automatically converts custom error classes to proper HTTP responses
- * with appropriate status codes and error structures.
- *
- * Usage:
- * ```typescript
- * try {
- *   // ... your API logic
- * } catch (error) {
- *   return handleApiError(error);
- * }
- * ```
- */
 export function handleApiError(error: unknown): NextResponse {
   // Log the error for debugging (in production, you might want to use a proper logger)
   console.error("API Error caught:", {
@@ -101,6 +85,66 @@ export function handleApiError(error: unknown): NextResponse {
         },
       },
       { status: HttpStatusCode.ServiceUnavailable }
+    );
+  }
+
+  // Handle Mongoose/MongoDB model errors
+  if (error instanceof Error && error.name === "MissingSchemaError") {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "DATABASE_MODEL_ERROR",
+          message: "Database model configuration error. Please contact support.",
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: HttpStatusCode.InternalServerError }
+    );
+  }
+
+  // Handle Mongoose validation errors
+  if (error instanceof Error && error.name === "ValidationError") {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Data validation failed. Please check your input.",
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: HttpStatusCode.BadRequest }
+    );
+  }
+
+  // Handle Mongoose cast errors (invalid ObjectId, etc.)
+  if (error instanceof Error && error.name === "CastError") {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "INVALID_DATA_FORMAT",
+          message: "Invalid data format provided.",
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: HttpStatusCode.BadRequest }
+    );
+  }
+
+  // Handle Mongoose duplicate key errors
+  if (error instanceof Error && error.name === "MongoServerError" && (error as any).code === 11000) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "DUPLICATE_ENTRY",
+          message: "A record with this information already exists.",
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: HttpStatusCode.Conflict }
     );
   }
 

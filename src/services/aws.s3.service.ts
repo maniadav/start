@@ -308,4 +308,57 @@ export class S3Service {
       throw error;
     }
   }
+
+  /**
+   * Downloads a file from S3 and returns it as a Buffer
+   */
+  async downloadFile(key: string): Promise<Buffer> {
+    try {
+      const params = {
+        Bucket: this.bucketName,
+        Key: key,
+      };
+
+      const command = new GetObjectCommand(params);
+      const response = await this.s3Client.send(command);
+
+      if (!response.Body) {
+        throw new Error("File body is empty");
+      }
+
+      // Convert the readable stream to buffer
+      const chunks: Uint8Array[] = [];
+      const stream = response.Body as any; // Type assertion for stream
+
+      return new Promise((resolve, reject) => {
+        stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
+        stream.on("end", () => {
+          const buffer = Buffer.concat(chunks);
+          resolve(buffer);
+        });
+        stream.on("error", (error: Error) => reject(error));
+      });
+    } catch (error) {
+      console.error("Error downloading file from S3:", error);
+
+      if (error instanceof S3ServiceException) {
+        switch (error.name) {
+          case "NoSuchKey":
+            throw new Error(`File not found in S3: ${key}`);
+          case "AccessDenied":
+            throw new Error(
+              "Access denied to S3 file. Check your AWS credentials and permissions"
+            );
+          default:
+            throw new Error(`S3 download failed: ${error.message}`);
+        }
+      }
+
+      throw new Error(
+        `Failed to download file from S3: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  }
 }
