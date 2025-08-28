@@ -8,18 +8,21 @@ interface FileSortModalProps {
   show: boolean;
   onClose: () => void;
   requestBody: FileRequestBody;
+  pendingRequestBody: FileRequestBody;
   onUpdate: (updates: Partial<FileRequestBody>) => void;
+  onSubmit: () => void;
 }
 
 export const FileSortModal: React.FC<FileSortModalProps> = ({
   show,
   onClose,
   requestBody,
+  pendingRequestBody,
   onUpdate,
+  onSubmit,
 }) => {
   const handleSort = (field: string, direction: string) => {
     onUpdate({ sortField: field, sortDirection: direction });
-    onClose();
   };
 
   const getSortFieldLabel = (field?: string) => {
@@ -71,7 +74,7 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
               <div className="space-y-2">
                 <Button
                   variant={
-                    requestBody.sortField === "file_size" && requestBody.sortDirection === "asc"
+                    pendingRequestBody.sortField === "file_size" && pendingRequestBody.sortDirection === "asc"
                       ? "default"
                       : "outline"
                   }
@@ -84,7 +87,7 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
                 </Button>
                 <Button
                   variant={
-                    requestBody.sortField === "file_size" && requestBody.sortDirection === "desc"
+                    pendingRequestBody.sortField === "file_size" && pendingRequestBody.sortDirection === "desc"
                       ? "default"
                       : "outline"
                   }
@@ -106,7 +109,7 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
               <div className="space-y-2">
                 <Button
                   variant={
-                    requestBody.sortField === "date_created" && requestBody.sortDirection === "asc"
+                    pendingRequestBody.sortField === "date_created" && pendingRequestBody.sortDirection === "asc"
                       ? "default"
                       : "outline"
                   }
@@ -119,7 +122,7 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
                 </Button>
                 <Button
                   variant={
-                    requestBody.sortField === "date_created" && requestBody.sortDirection === "desc"
+                    pendingRequestBody.sortField === "date_created" && pendingRequestBody.sortDirection === "desc"
                       ? "default"
                       : "outline"
                   }
@@ -137,12 +140,17 @@ export const FileSortModal: React.FC<FileSortModalProps> = ({
           {/* Sort Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-200">
             <div className="text-sm text-gray-600">
-              Current: {getSortFieldLabel(requestBody.sortField)} (
-              {requestBody.sortDirection === "asc" ? "Ascending" : "Descending"})
+              Current: {getSortFieldLabel(pendingRequestBody.sortField)} (
+              {pendingRequestBody.sortDirection === "asc" ? "Ascending" : "Descending"})
             </div>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
+            <div>
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button variant="outline" onClick={onSubmit}>
+                Submit
+              </Button>
+            </div>
           </div>
         </div>
       </div>

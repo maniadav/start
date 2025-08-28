@@ -4,3 +4,7 @@ export const ROLE = {
   OBSERVER: "observer",
   CHILD: "child",
 };
+export type RoleAllowed =
+  | typeof ROLE.ADMIN
+  | typeof ROLE.ORGANISATION
+  | typeof ROLE.OBSERVER;

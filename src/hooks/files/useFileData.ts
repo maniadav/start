@@ -15,10 +15,16 @@ export const useFileData = (requestBody: FileRequestBody) => {
 
       // Build query parameters for backend API
       const queryParams = new URLSearchParams();
-      
+
       // Add all non-default values to query params
       Object.entries(requestBody).forEach(([key, value]) => {
-        if (value && value !== "" && value !== "all" && value !== 0 && value !== Infinity) {
+        if (
+          value &&
+          value !== "" &&
+          value !== "all" &&
+          value !== 0 &&
+          value !== Infinity
+        ) {
           queryParams.set(key, value.toString());
         }
       });
@@ -39,10 +45,13 @@ export const useFileData = (requestBody: FileRequestBody) => {
   }, [loadData]);
 
   // Get unique values for filter dropdowns
-  const uniqueObservers = [...new Set(data.map((file) => file.observer_id))].sort();
-  const uniqueOrganizations = [...new Set(data.map((file) => file.organisation_id))].sort();
+  const uniqueObservers = [
+    ...new Set(data.map((file) => file.observer_id)),
+  ].sort();
+  const uniqueOrganizations = [
+    ...new Set(data.map((file) => file.organisation_id)),
+  ].sort();
   const uniqueChildren = [...new Set(data.map((file) => file.child_id))].sort();
-  const uniqueTasks = [...new Set(data.map((file) => file.task_id))].sort();
 
   return {
     data,
@@ -51,6 +60,5 @@ export const useFileData = (requestBody: FileRequestBody) => {
     uniqueObservers,
     uniqueOrganizations,
     uniqueChildren,
-    uniqueTasks,
   };
 };

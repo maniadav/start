@@ -159,7 +159,7 @@ export function DataTable<TData, TValue>({
                         {column.id === "actions"
                           ? "Actions"
                           : column.id === "organisation_id"
-                          ? "Organization"
+                          ? "Organisation"
                           : column.id === "observer_id"
                           ? "Observer"
                           : column.id === "child_id"

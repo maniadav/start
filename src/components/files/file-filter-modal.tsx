@@ -1,40 +1,44 @@
 import React from "react";
 import { Button } from "@components/ui/button";
-import { Input } from "@components/ui/input";
 import { PopupModal } from "@components/common/PopupModal";
 import { Filter, X } from "lucide-react";
 import { FileRequestBody } from "../../hooks/files/useFileFilters";
+import TASK_TYPE from "@constants/survey.type.constant";
+import { ROLE, RoleAllowed } from "@constants/role.constant";
 
 interface FileFilterModalProps {
   show: boolean;
   onClose: () => void;
+  onSubmit: () => void;
   requestBody: FileRequestBody;
+  pendingRequestBody: FileRequestBody;
   onUpdate: (updates: Partial<FileRequestBody>) => void;
   // Filter options
   uniqueObservers: string[];
   uniqueOrganizations: string[];
   uniqueChildren: string[];
-  uniqueTasks: string[];
-  // Computed values
   activeFiltersCount: number;
+  role: RoleAllowed;
 }
 
 export const FileFilterModal: React.FC<FileFilterModalProps> = ({
   show,
   onClose,
+  onSubmit,
   requestBody,
+  pendingRequestBody,
   onUpdate,
   uniqueObservers,
   uniqueOrganizations,
   uniqueChildren,
-  uniqueTasks,
   activeFiltersCount,
+  role,
 }) => {
   return (
     <PopupModal
       show={show}
       onRequestClose={onClose}
-      customStyle="w-full max-w-4xl h-auto max-h-[90vh] overflow-y-auto"
+      customStyle="w-full max-w-2xl h-auto max-h-[90vh] overflow-y-auto"
     >
       <div className="bg-white rounded-lg shadow-xl m-4">
         <div className="border-b border-gray-200 px-6 py-4">
@@ -56,44 +60,47 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
 
         <div className="px-6 py-4 space-y-6">
           {/* Filter Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {/* Observer Filter */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Observer
-              </label>
-              <select
-                value={requestBody.observerId || "all"}
-                onChange={(e) => onUpdate({ observerId: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="all">All Observers</option>
-                {uniqueObservers.map((observer) => (
-                  <option key={observer} value={observer}>
-                    {observer}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {role === ROLE.ADMIN && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Organization
+                </label>
+                <select
+                  value={requestBody.organisationId || "all"}
+                  onChange={(e) => onUpdate({ organisationId: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Organizations</option>
+                  {uniqueOrganizations.map((org) => (
+                    <option key={org} value={org}>
+                      {org}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-            {/* Organization Filter */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Organization
-              </label>
-              <select
-                value={requestBody.organisationId || "all"}
-                onChange={(e) => onUpdate({ organisationId: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="all">All Organizations</option>
-                {uniqueOrganizations.map((org) => (
-                  <option key={org} value={org}>
-                    {org}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {(role === ROLE.ADMIN || role === ROLE.ORGANISATION) && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Observer
+                </label>
+                <select
+                  value={pendingRequestBody.observerId || "all"}
+                  onChange={(e) => onUpdate({ observerId: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Observers</option>
+                  {uniqueObservers.map((observer) => (
+                    <option key={observer} value={observer}>
+                      {observer}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Child Filter */}
             <div className="space-y-2">
@@ -101,7 +108,7 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                 Child ID
               </label>
               <select
-                value={requestBody.childId || "all"}
+                value={pendingRequestBody.childId || "all"}
                 onChange={(e) => onUpdate({ childId: e.target.value })}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
@@ -120,12 +127,12 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                 Task ID
               </label>
               <select
-                value={requestBody.taskId || "all"}
+                value={pendingRequestBody.taskId || "all"}
                 onChange={(e) => onUpdate({ taskId: e.target.value })}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Tasks</option>
-                {uniqueTasks.map((task) => (
+                {TASK_TYPE.map((task) => (
                   <option key={task} value={task}>
                     {task}
                   </option>
@@ -134,7 +141,7 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
             </div>
 
             {/* File Size Range */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
                 File Size (MB)
               </label>
@@ -143,9 +150,9 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                   type="number"
                   placeholder="Min"
                   value={
-                    requestBody.fileSizeMin === 0 || !requestBody.fileSizeMin
+                    pendingRequestBody.fileSizeMin === 0 || !pendingRequestBody.fileSizeMin
                       ? ""
-                      : requestBody.fileSizeMin / (1024 * 1024)
+                      : pendingRequestBody.fileSizeMin / (1024 * 1024)
                   }
                   onChange={(e) =>
                     onUpdate({
@@ -160,10 +167,10 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                   type="number"
                   placeholder="Max"
                   value={
-                    requestBody.fileSizeMax === Infinity ||
-                    !requestBody.fileSizeMax
+                    pendingRequestBody.fileSizeMax === Infinity ||
+                    !pendingRequestBody.fileSizeMax
                       ? ""
-                      : requestBody.fileSizeMax / (1024 * 1024)
+                      : pendingRequestBody.fileSizeMax / (1024 * 1024)
                   }
                   onChange={(e) =>
                     onUpdate({
@@ -175,28 +182,28 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
                   className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Date Range */}
-            <div className="space-y-2 col-span-2">
+            {/* <div className="space-y-2 col-span-2">
               <label className="text-sm font-medium text-gray-700">
                 Date Range
               </label>
               <div className="flex gap-2">
                 <Input
                   type="date"
-                  value={requestBody.dateStart || ""}
+                  value={pendingRequestBody.dateStart || ""}
                   onChange={(e) => onUpdate({ dateStart: e.target.value })}
                   className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <Input
                   type="date"
-                  value={requestBody.dateEnd || ""}
+                  value={pendingRequestBody.dateEnd || ""}
                   onChange={(e) => onUpdate({ dateEnd: e.target.value })}
                   className="text-sm border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Filter Actions */}
@@ -205,9 +212,14 @@ export const FileFilterModal: React.FC<FileFilterModalProps> = ({
               {activeFiltersCount} filter
               {activeFiltersCount !== 1 ? "s" : ""} active
             </div>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
+            <div className="flex gap-2 items-center justify-center">
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button variant="default" onClick={onSubmit}>
+                Submit
+              </Button>
+            </div>
           </div>
         </div>
       </div>

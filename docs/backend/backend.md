@@ -76,7 +76,7 @@ This API is structured to support a medical research platform focused on early d
    - Assessment data collection
    - File upload and management for medical observations
 
-3. **Organization Management**
+3. **Organisation Management**
 
    - Multi-organization support
    - Observer assignment and management

@@ -92,7 +92,7 @@ export function FileTable({
     },
     {
       accessorKey: "organisation_id",
-      header: "Organization",
+      header: "Organisation",
       cell: ({ row }) => (
         <div className="font-medium text-sm">
           {row.getValue("organisation_id")}

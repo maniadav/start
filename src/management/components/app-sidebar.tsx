@@ -32,7 +32,7 @@ export function AppSidebar() {
       icon: Home,
     },
     {
-      title: "Organizations",
+      title: "Organisations",
       url: "/management/admin/organizations",
       icon: Building2,
     },

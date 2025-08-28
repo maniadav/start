@@ -22,7 +22,7 @@ interface FileControlBarProps {
   hasActiveFiltersOrSorts: boolean;
 }
 
-export const FileControlBar: React.FC<FileControlBarProps> = ({
+export const FileActions: React.FC<FileControlBarProps> = ({
   requestBody,
   onUpdate,
   onFilterClick,
@@ -38,7 +38,7 @@ export const FileControlBar: React.FC<FileControlBarProps> = ({
       <div className="relative flex-1 max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search by Task ID, Child ID, Organization, or Observer..."
+          placeholder="Search by Task ID, Child ID, Organisation, or Observer..."
           value={requestBody.searchTerm || ""}
           onChange={(e) => onUpdate({ searchTerm: e.target.value })}
           className="pl-10"
@@ -66,7 +66,7 @@ export const FileControlBar: React.FC<FileControlBarProps> = ({
         </Button>
 
         {/* Sort Button */}
-        <Button
+        {/* <Button
           variant="outline"
           onClick={onSortClick}
           className="flex items-center gap-2"
@@ -82,7 +82,7 @@ export const FileControlBar: React.FC<FileControlBarProps> = ({
               1
             </Badge>
           )}
-        </Button>
+        </Button> */}
 
         {/* Bulk Download Button */}
         <Button

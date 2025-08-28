@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     }
 
     if (role === "organisation") {
-      // Organizations can only see their own files
+      // Organisations can only see their own files
       filter.organisation_id = user_id;
     } else if (queryParams.has("organisationId")) {
       // Admins can filter by any organization

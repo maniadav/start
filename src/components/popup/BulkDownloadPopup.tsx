@@ -75,7 +75,7 @@ export function BulkDownloadPopup({
         return false;
       }
 
-      // Organization filter
+      // Organisation filter
       if (
         selectedOrganization !== "all" &&
         file.organisation_id !== selectedOrganization
@@ -235,17 +235,17 @@ export function BulkDownloadPopup({
                 </select>
               </div>
 
-              {/* Organization Filter */}
+              {/* Organisation Filter */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
-                  Organization
+                  Organisation
                 </label>
                 <select
                   value={selectedOrganization}
                   onChange={(e) => setSelectedOrganization(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
                 >
-                  <option value="all">All Organizations</option>
+                  <option value="all">All Organisations</option>
                   {uniqueOrganizations.map((org) => (
                     <option key={org} value={org}>
                       {org}
