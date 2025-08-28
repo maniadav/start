@@ -9,7 +9,7 @@ import { useFileFilters, useFileData, useFileOperations } from "@hooks/files";
 import { SidebarTriggerComp } from "@management/SidebarTrigger";
 import { FileResultsSummary } from "./file-results-summary";
 import { FileFilterModal } from "./file-filter-modal";
-import { FileControlBar } from "./file-actions";
+import { FileActions } from "./file-actions";
 import { RoleAllowed } from "@constants/role.constant";
 
 const Files = ({ role }: { role: RoleAllowed }) => {
@@ -66,7 +66,7 @@ const Files = ({ role }: { role: RoleAllowed }) => {
           ) : (
             <div className="space-y-4">
               {/* Control Bar */}
-              <FileControlBar
+              <FileActions
                 requestBody={requestBody}
                 onUpdate={updateFields}
                 onFilterClick={() => setShowFilterPopup(true)}
