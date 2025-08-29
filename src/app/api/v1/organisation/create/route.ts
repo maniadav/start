@@ -7,6 +7,10 @@ import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { sendGmail } from "@utils/gmail.utils";
+import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
+import TokenUtils from "@utils/token.utils";
+import { AppConfig } from "../../../../../config/app.config";
 
 export async function POST(request: Request) {
   try {
@@ -75,10 +79,45 @@ export async function POST(request: Request) {
 
     const savedProfile = await newOrganisationProfile.save();
 
-    // Return success response with temporary password (in production, send via email)
+    // Send verification email to the newly created organisation
+    try {
+      const verificationToken = TokenUtils.generateToken(
+        { 
+          role: "organisation", 
+          email: user.email 
+        },
+        "activation"
+      );
+
+      const emailTemplate = generateVerificationEmailTemplate(
+        {
+          email: user.email,
+          role: "organisation",
+          action: "organisation_creation",
+          organisationName: savedProfile.name,
+          adminName: "Administrator" // You can get this from the admin's profile if needed
+        },
+        verificationToken
+      );
+
+      await sendGmail({
+        fromEmail: AppConfig.GMAIL.EMAIL_ID,
+        toEmail: user.email,
+        subject: emailTemplate.subject,
+        textContent: emailTemplate.textContent,
+        htmlContent: emailTemplate.htmlContent,
+      });
+
+      console.log(`Verification email sent successfully to ${user.email} for organisation creation`);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Don't fail the entire request if email fails, just log it
+    }
+
+    // Return success response
     return NextResponse.json(
       {
-        message: "Organisation created successfully",
+        message: "Organisation created successfully and verification email sent",
         organisation: {
           user_id: user._id,
           name: savedProfile.name,
@@ -86,7 +125,7 @@ export async function POST(request: Request) {
           email: user.email,
           address: savedProfile.address,
         },
-        tempPassword: tempPassword, // Remove this in production and send via email
+        verificationEmailSent: true
       },
       { status: 201 }
     );

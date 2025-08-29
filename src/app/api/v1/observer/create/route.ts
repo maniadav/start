@@ -7,6 +7,10 @@ import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { sendGmail } from "@utils/gmail.utils";
+import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
+import TokenUtils from "@utils/token.utils";
+import { AppConfig } from "../../../../../config/app.config";
 
 export async function POST(request: Request) {
   try {
@@ -74,10 +78,56 @@ export async function POST(request: Request) {
 
     const savedProfile = await newObserverProfile.save();
 
-    // Return success response with temporary password (in production, send via email)
+    // Get organisation details for the email
+    let organisationName = "Organisation";
+    try {
+      const organisationProfile = await OrganisationProfileModel.findOne({ user_id });
+      if (organisationProfile) {
+        organisationName = organisationProfile.name;
+      }
+    } catch (error) {
+      console.error("Failed to fetch organisation details:", error);
+    }
+
+    // Send verification email to the newly created observer
+    try {
+      const verificationToken = TokenUtils.generateToken(
+        { 
+          role: "observer", 
+          email: user.email 
+        },
+        "activation"
+      );
+
+      const emailTemplate = generateVerificationEmailTemplate(
+        {
+          email: user.email,
+          role: "observer",
+          action: "observer_creation",
+          organisationName: organisationName,
+          observerName: savedProfile.name
+        },
+        verificationToken
+      );
+
+      await sendGmail({
+        fromEmail: AppConfig.GMAIL.EMAIL_ID,
+        toEmail: user.email,
+        subject: emailTemplate.subject,
+        textContent: emailTemplate.textContent,
+        htmlContent: emailTemplate.htmlContent,
+      });
+
+      console.log(`Verification email sent successfully to ${user.email} for observer creation`);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Don't fail the entire request if email fails, just log it
+    }
+
+    // Return success response
     return NextResponse.json(
       {
-        message: "Observer created successfully",
+        message: "Observer created successfully and verification email sent",
         observer: {
           user_id: user._id,
           name: savedProfile.name,
@@ -86,6 +136,7 @@ export async function POST(request: Request) {
           address: savedProfile.address,
           organisation_id: user_id,
         },
+        verificationEmailSent: true
       },
       { status: 201 }
     );

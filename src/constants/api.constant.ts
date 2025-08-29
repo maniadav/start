@@ -20,6 +20,7 @@ export const API_ENDPOINT = {
     reset_password: "/auth/reset-password",
     updateProfile: "/auth/update-profile",
     update_password: "/auth/password-update",
+    send_verification_mail: "/auth/send-verification-mail",
   },
   user: {
     list: "/user/list",

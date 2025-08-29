@@ -16,6 +16,14 @@ export class AppConfig {
     SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
   };
 
+  static readonly GMAIL = {
+    EMAIL_ID: process.env.GOOGLE_SMTP_EMAIL_ID || "",
+    SMTP_CLIENT_ID: process.env.GOOGLE_SMTP_CLIENT_ID || "",
+    SMTP_CLIENT_SECRET: process.env.GOOGLE_SMTP_CLIENT_SECRET || "",
+    SMTP_REDIRECT_URL: process.env.GOOGLE_SMTP_REDIRECT_URI || "",
+    SMTP_REFRESH_TOKEN: process.env.GOOGLE_SMTP_REFRESH_TOKEN || "",
+  };
+
   // Database Configuration
   static readonly DATABASE = {
     MONGODB_URI: process.env.MONGODB_URI || "",

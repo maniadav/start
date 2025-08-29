@@ -53,7 +53,7 @@ export function SideBar() {
     },
     {
       title: "All Files",
-      url: "/management/admin/file",
+      url: "/management/admin/files",
       icon: FileText,
     },
   ];
@@ -77,7 +77,7 @@ export function SideBar() {
 
     {
       title: "File Manager",
-      url: "/management/organisation/file",
+      url: "/management/organisation/files",
       icon: FileText,
     },
   ];

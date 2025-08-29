@@ -1,13 +1,13 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
 import { error } from "console";
+import { AppConfig } from "../config/app.config";
 
-const smtp_client_id: string = process.env.GOOGLE_SMTP_CLIENT_ID || "";
-const smtp_client_secret: string = process.env.GOOGLE_SMTP_CLIENT_SECRET || "";
-const smtp_redirect_url: string = process.env.GOOGLE_SMTP_REDIRECT_URI || "";
-const smtp_refresh_token: string = process.env.GOOGLE_SMTP_REFRESH_TOKEN || "";
-
-const EMAIL_ID = "manish.yadav.elit@gmail.com";
+const smtp_client_id: string = AppConfig.GMAIL.SMTP_CLIENT_ID;
+const smtp_client_secret: string = AppConfig.GMAIL.SMTP_CLIENT_SECRET;
+const smtp_redirect_url: string = AppConfig.GMAIL.SMTP_REDIRECT_URL;
+const smtp_refresh_token: string = AppConfig.GMAIL.SMTP_REFRESH_TOKEN;
+const EMAIL_ID = AppConfig.GMAIL.EMAIL_ID;
 
 const oauth2Client = new google.auth.OAuth2(
   smtp_client_id,
