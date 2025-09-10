@@ -45,6 +45,9 @@ export const API_ENDPOINT = {
     update: "/child/update",
     delete: "/child/delete",
   },
+  credential: {
+    create: "/credential/create",
+  },
   files: {
     list: "/files/list",
     create: "/files/create",

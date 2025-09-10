@@ -5,7 +5,7 @@ import DepthEstimation from "app/task/wheel-task/DepthEstimation";
 import { getIndexedDBValue } from "@utils/indexDB";
 import { convertBase64ToFile } from "@helper/binaryConvertion";
 import { BASE_URL } from "@constants/config.constant";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import { TasksConstant } from "@constants/tasks.constant";
 import MediaPipeHandler from "components/mediapipe/MediaPipeHandler";
 

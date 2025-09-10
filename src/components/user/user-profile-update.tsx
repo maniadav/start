@@ -5,6 +5,7 @@ import { setLocalStorageValue } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import StartUtilityAPI from "@services/start.utility";
 import { useAuth } from "state/provider/AuthProvider";
+import startUtilityAPI from "@services/start.utility";
 
 const MemberProfileUpdate = () => {
   const { member } = useAuth();
@@ -21,11 +22,10 @@ const MemberProfileUpdate = () => {
     const { name, value } = event.target;
     setResponseBody({ ...responseBody, [name]: value });
   };
-  const START_API = new StartUtilityAPI();
 
   const updateProfileData = async () => {
     try {
-      const profileResponse = await START_API.user.update(responseBody);
+      const profileResponse = await startUtilityAPI.user.update(responseBody);
 
       if (profileResponse?.data?.data) {
         setLocalStorageValue(
@@ -65,12 +65,12 @@ const MemberProfileUpdate = () => {
 
     try {
       // Upload the image
-      const response = await START_API.utility.uploadImage(formData);
+      const response = await startUtilityAPI.utility.uploadImage(formData);
 
       if (response?.data?.publicUrl) {
         toast("upading profile...");
 
-        const profileResponse = await START_API.user.update({
+        const profileResponse = await startUtilityAPI.user.update({
           profile: response.data.publicUrl,
         });
 

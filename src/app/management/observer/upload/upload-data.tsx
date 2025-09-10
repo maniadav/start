@@ -17,10 +17,10 @@ import {
   CardTitle,
 } from "./card";
 import TASK_TYPE from "@constants/survey.type.constant";
-import Button from "components/common/Button";
 import { useToast } from "@management/hooks/use-toast";
-import StartUtilityAPI from "@services/start.utility";
+import startUtilityAPI from "@services/start.utility";
 import { useSurveyContext } from "state/provider/SurveytProvider";
+import { Button } from "@components/ui/button";
 
 interface TaskData {
   assessment_id: string;
@@ -171,9 +171,7 @@ export default function UploadData({ user }: { user: any }) {
       formData.append("childId", childId);
       formData.append("organisationId", organisationId);
 
-      // Use StartUtilityAPI to upload the file
-      const START_API = new StartUtilityAPI();
-      const result = await START_API.files.upload(formData);
+      const result = await startUtilityAPI.files.upload(formData);
 
       console.log(`Task ${taskType} uploaded successfully:`, result);
 

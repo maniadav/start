@@ -19,8 +19,8 @@ import {
 } from "@utils/localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { redirectToDashboard } from "@utils/auth.utils";
-import StartUtilityAPI from "@services/start.utility";
 import toast from "react-hot-toast";
+import startUtilityAPI from "@services/start.utility";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -33,8 +33,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const START_API = new StartUtilityAPI();
-      const response = await START_API.auth.login({ email, password });
+      const response = await startUtilityAPI.auth.login({ email, password });
 
       console.log({ response });
       toast.success("Login successful");

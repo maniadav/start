@@ -1,5 +1,5 @@
 import React from "react";
-import { IconHome } from "./common/Icons";
+import { IconHome } from "./ui/Icons";
 import Link from "next/link";
 
 const TopNav = ({

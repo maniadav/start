@@ -1,10 +1,11 @@
 "use client";
 import { useToast } from "@management/hooks/use-toast";
 import StartUtilityAPI from "@services/start.utility";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import { useMemo, useState } from "react";
 import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
+import startUtilityAPI from "@services/start.utility";
 
 interface DeleteOrganisationPopupProps {
   showFilter: boolean;
@@ -22,14 +23,16 @@ const DeleteOrganisationPopup = ({
   organisation_id,
 }: DeleteOrganisationPopupProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const startApi = useMemo(() => new StartUtilityAPI(), []);
-  const { toast } = useToast();
 
+  const { toast } = useToast();
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await startApi.organisation.delete(organisation_id);
+      const response = await startUtilityAPI.organisation.delete(
+        organisation_id
+      );
 
       console.log("Parsed result:", response);
 

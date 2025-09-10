@@ -19,7 +19,7 @@ import { trackTaskTime } from "@utils/trackTime";
 import { setIndexedDBValue } from "@utils/indexDB";
 
 // Components
-import MessagePopup from "components/common/MessagePopup";
+import MessagePopup from "@components/ui/MessagePopup";
 import CloseGesture from "components/CloseGesture";
 import BallAnimation from "./BallAnimation";
 
@@ -123,7 +123,7 @@ export default function MotorFollowingTask({
       bubblePop();
       setCaught(true);
     }
-  }, [touchCoordinates]);
+  }, [touchCoordinates, ballCoordinates, bubblePop, windowSize.width]);
 
   // update interval time to manipulate data record rate
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function MotorFollowingTask({
     }, DATA_RECORD_INTERVAL);
 
     return () => clearInterval(intervalId);
-  }, [caught, isSurvey]);
+  }, [caught, isSurvey, currentDate]);
 
   const initializeCanvas = useCallback(
     (canvasElement: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
@@ -229,7 +229,7 @@ export default function MotorFollowingTask({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [mouseCoordinates, currentPath, windowSize, initializeCanvas]);
+  }, [mouseCoordinates, currentPath, windowSize, initializeCanvas, canvasRef]);
 
   function onDraw({ prevPoint, currentPoint, ctx }: Draw) {
     if (!isDrawing || !currentPoint || !prevPoint) return;
@@ -309,7 +309,7 @@ export default function MotorFollowingTask({
     return undefined;
   };
 
-  const handleTimer = () => {
+  const handleTimer = useCallback(() => {
     const { endTimePromise, stopTimer } = timer(SURVEY_MAX_DURATION);
 
     stopTimerFuncRef.current = stopTimer;
@@ -320,7 +320,7 @@ export default function MotorFollowingTask({
       // Optional cleanup if necessary
       stopTimerFuncRef.current && stopTimerFuncRef.current();
     };
-  };
+  }, []);
 
   const handleStopTimer = useCallback(() => {
     if (stopTimerFuncRef.current) {
@@ -329,14 +329,14 @@ export default function MotorFollowingTask({
     }
   }, []);
 
-  const handleStartGame = () => {
+  const handleStartGame = useCallback(() => {
     handleTimer();
     trackTaskTime("start"); // Start tracking time
 
     setSurveyData((prevState: any) => ({
       ...prevState,
     }));
-  };
+  }, [handleTimer]);
 
   const closeGame = useCallback(
     async (timeData?: any, closedMidWay: boolean = false) => {
@@ -396,6 +396,12 @@ export default function MotorFollowingTask({
       objX,
       objY,
       time,
+      deviceType,
+      dispatch,
+      router,
+      saveImage,
+      windowSize.height,
+      windowSize.width,
     ]
   );
 
@@ -403,7 +409,7 @@ export default function MotorFollowingTask({
     if (isSurvey) {
       handleStartGame();
     }
-  }, []);
+  }, [isSurvey, handleStartGame]);
 
   const handleCloseGame = (midway: boolean = false) => {
     const timeData = handleStopTimer();

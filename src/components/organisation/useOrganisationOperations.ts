@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { FileRequestBody } from "./useFileFilters";
+import { FileRequestBody } from "../../hooks/files/useFileFilters";
 import StartUtilityAPI from "@services/start.utility";
 import { toast } from "react-hot-toast"; // Or your library of choice
 import startUtilityAPI from "@services/start.utility";

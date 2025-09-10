@@ -5,7 +5,7 @@ import Image from "next/image";
 import Bubble from "./Bubble";
 import useAudio from "@hooks/useAudio";
 import useWindowSize from "@hooks/useWindowSize";
-import MessagePopup from "components/common/MessagePopup";
+import MessagePopup from "@components/ui/MessagePopup";
 import CloseGesture from "components/CloseGesture";
 import { Attempt } from "types/survey.types";
 import { timer } from "@utils/timer";

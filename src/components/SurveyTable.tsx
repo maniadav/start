@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
-import { PlusIcon, TickedIcon } from "./common/svg";
+import { PlusIcon, TickedIcon } from "./ui/svg";
 import { useRouter } from "next/navigation";
 import DataDownloadButton from "./DataDownloadButton";
 import BatchDataDownloadButton from "./BatchDataDownloadButton";

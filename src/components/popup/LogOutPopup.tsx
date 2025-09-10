@@ -4,7 +4,7 @@ import { IndexDB_Storage } from "@constants/storage.constant";
 import { removeIndexedDBValue } from "@utils/indexDB";
 import { clearLocalStorageValue } from "@utils/localStorage";
 import { handleBatchDownload } from "components/BatchDataDownloadButton";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaExclamationTriangle, FaSignOutAlt } from "react-icons/fa";

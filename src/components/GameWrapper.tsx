@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ErrorComponent from "./common/ErrorComponent";
+import ErrorComponent from "./ui/ErrorComponent";
 import { BASE_URL } from "@constants/config.constant";
 import { useWindowResize } from "@hooks/useWindowResize";
 

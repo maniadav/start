@@ -9,6 +9,7 @@ import SidebarTrigger from "@management/SidebarTrigger";
 import CreateOrganisationPopup from "components/popup/CreateOrganisationPopup";
 import StartUtilityAPI from "@services/start.utility";
 import DeleteOrganisationPopup from "components/popup/DeleteOrganisationPopup";
+import startUtilityAPI from "@services/start.utility";
 interface PopupState {
   type: String | null;
   isOpen: boolean;
@@ -28,8 +29,6 @@ export default function ObserverPage() {
     observerId: "",
     data: null,
   });
-
-  const nextApi = useMemo(() => new StartUtilityAPI(), []);
 
   // Helper functions to manage popup state
   const openPopup = (
@@ -57,7 +56,7 @@ export default function ObserverPage() {
     try {
       console.log("Loading observers...");
       setLoading(true);
-      const res = await nextApi.observer.list();
+      const res = await startUtilityAPI.observer.list();
       setData(res.data || []);
       console.log("Observers loaded:", res.data?.length || 0);
     } catch (error) {
@@ -65,7 +64,7 @@ export default function ObserverPage() {
     } finally {
       setLoading(false);
     }
-  }, [nextApi]);
+  }, []);
 
   useEffect(() => {
     loadData();

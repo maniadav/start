@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ButtonCanvas } from "./ButtonCanvas";
-import MessagePopup from "components/common/MessagePopup";
+import MessagePopup from "@components/ui/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import StartUtilityAPI from "@services/start.utility";
 import { FileRequestBody } from "./useFileFilters";
+import startUtilityAPI from "@services/start.utility";
 
 export const useFileData = (requestBody: FileRequestBody) => {
   const [data, setData] = useState<any[]>([]);
@@ -11,7 +11,6 @@ export const useFileData = (requestBody: FileRequestBody) => {
     setLoading(true);
     try {
       console.log("Loading files with request body...", requestBody);
-      const START_API = new StartUtilityAPI();
 
       // Build query parameters for backend API
       const queryParams = new URLSearchParams();
@@ -29,11 +28,14 @@ export const useFileData = (requestBody: FileRequestBody) => {
         }
       });
 
-      const res = await START_API.files.list(queryParams.toString());
-      setData(res.data.files || []);
-      console.log("files data", res || 0);
+      const res = await startUtilityAPI.files.list(queryParams.toString());
+      // Ensure data is always an array
+      const filesData = Array.isArray(res.data.files) ? res.data.files : [];
+      setData(filesData || []);
+      console.log("files data", res);
     } catch (error) {
-      console.error("Failed to load files:", error);
+      console.error("Failed to load files data:", error);
+      setData([]); // fallback to empty array on error
     } finally {
       setLoading(false);
     }
@@ -45,13 +47,16 @@ export const useFileData = (requestBody: FileRequestBody) => {
   }, [loadData]);
 
   // Get unique values for filter dropdowns
+  const safeData = Array.isArray(data) ? data : [];
   const uniqueObservers = [
-    ...new Set(data.map((file) => file.observer_id)),
+    ...new Set(safeData.map((file) => file.observer_id)),
   ].sort();
   const uniqueOrganizations = [
-    ...new Set(data.map((file) => file.organisation_id)),
+    ...new Set(safeData.map((file) => file.organisation_id)),
   ].sort();
-  const uniqueChildren = [...new Set(data.map((file) => file.child_id))].sort();
+  const uniqueChildren = [
+    ...new Set(safeData.map((file) => file.child_id)),
+  ].sort();
 
   return {
     data,

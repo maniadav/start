@@ -3,7 +3,7 @@ import { Button } from "@components/ui/button";
 import { Input } from "components/ui/input";
 import { Badge } from "@management/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import {
   Download,
   Filter,

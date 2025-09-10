@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { IconSurvey } from "../common/Icons";
+import { IconSurvey } from "../ui/Icons";
 import Image from "next/image";
 import { useLanguageProvider } from "state/provider/LanguageProvider";
 import { BASE_URL } from "@constants/config.constant";

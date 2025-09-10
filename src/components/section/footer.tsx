@@ -1,10 +1,10 @@
 import React from "react";
-import CommonIcon from "../common/CommonIcon";
+import CommonIcon from "../ui/CommonIcon";
 import Image from "next/image";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
-import CacheResetButton from "../button/CacheResetButton";
+import CacheResetButton from "../ui/CacheResetButton";
 
 const SOCIAL_LINKS = [
   {

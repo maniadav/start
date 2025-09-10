@@ -1,5 +1,5 @@
 "use client";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import { Building2, Loader2 } from "lucide-react";
 
 interface ManagementPopupProps {

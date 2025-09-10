@@ -4,7 +4,7 @@ import StartUtilityAPI from "@services/start.utility";
 import { useMemo, useState } from "react";
 import { FaBuilding, FaEnvelope, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
-
+import startUtilityAPI from "@services/start.utility";
 interface CreateOrganisationPopupProps {
   showFilter: boolean;
   closeModal: any;
@@ -31,7 +31,7 @@ const EditOrganisationPopup = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<OrganisationFormData>>({});
-  const startApi = useMemo(() => new StartUtilityAPI(), []);
+
   const { toast } = useToast();
   const validateForm = (): boolean => {
     const newErrors: Partial<OrganisationFormData> = {};
@@ -76,7 +76,7 @@ const EditOrganisationPopup = ({
 
     setIsLoading(true);
     try {
-      const response = await startApi.organisation.update(
+      const response = await startUtilityAPI.organisation.update(
         organisation_id,
         formData
       );

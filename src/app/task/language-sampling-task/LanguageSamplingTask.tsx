@@ -2,12 +2,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import MessagePopup from "components/common/MessagePopup";
+import MessagePopup from "@components/ui/MessagePopup";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
-import CommonIcon from "components/common/CommonIcon";
+import CommonIcon from "@components/ui/CommonIcon";
 import CloseGesture from "components/CloseGesture";
 import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";

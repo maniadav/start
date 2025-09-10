@@ -1,4 +1,4 @@
-import CommonIcon from "components/common/CommonIcon";
+import CommonIcon from "@components/ui/CommonIcon";
 import React, { useState, useRef, useEffect } from "react";
 import { setIndexedDBValue } from "@utils/indexDB";
 import { IndexDB_Storage } from "@constants/storage.constant";

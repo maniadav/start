@@ -6,7 +6,7 @@ import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import CloseGesture from "components/CloseGesture";
 import useVideoRecorder from "@hooks/useVideoRecorder";
-import VidProcessingPopup from "components/common/VidProcessingPopup";
+import VidProcessingPopup from "@components/ui/VidProcessingPopup";
 import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";

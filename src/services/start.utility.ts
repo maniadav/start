@@ -170,6 +170,18 @@ class StartUtilityAPI {
   };
 
   /**
+   * Child related API methods
+   */
+  public credential = {
+    create: (data: any) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.credential.create}`,
+        data
+      );
+    },
+  };
+
+  /**
    * Files related API methods
    */
   public files = {
@@ -207,4 +219,5 @@ class StartUtilityAPI {
   };
 }
 
-export default StartUtilityAPI;
+const startUtilityAPI = new StartUtilityAPI();
+export default startUtilityAPI;

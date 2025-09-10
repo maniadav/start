@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import CommonIcon from "../common/CommonIcon";
+import CommonIcon from "../ui/CommonIcon";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "state/provider/AuthProvider";

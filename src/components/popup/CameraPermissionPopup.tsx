@@ -1,5 +1,5 @@
 import { BASE_URL } from "@constants/config.constant";
-import { PopupModal } from "components/common/PopupModal";
+import { PopupModal } from "@components/ui/PopupModal";
 import { FaSyncAlt, FaExclamationCircle } from "react-icons/fa";
 import Image from "next/image";
 

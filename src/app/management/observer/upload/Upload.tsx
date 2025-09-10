@@ -12,10 +12,10 @@ import {
   CardTitle,
 } from "./card";
 import TASK_TYPE from "@constants/survey.type.constant";
-import FileDropZone from "components/common/FileDropZone";
-import Button from "components/common/Button";
+import FileDropZone from "@components/ui/FileDropZone";
 import { useToast } from "@management/hooks/use-toast";
-import StartUtilityAPI from "@services/start.utility";
+import startUtilityAPI from "@services/start.utility";
+import { Button } from "@components/ui/button";
 
 interface FileWithTask {
   file: File;
@@ -94,8 +94,8 @@ export default function Upload({ user }: { user: any }) {
 
     try {
       // Use StartUtilityAPI which handles authentication and token refresh automatically
-      const START_API = new StartUtilityAPI();
-      const result = await START_API.files.upload(formData);
+
+      const result = await startUtilityAPI.files.upload(formData);
 
       console.log(
         `File ${fileWithTask.file.name} uploaded successfully:`,

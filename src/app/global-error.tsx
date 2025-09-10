@@ -1,6 +1,6 @@
 "use client";
 
-import CacheResetButton from "components/button/CacheResetButton";
+import CacheResetButton from "@components/ui/CacheResetButton";
 
 export default function GlobalError({
   error,

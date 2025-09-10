@@ -7,7 +7,7 @@ import useVideoRecorder from "@hooks/useVideoRecorder";
 import CloseGesture from "components/CloseGesture";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
-import VidProcessingPopup from "components/common/VidProcessingPopup";
+import VidProcessingPopup from "@components/ui/VidProcessingPopup";
 import { SURVEY_MAX_ATTEMPTS } from "@constants/survey.config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { useRouter } from "next/navigation";

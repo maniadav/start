@@ -1,5 +1,5 @@
 import React from "react";
-import { CommonButton } from "./common/CommonButton";
+import { CommonButton } from "./ui/CommonButton";
 import Link from "next/link";
 import { PAGE_ROUTES } from "@constants/route.constant";
 

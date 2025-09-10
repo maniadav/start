@@ -1,13 +1,8 @@
-import {
-  getLocalStorageValue,
-  removeLocalStorageValue,
-} from "@utils/localStorage";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LOCALSTORAGE } from "@constants/storage.constant";
 import toast from "react-hot-toast";
 import { passwordValidator } from "@helper/validator";
-import StartUtilityAPI from "@services/start.utility";
+import startUtilityAPI from "@services/start.utility";
 
 const UserPasswordUpdate = () => {
   const formData: FormDataType = {};
@@ -31,7 +26,6 @@ const UserPasswordUpdate = () => {
       return;
     }
 
-    let START_API = new StartUtilityAPI();
     try {
       const data: any = {
         oldPassword: responseBody.oldPassword,
@@ -39,7 +33,7 @@ const UserPasswordUpdate = () => {
       };
 
       toast("updating...");
-      const res = await START_API.auth.updatePassword(data);
+      const res = await startUtilityAPI.auth.updatePassword(data);
       toast(res.data.message);
       if (res.status === 200) {
         router.push("/");

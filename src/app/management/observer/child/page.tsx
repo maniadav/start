@@ -15,9 +15,8 @@ import { useAuth } from "state/provider/AuthProvider";
 import { Button } from "@components/ui/button";
 import ChildForm from "./ChildForm";
 import ChildSearch from "./ChildSearch";
-import StartUtilityAPI from "@services/start.utility";
 import ChildRemovePopup from "components/popup/ChildRemovePopup";
-
+import startUtilityAPI from "@services/start.utility";
 interface LoginDataType {
   childId: string;
   childName: string;
@@ -48,7 +47,7 @@ const LoginPage = () => {
   });
 
   const router = useRouter();
-  const START_API = new StartUtilityAPI();
+
   // Set initial data from state
   useEffect(() => {
     if (childData) {
@@ -74,7 +73,7 @@ const LoginPage = () => {
     }
     try {
       toast("Fetching child details...");
-      const response = await START_API.child.fetch(childId);
+      const response = await startUtilityAPI.child.fetch(childId);
       setData(response.data);
       setLocalStorageValue(LOCALSTORAGE.START_USER, response.data, true);
       toast.success(response.message || "Child details fetched successfully");
@@ -125,7 +124,7 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await START_API.child.create({
+      const response = await startUtilityAPI.child.create({
         ...formData,
       });
       setLocalStorageValue(LOCALSTORAGE.START_USER, response.profile, true);

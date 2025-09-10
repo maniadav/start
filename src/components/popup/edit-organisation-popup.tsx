@@ -18,7 +18,7 @@ interface OrganisationFormData {
   address: string;
 }
 
-const CreateOrganisationPopup = ({
+const EditOrganisationPopup = ({
   showFilter,
   closeModal,
   onSuccess,
@@ -238,4 +238,4 @@ const CreateOrganisationPopup = ({
   );
 };
 
-export default CreateOrganisationPopup;
+export default EditOrganisationPopup;

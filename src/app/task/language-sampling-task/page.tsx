@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { CommonButton } from "components/common/CommonButton";
+import { CommonButton } from "@components/ui/CommonButton";
 import { TasksConstant } from "constants/tasks.constant";
 import { useSearchParams } from "next/navigation";
-import MessagePopup from "components/common/MessagePopup";
+import MessagePopup from "@components/ui/MessagePopup";
 import TaskHome from "components/TaskHome";
 import LanguageSamplingTask from "./LanguageSamplingTask";
 import SuspenseWrapper from "components/SuspenseWrapper";

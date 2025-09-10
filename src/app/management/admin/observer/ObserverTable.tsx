@@ -2,12 +2,9 @@ import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Delete, Edit, MoreHorizontal, View } from "lucide-react";
 import { DataTable } from "components/table/data-table";
-import { AdvancedFilters } from "@management/components/advanced-filters";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "components/ui/card";
 import { Button } from "@components/ui/button";
 import {
