@@ -181,7 +181,7 @@ class StartAPI {
 
     if (!response.ok) {
       // invalid refresh token
-      console.log("response.status", response.status);
+      console.log("response.status", response);
       if (response.status === HttpStatusCode.Unauthorized) {
         clearLocalStorageValue();
         await clearEntireIndexedDB();
@@ -190,15 +190,12 @@ class StartAPI {
 
       // Handle token refresh case
       if (response.status === HttpStatusCode.Forbidden) {
-        console.log("403 Forbidden detected, attempting token refresh...");
         // Try to get a new access token using refresh token
         const member = getLocalStorageValue(LOCALSTORAGE.START_MEMBER, true);
         const refreshToken = member?.rtoken;
-        console.log("Refresh token available:", !!refreshToken);
 
         if (refreshToken) {
           try {
-            console.log("Calling token refresh endpoint...");
             const tokenResponse = await fetch(
               `${window.location.origin}/api/v1/auth/get-access-token`,
               {
@@ -210,15 +207,8 @@ class StartAPI {
               }
             );
             const tokenData = await tokenResponse.json();
-            console.log("Token refresh response:", {
-              status: tokenResponse.status,
-              data: tokenData,
-            });
 
             if (tokenResponse.ok && tokenData.accessToken) {
-              console.log(
-                "Token refresh successful, updating headers and retrying..."
-              );
               // Update local storage and headers
               localStorage.setItem(
                 LOCALSTORAGE.START_MEMBER,
@@ -261,6 +251,9 @@ class StartAPI {
                 status: tokenResponse.status,
                 data: tokenData,
               });
+              clearLocalStorageValue();
+              await clearEntireIndexedDB();
+              window.location.href = PAGE_ROUTES.LOGIN.path;
             }
           } catch (e) {
             console.error("Token refresh failed:", e);
@@ -270,8 +263,6 @@ class StartAPI {
             window.location.href = PAGE_ROUTES.LOGIN.path;
           }
         } else {
-          console.log("No refresh token available, logging out...");
-          // No refresh token, logout
           clearLocalStorageValue();
           await clearEntireIndexedDB();
           window.location.href = PAGE_ROUTES.LOGIN.path;

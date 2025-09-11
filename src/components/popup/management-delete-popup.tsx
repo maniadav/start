@@ -1,5 +1,5 @@
 "use client";
-import { useToast } from "@management/hooks/use-toast";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
@@ -24,7 +24,6 @@ const ManagementDeletePopup = ({
 }: DeleteOrganisationPopupProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,15 +38,9 @@ const ManagementDeletePopup = ({
       if (onSuccess) {
         onSuccess();
       }
-      toast({
-        title: "Success",
-        description: `${role} deleted successfully`,
-      });
+      toast.success(`${role} deleted successfully`);
     } catch (_error) {
-      toast({
-        title: "Error",
-        description: `Failed to delete ${role}`,
-      });
+      toast.error(`Failed to delete ${role}`);
     } finally {
       setIsLoading(false);
       closeModal();

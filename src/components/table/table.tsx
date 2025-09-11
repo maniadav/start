@@ -74,12 +74,12 @@ export function DataTable<T>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-muted/50">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="h-12">
+                  <TableHead key={header.id} className="h-12 text-center">
                     {header.isPlaceholder ? null : (
                       <div
                         className={
                           header.column.getCanSort()
-                            ? "cursor-pointer select-none flex items-center gap-2"
+                            ? "cursor-pointer select-none flex gap-2"
                             : ""
                         }
                         onClick={header.column.getToggleSortingHandler()}

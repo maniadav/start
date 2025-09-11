@@ -75,7 +75,7 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
           const joinedOn = row.getValue("joinedOn");
           return joinedOn
             ? new Date(joinedOn as string).toLocaleDateString()
-            : "N/A";
+            : "-";
         },
       },
       {
@@ -83,7 +83,7 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
         header: "Obs Email",
         cell: ({ row }) => {
           const email = row.getValue("email");
-          return email || "N/A";
+          return email || "-";
         },
       },
       {
@@ -91,7 +91,7 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
         header: "Status",
         cell: ({ row }) => {
           const status = row.getValue("status");
-          if (!status) return "N/A";
+          if (!status) return "-";
           return <Badge>{String(status)}</Badge>;
         },
       },

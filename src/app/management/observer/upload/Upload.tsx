@@ -13,7 +13,7 @@ import {
 } from "./card";
 import TASK_TYPE from "@constants/survey.type.constant";
 import FileDropZone from "@components/ui/FileDropZone";
-import { useToast } from "@management/hooks/use-toast";
+import toast from "react-hot-toast";
 import startUtilityAPI from "@services/start.utility";
 import { Button } from "@components/ui/button";
 
@@ -23,7 +23,6 @@ interface FileWithTask {
 }
 
 export default function Upload({ user }: { user: any }) {
-  const { toast } = useToast();
   const [files, setFiles] = useState<FileWithTask[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadedTasks, setUploadedTasks] = useState<Record<string, boolean>>(
@@ -48,11 +47,7 @@ export default function Upload({ user }: { user: any }) {
         const isAllowedExtension = /\.(json|csv)$/i.test(file.name);
 
         if (!isAllowedExtension) {
-          toast({
-            variant: "destructive",
-            title: "Invalid File Type",
-            description: `${file.name}. Only JSON and CSV files are accepted.`,
-          });
+          toast.error(`${file.name}. Only JSON and CSV files are accepted.`);
           return null;
         }
         return { file, taskType: detectTaskType(file.name) };
@@ -64,11 +59,7 @@ export default function Upload({ user }: { user: any }) {
   // Upload a single file using the AWS route
   const uploadFile = async (fileWithTask: FileWithTask): Promise<boolean> => {
     if (!fileWithTask.taskType) {
-      toast({
-        variant: "destructive",
-        title: "Upload Failed",
-        description: `Could not determine task type for ${fileWithTask.file.name}`,
-      });
+      toast.error(`Could not determine task type for ${fileWithTask.file.name}`);
       return false;
     }
 
@@ -76,12 +67,7 @@ export default function Upload({ user }: { user: any }) {
     const { organisationId, childId } = user;
 
     if (!organisationId || !childId) {
-      toast({
-        variant: "destructive",
-        title: "Upload Failed",
-        description:
-          "Missing required user metadata (organisationId or childId)",
-      });
+      toast.error("Missing required user metadata (organisationId or childId)");
       return false;
     }
 
@@ -104,13 +90,9 @@ export default function Upload({ user }: { user: any }) {
       return true;
     } catch (error) {
       console.error(`Failed to upload ${fileWithTask.file.name}:`, error);
-      toast({
-        variant: "destructive",
-        title: "Upload Failed",
-        description: `${fileWithTask.file.name}: ${
+      toast.error(`${fileWithTask.file.name}: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
-      });
+        }`);
       return false;
     }
   };
@@ -120,11 +102,7 @@ export default function Upload({ user }: { user: any }) {
     const taskFiles = files.filter((f) => f.taskType === taskType);
 
     if (taskFiles.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No Files",
-        description: `No files found for ${taskType}`,
-      });
+      toast.error(`No files found for ${taskType}`);
       return;
     }
 
@@ -143,10 +121,7 @@ export default function Upload({ user }: { user: any }) {
         // Remove successfully uploaded files for this task
         setFiles((prev) => prev.filter((f) => f.taskType !== taskType));
 
-        toast({
-          title: "Task Upload Complete",
-          description: `All files for ${taskType} uploaded successfully`,
-        });
+        toast.success(`All files for ${taskType} uploaded successfully`);
       } else {
         // Remove only the successfully uploaded files
         const successfulUploads = taskFiles.filter(
@@ -155,11 +130,7 @@ export default function Upload({ user }: { user: any }) {
         setFiles((prev) => prev.filter((f) => !successfulUploads.includes(f)));
 
         const successCount = results.filter(Boolean).length;
-        toast({
-          variant: "destructive",
-          title: "Partial Upload",
-          description: `${successCount}/${taskFiles.length} files uploaded for ${taskType}`,
-        });
+        toast.error(`${successCount}/${taskFiles.length} files uploaded for ${taskType}`);
       }
     } finally {
       setUploading(false);
@@ -169,11 +140,7 @@ export default function Upload({ user }: { user: any }) {
   // Bulk upload all files
   const uploadAllFiles = async () => {
     if (files.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No Files",
-        description: "Please add files before uploading",
-      });
+      toast.error("Please add files before uploading");
       return;
     }
 
@@ -204,10 +171,7 @@ export default function Upload({ user }: { user: any }) {
       // Show summary
       const successCount = successfulUploads.length;
       const totalCount = files.length;
-      toast({
-        title: "Upload Summary",
-        description: `${successCount}/${totalCount} files uploaded successfully`,
-      });
+      toast.success(`${successCount}/${totalCount} files uploaded successfully`);
     } finally {
       setUploading(false);
     }

@@ -1,5 +1,5 @@
 "use client";
-import { useToast } from "@management/hooks/use-toast";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { FaBuilding, FaEnvelope, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
@@ -33,7 +33,6 @@ const ManagementEditPopup = ({
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<OrganisationFormData>>({});
 
-  const { toast } = useToast();
   const validateForm = (): boolean => {
     const newErrors: Partial<OrganisationFormData> = {};
 
@@ -87,15 +86,9 @@ const ManagementEditPopup = ({
       if (onSuccess) {
         onSuccess();
       }
-      toast({
-        title: "Success",
-        description: `${role} updated successfully`,
-      });
+      toast.success(`${role} updated successfully`);
     } catch (_error) {
-      toast({
-        title: "Error",
-        description: `Failed to update ${role}`,
-      });
+      toast.error(`Failed to update ${role}`);
     } finally {
       setIsLoading(false);
       closeModal();

@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "./card";
 import TASK_TYPE from "@constants/survey.type.constant";
-import { useToast } from "@management/hooks/use-toast";
+import toast from "react-hot-toast";
 import startUtilityAPI from "@services/start.utility";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { Button } from "@components/ui/button";
@@ -35,7 +35,6 @@ interface TaskData {
 }
 
 export default function UploadData({ user }: { user: any }) {
-  const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [uploadingTasks, setUploadingTasks] = useState<Record<string, boolean>>(
     {}
@@ -121,11 +120,7 @@ export default function UploadData({ user }: { user: any }) {
     const taskData = state[taskType] as TaskData;
 
     if (!taskData) {
-      toast({
-        variant: "destructive",
-        title: "No Data Available",
-        description: `No data found for ${taskType}`,
-      });
+      toast.error(`No data found for ${taskType}`);
       return;
     }
 
@@ -136,11 +131,7 @@ export default function UploadData({ user }: { user: any }) {
       (taskData.attempt3 && Object.keys(taskData.attempt3).length > 0);
 
     if (!hasData) {
-      toast({
-        variant: "destructive",
-        title: "No Data Available",
-        description: `No attempt data found for ${taskType}`,
-      });
+      toast.error(`No attempt data found for ${taskType}`);
       return;
     }
 
@@ -155,12 +146,7 @@ export default function UploadData({ user }: { user: any }) {
       const { organisationId, childId } = user;
 
       if (!organisationId || !childId) {
-        toast({
-          variant: "destructive",
-          title: "Upload Failed",
-          description:
-            "Missing required user metadata (organisationId or childId)",
-        });
+        toast.error("Missing required user metadata (organisationId or childId)");
         return;
       }
 
@@ -180,19 +166,12 @@ export default function UploadData({ user }: { user: any }) {
         [taskType]: true,
       }));
 
-      toast({
-        title: "Task Upload Complete",
-        description: `${taskType} data uploaded successfully`,
-      });
+      toast.success(`${taskType} data uploaded successfully`);
     } catch (error) {
       console.error(`Failed to upload ${taskType}:`, error);
-      toast({
-        variant: "destructive",
-        title: "Upload Failed",
-        description: `${taskType}: ${
+      toast.error(`${taskType}: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
-      });
+        }`);
     } finally {
       // Clear individual task loading state
       setUploadingTasks((prev) => ({ ...prev, [taskType]: false }));
@@ -213,11 +192,7 @@ export default function UploadData({ user }: { user: any }) {
     });
 
     if (tasksWithData.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No Data Available",
-        description: "No tasks have data to upload",
-      });
+      toast.error("No tasks have data to upload");
       return;
     }
 
@@ -227,10 +202,7 @@ export default function UploadData({ user }: { user: any }) {
       const results = await Promise.all(tasksWithData.map(uploadTask));
       const successCount = results.filter(Boolean).length;
 
-      toast({
-        title: "Bulk Upload Complete",
-        description: `${successCount}/${tasksWithData.length} tasks uploaded successfully`,
-      });
+      toast.success(`${successCount}/${tasksWithData.length} tasks uploaded successfully`);
     } finally {
       setUploading(false);
     }
@@ -241,11 +213,7 @@ export default function UploadData({ user }: { user: any }) {
     const taskData = state[taskType] as TaskData;
 
     if (!taskData) {
-      toast({
-        variant: "destructive",
-        title: "No Data Available",
-        description: `No data found for ${taskType}`,
-      });
+      toast.error(`No data found for ${taskType}`);
       return;
     }
 
@@ -261,10 +229,7 @@ export default function UploadData({ user }: { user: any }) {
     csvLink.download = fileName;
     csvLink.click();
 
-    toast({
-      title: "Download Complete",
-      description: `${taskType} data downloaded as CSV`,
-    });
+    toast.success(`${taskType} data downloaded as CSV`);
   };
 
   // Check if user has required metadata

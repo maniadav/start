@@ -114,6 +114,9 @@ export class AppConfig {
     if (!this.DATABASE.MONGODB_URI) {
       errors.push("MONGODB_URI is required for database connection");
     }
+    if (!this.DATABASE.MONGODB_DB_NAME) {
+      errors.push("MONGODB_DB_NAME is required for database connection");
+    }
 
     // Critical JWT configuration
     if (!this.JWT.SECRET) {
@@ -157,6 +160,11 @@ export class AppConfig {
     console.log(
       `   Database: ${
         this.DATABASE.MONGODB_URI ? "Configured" : "Not configured"
+      }`
+    );
+    console.log(
+      `   Database: ${
+        this.DATABASE.MONGODB_DB_NAME ? "Configured" : "Not configured"
       }`
     );
     console.log(

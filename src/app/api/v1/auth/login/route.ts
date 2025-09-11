@@ -47,17 +47,22 @@ export async function POST(req: Request) {
     const normalizedEmail = email.toLowerCase().trim();
     const user = await UserModel.findOne({ email: normalizedEmail });
 
-    let isPasswordValid = false;
-
-    if (user) {
-      isPasswordValid = await PasswordUtils.verifyPassword(
-        password,
-        user.password
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: HttpStatusCode.BadRequest }
       );
     }
 
+    let isPasswordValid = false;
+
+    isPasswordValid = await PasswordUtils.verifyPassword(
+      password,
+      user.password
+    );
+
     // Don't reveal whether the email exists or password is wrong
-    if (!user || !isPasswordValid) {
+    if (!isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: HttpStatusCode.BadRequest }

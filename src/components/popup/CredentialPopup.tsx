@@ -1,5 +1,5 @@
 "use client";
-import { useToast } from "@management/hooks/use-toast";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
@@ -32,7 +32,6 @@ const CredentialPopup = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<CredentialFormData>>({});
-  const { toast } = useToast();
   const validateForm = (): boolean => {
     const newErrors: Partial<CredentialFormData> = {};
     if (!formData.organisation_id.trim()) {
@@ -90,16 +89,11 @@ const CredentialPopup = ({
       });
       setErrors({});
       if (onSuccess) onSuccess();
-      toast({
-        title: "Success",
-        description: "AWS credentials saved successfully",
-      });
+      toast.success("AWS credentials saved successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to save credentials",
-      });
+      toast.error(
+          error instanceof Error ? error.message : "Failed to save credentials"
+        );
     } finally {
       setIsLoading(false);
       closeModal();

@@ -1,9 +1,9 @@
 "use client";
-import { useToast } from "@management/hooks/use-toast";
 import { useState } from "react";
 import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
 import startUtilityAPI from "@services/start.utility";
+import toast from "react-hot-toast";
 
 interface CreateManagementPopupProps {
   showFilter: boolean;
@@ -32,7 +32,6 @@ const ManagementCreatePopup = ({
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<IManagementForm>>({});
 
-  const { toast } = useToast();
   const validateForm = (): boolean => {
     const newErrors: Partial<IManagementForm> = {};
 
@@ -89,15 +88,10 @@ const ManagementCreatePopup = ({
       } else {
         console.log("onSuccess is not provided or falsy");
       }
-      toast({
-        title: "Success",
-        description: `${role} created successfully`,
-      });
+
+      toast.success(`${role} created successfully`);
     } catch (_error) {
-      toast({
-        title: "Error",
-        description: `Failed to create ${role}`,
-      });
+      toast.error(`Failed to create ${role}`);
     } finally {
       setIsLoading(false);
       closeModal();
@@ -106,7 +100,6 @@ const ManagementCreatePopup = ({
 
   return (
     <PopupContainter>
-      {" "}
       <div className="relative bg-white rounded-xl shadow-2xl p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">

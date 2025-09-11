@@ -37,6 +37,9 @@ const Management = ({
     orgId: null,
   });
 
+  const showCreateButton =
+    (accessedBy === "organisation" && forRole === "observer") ||
+    (accessedBy === "admin" && forRole === "organisation");
   const { requestBody, hasActiveFiltersOrSorts, getActiveFiltersCount } =
     useFileFilters();
 
@@ -126,7 +129,7 @@ const Management = ({
                     Search
                   </Button>
                 </div>
-                {accessedBy === "organisation" && (
+                {showCreateButton && (
                   <Button
                     onClick={() => handlePopup("create")}
                     variant="default"
