@@ -39,6 +39,10 @@ const UserSchema = new Schema<IUser>(
       enum: ["active", "inactive"],
       default: "active",
     },
+    created_at: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: { createdAt: "created_at" },

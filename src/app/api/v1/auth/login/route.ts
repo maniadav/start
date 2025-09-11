@@ -121,7 +121,7 @@ export async function POST(req: Request) {
       case "observer":
         profile = await ObserverProfileModel.findOne({
           user_id: user._id,
-        }).populate("organisation_id");
+        });
         break;
       default:
         return NextResponse.json(

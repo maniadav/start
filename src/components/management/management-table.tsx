@@ -21,10 +21,20 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 import { DataTable } from "@components/table/table";
+interface IManagementTableProps {
+  data: any[];
+  handlebuttonActions: (action: string, id: string) => void;
+  forRole: "observer" | "organisation";
+}
 
-export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
-  const columns: ColumnDef<any>[] = React.useMemo(
-    () => [
+export function ManagementTable({
+  data,
+  handlebuttonActions,
+  forRole,
+}: IManagementTableProps) {
+  console.log({ forRole });
+  const columns: ColumnDef<any>[] = React.useMemo(() => {
+    const baseColumns: ColumnDef<any>[] = [
       {
         accessorKey: "user_id",
         header: ({ column }) => {
@@ -34,12 +44,24 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              className="text-left capitalize"
             >
-              Obs ID
+              {`${forRole} ID`}
             </Button>
           );
         },
       },
+    ];
+
+    // Add organisation_id column only for observer role
+    if (forRole === "observer") {
+      baseColumns.push({
+        accessorKey: "organisation_id",
+        header: "Organisation ID",
+      });
+    }
+
+    baseColumns.push(
       {
         accessorKey: "name",
         header: ({ column }) => {
@@ -49,8 +71,9 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
+              className="text-left capitalize"
             >
-              Obs Name
+              {`${forRole} Name`}
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           );
@@ -80,7 +103,7 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
       },
       {
         accessorKey: "email",
-        header: "Obs Email",
+        header: `${forRole} Email`,
         cell: ({ row }) => {
           const email = row.getValue("email");
           return email || "-";
@@ -156,16 +179,11 @@ export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
             </DropdownMenu>
           );
         },
-      },
-    ],
-    [handlebuttonActions, forRole]
-  );
+      }
+    );
 
-  return (
-    <DataTable
-      data={data}
-      columns={columns}
-      summaryLabel={forRole === "observer" ? "observers" : "organisations"}
-    />
-  );
+    return baseColumns;
+  }, [handlebuttonActions, forRole]);
+
+  return <DataTable data={data} columns={columns} summaryLabel={forRole} />;
 }

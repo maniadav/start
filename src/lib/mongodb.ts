@@ -17,9 +17,20 @@ if (!MONGODB_DB_NAME) {
 // Construct the full connection URI with database name
 const getConnectionURI = () => {
   if (MONGODB_DB_NAME) {
-    // If database name is provided, append it to the URI
-    const baseURI = MONGODB_URI.replace(/\/$/, ''); // Remove trailing slash if present
-    return `${baseURI}/${MONGODB_DB_NAME}`;
+    // If database name is provided, insert it before query parameters
+    let baseURI = MONGODB_URI.replace(/\/$/, ''); // Remove trailing slash if present
+    
+    // Check if URI already has query parameters
+    if (baseURI.includes('?')) {
+      // Insert database name before query parameters
+      const [base, query] = baseURI.split('?');
+      // Ensure there's no double slash
+      const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+      return `${cleanBase}/${MONGODB_DB_NAME}?${query}`;
+    } else {
+      // No query parameters, just append database name
+      return `${baseURI}/${MONGODB_DB_NAME}`;
+    }
   }
   return MONGODB_URI;
 };

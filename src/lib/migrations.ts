@@ -1,10 +1,8 @@
 import connectDB from "./mongodb";
+import AppConfig from "../config/app.config";
 import User from "../models/user.model";
-import Child from "../models/child.model";
 import AdminProfile from "../models/admin.profle.model";
-import ObserverProfile from "../models/observer.profile.model";
 import OrganisationProfile from "../models/organisation.profile.model";
-import File from "../models/file.model";
 
 export interface Migration {
   version: string;
@@ -13,19 +11,16 @@ export interface Migration {
   down: () => Promise<void>;
 }
 
-// Migration tracking schema
-import mongoose, { Schema } from "mongoose";
-
-const MigrationSchema = new Schema({
-  version: { type: String, required: true, unique: true },
-  description: { type: String, required: true },
-  appliedAt: { type: Date, default: Date.now },
-});
-
-const MigrationModel =
-  mongoose.models.Migration || mongoose.model("Migration", MigrationSchema);
+import mongoose from "mongoose";
 
 export class MigrationManager {
+  /**
+   * Get the target database name from configuration
+   */
+  getTargetDatabaseName(): string {
+    return AppConfig.DATABASE.MONGODB_DB_NAME;
+  }
+
   /**
    * Check if a collection exists in the database
    */
@@ -98,11 +93,8 @@ export class MigrationManager {
         console.log("Existing collections:", existingCollections);
         const modelsToIndex = [
           { name: "users", model: User },
-          { name: "children", model: Child },
           { name: "adminprofiles", model: AdminProfile },
-          { name: "observerprofiles", model: ObserverProfile },
           { name: "organisationprofiles", model: OrganisationProfile },
-          { name: "files", model: File },
         ];
         for (const { name, model } of modelsToIndex) {
           try {
@@ -132,91 +124,13 @@ export class MigrationManager {
         if (mongoose.connection.db) {
           await mongoose.connection.db.dropCollection("users").catch(() => {});
           await mongoose.connection.db
-            .dropCollection("children")
-            .catch(() => {});
-          await mongoose.connection.db
             .dropCollection("adminprofiles")
-            .catch(() => {});
-          await mongoose.connection.db
-            .dropCollection("observerprofiles")
             .catch(() => {});
           await mongoose.connection.db
             .dropCollection("organisationprofiles")
             .catch(() => {});
         }
         console.log("⚠️ All collections dropped");
-      },
-    },
-    {
-      version: "009",
-      description: "Seed files collection with dummyFiles if not present",
-      up: async () => {
-        await connectDB();
-        const collectionName = "files";
-        const FilesModel = require("../models/file.model").default;
-        const { dummyFiles, validateDummyFilesConsistency } = require("../models/dummyData/fileData");
-
-        // Check if collection exists and has data
-        const exists = await migrationManager.collectionExists(collectionName);
-        let count = 0;
-        if (exists) {
-          count = await migrationManager.getCollectionCount(collectionName);
-        }
-
-        if (!exists || count === 0) {
-          console.log("📦 Seeding files collection with dummyFiles...");
-          if (!validateDummyFilesConsistency()) {
-            throw new Error("Dummy files validation failed. Aborting seeding.");
-          }
-          const created = await FilesModel.insertMany(dummyFiles);
-          console.log(`✅ Seeded files collection with ${created.length} files`);
-        } else {
-          console.log("📦 Files collection already exists and is not empty. Skipping seeding.");
-        }
-      },
-      down: async () => {
-        await connectDB();
-        const FilesModel = require("../models/file.model").default;
-        await FilesModel.deleteMany({});
-        console.log("🗑️ All seeded files removed from files collection");
-      },
-    },
-    {
-      version: "002",
-      description: "Add survey data tracking fields",
-      up: async () => {
-        await connectDB();
-
-        // Update existing child documents to include new fields
-        await Child.updateMany(
-          {},
-          {
-            $set: {
-              last_survey_date: null,
-              total_surveys: 0,
-              survey_status: "pending",
-            },
-          }
-        );
-
-        console.log("✅ Added survey tracking fields to children");
-      },
-      down: async () => {
-        await connectDB();
-
-        // Remove the added fields
-        await Child.updateMany(
-          {},
-          {
-            $unset: {
-              last_survey_date: "",
-              total_surveys: "",
-              survey_status: "",
-            },
-          }
-        );
-
-        console.log("⚠️ Removed survey tracking fields from children");
       },
     },
 
@@ -234,8 +148,6 @@ export class MigrationManager {
           hashUserPasswords,
           dummyAdminProfiles,
           dummyOrganisationProfiles,
-          dummyObserverProfiles,
-          dummyChildren,
           validateDummyDataConsistency,
         } = await import("../models/dummyData");
 
@@ -304,65 +216,12 @@ export class MigrationManager {
           `✅ Created ${createdOrgProfiles.length} organisation profiles`
         );
 
-        // Create observer profiles
-        console.log("👁️ Creating observer profiles...");
-        const observerUsers = createdUsers.filter((u) => u.role === "observer");
-
-        if (observerUsers.length !== dummyObserverProfiles.length) {
-          throw new Error(
-            `Observer user count (${observerUsers.length}) doesn't match observer profile count (${dummyObserverProfiles.length})`
-          );
-        }
-
-        const observerProfileData = dummyObserverProfiles.map(
-          (profile, index) => ({
-            ...profile,
-            user_id: observerUsers[index]._id,
-            // Assign observers to organisations in a round-robin fashion
-            organisation_id:
-              createdOrgProfiles[index % createdOrgProfiles.length]._id,
-          })
-        );
-
-        const createdObserverProfiles = await ObserverProfile.insertMany(
-          observerProfileData
-        );
-        console.log(
-          `✅ Created ${createdObserverProfiles.length} observer profiles`
-        );
-
-        // Log observer-organisation assignments
-        createdObserverProfiles.forEach((observer, index) => {
-          const assignedOrg =
-            createdOrgProfiles[index % createdOrgProfiles.length];
-          console.log(
-            `   - ${dummyObserverProfiles[index].name} → ${
-              assignedOrg ? assignedOrg.name : "Unknown Org"
-            }`
-          );
-        });
-
-        // Create children
-        console.log("👶 Creating child records...");
-        const childData = dummyChildren.map((child, index) => ({
-          ...child,
-          observer_id:
-            createdObserverProfiles[index % createdObserverProfiles.length]
-              ?._id,
-          organisation_id:
-            createdOrgProfiles[index % createdOrgProfiles.length]?._id,
-        }));
-        const createdChildren = await Child.insertMany(childData);
-        console.log(`✅ Created ${createdChildren.length} child records`);
-
         console.log("🎉 Database seeding completed successfully!");
         console.log(`
         📈 Summary:
         - Users: ${createdUsers.length}
         - Admin Profiles: ${createdAdminProfiles.length}  
         - Organisation Profiles: ${createdOrgProfiles.length}
-        - Observer Profiles: ${createdObserverProfiles.length}
-        - Children: ${createdChildren.length}
         `);
       },
       down: async () => {
@@ -371,8 +230,6 @@ export class MigrationManager {
         console.log("🗑️ Removing all seeded data...");
 
         // Remove in reverse order due to dependencies
-        await Child.deleteMany({});
-        await ObserverProfile.deleteMany({});
         await OrganisationProfile.deleteMany({});
         await AdminProfile.deleteMany({});
         await User.deleteMany({});
@@ -437,122 +294,7 @@ export class MigrationManager {
         console.log("⚠️ Rollback completed (no action taken)");
       },
     },
-    {
-      version: "007",
-      description: "Add email field to ObserverProfile and make user_id unique",
-      up: async () => {
-        await connectDB();
 
-        console.log("� Adding email field to ObserverProfile collection...");
-
-        // Check if the collection exists
-        const collectionExists = await this.collectionExists(
-          "observer_profiles"
-        );
-        if (!collectionExists) {
-          console.log(
-            "📊 observer_profiles collection doesn't exist, skipping"
-          );
-          return;
-        }
-
-        const db = mongoose.connection.db;
-        if (!db) {
-          throw new Error("Database connection not available");
-        }
-
-        // Drop the old unique_id index if it exists
-        try {
-          await db.collection("observer_profiles").dropIndex("unique_id_1");
-          console.log("✅ Dropped unique_id index");
-        } catch (error: any) {
-          if (error.code === 27) {
-            console.log("📊 unique_id index doesn't exist, skipping drop");
-          } else {
-            console.log("⚠️ Error dropping unique_id index:", error.message);
-          }
-        }
-
-        // Get all observer profiles that don't have email field
-        const profilesWithoutEmail = await db
-          .collection("observer_profiles")
-          .find({ email: { $exists: false } })
-          .toArray();
-
-        if (profilesWithoutEmail.length === 0) {
-          console.log("📊 All observer profiles already have email field");
-        } else {
-          console.log(
-            `📧 Found ${profilesWithoutEmail.length} profiles without email field`
-          );
-
-          // Update each profile by fetching email from associated user
-          for (const profile of profilesWithoutEmail) {
-            try {
-              const user = await db
-                .collection("users")
-                .findOne({ _id: profile.user_id });
-              if (user && user.email) {
-                await db
-                  .collection("observer_profiles")
-                  .updateOne(
-                    { _id: profile._id },
-                    { $set: { email: user.email } }
-                  );
-                console.log(
-                  `✅ Updated observer profile ${profile._id} with email ${user.email}`
-                );
-              } else {
-                console.log(
-                  `⚠️ No user found for observer profile ${profile._id}`
-                );
-              }
-            } catch (error) {
-              console.log(
-                `❌ Error updating observer profile ${profile._id}:`,
-                error
-              );
-            }
-          }
-        }
-
-        // Remove unique_id field from all documents
-        const unsetResult = await db
-          .collection("observer_profiles")
-          .updateMany({}, { $unset: { unique_id: "" } });
-
-        console.log(
-          `✅ Removed unique_id field from ${unsetResult.modifiedCount} observer profile documents`
-        );
-
-        // Create unique index on email
-        try {
-          await db
-            .collection("observer_profiles")
-            .createIndex({ email: 1 }, { unique: true });
-          console.log("✅ Created unique index on email field");
-        } catch (error: any) {
-          if (error.code === 85) {
-            console.log("📊 Email unique index already exists");
-          } else {
-            console.log("⚠️ Error creating email unique index:", error.message);
-          }
-        }
-
-        console.log("✅ ObserverProfile collection update completed");
-      },
-      down: async () => {
-        await connectDB();
-
-        console.log(
-          "⚠️ Rollback: Adding back unique_id field to ObserverProfile is not recommended"
-        );
-        console.log(
-          "⚠️ This would require regenerating unique IDs for all documents"
-        );
-        console.log("⚠️ Rollback completed (no action taken)");
-      },
-    },
     {
       version: "008",
       description: "Add email field to OrganisationProfile collection",
@@ -668,43 +410,28 @@ export class MigrationManager {
         );
       },
     },
-
   ];
 
   async getAppliedMigrations(): Promise<string[]> {
-    await connectDB();
-    const applied = await MigrationModel.find({}).sort({ version: 1 });
-    return applied.map((m) => m.version);
+    // No migration tracking - always return empty array to run all migrations
+    return [];
   }
 
   async runMigrations(): Promise<void> {
     try {
-      const appliedVersions = await this.getAppliedMigrations();
-
       for (const migration of this.migrations) {
-        if (!appliedVersions.includes(migration.version)) {
+        console.log(
+          `🔄 Running migration ${migration.version}: ${migration.description}`
+        );
+
+        try {
+          await migration.up();
           console.log(
-            `🔄 Running migration ${migration.version}: ${migration.description}`
+            `✅ Migration ${migration.version} completed successfully`
           );
-
-          try {
-            await migration.up();
-
-            // Record successful migration
-            await MigrationModel.create({
-              version: migration.version,
-              description: migration.description,
-            });
-
-            console.log(
-              `✅ Migration ${migration.version} completed successfully`
-            );
-          } catch (error) {
-            console.error(`❌ Migration ${migration.version} failed:`, error);
-            throw error;
-          }
-        } else {
-          console.log(`⏭️ Migration ${migration.version} already applied`);
+        } catch (error) {
+          console.error(`❌ Migration ${migration.version} failed:`, error);
+          throw error;
         }
       }
     } catch (error) {
@@ -719,38 +446,15 @@ export class MigrationManager {
     }
   }
 
-  async rollbackMigration(version: string): Promise<void> {
-    const migration = this.migrations.find((m) => m.version === version);
-    if (!migration) {
-      throw new Error(`Migration ${version} not found`);
-    }
-
-    console.log(
-      `🔄 Rolling back migration ${version}: ${migration.description}`
-    );
-
-    try {
-      await migration.down();
-
-      // Remove migration record
-      await MigrationModel.deleteOne({ version });
-
-      console.log(`✅ Migration ${version} rolled back successfully`);
-    } catch (error) {
-      console.error(`❌ Rollback of migration ${version} failed:`, error);
-      throw error;
-    }
-  }
 
   async getStatus(): Promise<
     { version: string; description: string; applied: boolean }[]
   > {
-    const appliedVersions = await this.getAppliedMigrations();
-
+    // Since we don't track migrations, show all as available to run
     return this.migrations.map((migration) => ({
       version: migration.version,
       description: migration.description,
-      applied: appliedVersions.includes(migration.version),
+      applied: false, // Always show as not applied since we don't track
     }));
   }
 }

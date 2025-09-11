@@ -117,9 +117,9 @@ const ManagementCreatePopup = ({
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2 capitalize"
             >
-              {`${role} Name *`}
+              {`${role} name *`}
             </label>
             <div className="relative">
               <FaBuilding className="absolute left-3 top-3 text-gray-400" />
@@ -144,7 +144,7 @@ const ManagementCreatePopup = ({
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2 capitalize"
             >
               Email Address *
             </label>
@@ -171,7 +171,7 @@ const ManagementCreatePopup = ({
           <div>
             <label
               htmlFor="address"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2 capitalize"
             >
               Address *
             </label>

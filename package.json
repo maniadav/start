@@ -9,7 +9,6 @@
     "lint": "next lint",
     "migrate": "npx ts-node --project tsconfig.scripts.json scripts/migrate.ts",
     "migrate:up": "yarn migrate up",
-    "migrate:down": "yarn migrate down",
     "migrate:status": "yarn migrate status"
   },
   "dependencies": {

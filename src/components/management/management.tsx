@@ -143,7 +143,7 @@ const Management = ({
                 handlebuttonActions={(action: string, orgId: string) =>
                   handlePopup(action as PopupType, orgId)
                 }
-                role={forRole}
+                forRole={forRole}
               />
             </div>
           )}

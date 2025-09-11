@@ -79,7 +79,7 @@ export function DataTable<T>({
                       <div
                         className={
                           header.column.getCanSort()
-                            ? "cursor-pointer select-none flex gap-2"
+                            ? "cursor-pointer select-none flex gap-2 text-left capitalize"
                             : ""
                         }
                         onClick={header.column.getToggleSortingHandler()}
