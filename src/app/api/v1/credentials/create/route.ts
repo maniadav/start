@@ -9,17 +9,29 @@ import { sendGmail } from "@utils/gmail.utils";
 import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
 import TokenUtils from "@utils/token.utils";
 import { AppConfig } from "../../../../../config/app.config";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
     await connectDB();
 
-
     const body = await request.json();
-    const { organisation_id, aws_access_key, aws_secret_access_key, aws_bucket_name, aws_bucket_region } = body;
+    const {
+      organisation_id,
+      aws_access_key,
+      aws_secret_access_key,
+      aws_bucket_name,
+      aws_bucket_region,
+    } = body;
 
     // Validate required fields
-    if (!organisation_id || !aws_access_key || !aws_secret_access_key || !aws_bucket_name || !aws_bucket_region) {
+    if (
+      !organisation_id ||
+      !aws_access_key ||
+      !aws_secret_access_key ||
+      !aws_bucket_name ||
+      !aws_bucket_region
+    ) {
       return NextResponse.json(
         { error: "All AWS credential fields are required" },
         { status: HttpStatusCode.BadRequest }
@@ -36,21 +48,11 @@ export async function POST(request: Request) {
       date_created: new Date(),
     });
     await credential.save();
-    return NextResponse.json({ message: "AWS credentials saved successfully" }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating organisation:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
     return NextResponse.json(
-      { error: "Failed to create organisation" },
-      { status: 500 }
+      { message: "AWS credentials saved successfully" },
+      { status: 201 }
     );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import UserModel from "@models/user.model";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
-import TokenUtils, {  TokenUtilsError } from "@utils/token.utils";
+import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
 import { ModelUtils, Role } from "@utils/model.utils";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function GET(request: Request) {
   try {
@@ -43,19 +44,6 @@ export async function GET(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error retrieving profile:", error);
-
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to retrieve profile" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

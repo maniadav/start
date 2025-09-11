@@ -37,6 +37,8 @@ export const API_ENDPOINT = {
   observer: {
     list: "/observer/list",
     create: "/observer/create",
+    delete: "/observer/delete",
+    update: "/observer/update",
   },
   child: {
     list: "/child/list",

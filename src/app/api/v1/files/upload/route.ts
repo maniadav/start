@@ -143,7 +143,6 @@ export async function POST(request: Request) {
       "File uploaded successfully"
     );
   } catch (error) {
-    // Use the global error handler for all unhandled errors
     return handleApiError(error);
   }
 }

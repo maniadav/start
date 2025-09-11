@@ -6,6 +6,7 @@ import { BASE_URL } from "@constants/config.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { sendGmail } from "@utils/gmail.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 interface RequestBody {
   email?: string;
@@ -110,9 +111,6 @@ export async function POST(request: Request): Promise<NextResponse> {
       message: "We have sent a password reset link to your email address.",
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: "An internal server error occurred." },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

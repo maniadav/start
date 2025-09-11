@@ -7,6 +7,7 @@ import { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { ModelUtils, Role } from "@utils/model.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
@@ -93,19 +94,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating organisation:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to create organisation" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

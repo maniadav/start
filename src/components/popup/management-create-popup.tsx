@@ -1,46 +1,47 @@
 "use client";
 import { useToast } from "@management/hooks/use-toast";
-import { PopupModal } from "@components/ui/PopupModal";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
 import startUtilityAPI from "@services/start.utility";
 
-interface CreateOrganisationPopupProps {
+interface CreateManagementPopupProps {
   showFilter: boolean;
   closeModal: any;
   onSuccess?: () => void;
+  role: "organisation" | "observer";
 }
 
-interface OrganisationFormData {
+interface IManagementForm {
   name: string;
   email: string;
   address: string;
 }
 
-const CreateOrganisationPopup = ({
+const ManagementCreatePopup = ({
   showFilter,
   closeModal,
   onSuccess,
-}: CreateOrganisationPopupProps) => {
-  const [formData, setFormData] = useState<OrganisationFormData>({
+  role = "organisation",
+}: CreateManagementPopupProps) => {
+  const [formData, setFormData] = useState<IManagementForm>({
     name: "",
     email: "",
     address: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<OrganisationFormData>>({});
+  const [errors, setErrors] = useState<Partial<IManagementForm>>({});
 
   const { toast } = useToast();
   const validateForm = (): boolean => {
-    const newErrors: Partial<OrganisationFormData> = {};
+    const newErrors: Partial<IManagementForm> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Organisation name is required";
+      newErrors.name = `${role} name is required`;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = `${role} email is required`;
     } else if (
       !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)
     ) {
@@ -55,10 +56,7 @@ const CreateOrganisationPopup = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (
-    field: keyof OrganisationFormData,
-    value: string
-  ) => {
+  const handleInputChange = (field: keyof IManagementForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
@@ -75,7 +73,10 @@ const CreateOrganisationPopup = ({
 
     setIsLoading(true);
     try {
-      const response = await startUtilityAPI.organisation.create(formData);
+      const response =
+        role === "observer"
+          ? await startUtilityAPI.observer.create(formData)
+          : await startUtilityAPI.organisation.create(formData);
       console.log("Create response:", response);
 
       setFormData({ name: "", email: "", address: "" });
@@ -90,16 +91,12 @@ const CreateOrganisationPopup = ({
       }
       toast({
         title: "Success",
-        description: "Organisation created successfully",
+        description: `${role} created successfully`,
       });
-    } catch (error) {
-      console.error("Error creating organisation:", error);
+    } catch (_error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create organisation",
+        description: `Failed to create ${role}`,
       });
     } finally {
       setIsLoading(false);
@@ -115,24 +112,21 @@ const CreateOrganisationPopup = ({
         <div className="flex items-center gap-3">
           <FaBuilding className="w-8 h-8 text-primary shrink-0" />
           <div className="flex flex-col gap-1 w-full">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Create Organisation
+            <h3 className="text-2xl font-bold text-gray-900 capitalize">
+              {`Create ${role}`}
             </h3>
             <p className="text-gray-600 mt-1 text-base md:text-sm">
-              Add a new organisation to the system
+              {`Add a new ${role} to the system`}
             </p>
           </div>
         </div>
-
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Organisation Name */}
           <div>
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Organisation Name *
+              {`${role} Name *`}
             </label>
             <div className="relative">
               <FaBuilding className="absolute left-3 top-3 text-gray-400" />
@@ -144,7 +138,7 @@ const CreateOrganisationPopup = ({
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="Enter organisation name"
+                placeholder={`Enter ${role} name`}
                 disabled={isLoading}
               />
             </div>
@@ -196,7 +190,7 @@ const CreateOrganisationPopup = ({
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
                 errors.address ? "border-red-500" : "border-gray-300"
               }`}
-              placeholder="Enter organisation address"
+              placeholder="Enter address"
               disabled={isLoading}
             />
             {errors.address && (
@@ -216,7 +210,7 @@ const CreateOrganisationPopup = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 text-white bg-primary hover:bg-primary rounded-lg font-medium transition-colors flex items-center gap-2 w-full md:w-auto justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="capitalize px-5 py-2.5 text-white bg-primary hover:bg-primary rounded-lg font-medium transition-colors flex items-center gap-2 w-full md:w-auto justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -227,7 +221,7 @@ const CreateOrganisationPopup = ({
               ) : (
                 <>
                   <FaBuilding />
-                  Create Organisation
+                  {`Create ${role}`}
                 </>
               )}
             </button>
@@ -238,4 +232,4 @@ const CreateOrganisationPopup = ({
   );
 };
 
-export default CreateOrganisationPopup;
+export default ManagementCreatePopup;

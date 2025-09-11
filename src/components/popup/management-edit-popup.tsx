@@ -1,15 +1,15 @@
 "use client";
 import { useToast } from "@management/hooks/use-toast";
-import { PopupModal } from "@components/ui/PopupModal";
-import { useMemo, useState } from "react";
-import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
+import { useState } from "react";
+import { FaBuilding, FaEnvelope, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
 import startUtilityAPI from "@services/start.utility";
-
-interface CreateOrganisationPopupProps {
+interface ManagementEditPopupProps {
   showFilter: boolean;
   closeModal: any;
   onSuccess?: () => void;
+  organisation_id: string;
+  role: "organisation" | "observer";
 }
 
 interface OrganisationFormData {
@@ -18,11 +18,13 @@ interface OrganisationFormData {
   address: string;
 }
 
-const EditOrganisationPopup = ({
+const ManagementEditPopup = ({
   showFilter,
   closeModal,
   onSuccess,
-}: CreateOrganisationPopupProps) => {
+  organisation_id,
+  role,
+}: ManagementEditPopupProps) => {
   const [formData, setFormData] = useState<OrganisationFormData>({
     name: "",
     email: "",
@@ -36,11 +38,11 @@ const EditOrganisationPopup = ({
     const newErrors: Partial<OrganisationFormData> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Organisation name is required";
+      newErrors.name = `${role} name is required`;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = `${role} email is required`;
     } else if (
       !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)
     ) {
@@ -75,31 +77,24 @@ const EditOrganisationPopup = ({
 
     setIsLoading(true);
     try {
-      const response = await startUtilityAPI.organisation.create(formData);
-      console.log("Create response:", response);
+      const response =
+        role === "observer"
+          ? await startUtilityAPI.observer.update(organisation_id, formData)
+          : await startUtilityAPI.organisation.update(organisation_id, formData);
 
       setFormData({ name: "", email: "", address: "" });
       setErrors({});
-      console.log("onSuccess is function:", typeof onSuccess === "function");
       if (onSuccess) {
-        console.log("Calling onSuccess...");
         onSuccess();
-        console.log("onSuccess called successfully");
-      } else {
-        console.log("onSuccess is not provided or falsy");
       }
       toast({
         title: "Success",
-        description: "Organisation created successfully",
+        description: `${role} updated successfully`,
       });
-    } catch (error) {
-      console.error("Error creating organisation:", error);
+    } catch (_error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create organisation",
+        description: `Failed to update ${role}`,
       });
     } finally {
       setIsLoading(false);
@@ -109,18 +104,13 @@ const EditOrganisationPopup = ({
 
   return (
     <PopupContainter>
-      {" "}
       <div className="relative bg-white rounded-xl shadow-2xl p-8 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
           <FaBuilding className="w-8 h-8 text-primary shrink-0" />
           <div className="flex flex-col gap-1 w-full">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Create Organisation
-            </h3>
-            <p className="text-gray-600 mt-1 text-base md:text-sm">
-              Add a new organisation to the system
-            </p>
+            <h3 className="text-2xl font-bold text-gray-900 capitalize">{`Edit ${role}`}</h3>
+            <p className="text-gray-600 mt-1 text-base md:text-sm capitalize">{`Update ${role} details`}</p>
           </div>
         </div>
 
@@ -132,7 +122,7 @@ const EditOrganisationPopup = ({
               htmlFor="name"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Organisation Name *
+              {`${role} Name *`}
             </label>
             <div className="relative">
               <FaBuilding className="absolute left-3 top-3 text-gray-400" />
@@ -144,7 +134,7 @@ const EditOrganisationPopup = ({
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="Enter organisation name"
+                placeholder={`Enter ${role} name`}
                 disabled={isLoading}
               />
             </div>
@@ -196,7 +186,7 @@ const EditOrganisationPopup = ({
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
                 errors.address ? "border-red-500" : "border-gray-300"
               }`}
-              placeholder="Enter organisation address"
+              placeholder={`Enter ${role} address`}
               disabled={isLoading}
             />
             {errors.address && (
@@ -222,12 +212,12 @@ const EditOrganisationPopup = ({
               {isLoading ? (
                 <>
                   <FaSpinner className="animate-spin" />
-                  Creating...
+                  Updating...
                 </>
               ) : (
                 <>
                   <FaBuilding />
-                  Create Organisation
+                  {`Edit ${role}`}
                 </>
               )}
             </button>
@@ -238,4 +228,4 @@ const EditOrganisationPopup = ({
   );
 };
 
-export default EditOrganisationPopup;
+export default ManagementEditPopup;

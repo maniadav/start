@@ -3,7 +3,7 @@ import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { useState } from "react";
 import LoadingSection from "@components/section/loading-section";
-import { FileTable } from "@components/table/file-table";
+import { FileTable } from "@components/files/file-table";
 import { BulkDownloadPopup } from "@components/popup/BulkDownloadPopup";
 import { useFileFilters, useFileData, useFileOperations } from "@hooks/files";
 import { SidebarTriggerComp } from "@management/SidebarTrigger";

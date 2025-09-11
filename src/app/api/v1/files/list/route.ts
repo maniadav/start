@@ -92,7 +92,6 @@ export async function GET(request: Request) {
       "Files retrieved successfully"
     );
   } catch (error) {
-    // Use the global error handler for consistent error responses
     return handleApiError(error);
   }
 }

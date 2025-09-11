@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
@@ -22,20 +23,7 @@ export async function POST(request: Request) {
     const accessToken = TokenUtils.generateToken({ role, email }, "access");
 
     return NextResponse.json({ accessToken }, { status: 200 });
-  } catch (err) {
-    if (err instanceof TokenUtilsError) {
-      return NextResponse.json(
-        {
-          error: err.message,
-          code: err.name,
-        },
-        { status: err.statusCode }
-      );
-    }
-
-    return NextResponse.json(
-      { error: "Failed to generate access token" },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

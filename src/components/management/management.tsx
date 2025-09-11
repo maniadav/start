@@ -5,21 +5,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Search } from "lucide-react";
 import LoadingSection from "@components/section/loading-section";
-import { OrganisationTable } from "@components/organisation/organisation-table";
 import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import ManagementCreatePopup from "@components/popup/management-create-popup";
+import ManagementDeletePopup from "@components/popup/management-delete-popup";
+import ManagementEditPopup from "@components/popup/management-edit-popup";
 import startUtilityAPI from "@services/start.utility";
 import { useFileFilters } from "@hooks/files";
 import { FilterSummary } from "@components/ui/filter-summary";
-import CredentialPopup from "@components/popup/credential-popup";
 import { Button } from "@components/ui/button";
-import ManagementDeletePopup from "@components/popup/management-delete-popup";
-import ManagementEditPopup from "@components/popup/management-edit-popup";
-import ManagementCreatePopup from "@components/popup/management-create-popup";
+import { ManagementTable } from "./management-table";
 
-// Define a type for the popup state for better type safety
-type PopupType = "create" | "delete" | "credential" | "edit" | null;
+type PopupType = "create" | "delete" | "edit" | null;
 
-const Organisation = () => {
+const Management = ({
+  forRole,
+  accessedBy,
+}: {
+  forRole: "observer" | "organisation";
+  accessedBy: "organisation" | "admin";
+}) => {
   const [organisations, setOrganisations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchId, setSearchId] = useState<string>("");
@@ -50,7 +54,7 @@ const Organisation = () => {
     setLoading(true);
     try {
       const params = orgIdParam ? { organisation_id: orgIdParam } : {};
-      const res = await startUtilityAPI.organisation.list(params);
+      const res = await startUtilityAPI[forRole].list(params);
       setOrganisations(res.data || []);
       // Update URL query param if searching
       if (orgIdParam) {
@@ -85,10 +89,10 @@ const Organisation = () => {
 
   return (
     <div className="p-4 md:p-8">
-      <SidebarTriggerComp title="Organisation Management" />
+      <SidebarTriggerComp title={`${forRole} Management`} />
       <Card>
         <CardHeader>
-          <CardTitle>Organisation</CardTitle>
+          <CardTitle>{forRole}</CardTitle>
         </CardHeader>
         <CardContent className="w-auto overflow-x-scroll">
           {loading ? (
@@ -108,7 +112,7 @@ const Organisation = () => {
                   <div className="relative flex-grow">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search by organisation ID..."
+                      placeholder={`Search by ${forRole} ID...`}
                       value={searchId}
                       onChange={(e) => setSearchId(e.target.value)}
                       className="pl-8 bg-white rounded-r-none"
@@ -122,36 +126,33 @@ const Organisation = () => {
                     Search
                   </Button>
                 </div>
-                <Button onClick={() => handlePopup("create")} variant="default">
-                  Add Organisation
-                </Button>
+                {accessedBy === "organisation" && (
+                  <Button
+                    onClick={() => handlePopup("create")}
+                    variant="default"
+                  >
+                    Add {forRole}
+                  </Button>
+                )}
               </div>
-              <OrganisationTable
+              <ManagementTable
                 data={organisations}
-                handleOrgActions={(action: string, orgId: string) =>
+                handlebuttonActions={(action: string, orgId: string) =>
                   handlePopup(action as PopupType, orgId)
                 }
+                role={forRole}
               />
             </div>
           )}
         </CardContent>
       </Card>
 
-      {popupState.type === "credential" && (
-        <CredentialPopup
-          showFilter={popupState.isOpen}
-          closeModal={() => handlePopup(null)}
-          onSuccess={handleSuccess}
-          organisationId={popupState.orgId as string}
-        />
-      )}
-
       {popupState.type === "create" && (
         <ManagementCreatePopup
           showFilter={popupState.isOpen}
           closeModal={() => handlePopup(null)}
           onSuccess={handleSuccess}
-          role="organisation"
+          role={forRole}
         />
       )}
 
@@ -161,7 +162,7 @@ const Organisation = () => {
           closeModal={() => handlePopup(null)}
           onSuccess={handleSuccess}
           organisation_id={popupState.orgId as string}
-          role="organisation"
+          role={forRole}
         />
       )}
 
@@ -171,11 +172,11 @@ const Organisation = () => {
           closeModal={() => handlePopup(null)}
           onSuccess={handleSuccess}
           organisation_id={popupState.orgId as string}
-          role="organisation"
+          role={forRole}
         />
       )}
     </div>
   );
 };
 
-export default Organisation;
+export default Management;

@@ -11,6 +11,7 @@ import { sendGmail } from "@utils/gmail.utils";
 import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
 import TokenUtils from "@utils/token.utils";
 import { AppConfig } from "../../../../../config/app.config";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
@@ -81,7 +82,9 @@ export async function POST(request: Request) {
     // Get organisation details for the email
     let organisationName = "Organisation";
     try {
-      const organisationProfile = await OrganisationProfileModel.findOne({ user_id });
+      const organisationProfile = await OrganisationProfileModel.findOne({
+        user_id,
+      });
       if (organisationProfile) {
         organisationName = organisationProfile.name;
       }
@@ -92,9 +95,9 @@ export async function POST(request: Request) {
     // Send verification email to the newly created observer
     try {
       const verificationToken = TokenUtils.generateToken(
-        { 
-          role: "observer", 
-          email: user.email 
+        {
+          role: "observer",
+          email: user.email,
         },
         "activation"
       );
@@ -105,7 +108,7 @@ export async function POST(request: Request) {
           role: "observer",
           action: "observer_creation",
           organisationName: organisationName,
-          observerName: savedProfile.name
+          observerName: savedProfile.name,
         },
         verificationToken
       );
@@ -118,7 +121,9 @@ export async function POST(request: Request) {
         htmlContent: emailTemplate.htmlContent,
       });
 
-      console.log(`Verification email sent successfully to ${user.email} for observer creation`);
+      console.log(
+        `Verification email sent successfully to ${user.email} for observer creation`
+      );
     } catch (emailError) {
       console.error("Failed to send verification email:", emailError);
       // Don't fail the entire request if email fails, just log it
@@ -136,24 +141,11 @@ export async function POST(request: Request) {
           address: savedProfile.address,
           organisation_id: user_id,
         },
-        verificationEmailSent: true
+        verificationEmailSent: true,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating observer:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to create observer" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

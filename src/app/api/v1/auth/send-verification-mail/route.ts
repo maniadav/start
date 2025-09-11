@@ -7,6 +7,7 @@ import {
   VerificationEmailRequest,
   generateVerificationEmailTemplate,
 } from "../../../../../utils/email-templates.utils";
+import { handleApiError } from "@utils/errorHandler";
 
 /**
  * POST /api/v1/auth/send-verification-mail
@@ -94,22 +95,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error sending verification email:", error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : "Internal server error";
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to send verification email",
-        error:
-          process.env.NODE_ENV === "development"
-            ? errorMessage
-            : "Internal server error",
-      },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 

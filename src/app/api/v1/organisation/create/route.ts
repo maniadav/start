@@ -11,6 +11,7 @@ import { sendGmail } from "@utils/gmail.utils";
 import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
 import TokenUtils from "@utils/token.utils";
 import { AppConfig } from "../../../../../config/app.config";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
@@ -82,9 +83,9 @@ export async function POST(request: Request) {
     // Send verification email to the newly created organisation
     try {
       const verificationToken = TokenUtils.generateToken(
-        { 
-          role: "organisation", 
-          email: user.email 
+        {
+          role: "organisation",
+          email: user.email,
         },
         "activation"
       );
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
           role: "organisation",
           action: "organisation_creation",
           organisationName: savedProfile.name,
-          adminName: "Administrator" // You can get this from the admin's profile if needed
+          adminName: "Administrator", // You can get this from the admin's profile if needed
         },
         verificationToken
       );
@@ -108,7 +109,9 @@ export async function POST(request: Request) {
         htmlContent: emailTemplate.htmlContent,
       });
 
-      console.log(`Verification email sent successfully to ${user.email} for organisation creation`);
+      console.log(
+        `Verification email sent successfully to ${user.email} for organisation creation`
+      );
     } catch (emailError) {
       console.error("Failed to send verification email:", emailError);
       // Don't fail the entire request if email fails, just log it
@@ -117,7 +120,8 @@ export async function POST(request: Request) {
     // Return success response
     return NextResponse.json(
       {
-        message: "Organisation created successfully and verification email sent",
+        message:
+          "Organisation created successfully and verification email sent",
         organisation: {
           user_id: user._id,
           name: savedProfile.name,
@@ -125,24 +129,11 @@ export async function POST(request: Request) {
           email: user.email,
           address: savedProfile.address,
         },
-        verificationEmailSent: true
+        verificationEmailSent: true,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating organisation:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to create organisation" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

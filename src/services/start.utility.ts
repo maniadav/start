@@ -144,6 +144,17 @@ class StartUtilityAPI {
         data
       );
     },
+    delete: (observer_id: string) => {
+      return this.api.delete(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.observer.delete}/${observer_id}`
+      );
+    },
+    update: (observer_id: string, data: any) => {
+      return this.api.put(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.observer.update}/${observer_id}`,
+        data
+      );
+    },
   };
 
   /**

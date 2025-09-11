@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import OrganisationProfileModel from "@models/organisation.profile.model";
-import TokenUtils, {  TokenUtilsError } from "@utils/token.utils";
+import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import AdminProfileModel from "@models/admin.profle.model";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function GET(request: Request) {
   try {
@@ -37,17 +38,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-      if (error instanceof TokenUtilsError) {
-        throw error;
-      }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to fetch organisation profiles" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

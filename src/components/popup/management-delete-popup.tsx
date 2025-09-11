@@ -1,8 +1,6 @@
 "use client";
 import { useToast } from "@management/hooks/use-toast";
-import StartUtilityAPI from "@services/start.utility";
-import { PopupModal } from "@components/ui/PopupModal";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
 import startUtilityAPI from "@services/start.utility";
@@ -12,49 +10,43 @@ interface DeleteOrganisationPopupProps {
   closeModal: any;
   onSuccess?: () => void;
   organisation_id: string;
+  role: "organisation" | "observer";
 }
 
 // Not needed for delete operation
 
-const DeleteOrganisationPopup = ({
+const ManagementDeletePopup = ({
   showFilter,
   closeModal,
   onSuccess,
   organisation_id,
+  role = "organisation",
 }: DeleteOrganisationPopupProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { toast } = useToast();
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsLoading(true);
     try {
-      const response = await startUtilityAPI.organisation.delete(
-        organisation_id
-      );
-
-      console.log("Parsed result:", response);
+      const response =
+        role === "observer"
+          ? await startUtilityAPI.observer.delete(organisation_id)
+          : await startUtilityAPI.organisation.delete(organisation_id);
 
       if (onSuccess) {
-        console.log("Calling onSuccess...");
         onSuccess();
-        console.log("onSuccess called successfully");
-      } else {
-        console.log("onSuccess is not provided or falsy");
       }
       toast({
         title: "Success",
-        description: "Organisation deleted successfully",
+        description: `${role} deleted successfully`,
       });
-    } catch (error) {
-      console.error("Error creating organisation:", error);
+    } catch (_error) {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create organisation",
+        description: `Failed to delete ${role}`,
       });
     } finally {
       setIsLoading(false);
@@ -69,9 +61,7 @@ const DeleteOrganisationPopup = ({
         <div className="flex items-center gap-3">
           <FaBuilding className="w-8 h-8 text-red-600 shrink-0" />
           <div className="flex flex-col gap-1 w-full">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Delete Organisation
-            </h3>
+            <h3 className="text-2xl font-bold text-gray-900 capitalize">{`Delete ${role}`}</h3>
             <p className="text-gray-600 mt-1 text-base md:text-sm">
               This action cannot be undone
             </p>
@@ -96,19 +86,11 @@ const DeleteOrganisationPopup = ({
               />
             </svg>
           </div>
-          <h4 className="text-lg font-semibold text-red-700 mb-2">
-            Warning: Permanent Deletion
+          <h4 className="text-lg font-semibold text-red-700 mb-2 capitalize">
+            {`Warning: Permanent ${role} Deletion`}
           </h4>
-          <p className="text-red-600 mb-2">
-            Deleting this organisation will also permanently delete:
-          </p>
-          <ul className="text-sm text-red-600 mb-3 list-disc list-inside">
-            <li>All associated observers</li>
-            <li>All related child records</li>
-            <li>All data linked to this organisation</li>
-          </ul>
           <p className="text-red-700 font-medium">
-            This action cannot be reversed. Are you absolutely sure?
+            This will permanently remove this {role}. Are you absolutely sure?
           </p>
         </div>
 
@@ -131,7 +113,7 @@ const DeleteOrganisationPopup = ({
                 Processing...
               </>
             ) : (
-              <>Delete Organisation</>
+              <>Delete {role}</>
             )}
           </button>
         </div>
@@ -140,4 +122,4 @@ const DeleteOrganisationPopup = ({
   );
 };
 
-export default DeleteOrganisationPopup;
+export default ManagementDeletePopup;

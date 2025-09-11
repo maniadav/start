@@ -5,6 +5,7 @@ import TokenModel from "@models/token.model";
 import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(req: Request) {
   try {
@@ -74,15 +75,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.error("Error in password reset:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    return NextResponse.json(
-      { error: "Failed to process password reset" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

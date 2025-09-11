@@ -5,6 +5,7 @@ import TokenUtils, { TokenUtilsError } from "@utils/token.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { ValidatorUtils } from "@helper/validator";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(req: Request) {
   try {
@@ -75,15 +76,6 @@ export async function POST(req: Request) {
     };
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
-    console.error("Error updating password:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    return NextResponse.json(
-      { error: "Failed to update password" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

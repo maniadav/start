@@ -1,6 +1,8 @@
 "use client";
-import Organisation from "@components/organisation";
 
-export default function OrganisationsPage() {
-  return <Organisation />;
+import * as React from "react";
+import Management from "@components/management/management";
+
+export default function OrganisationPage() {
+  return <Management forRole="organisation" accessedBy="admin" />;
 }

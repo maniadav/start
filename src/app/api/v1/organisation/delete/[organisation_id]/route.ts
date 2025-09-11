@@ -5,6 +5,7 @@ import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils } from "@utils/profile.utils";
 import UserModel from "@models/user.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function DELETE(
   request: Request,
@@ -62,10 +63,6 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting organisation:", error);
-    return NextResponse.json(
-      { error: "Failed to delete organisation" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

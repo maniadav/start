@@ -1,12 +1,17 @@
 import * as React from "react";
-import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Delete, Edit, MoreHorizontal, View } from "lucide-react";
-import { DataTable } from "components/table/data-table";
-import {
-  Card,
-  CardContent,
-} from "components/ui/card";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@components/ui/button";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  Edit,
+  Delete,
+  View,
+  Ellipsis,
+  Key,
+  Trash2,
+} from "lucide-react";
+import { Badge } from "@management/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,32 +20,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@management/components/ui/dropdown-menu";
-import { Badge } from "@management/components/ui/badge";
-import type {
-  Organisation,
-  FilterOptions,
-  Status,
-} from "@type/management.types";
+import { DataTable } from "@components/table/table";
 
-interface OrganisationTableProps {
-  data: Organisation[];
-  filters: FilterOptions;
-  setFilters: (filters: FilterOptions) => void;
-  hasLimitedData?: boolean;
-  handleOrgActions: (action: string, observer_id: string) => void;
-}
-
-export function ObserverTable({
-  data,
-  filters,
-  setFilters,
-  hasLimitedData = false,
-  handleOrgActions,
-}: OrganisationTableProps) {
-  const columns: ColumnDef<Organisation>[] = React.useMemo(
+export function ManagementTable({ data, handlebuttonActions, forRole }: any) {
+  const columns: ColumnDef<any>[] = React.useMemo(
     () => [
       {
-        accessorKey: "organisation_id",
+        accessorKey: "user_id",
         header: ({ column }) => {
           return (
             <Button
@@ -49,7 +35,7 @@ export function ObserverTable({
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              Organisation ID
+              Obs ID
             </Button>
           );
         },
@@ -64,14 +50,14 @@ export function ObserverTable({
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
             >
-              Observer Name
+              Obs Name
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           );
         },
       },
       {
-        accessorKey: "joined_on",
+        accessorKey: "joinedOn",
         header: ({ column }) => {
           return (
             <Button
@@ -86,7 +72,7 @@ export function ObserverTable({
           );
         },
         cell: ({ row }) => {
-          const joinedOn = row.getValue("joined_on");
+          const joinedOn = row.getValue("joinedOn");
           return joinedOn
             ? new Date(joinedOn as string).toLocaleDateString()
             : "N/A";
@@ -94,7 +80,7 @@ export function ObserverTable({
       },
       {
         accessorKey: "email",
-        header: "Observer Email",
+        header: "Obs Email",
         cell: ({ row }) => {
           const email = row.getValue("email");
           return email || "N/A";
@@ -104,66 +90,67 @@ export function ObserverTable({
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
-          const status = row.getValue("status") as Status;
+          const status = row.getValue("status");
           if (!status) return "N/A";
-          return (
-            <Badge
-              variant={
-                status === "active"
-                  ? "default"
-                  : status === "pending"
-                  ? "secondary"
-                  : "destructive"
-              }
-            >
-              {status}
-            </Badge>
-          );
+          return <Badge>{String(status)}</Badge>;
         },
       },
       {
         id: "actions",
+        header: "Actions",
         cell: ({ row }) => {
-          const org = row.original;
-
+          const item = row.original;
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="bg-white p-8">
+              <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
+                  <Ellipsis className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white py-2">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
+              <DropdownMenuContent align="end" className="w-48 bg-white">
+                <DropdownMenuLabel>File Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+
+                {forRole === "organisation" && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handlebuttonActions(
+                        "credential",
+                        item.unique_id || item.user_id || ""
+                      )
+                    }
+                  >
+                    <Key className="mr-2 h-4 w-4" />
+                    Set Credentials
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem
                   onClick={() =>
-                    handleOrgActions("view", org.unique_id || org.user_id || "")
-                  }
-                >
-                  <View className="mr-2 h-4 w-4" />
-                  View Details
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    handleOrgActions("edit", org.unique_id || org.user_id || "")
+                    handlebuttonActions(
+                      "edit",
+                      item.unique_id || item.user_id || ""
+                    )
                   }
                 >
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Details
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem
                   onClick={() =>
-                    handleOrgActions(
+                    handlebuttonActions(
                       "delete",
-                      org.unique_id || org.user_id || ""
+                      item.unique_id || item.user_id || ""
                     )
                   }
+                  className="text-red-600 focus:text-red-600"
                 >
-                  <Delete className="mr-2 h-4 w-4" />
-                  Delete Organisation
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete File
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -171,19 +158,14 @@ export function ObserverTable({
         },
       },
     ],
-    []
+    [handlebuttonActions, forRole]
   );
 
   return (
-    <Card>
-      <CardContent className="w-auto overflow-x-scroll">
-        <DataTable
-          columns={columns}
-          data={data}
-          searchKey="name"
-          searchPlaceholder="Search by name..."
-        />
-      </CardContent>
-    </Card>
+    <DataTable
+      data={data}
+      columns={columns}
+      summaryLabel={forRole === "observer" ? "observers" : "organisations"}
+    />
   );
 }

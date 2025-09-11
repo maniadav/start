@@ -4,6 +4,7 @@ import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import ChildModel from "@models/child.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import { TokenUtilsError } from "@utils/token.utils";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function GET(
   request: Request,
@@ -65,19 +66,6 @@ export async function GET(
       { status: HttpStatusCode.Ok }
     );
   } catch (error) {
-    console.error("Error fetching child:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      throw error;
-    }
-
-    return NextResponse.json(
-      { message: "Failed to fetch child" },
-      { status: HttpStatusCode.InternalServerError }
-    );
+    return handleApiError(error);
   }
 }

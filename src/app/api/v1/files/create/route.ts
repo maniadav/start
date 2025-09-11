@@ -4,6 +4,7 @@ import { TokenUtilsError } from "@utils/token.utils";
 import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
 import FilesModel from "@models/file.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   try {
@@ -84,19 +85,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating file record:", error);
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json({ error: error.message }, { status: 403 });
-    }
-
-    return NextResponse.json(
-      { error: "Failed to create file record" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }

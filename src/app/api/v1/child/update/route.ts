@@ -6,6 +6,7 @@ import ChildProfileModel from "@models/child.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import mongoose from "mongoose";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function PATCH(
   request: Request,
@@ -127,25 +128,8 @@ export async function PATCH(
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("[child/update] Error updating child profile:", error);
-
-    if (error instanceof TokenUtilsError) throw error;
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json(
-        { error: "Profile error", message: error.message },
-        { status: error.statusCode || 400 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        error: "Failed to update child profile",
-        requestId: Date.now().toString(36),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error);
   } finally {
     if (session) session.endSession();
   }

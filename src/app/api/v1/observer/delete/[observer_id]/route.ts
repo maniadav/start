@@ -5,6 +5,7 @@ import UserModel from "@models/user.model";
 import { ProfileUtils } from "@utils/profile.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 /**
  * Deletes an observer and associated data
@@ -98,16 +99,6 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting observer:", error);
-
-    // Provide more specific error information in development
-    const errorMessage =
-      process.env.NODE_ENV === "development"
-        ? `Failed to delete observer: ${
-            error instanceof Error ? error.message : "Unknown error"
-          }`
-        : "Failed to delete observer";
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleApiError(error);
   }
 }

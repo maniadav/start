@@ -6,6 +6,7 @@ import ChildProfileModel from "@models/child.model";
 import ObserverProfileModel from "@models/observer.profile.model";
 import mongoose from "mongoose";
 import { HttpStatusCode } from "enums/HttpStatusCode";
+import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
   let session = null;
@@ -143,31 +144,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
-    console.error(
-      "[child/create] Error creating child profile:",
-      error.statusCode || 500,
-      error.message || error
-    );
-
-    if (error instanceof TokenUtilsError) {
-      throw error;
-    }
-
-    if (error instanceof ProfileUtilsError) {
-      return NextResponse.json(
-        { error: "Profile error", message: error.message },
-        { status: error.statusCode || 400 }
-      );
-    }
-
-    // Don't expose internal error details to client
-    return NextResponse.json(
-      {
-        error: "Failed to create child profile",
-        requestId: Date.now().toString(36),
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
