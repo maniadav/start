@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@components/button/button";
 import { cn } from "@lib/utils";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useSidebar } from "@management/SidebarProvider";
+import { useSidebar } from "@components/management/SidebarProvider";
 
 const SidebarTrigger = () => {
   const { collapsed, toggleSidebar } = useSidebar();

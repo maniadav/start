@@ -3,23 +3,20 @@
 import {
   Building2,
   FileText,
-  Home,
-  Upload,
   LayoutDashboard,
   Users,
   Eye,
   UploadCloudIcon,
   NotebookPen,
-  ArrowLeftFromLine,
   CircleArrowOutUpLeft,
   Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserNav } from "../components/ui/UserNav";
-import { useSidebar } from "@management/SidebarProvider";
+import { useSidebar } from "@components/management/SidebarProvider";
 import { useAuth } from "state/provider/AuthProvider";
 import React from "react";
+import { UserNav } from "@components/ui/UserNav";
 
 export function SideBar() {
   const pathname = usePathname();
@@ -137,8 +134,8 @@ export function SideBar() {
 
   return (
     <aside
-      className={`h-screen border-r-2 border-primary flex flex-col min-h-screen bg-background transition-all duration-200 ${
-        collapsed ? "w-12 items-center justify-center" : "w-[100px]"
+      className={`h-screen border-r-2 border-gray-100 flex flex-col min-h-screen bg-background transition-all duration-200 ${
+        collapsed ? "w-16 items-center justify-center" : "w-64"
       }`}
     >
       {/* Top Title */}

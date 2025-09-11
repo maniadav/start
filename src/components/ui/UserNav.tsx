@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { useAuth } from "state/provider/AuthProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { logOut } from "@utils/auth.utils";
-import { useSidebar } from "@management/SidebarProvider";
+import { useSidebar } from "@components/management/SidebarProvider";
 
 export function UserNav() {
   const router = useRouter();

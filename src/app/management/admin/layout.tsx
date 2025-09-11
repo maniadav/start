@@ -4,11 +4,11 @@ import type React from "react";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SidebarProvider } from "@management/SidebarProvider";
+import { SidebarProvider } from "@components/management/SidebarProvider";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { cn } from "@lib/utils";
-import { SideBar } from "@management/SideBar";
+import { SideBar } from "@components/management/SideBar";
 
 export default function AdminLayout({
   children,
@@ -35,8 +35,8 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen">
-      <SidebarProvider>
+    <SidebarProvider>
+      <div className="flex h-screen">
         <SideBar />
         <main
           className={cn(
@@ -46,7 +46,7 @@ export default function AdminLayout({
         >
           {children}
         </main>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }

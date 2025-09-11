@@ -3,11 +3,11 @@
 import type React from "react";
 import { useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { SidebarProvider } from "@management/SidebarProvider";
+import { SidebarProvider } from "@components/management/SidebarProvider";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { cn } from "@lib/utils";
-import { SideBar } from "@management/SideBar";
+import { SideBar } from "@components/management/SideBar";
 import { useAuth } from "state/provider/AuthProvider";
 
 export default function OrgnisationLayout({
@@ -67,8 +67,8 @@ export default function OrgnisationLayout({
   }
 
   return (
-    <div className="flex h-screen">
-      <SidebarProvider>
+    <SidebarProvider>
+      <div className="flex h-screen">
         <SideBar />
         <main
           className={cn(
@@ -78,7 +78,7 @@ export default function OrgnisationLayout({
         >
           {children}
         </main>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }
