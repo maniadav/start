@@ -7,7 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import ProgressiveCircle from "./ProgrgessiveCircle";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import { DelayedGratificationContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { DGTAttemptDataType, TimerDataType } from "types/survey.types";

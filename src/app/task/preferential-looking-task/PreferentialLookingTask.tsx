@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import useVideoRecorder from "@hooks/useVideoRecorder";
 import VidProcessingPopup from "@components/ui/VidProcessingPopup";
 import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";

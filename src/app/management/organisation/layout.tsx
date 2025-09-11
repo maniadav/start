@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { cn } from "@management/lib/utils";
+import { cn } from "@lib/utils";
 import { SideBar } from "@management/SideBar";
 import { SidebarProvider } from "@management/SidebarProvider";
 

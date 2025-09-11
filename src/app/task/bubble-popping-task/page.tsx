@@ -1,11 +1,10 @@
 "use client";
 import { useState } from "react";
-import { BubblePoppingContent } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
-import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
 import BubblePoppingTask from "./BubblePoppingTask";
 import { BubblePoppingContent as TaskContent } from "constants/tasks.constant";
-import FullScreenWrapper from "components/FullScreenWrapper";
+import FullScreenWrapper from "@components/wrapper/FullScreenWrapper";
+import TaskHome from "@components/ui/TaskHome";
+import SuspenseWrapper from "@components/wrapper/SuspenseWrapper";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);

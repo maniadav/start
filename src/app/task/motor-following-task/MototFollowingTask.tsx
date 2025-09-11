@@ -20,7 +20,7 @@ import { setIndexedDBValue } from "@utils/indexDB";
 
 // Components
 import MessagePopup from "@components/ui/MessagePopup";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import BallAnimation from "./BallAnimation";
 
 // Constants

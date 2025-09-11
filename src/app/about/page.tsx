@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import SuspenseWrapper from "components/SuspenseWrapper";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import ProjectParticipants from "./participants";
 import { BASE_URL } from "@constants/config.constant";
 

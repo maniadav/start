@@ -3,13 +3,13 @@ import { PAGE_ROUTES } from "@constants/route.constant";
 import { IndexDB_Storage } from "@constants/storage.constant";
 import { removeIndexedDBValue } from "@utils/indexDB";
 import { clearLocalStorageValue } from "@utils/localStorage";
-import { handleBatchDownload } from "components/BatchDataDownloadButton";
 import { PopupModal } from "@components/ui/PopupModal";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaExclamationTriangle, FaSignOutAlt } from "react-icons/fa";
 import { FaDownload, FaUpload } from "react-icons/fa6";
 import { useSurveyContext } from "state/provider/SurveytProvider";
+import { handleBatchDownload } from "@components/button/BatchDataDownloadButton";
 
 interface msgPopUp {
   showFilter: boolean;

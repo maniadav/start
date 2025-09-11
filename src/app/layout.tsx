@@ -3,11 +3,11 @@ import { BASE_URL } from "@constants/config.constant";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "state/provider/AuthProvider";
-import GameWrapper from "components/GameWrapper";
 import { SurveyProvider } from "state/provider/SurveytProvider";
 import { LanguageProvider } from "state/provider/LanguageProvider";
 import ServiceWorkerUpdater from "../pwa/ServiceWorkerUpdater";
 import { Toaster } from "react-hot-toast";
+import GameWrapper from "@components/wrapper/GameWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 

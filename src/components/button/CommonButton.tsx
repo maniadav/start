@@ -1,4 +1,4 @@
-import CommonIcon from "./CommonIcon";
+import CommonIcon from "@components/ui/CommonIcon";
 import clsx from "clsx";
 interface buttonPropsType {
   labelText?: string;

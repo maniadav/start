@@ -1,6 +1,6 @@
 import React from "react";
 import { FiUpload } from "react-icons/fi";
-import { Button } from "./button";
+import { Button } from "../button/button";
 
 interface FileDropZoneProps {
   onFilesSelected: (files: FileList) => void;

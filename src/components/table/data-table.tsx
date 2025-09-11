@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { ChevronDown, Search, Filter, Eye, EyeOff } from "lucide-react";
 
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -23,7 +23,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@management/components/ui/dropdown-menu";
+} from "@components/ui/dropdown-menu";
 import { Input } from "components/ui/input";
 import {
   Table,
@@ -32,8 +32,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@management/components/ui/table";
-import { Badge } from "@management/components/ui/badge";
+} from "@components/ui/table";
+import { Badge } from "@components/ui/badge";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

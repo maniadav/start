@@ -1,7 +1,7 @@
 import React from "react";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import { Input } from "@components/ui/input";
-import { Badge } from "@management/components/ui/badge";
+import { Badge } from "@components/ui/badge";
 import {
   Filter,
   SortAsc,

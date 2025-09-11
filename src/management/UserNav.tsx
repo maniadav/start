@@ -9,9 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@management/components/ui/dropdown-menu";
-import { Button } from "@components/ui/button";
-import { Avatar, AvatarFallback } from "@management/components/ui/avatar";
+} from "@components/ui/dropdown-menu";
+import { Button } from "@components/button/button";
+import { Avatar, AvatarFallback } from "@components/ui/avatar";
 import { useAuth } from "state/provider/AuthProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { logOut } from "@utils/auth.utils";

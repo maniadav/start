@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import ErrorComponent from "./ui/ErrorComponent";
 import { BASE_URL } from "@constants/config.constant";
 import { useWindowResize } from "@hooks/useWindowResize";
+import ErrorComponent from "../ui/ErrorComponent";
 
 const GameWrapper = ({ children }: any) => {
   const { isLandscape, isWindowResized } = useWindowResize();

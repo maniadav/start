@@ -1,8 +1,8 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
-import { cn } from "@management/lib/utils"
-import { ButtonProps, buttonVariants } from "@components/ui/button"
+import { cn } from "@lib/utils";
+import { ButtonProps, buttonVariants } from "@components/button/button"
 
 // Types for better readability
 interface PaginationProps extends React.ComponentProps<"nav"> {

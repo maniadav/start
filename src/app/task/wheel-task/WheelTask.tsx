@@ -4,7 +4,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import useVideoRecorder from "@hooks/useVideoRecorder";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import { WheelContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import VidProcessingPopup from "@components/ui/VidProcessingPopup";

@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
-import SuspenseWrapper from "components/SuspenseWrapper"; // Import the wrapper component
+import TaskHome from "components/ui/TaskHome";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper"; // Import the wrapper component
 import MototFollowingTask from "./MototFollowingTask";
 import { MotorStateProvider } from "state/provider/MotorStateProvider";
 import { MotorFollowingContent as TaskContent } from "constants/tasks.constant";
-import FullScreenWrapper from "components/FullScreenWrapper";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);

@@ -2,11 +2,11 @@
 import * as React from "react";
 import { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
-import TaskHome from "components/TaskHome";
+import TaskHome from "components/ui/TaskHome";
 import SynchronyTask from "./SynchronyTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import { SynchronyStateProvider } from "state/provider/SynchronyStateProvider";
-import FullScreenWrapper from "components/FullScreenWrapper";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 import { SynchronyContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {

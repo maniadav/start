@@ -12,7 +12,7 @@ import { PAGE_ROUTES } from "@constants/route.constant";
 import { SidebarTriggerComp } from "@management/SidebarTrigger";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useAuth } from "state/provider/AuthProvider";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import ChildForm from "./ChildForm";
 import ChildSearch from "./ChildSearch";
 import ChildRemovePopup from "components/popup/ChildRemovePopup";

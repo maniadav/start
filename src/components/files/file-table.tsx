@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { formatFileSize } from "@management/lib/data-service";
 import { DataTable } from "@components/table/table";
 import {
   DropdownMenu,
@@ -9,9 +8,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@management/components/ui/dropdown-menu";
-import { Button } from "@components/ui/button";
+} from "@components/ui/dropdown-menu";
+import { Button } from "@components/button/button";
 import { Eye, Edit, Download, Trash2, Ellipsis } from "lucide-react";
+import { formatFileSize } from "@helper/helper";
 
 interface FileData {
   task_id: string;

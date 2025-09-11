@@ -12,7 +12,7 @@ import ManagementEditPopup from "@components/popup/management-edit-popup";
 import startUtilityAPI from "@services/start.utility";
 import { useFileFilters } from "@hooks/files";
 import { FilterSummary } from "@components/ui/filter-summary";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import { ManagementTable } from "./management-table";
 
 type PopupType = "create" | "delete" | "edit" | null;

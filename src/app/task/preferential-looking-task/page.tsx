@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import TaskHome from "components/TaskHome";
+import TaskHome from "components/ui/TaskHome";
 import PreferentialLookingTask from "./PreferentialLookingTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import { PreferentialLookingStateProvider } from "state/provider/PreferentialLookingStateProvider";
-import FullScreenWrapper from "components/FullScreenWrapper";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
 
 const IndexPage = () => {

@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@management/components/ui/table";
+} from "@components/ui/table";
 import {
   flexRender,
   getCoreRowModel,

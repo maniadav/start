@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Button } from "./button";
+import { Button } from "../button/button";
 
 const CacheResetButton = () => {
   const router = useRouter();

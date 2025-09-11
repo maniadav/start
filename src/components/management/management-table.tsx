@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import {
   ArrowUpDown,
   MoreHorizontal,
@@ -11,7 +11,7 @@ import {
   Key,
   Trash2,
 } from "lucide-react";
-import { Badge } from "@management/components/ui/badge";
+import { Badge } from "@components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@management/components/ui/dropdown-menu";
+} from "@components/ui/dropdown-menu";
 import { DataTable } from "@components/table/table";
 
 export function ManagementTable({ data, handlebuttonActions, forRole }: any) {

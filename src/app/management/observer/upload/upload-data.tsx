@@ -20,7 +20,7 @@ import TASK_TYPE from "@constants/survey.type.constant";
 import toast from "react-hot-toast";
 import startUtilityAPI from "@services/start.utility";
 import { useSurveyContext } from "state/provider/SurveytProvider";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 
 interface TaskData {
   assessment_id: string;

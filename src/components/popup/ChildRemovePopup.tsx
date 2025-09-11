@@ -6,7 +6,7 @@ import {
   clearLocalStorageValue,
   removeLocalStorageValue,
 } from "@utils/localStorage";
-import { handleBatchDownload } from "components/BatchDataDownloadButton";
+import { handleBatchDownload } from "components/button/BatchDataDownloadButton";
 import { PopupModal } from "@components/ui/PopupModal";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

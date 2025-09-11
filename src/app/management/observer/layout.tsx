@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider } from "@management/SidebarProvider";
 import { getCurrentMember, hasValidRole } from "@utils/auth.utils";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { cn } from "@management/lib/utils";
+import { cn } from "@lib/utils";
 import { SideBar } from "@management/SideBar";
 import { useAuth } from "state/provider/AuthProvider";
 

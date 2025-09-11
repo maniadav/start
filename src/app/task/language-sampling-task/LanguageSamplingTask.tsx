@@ -8,7 +8,7 @@ import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import AudioRecorder from "@hooks/useAudioRecorder";
 import CommonIcon from "@components/ui/CommonIcon";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import { LanguageSamplingContent as TaskContent } from "@constants/tasks.constant";
 import { BASE_URL } from "@constants/config.constant";
 import { useAuth } from "state/provider/AuthProvider";

@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import { TasksConstant } from "constants/tasks.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
-import { PlusIcon, TickedIcon } from "./ui/svg";
 import { useRouter } from "next/navigation";
-import DataDownloadButton from "./DataDownloadButton";
-import BatchDataDownloadButton from "./BatchDataDownloadButton";
+import DataDownloadButton from "../button/DataDownloadButton";
+import BatchDataDownloadButton from "../button/BatchDataDownloadButton";
 import { FaUpload } from "react-icons/fa6";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import Link from "next/link";
+import { PlusIcon, TickedIcon } from "./svg";
 
 const SurveyTable = () => {
   const { state } = useSurveyContext();

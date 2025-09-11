@@ -1,6 +1,6 @@
 import React from "react";
-import { IconHome } from "./ui/Icons";
 import Link from "next/link";
+import { IconHome } from "./Icons";
 
 const TopNav = ({
   primaryText,

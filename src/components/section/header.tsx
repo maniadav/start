@@ -5,11 +5,11 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "state/provider/AuthProvider";
 import Link from "next/link";
-import LanguageToggle from "../LanguageToggle";
 import { BASE_URL } from "@constants/config.constant";
 import LogOutPopupModal from "../popup/LogOutPopup";
 import { NAV_ROUTES, PAGE_ROUTES } from "@constants/route.constant";
 import { clearLocalStorageValue } from "@utils/localStorage";
+import LanguageToggle from "@components/ui/LanguageToggle";
 
 export const Header = () => {
   const [mounted, setMounted] = useState(false);

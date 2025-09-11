@@ -1,7 +1,7 @@
 import React from "react";
-import { CommonButton } from "./ui/CommonButton";
 import Link from "next/link";
 import { PAGE_ROUTES } from "@constants/route.constant";
+import { CommonButton } from "@components/button/CommonButton";
 
 interface TaskHomeInterface {
   taskName: any;

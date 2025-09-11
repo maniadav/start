@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 import { PopupModal } from "@components/ui/PopupModal";
 import { SortAsc, SortDesc, X } from "lucide-react";
 import { FileRequestBody } from "../../hooks/files/useFileFilters";

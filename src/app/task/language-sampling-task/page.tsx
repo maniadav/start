@@ -1,13 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { CommonButton } from "@components/ui/CommonButton";
-import { TasksConstant } from "constants/tasks.constant";
-import { useSearchParams } from "next/navigation";
-import MessagePopup from "@components/ui/MessagePopup";
-import TaskHome from "components/TaskHome";
+import { useState } from "react";
+import TaskHome from "components/ui/TaskHome";
 import LanguageSamplingTask from "./LanguageSamplingTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import { LanguageSamplingContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {

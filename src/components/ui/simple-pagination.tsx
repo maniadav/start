@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from './button'
+import { Button } from '../button/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface SimplePaginationProps {

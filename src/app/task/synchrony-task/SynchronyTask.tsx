@@ -6,7 +6,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import DrumSVG from "app/task/synchrony-task/DrumSVG";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import { useSynchronyStateContext } from "state/provider/SynchronyStateProvider";
 import DrumPatch from "./DrumPatch";
 import { SynchronyContent as TaskContent } from "@constants/tasks.constant";

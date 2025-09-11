@@ -7,7 +7,7 @@ import { timer } from "@utils/timer";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import useWindowSize from "@hooks/useWindowSize";
 import { getRandomVideo } from "./RandomVideo";
-import CloseGesture from "components/CloseGesture";
+import CloseGesture from "@components/button/CloseGesture";
 import { ButtonContent as TaskContent } from "@constants/tasks.constant";
 import {
   SURVEY_MAX_ATTEMPTS,

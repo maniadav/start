@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import TaskHome from "components/TaskHome";
+import TaskHome from "components/ui/TaskHome";
 import LanguageSamplingTask from "./DelayedGratificationTask";
-import SuspenseWrapper from "components/SuspenseWrapper";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import DelayedGratificationTask from "./DelayedGratificationTask";
-import FullScreenWrapper from "components/FullScreenWrapper";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 import { DelayedGratificationContent as TaskContent } from "constants/tasks.constant";
 
 const IndexPage = () => {

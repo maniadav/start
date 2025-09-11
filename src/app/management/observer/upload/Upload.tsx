@@ -15,7 +15,7 @@ import TASK_TYPE from "@constants/survey.type.constant";
 import FileDropZone from "@components/ui/FileDropZone";
 import toast from "react-hot-toast";
 import startUtilityAPI from "@services/start.utility";
-import { Button } from "@components/ui/button";
+import { Button } from "@components/button/button";
 
 interface FileWithTask {
   file: File;
