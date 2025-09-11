@@ -1,5 +1,5 @@
 "use client";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import {
   Card,
   CardContent,

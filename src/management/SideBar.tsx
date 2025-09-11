@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserNav } from "./UserNav";
+import { UserNav } from "../components/ui/UserNav";
 import { useSidebar } from "@management/SidebarProvider";
 import { useAuth } from "state/provider/AuthProvider";
 import React from "react";

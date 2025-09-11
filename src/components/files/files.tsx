@@ -6,7 +6,7 @@ import LoadingSection from "@components/section/loading-section";
 import { FileTable } from "@components/files/file-table";
 import { BulkDownloadPopup } from "@components/popup/BulkDownloadPopup";
 import { useFileFilters, useFileData, useFileOperations } from "@hooks/files";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import { FileResultsSummary } from "./file-results-summary";
 import { FileFilterModal } from "./file-filter-modal";
 import { FileActions } from "./file-actions";

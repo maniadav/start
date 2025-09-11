@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Search } from "lucide-react";
 import LoadingSection from "@components/section/loading-section";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
 import ManagementCreatePopup from "@components/popup/management-create-popup";
 import ManagementDeletePopup from "@components/popup/management-delete-popup";
 import ManagementEditPopup from "@components/popup/management-edit-popup";
@@ -14,6 +13,7 @@ import { useFileFilters } from "@hooks/files";
 import { FilterSummary } from "@components/ui/filter-summary";
 import { Button } from "@components/button/button";
 import { ManagementTable } from "./management-table";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 
 type PopupType = "create" | "delete" | "edit" | null;
 

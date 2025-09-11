@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "components/ui/card";
-import SidebarTrigger, { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 
 export default function OrgDashboard() {
   // Dummy data for the dashboard

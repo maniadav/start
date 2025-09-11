@@ -1,7 +1,7 @@
 "use client";
 import SurveyTable from "@components/ui/SurveyTable";
 import UserComp from "@components/ui/UserComp";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 
 const SurveyPage = () => {

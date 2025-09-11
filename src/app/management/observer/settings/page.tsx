@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "components/ui/card";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import { useState } from "react";
 import UserProfileUpdate from "components/user/user-profile-update";
 import UserPasswordUpdate from "components/user/user-password-update";

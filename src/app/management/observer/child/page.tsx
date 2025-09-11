@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { BASE_URL } from "@constants/config.constant";
 import { useSurveyContext } from "state/provider/SurveytProvider";
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { SidebarTriggerComp } from "@management/SidebarTrigger";
+import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import { Card, CardContent, CardHeader, CardTitle } from "components/ui/card";
 import { useAuth } from "state/provider/AuthProvider";
 import { Button } from "@components/button/button";
