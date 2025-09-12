@@ -3,13 +3,12 @@ import connectDB from "@lib/mongodb";
 import OrganisationProfileModel from "@models/organisation.profile.model";
 import UserModel from "@models/user.model";
 import "@models/user.model"; // Import User model to register it with Mongoose
-import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
-import { TokenUtilsError } from "@utils/token.utils";
+import { ProfileUtils } from "@utils/profile.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import { sendGmail } from "@utils/gmail.utils";
 import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
-import TokenUtils from "@utils/token.utils";
+import { generateAndSaveToken } from "@utils/backend.utils";
 import { AppConfig } from "../../../../../config/app.config";
 import { handleApiError } from "@utils/errorHandler";
 
@@ -75,28 +74,28 @@ export async function POST(request: Request) {
       name: name.trim(),
       address: address.trim(),
       status: "pending",
-      joined_on: null, // Will be set when approved
+      joined_on: null,
     });
 
     const savedProfile = await newOrganisationProfile.save();
 
     // Send verification email to the newly created organisation
+    let verificationEmailSent = false;
     try {
-      const verificationToken = TokenUtils.generateToken(
+      const verificationToken = await generateAndSaveToken(
         {
           role: "organisation",
           email: user.email,
         },
-        "activation"
+        "activation",
+        user._id
       );
 
       const emailTemplate = generateVerificationEmailTemplate(
         {
           email: user.email,
           role: "organisation",
-          action: "organisation_creation",
-          organisationName: savedProfile.name,
-          adminName: "Administrator", // You can get this from the admin's profile if needed
+          name: savedProfile.name,
         },
         verificationToken
       );
@@ -112,6 +111,7 @@ export async function POST(request: Request) {
       console.log(
         `Verification email sent successfully to ${user.email} for organisation creation`
       );
+      verificationEmailSent = true;
     } catch (emailError) {
       console.error("Failed to send verification email:", emailError);
       // Don't fail the entire request if email fails, just log it
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
           email: user.email,
           address: savedProfile.address,
         },
-        verificationEmailSent: true,
+        verificationEmailSent,
       },
       { status: 201 }
     );

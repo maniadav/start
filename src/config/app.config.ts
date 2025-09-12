@@ -96,26 +96,38 @@ export class AppConfig {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    // Critical AWS configuration
+    // AWS configuration (warnings for non-critical)
     if (!this.AWS.BUCKET_NAME) {
-      errors.push("AWS_BUCKET_NAME is required for file uploads");
+      warnings.push(
+        "AWS_BUCKET_NAME not set - file upload functionality will be disabled"
+      );
     }
     if (!this.AWS.BUCKET_REGION) {
-      errors.push("AWS_BUCKET_REGION is required for file uploads");
+      warnings.push(
+        "AWS_BUCKET_REGION not set - file upload functionality will be disabled"
+      );
     }
     if (!this.AWS.ACCESS_KEY) {
-      errors.push("AWS_ACCESS_KEY is required for file uploads");
+      warnings.push(
+        "AWS_ACCESS_KEY not set - file upload functionality will be disabled"
+      );
     }
     if (!this.AWS.SECRET_ACCESS_KEY) {
-      errors.push("AWS_SECRET_ACCESS_KEY is required for file uploads");
+      warnings.push(
+        "AWS_SECRET_ACCESS_KEY not set - file upload functionality will be disabled"
+      );
     }
 
-    // Critical Database configuration
+    // Database configuration (warnings for non-critical)
     if (!this.DATABASE.MONGODB_URI) {
-      errors.push("MONGODB_URI is required for database connection");
+      warnings.push(
+        "MONGODB_URI not set - database functionality will be disabled"
+      );
     }
     if (!this.DATABASE.MONGODB_DB_NAME) {
-      errors.push("MONGODB_DB_NAME is required for database connection");
+      warnings.push(
+        "MONGODB_DB_NAME not set - database functionality will be disabled"
+      );
     }
 
     // Critical JWT configuration
@@ -123,15 +135,38 @@ export class AppConfig {
       errors.push("JWT_SECRET is required for authentication");
     }
 
-    // Critical Email configuration (warnings for non-critical)
+    // Critical Gmail configuration
+    if (!this.GMAIL.EMAIL_ID) {
+      errors.push("GOOGLE_SMTP_EMAIL_ID is required for Gmail SMTP");
+    }
+    if (!this.GMAIL.SMTP_CLIENT_ID) {
+      errors.push("GOOGLE_SMTP_CLIENT_ID is required for Gmail SMTP");
+    }
+    if (!this.GMAIL.SMTP_CLIENT_SECRET) {
+      errors.push("GOOGLE_SMTP_CLIENT_SECRET is required for Gmail SMTP");
+    }
+    if (!this.GMAIL.SMTP_REDIRECT_URL) {
+      errors.push("GOOGLE_SMTP_REDIRECT_URI is required for Gmail SMTP");
+    }
+    if (!this.GMAIL.SMTP_REFRESH_TOKEN) {
+      errors.push("GOOGLE_SMTP_REFRESH_TOKEN is required for Gmail SMTP");
+    }
+
+    // Legacy Email configuration (warnings for non-critical)
     if (!this.EMAIL.SMTP_HOST) {
-      warnings.push("SMTP_HOST not set - email functionality will be disabled");
+      warnings.push(
+        "SMTP_HOST not set - legacy email functionality will be disabled"
+      );
     }
     if (!this.EMAIL.SMTP_USER) {
-      warnings.push("SMTP_USER not set - email functionality will be disabled");
+      warnings.push(
+        "SMTP_USER not set - legacy email functionality will be disabled"
+      );
     }
     if (!this.EMAIL.SMTP_PASS) {
-      warnings.push("SMTP_PASS not set - email functionality will be disabled");
+      warnings.push(
+        "SMTP_PASS not set - legacy email functionality will be disabled"
+      );
     }
 
     // Log warnings
@@ -172,7 +207,20 @@ export class AppConfig {
     );
     console.log(`   JWT: ${this.JWT.SECRET ? "Configured" : "Not configured"}`);
     console.log(
-      `   Email: ${this.EMAIL.SMTP_HOST ? "Configured" : "Not configured"}`
+      `   Gmail SMTP: ${
+        this.GMAIL.EMAIL_ID &&
+        this.GMAIL.SMTP_CLIENT_ID &&
+        this.GMAIL.SMTP_CLIENT_SECRET &&
+        this.GMAIL.SMTP_REDIRECT_URL &&
+        this.GMAIL.SMTP_REFRESH_TOKEN
+          ? "Configured"
+          : "Not configured"
+      }`
+    );
+    console.log(
+      `   Legacy Email: ${
+        this.EMAIL.SMTP_HOST ? "Configured" : "Not configured"
+      }`
     );
     console.log(
       `   Max File Size: ${this.UPLOAD.MAX_FILE_SIZE / 1024 / 1024}MB`
@@ -201,6 +249,43 @@ export class AppConfig {
    */
   static isDevelopment(): boolean {
     return this.SERVER.NODE_ENV === "development";
+  }
+
+  /**
+   * Checks if Gmail SMTP is properly configured
+   */
+  static isGmailConfigured(): boolean {
+    return !!(
+      this.GMAIL.EMAIL_ID &&
+      this.GMAIL.SMTP_CLIENT_ID &&
+      this.GMAIL.SMTP_CLIENT_SECRET &&
+      this.GMAIL.SMTP_REDIRECT_URL &&
+      this.GMAIL.SMTP_REFRESH_TOKEN
+    );
+  }
+
+  /**
+   * Gets Gmail configuration status
+   */
+  static getGmailConfigStatus(): {
+    isConfigured: boolean;
+    missingFields: string[];
+  } {
+    const missingFields: string[] = [];
+
+    if (!this.GMAIL.EMAIL_ID) missingFields.push("GOOGLE_SMTP_EMAIL_ID");
+    if (!this.GMAIL.SMTP_CLIENT_ID) missingFields.push("GOOGLE_SMTP_CLIENT_ID");
+    if (!this.GMAIL.SMTP_CLIENT_SECRET)
+      missingFields.push("GOOGLE_SMTP_CLIENT_SECRET");
+    if (!this.GMAIL.SMTP_REDIRECT_URL)
+      missingFields.push("GOOGLE_SMTP_REDIRECT_URI");
+    if (!this.GMAIL.SMTP_REFRESH_TOKEN)
+      missingFields.push("GOOGLE_SMTP_REFRESH_TOKEN");
+
+    return {
+      isConfigured: missingFields.length === 0,
+      missingFields,
+    };
   }
 }
 

@@ -50,7 +50,7 @@ export function CommonButton({
     >
       <CommonIcon icon={btnIcon} width={26} height={26} />
       {labelText && (
-        <span className={`${btnIcon ? " ml-1 mt-0.5" : "no-wrap"}`}>
+        <span className={`${btnIcon ? " ml-1 mt-0.5" : "no-wrap text-center"}`}>
           {labelText}
         </span>
       )}

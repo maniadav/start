@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const body: VerificationEmailRequest = await request.json();
 
     // Validate required fields
-    if (!body.email || !body.role || !body.action) {
+    if (!body.email || !body.role) {
       return NextResponse.json(
         {
           success: false,
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     });
 
     console.log(
-      `Verification email sent successfully to ${body.email} for ${body.action}`
+      `Verification email sent successfully to ${body.email} for ${body.role}`
     );
 
     return NextResponse.json(
@@ -87,7 +87,6 @@ export async function POST(request: NextRequest) {
         message: "Verification email sent successfully",
         data: {
           email: body.email,
-          action: body.action,
           role: body.role,
           tokenExpiry: "24 hours",
         },

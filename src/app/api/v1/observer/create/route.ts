@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
 import UserModel from "@models/user.model";
-import { ProfileUtils, ProfileUtilsError } from "@utils/profile.utils";
-import { TokenUtilsError } from "@utils/token.utils";
+import { ProfileUtils } from "@utils/profile.utils";
 import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
@@ -106,9 +105,8 @@ export async function POST(request: Request) {
         {
           email: user.email,
           role: "observer",
-          action: "observer_creation",
-          organisationName: organisationName,
-          observerName: savedProfile.name,
+          organisation: organisationName,
+          name: savedProfile.name,
         },
         verificationToken
       );

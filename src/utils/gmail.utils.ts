@@ -7,7 +7,17 @@ const smtp_client_id: string = AppConfig.GMAIL.SMTP_CLIENT_ID;
 const smtp_client_secret: string = AppConfig.GMAIL.SMTP_CLIENT_SECRET;
 const smtp_redirect_url: string = AppConfig.GMAIL.SMTP_REDIRECT_URL;
 const smtp_refresh_token: string = AppConfig.GMAIL.SMTP_REFRESH_TOKEN;
-const EMAIL_ID = AppConfig.GMAIL.EMAIL_ID;
+const email_id = AppConfig.GMAIL.EMAIL_ID;
+
+// if (
+//   !smtp_client_id ||
+//   !smtp_client_secret ||
+//   !smtp_redirect_url ||
+//   !smtp_refresh_token ||
+//   !email_id
+// ) {
+//   console.error("Gmail SMTP not properly configured");
+// }
 
 const oauth2Client = new google.auth.OAuth2(
   smtp_client_id,
@@ -28,7 +38,18 @@ interface EmailOptions {
 // Send email function
 export async function sendGmail(options: EmailOptions) {
   const { toEmail, fromEmail, subject, textContent, htmlContent } = options;
-  // console.log({ toEmail, subject, textContent, htmlContent, fromEmail })
+
+  // Check if Gmail is properly configured
+  if (!AppConfig.isGmailConfigured()) {
+    const configStatus = AppConfig.getGmailConfigStatus();
+    throw new Error(
+      `Gmail SMTP not properly configured. Missing environment variables: ${configStatus.missingFields.join(
+        ", "
+      )}`
+    );
+  }
+
+  console.log({ toEmail, subject, textContent, htmlContent, fromEmail });
   try {
     const accessToken = await oauth2Client.getAccessToken();
     if (!accessToken.token) {
@@ -41,7 +62,7 @@ export async function sendGmail(options: EmailOptions) {
       secure: true,
       auth: {
         type: "OAuth2",
-        user: EMAIL_ID,
+        user: email_id,
         clientId: smtp_client_id,
         clientSecret: smtp_client_secret,
         refreshToken: smtp_refresh_token,

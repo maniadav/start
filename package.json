@@ -9,7 +9,9 @@
     "lint": "next lint",
     "migrate": "npx ts-node --project tsconfig.scripts.json scripts/migrate.ts",
     "migrate:up": "yarn migrate up",
-    "migrate:status": "yarn migrate status"
+    "migrate:status": "yarn migrate status",
+    "gmail:setup": "node scripts/generate-gmail-refresh-token.js",
+    "gmail:test": "node scripts/test-gmail-setup.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",

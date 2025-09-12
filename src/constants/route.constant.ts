@@ -13,6 +13,10 @@ export const PAGE_ROUTES = {
       label: "Reset Password",
       path: "/auth/reset-password",
     },
+    VERIFY_ACCOUNT: {
+      label: "Verify Account",
+      path: "/auth/verify",
+    },
   },
   ABOUT: {
     label: "About",
