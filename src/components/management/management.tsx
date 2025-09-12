@@ -14,8 +14,9 @@ import { FilterSummary } from "@components/ui/filter-summary";
 import { Button } from "@components/button/button";
 import { ManagementTable } from "./management-table";
 import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
+import ManagementActivationPopup from "@components/popup/management-activation-popup";
 
-type PopupType = "create" | "delete" | "edit" | null;
+type PopupType = "create" | "delete" | "edit" | "send-activation-mail" | null;
 
 const Management = ({
   forRole,
@@ -30,11 +31,15 @@ const Management = ({
   const [popupState, setPopupState] = useState<{
     type: PopupType;
     isOpen: boolean;
-    orgId: string | null;
+    userId: string | null;
+    email: string | null;
+    name: string | null;
   }>({
     type: null,
     isOpen: false,
-    orgId: null,
+    userId: null,
+    email: null,
+    name: null,
   });
 
   const showCreateButton =
@@ -44,11 +49,13 @@ const Management = ({
     useFileFilters();
 
   // Helper function to manage popup state
-  const handlePopup = (type: PopupType, orgId: string | null = null) => {
+  const handlePopup = (type: PopupType, orgId: string | null = null, userData?: { name: string; email: string }) => {
     setPopupState({
       type,
       isOpen: type !== null, // isOpen is true if type is not null
-      orgId,
+      userId: orgId,
+      email: userData?.email || null,
+      name: userData?.name || null,
     });
   };
 
@@ -70,7 +77,7 @@ const Management = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [forRole]);
 
   // Effect to handle initial load and URL parameter
   useEffect(() => {
@@ -140,9 +147,13 @@ const Management = ({
               </div>
               <ManagementTable
                 data={organisations}
-                handlebuttonActions={(action: string, orgId: string) =>
-                  handlePopup(action as PopupType, orgId)
-                }
+                handlebuttonActions={(action: string, orgId: string, userData?: { name: string; email: string }) => {
+                  if (action === "send-activation-mail" && userData) {
+                    handlePopup(action as PopupType, orgId, userData);
+                  } else {
+                    handlePopup(action as PopupType, orgId);
+                  }
+                }}
                 forRole={forRole}
               />
             </div>
@@ -164,7 +175,7 @@ const Management = ({
           showFilter={popupState.isOpen}
           closeModal={() => handlePopup(null)}
           onSuccess={handleSuccess}
-          organisation_id={popupState.orgId as string}
+          organisation_id={popupState.userId as string}
           role={forRole}
         />
       )}
@@ -174,7 +185,18 @@ const Management = ({
           showFilter={popupState.isOpen}
           closeModal={() => handlePopup(null)}
           onSuccess={handleSuccess}
-          organisation_id={popupState.orgId as string}
+          organisation_id={popupState.userId as string}
+          role={forRole}
+        />
+      )}
+      {popupState.type === "send-activation-mail" && (
+        <ManagementActivationPopup
+          showFilter={popupState.isOpen}
+          closeModal={() => handlePopup(null)}
+          onSuccess={handleSuccess}
+          user_id={popupState.userId as string}
+          user_name={popupState.name as string}
+          user_email={popupState.email as string}
           role={forRole}
         />
       )}

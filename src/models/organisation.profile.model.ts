@@ -56,7 +56,7 @@ const OrganisationProfileSchema = new Schema<IOrganisationProfile>(
     },
   },
   {
-    timestamps: { createdAt: false, updatedAt: "updated_on" },
+    timestamps: { createdAt: "joined_on" },
     collection: "organisation_profiles",
   }
 );

@@ -1,6 +1,9 @@
 import TokenUtils from "./token.utils";
 import TokenModel from "../models/token.model";
 import UserModel from "../models/user.model";
+import { sendGmail } from "./gmail.utils";
+import { generateVerificationEmailTemplate } from "./email-templates.utils";
+import { AppConfig } from "../config/app.config";
 
 export const generateAndSaveToken = async (
   details: { role: string; email: string },
@@ -41,4 +44,69 @@ export const generateAndSaveToken = async (
   await tokenDoc.save();
 
   return token;
+};
+
+export interface CreateAndSendVerificationEmailParams {
+  user: {
+    _id: string;
+    email: string;
+  };
+  profile: {
+    name: string;
+    role: "observer" | "organisation";
+  };
+  organisationName?: string;
+}
+
+export const createAndSendVerificationEmail = async ({
+  user,
+  profile,
+  organisationName,
+}: CreateAndSendVerificationEmailParams): Promise<{
+  verificationEmailSent: boolean;
+  error?: string;
+}> => {
+  try {
+    // Generate and save verification token
+    const verificationToken = await generateAndSaveToken(
+      {
+        role: profile.role,
+        email: user.email,
+      },
+      "activation",
+      user._id
+    );
+
+    // Generate email template
+    const emailTemplate = generateVerificationEmailTemplate(
+      {
+        email: user.email,
+        role: profile.role,
+        name: profile.name,
+        organisation: organisationName,
+      },
+      verificationToken
+    );
+
+    // Send verification email
+    await sendGmail({
+      fromEmail: AppConfig.GMAIL.EMAIL_ID,
+      toEmail: user.email,
+      subject: emailTemplate.subject,
+      textContent: emailTemplate.textContent,
+      htmlContent: emailTemplate.htmlContent,
+    });
+
+    console.log(
+      `Verification email sent successfully to ${user.email} for ${profile.role} creation`
+    );
+
+    return { verificationEmailSent: true };
+  } catch (error) {
+    console.error("Failed to send verification email:", error);
+    return {
+      verificationEmailSent: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
 };

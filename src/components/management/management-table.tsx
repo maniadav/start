@@ -10,6 +10,7 @@ import {
   Ellipsis,
   Key,
   Trash2,
+  Mail,
 } from "lucide-react";
 import { Badge } from "@components/ui/badge";
 import {
@@ -23,7 +24,11 @@ import {
 import { DataTable } from "@components/table/table";
 interface IManagementTableProps {
   data: any[];
-  handlebuttonActions: (action: string, id: string) => void;
+  handlebuttonActions: (
+    action: string,
+    id: string,
+    userData?: { name: string; email: string }
+  ) => void;
   forRole: "observer" | "organisation";
 }
 
@@ -164,6 +169,25 @@ export function ManagementTable({
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Details
                 </DropdownMenuItem>
+
+                {item.status === "pending" && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handlebuttonActions(
+                        "send-activation-mail",
+                        item.unique_id || item.user_id || "",
+                        {
+                          name:
+                            item.name || item.organisation_name || "Unknown",
+                          email: item.email || "Unknown",
+                        }
+                      )
+                    }
+                  >
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Activation Mail
+                  </DropdownMenuItem>
+                )}
 
                 <DropdownMenuSeparator />
 

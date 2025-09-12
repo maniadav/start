@@ -63,7 +63,7 @@ const ObserverProfileSchema = new Schema<IObserverProfile>(
     },
   },
   {
-    timestamps: { createdAt: false, updatedAt: "updated_on" },
+    timestamps: { createdAt: "joined_on" },
     collection: "observer_profiles",
   }
 );

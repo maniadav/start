@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     if (!tokenDoc) {
       return NextResponse.json(
-        { error: "Invalid or expired token" },
+        { error: "invalid token" },
         { status: HttpStatusCode.BadRequest }
       );
     }
@@ -93,6 +93,7 @@ export async function POST(request: Request) {
             { email },
             {
               status: "active",
+              joined_on: new Date(),
             },
             {
               new: true,
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
             { email },
             {
               status: "active",
+              joined_on: new Date(),
             },
             {
               new: true,

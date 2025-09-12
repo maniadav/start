@@ -6,10 +6,7 @@ import { PasswordUtils } from "@utils/password.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import OrganisationProfileModel from "@models/organisation.profile.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
-import { sendGmail } from "@utils/gmail.utils";
-import { generateVerificationEmailTemplate } from "@utils/email-templates.utils";
-import TokenUtils from "@utils/token.utils";
-import { AppConfig } from "../../../../../config/app.config";
+import { createAndSendVerificationEmail } from "@utils/backend.utils";
 import { handleApiError } from "@utils/errorHandler";
 
 export async function POST(request: Request) {
@@ -92,40 +89,17 @@ export async function POST(request: Request) {
     }
 
     // Send verification email to the newly created observer
-    try {
-      const verificationToken = TokenUtils.generateToken(
-        {
-          role: "observer",
-          email: user.email,
-        },
-        "activation"
-      );
-
-      const emailTemplate = generateVerificationEmailTemplate(
-        {
-          email: user.email,
-          role: "observer",
-          organisation: organisationName,
-          name: savedProfile.name,
-        },
-        verificationToken
-      );
-
-      await sendGmail({
-        fromEmail: AppConfig.GMAIL.EMAIL_ID,
-        toEmail: user.email,
-        subject: emailTemplate.subject,
-        textContent: emailTemplate.textContent,
-        htmlContent: emailTemplate.htmlContent,
-      });
-
-      console.log(
-        `Verification email sent successfully to ${user.email} for observer creation`
-      );
-    } catch (emailError) {
-      console.error("Failed to send verification email:", emailError);
-      // Don't fail the entire request if email fails, just log it
-    }
+    const emailResult = await createAndSendVerificationEmail({
+      user: {
+        _id: user._id,
+        email: user.email,
+      },
+      profile: {
+        name: savedProfile.name,
+        role: "observer",
+      },
+      organisationName,
+    });
 
     // Return success response
     return NextResponse.json(
@@ -139,7 +113,7 @@ export async function POST(request: Request) {
           address: savedProfile.address,
           organisation_id: user_id,
         },
-        verificationEmailSent: true,
+        verificationEmailSent: emailResult.verificationEmailSent,
       },
       { status: 201 }
     );

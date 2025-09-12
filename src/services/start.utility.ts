@@ -51,6 +51,13 @@ class StartUtilityAPI {
         data
       );
     },
+    sendActivationMail: (user_id: string) => {
+      return this.api.post(
+        `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.send_activation_mail}/${user_id}`,
+        {}
+      );
+    },
+
     verifyResetToken: (token: string) => {
       return this.api.get(
         `${StartUtilityAPI.prefix}${API_ENDPOINT.auth.verify_reset_token}/${token}`
