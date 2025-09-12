@@ -115,7 +115,11 @@ export function ManagementTable({
         cell: ({ row }) => {
           const status = row.getValue("status");
           if (!status) return "-";
-          return <Badge>{String(status)}</Badge>;
+          return (
+            <Badge variant={status as "active" | "pending" | "blocked"}>
+              {String(status)}
+            </Badge>
+          );
         },
       },
       {

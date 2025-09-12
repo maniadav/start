@@ -10,9 +10,7 @@ import {
   CardTitle,
 } from "@components/ui/card";
 import { Input } from "@components/ui/input";
-import { CommonButton } from "@components/button/CommonButton";
 import { ValidatorUtils } from "@helper/validator";
-import { API_ENDPOINT } from "@constants/api.constant";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import Image from "next/image";
 import { Button } from "@components/button/button";
