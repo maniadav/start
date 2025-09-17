@@ -15,8 +15,34 @@ import { Button } from "@components/button/button";
 import { ManagementTable } from "./management-table";
 import { SidebarTriggerComp } from "@components/ui/SidebarTrigger";
 import ManagementActivationPopup from "@components/popup/management-activation-popup";
+import CredentialsPopup from "@components/popup/credential-popup";
+import { POPUP_TYPES } from "@constants/config.constant";
 
-type PopupType = "create" | "delete" | "edit" | "send-activation-mail" | null;
+type PopupType =
+  | "create"
+  | "delete"
+  | "edit"
+  | "send-activation-mail"
+  | "credentials"
+  | null;
+
+type PopupState =
+  | { type: null }
+  | {
+      type:
+        | "create"
+        | "edit"
+        | "delete"
+        | "send-activation-mail"
+        | "credentials";
+      data: {
+        id: string | undefined;
+        name: string | undefined;
+        email: string | undefined;
+      };
+    };
+
+type NonNullPopupType = Exclude<PopupType, null>;
 
 const Management = ({
   forRole,
@@ -28,19 +54,7 @@ const Management = ({
   const [organisations, setOrganisations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchId, setSearchId] = useState<string>("");
-  const [popupState, setPopupState] = useState<{
-    type: PopupType;
-    isOpen: boolean;
-    userId: string | null;
-    email: string | null;
-    name: string | null;
-  }>({
-    type: null,
-    isOpen: false,
-    userId: null,
-    email: null,
-    name: null,
-  });
+  const [popupState, setPopupState] = useState<PopupState>({ type: null });
 
   const showCreateButton =
     (accessedBy === "organisation" && forRole === "observer") ||
@@ -48,36 +62,28 @@ const Management = ({
   const { requestBody, hasActiveFiltersOrSorts, getActiveFiltersCount } =
     useFileFilters();
 
-  // Helper function to manage popup state
-  const handlePopup = (type: PopupType, orgId: string | null = null, userData?: { name: string; email: string }) => {
-    setPopupState({
-      type,
-      isOpen: type !== null, // isOpen is true if type is not null
-      userId: orgId,
-      email: userData?.email || null,
-      name: userData?.name || null,
-    });
-  };
-
   // Load organisations from the API
-  const loadOrganisations = useCallback(async (orgIdParam?: string) => {
-    setLoading(true);
-    try {
-      const params = orgIdParam ? { organisation_id: orgIdParam } : {};
-      const res = await startUtilityAPI[forRole].list(params);
-      setOrganisations(res.data || []);
-      // Update URL query param if searching
-      if (orgIdParam) {
-        const url = new URL(window.location.href);
-        url.searchParams.set("organisation_id", orgIdParam);
-        window.history.replaceState({}, "", url.toString());
+  const loadOrganisations = useCallback(
+    async (orgIdParam?: string) => {
+      setLoading(true);
+      try {
+        const params = orgIdParam ? { organisation_id: orgIdParam } : {};
+        const res = await startUtilityAPI[forRole].list(params);
+        setOrganisations(res.data || []);
+        // Update URL query param if searching
+        if (orgIdParam) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("organisation_id", orgIdParam);
+          window.history.replaceState({}, "", url.toString());
+        }
+      } catch (error) {
+        console.error("Failed to load organisations:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to load organisations:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [forRole]);
+    },
+    [forRole]
+  );
 
   // Effect to handle initial load and URL parameter
   useEffect(() => {
@@ -93,7 +99,7 @@ const Management = ({
 
   // Success handler to reload data
   const handleSuccess = useCallback(() => {
-    handlePopup(null);
+    setPopupState({ type: null });
     loadOrganisations(searchId || undefined);
   }, [loadOrganisations, searchId]);
 
@@ -138,7 +144,16 @@ const Management = ({
                 </div>
                 {showCreateButton && (
                   <Button
-                    onClick={() => handlePopup("create")}
+                    onClick={() =>
+                      setPopupState({
+                        type: "create",
+                        data: {
+                          id: undefined,
+                          name: undefined,
+                          email: undefined,
+                        },
+                      })
+                    }
                     variant="default"
                   >
                     Add {forRole}
@@ -147,12 +162,18 @@ const Management = ({
               </div>
               <ManagementTable
                 data={organisations}
-                handlebuttonActions={(action: string, orgId: string, userData?: { name: string; email: string }) => {
-                  if (action === "send-activation-mail" && userData) {
-                    handlePopup(action as PopupType, orgId, userData);
-                  } else {
-                    handlePopup(action as PopupType, orgId);
+                handlebuttonActions={(
+                  action: string,
+                  data: {
+                    id: string | undefined;
+                    name: string | undefined;
+                    email: string | undefined;
                   }
+                ) => {
+                  setPopupState({
+                    type: action as NonNullPopupType,
+                    data,
+                  });
                 }}
                 forRole={forRole}
               />
@@ -161,42 +182,51 @@ const Management = ({
         </CardContent>
       </Card>
 
-      {popupState.type === "create" && (
+      {popupState.type === POPUP_TYPES.CREATE && (
         <ManagementCreatePopup
-          showFilter={popupState.isOpen}
-          closeModal={() => handlePopup(null)}
+          showFilter={true}
+          closeModal={() => setPopupState({ type: null })}
           onSuccess={handleSuccess}
           role={forRole}
         />
       )}
 
-      {popupState.type === "edit" && (
+      {popupState.type === POPUP_TYPES.CREDENTIALS && (
+        <CredentialsPopup
+          showFilter={true}
+          closeModal={() => setPopupState({ type: null })}
+          onSuccess={handleSuccess}
+          data={popupState.data}
+        />
+      )}
+
+      {popupState.type === POPUP_TYPES.EDIT && (
         <ManagementEditPopup
-          showFilter={popupState.isOpen}
-          closeModal={() => handlePopup(null)}
+          showFilter={true}
+          closeModal={() => setPopupState({ type: null })}
           onSuccess={handleSuccess}
-          organisation_id={popupState.userId as string}
+          organisation_id={popupState.data?.id as string}
           role={forRole}
         />
       )}
 
-      {popupState.type === "delete" && (
+      {popupState.type === POPUP_TYPES.DELETE && (
         <ManagementDeletePopup
-          showFilter={popupState.isOpen}
-          closeModal={() => handlePopup(null)}
+          showFilter={true}
+          closeModal={() => setPopupState({ type: null })}
           onSuccess={handleSuccess}
-          organisation_id={popupState.userId as string}
+          organisation_id={popupState.data?.id as string}
           role={forRole}
         />
       )}
-      {popupState.type === "send-activation-mail" && (
+      {popupState.type === POPUP_TYPES.SEND_ACTIVATION_MAIL && (
         <ManagementActivationPopup
-          showFilter={popupState.isOpen}
-          closeModal={() => handlePopup(null)}
+          showFilter={true}
+          closeModal={() => setPopupState({ type: null })}
           onSuccess={handleSuccess}
-          user_id={popupState.userId as string}
-          user_name={popupState.name as string}
-          user_email={popupState.email as string}
+          user_id={popupState.data?.id as string}
+          user_name={popupState.data?.name as string}
+          user_email={popupState.data?.email as string}
           role={forRole}
         />
       )}

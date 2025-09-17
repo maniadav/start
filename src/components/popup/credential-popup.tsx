@@ -1,59 +1,59 @@
 "use client";
 import toast from "react-hot-toast";
-import StartUtilityAPI from "@services/start.utility";
-import { PopupModal } from "@components/ui/PopupModal";
-import { useMemo, useState } from "react";
-import { FaBuilding, FaEnvelope, FaUser, FaSpinner } from "react-icons/fa";
+import { useState } from "react";
+import { FaBuilding, FaSpinner } from "react-icons/fa";
 import PopupContainter from "./PopupContainter";
-import startUtilityAPI from "@services/start.utility";
 
 interface CredentialPopupProps {
   showFilter: boolean;
   closeModal: any;
   onSuccess?: () => void;
-  organisationId: string;
+  data: {
+    id: string | undefined;
+    name: string | undefined;
+    email: string | undefined;
+  };
 }
 
 interface CredentialFormData {
-  awsAccessKey: string;
-  awsSecretAccessKey: string;
-  awsBucketName: string;
-  awsBucketRegion: string;
-  organisationId: string;
+  organisation_id: string;
+  aws_access_key: string;
+  aws_secret_access_key: string;
+  aws_bucket_name: string;
+  aws_bucket_region: string;
 }
 
 const CredentialPopup = ({
   showFilter,
   closeModal,
   onSuccess,
-  organisationId,
+  data: { id, name, email },
 }: CredentialPopupProps) => {
   const [formData, setFormData] = useState<CredentialFormData>({
-    organisationId: organisationId || "",
-    awsAccessKey: "",
-    awsSecretAccessKey: "",
-    awsBucketName: "",
-    awsBucketRegion: "",
+    organisation_id: id || "",
+    aws_access_key: "",
+    aws_secret_access_key: "",
+    aws_bucket_name: "",
+    aws_bucket_region: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<CredentialFormData>>({});
-
   const validateForm = (): boolean => {
     const newErrors: Partial<CredentialFormData> = {};
-    if (!formData.organisationId.trim()) {
-      newErrors.organisationId = "Organisation ID is required";
+    if (!formData.organisation_id.trim()) {
+      newErrors.organisation_id = "Organisation ID is required";
     }
-    if (!formData.awsAccessKey.trim()) {
-      newErrors.awsAccessKey = "AWS Access Key is required";
+    if (!formData.aws_access_key.trim()) {
+      newErrors.aws_access_key = "AWS Access Key is required";
     }
-    if (!formData.awsSecretAccessKey.trim()) {
-      newErrors.awsSecretAccessKey = "AWS Secret Access Key is required";
+    if (!formData.aws_secret_access_key.trim()) {
+      newErrors.aws_secret_access_key = "AWS Secret Access Key is required";
     }
-    if (!formData.awsBucketName.trim()) {
-      newErrors.awsBucketName = "AWS Bucket Name is required";
+    if (!formData.aws_bucket_name.trim()) {
+      newErrors.aws_bucket_name = "AWS Bucket Name is required";
     }
-    if (!formData.awsBucketRegion.trim()) {
-      newErrors.awsBucketRegion = "AWS Bucket Region is required";
+    if (!formData.aws_bucket_region.trim()) {
+      newErrors.aws_bucket_region = "AWS Bucket Region is required";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -77,25 +77,29 @@ const CredentialPopup = ({
     setIsLoading(true);
     try {
       // Call credential API route
-      const res = await startUtilityAPI.credential.create(formData);
-      console.log("Credential response:", res);
-      if (!res) {
-        throw new Error("Failed to save credentials");
+      const response = await fetch("/api/v1/credentials/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save credentials");
       }
       setFormData({
-        organisationId: "",
-        awsAccessKey: "",
-        awsSecretAccessKey: "",
-        awsBucketName: "",
-        awsBucketRegion: "",
+        organisation_id: "",
+        aws_access_key: "",
+        aws_secret_access_key: "",
+        aws_bucket_name: "",
+        aws_bucket_region: "",
       });
       setErrors({});
       if (onSuccess) onSuccess();
       toast.success("AWS credentials saved successfully");
     } catch (error) {
       toast.error(
-          error instanceof Error ? error.message : "Failed to save credentials"
-        );
+        error instanceof Error ? error.message : "Failed to save credentials"
+      );
     } finally {
       setIsLoading(false);
       closeModal();
@@ -122,27 +126,27 @@ const CredentialPopup = ({
           {/* Organisation ID */}
           <div>
             <label
-              htmlFor="organisationId"
+              htmlFor="organisation_id"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               Organisation ID *
             </label>
             <input
               type="text"
-              id="organisationId"
-              value={formData.organisationId}
+              id="organisation_id"
+              value={formData.organisation_id}
               onChange={(e) =>
-                handleInputChange("organisationId", e.target.value)
+                handleInputChange("organisation_id", e.target.value)
               }
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.organisationId ? "border-red-500" : "border-gray-300"
+                errors.organisation_id ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter organisation ID"
               disabled={isLoading}
             />
-            {errors.organisationId && (
+            {errors.organisation_id && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.organisationId}
+                {errors.organisation_id}
               </p>
             )}
           </div>
@@ -150,53 +154,57 @@ const CredentialPopup = ({
           {/* AWS Access Key */}
           <div>
             <label
-              htmlFor="awsAccessKey"
+              htmlFor="aws_access_key"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               AWS Access Key *
             </label>
             <input
               type="text"
-              id="awsAccessKey"
-              value={formData.awsAccessKey}
+              id="aws_access_key"
+              value={formData.aws_access_key}
               onChange={(e) =>
-                handleInputChange("awsAccessKey", e.target.value)
+                handleInputChange("aws_access_key", e.target.value)
               }
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.awsAccessKey ? "border-red-500" : "border-gray-300"
+                errors.aws_access_key ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter AWS Access Key"
               disabled={isLoading}
             />
-            {errors.awsAccessKey && (
-              <p className="mt-1 text-sm text-red-600">{errors.awsAccessKey}</p>
+            {errors.aws_access_key && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.aws_access_key}
+              </p>
             )}
           </div>
 
           {/* AWS Secret Access Key */}
           <div>
             <label
-              htmlFor="awsSecretAccessKey"
+              htmlFor="aws_secret_access_key"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               AWS Secret Access Key *
             </label>
             <input
               type="password"
-              id="awsSecretAccessKey"
-              value={formData.awsSecretAccessKey}
+              id="aws_secret_access_key"
+              value={formData.aws_secret_access_key}
               onChange={(e) =>
-                handleInputChange("awsSecretAccessKey", e.target.value)
+                handleInputChange("aws_secret_access_key", e.target.value)
               }
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.awsSecretAccessKey ? "border-red-500" : "border-gray-300"
+                errors.aws_secret_access_key
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
               placeholder="Enter AWS Secret Access Key"
               disabled={isLoading}
             />
-            {errors.awsSecretAccessKey && (
+            {errors.aws_secret_access_key && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.awsSecretAccessKey}
+                {errors.aws_secret_access_key}
               </p>
             )}
           </div>
@@ -204,27 +212,27 @@ const CredentialPopup = ({
           {/* AWS Bucket Name */}
           <div>
             <label
-              htmlFor="awsBucketName"
+              htmlFor="aws_bucket_name"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               AWS Bucket Name *
             </label>
             <input
               type="text"
-              id="awsBucketName"
-              value={formData.awsBucketName}
+              id="aws_bucket_name"
+              value={formData.aws_bucket_name}
               onChange={(e) =>
-                handleInputChange("awsBucketName", e.target.value)
+                handleInputChange("aws_bucket_name", e.target.value)
               }
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.awsBucketName ? "border-red-500" : "border-gray-300"
+                errors.aws_bucket_name ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter AWS Bucket Name"
               disabled={isLoading}
             />
-            {errors.awsBucketName && (
+            {errors.aws_bucket_name && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.awsBucketName}
+                {errors.aws_bucket_name}
               </p>
             )}
           </div>
@@ -232,27 +240,27 @@ const CredentialPopup = ({
           {/* AWS Bucket Region */}
           <div>
             <label
-              htmlFor="awsBucketRegion"
+              htmlFor="aws_bucket_region"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               AWS Bucket Region *
             </label>
             <input
               type="text"
-              id="awsBucketRegion"
-              value={formData.awsBucketRegion}
+              id="aws_bucket_region"
+              value={formData.aws_bucket_region}
               onChange={(e) =>
-                handleInputChange("awsBucketRegion", e.target.value)
+                handleInputChange("aws_bucket_region", e.target.value)
               }
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.awsBucketRegion ? "border-red-500" : "border-gray-300"
+                errors.aws_bucket_region ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter AWS Bucket Region"
               disabled={isLoading}
             />
-            {errors.awsBucketRegion && (
+            {errors.aws_bucket_region && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.awsBucketRegion}
+                {errors.aws_bucket_region}
               </p>
             )}
           </div>

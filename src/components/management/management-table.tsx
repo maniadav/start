@@ -22,12 +22,16 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 import { DataTable } from "@components/table/table";
+import { POPUP_TYPES } from "@constants/config.constant";
 interface IManagementTableProps {
   data: any[];
   handlebuttonActions: (
     action: string,
-    id: string,
-    userData?: { name: string; email: string }
+    data: {
+      id: string | undefined;
+      name: string | undefined;
+      email: string | undefined;
+    }
   ) => void;
   forRole: "observer" | "organisation";
 }
@@ -37,7 +41,6 @@ export function ManagementTable({
   handlebuttonActions,
   forRole,
 }: IManagementTableProps) {
-  console.log({ forRole });
   const columns: ColumnDef<any>[] = React.useMemo(() => {
     const baseColumns: ColumnDef<any>[] = [
       {
@@ -147,10 +150,11 @@ export function ManagementTable({
                 {forRole === "organisation" && (
                   <DropdownMenuItem
                     onClick={() =>
-                      handlebuttonActions(
-                        "credential",
-                        item.unique_id || item.user_id || ""
-                      )
+                      handlebuttonActions(POPUP_TYPES.CREDENTIALS, {
+                        id: item.unique_id || item.user_id || "",
+                        name: item.name || item.organisation_name || "Unknown",
+                        email: item.email || "Unknown",
+                      })
                     }
                   >
                     <Key className="mr-2 h-4 w-4" />
@@ -160,10 +164,11 @@ export function ManagementTable({
 
                 <DropdownMenuItem
                   onClick={() =>
-                    handlebuttonActions(
-                      "edit",
-                      item.unique_id || item.user_id || ""
-                    )
+                    handlebuttonActions(POPUP_TYPES.EDIT, {
+                      id: item.unique_id || item.user_id || "",
+                      name: item.name || item.organisation_name || "Unknown",
+                      email: item.email || "Unknown",
+                    })
                   }
                 >
                   <Edit className="mr-2 h-4 w-4" />
@@ -173,15 +178,11 @@ export function ManagementTable({
                 {item.status === "pending" && (
                   <DropdownMenuItem
                     onClick={() =>
-                      handlebuttonActions(
-                        "send-activation-mail",
-                        item.unique_id || item.user_id || "",
-                        {
-                          name:
-                            item.name || item.organisation_name || "Unknown",
-                          email: item.email || "Unknown",
-                        }
-                      )
+                      handlebuttonActions(POPUP_TYPES.SEND_ACTIVATION_MAIL, {
+                        id: item.unique_id || item.user_id || "",
+                        name: item.name || item.organisation_name || "Unknown",
+                        email: item.email || "Unknown",
+                      })
                     }
                   >
                     <Mail className="mr-2 h-4 w-4" />
@@ -193,10 +194,11 @@ export function ManagementTable({
 
                 <DropdownMenuItem
                   onClick={() =>
-                    handlebuttonActions(
-                      "delete",
-                      item.unique_id || item.user_id || ""
-                    )
+                    handlebuttonActions("delete", {
+                      id: item.unique_id || item.user_id || "",
+                      name: item.name || item.organisation_name || "Unknown",
+                      email: item.email || "Unknown",
+                    })
                   }
                   className="text-red-600 focus:text-red-600"
                 >

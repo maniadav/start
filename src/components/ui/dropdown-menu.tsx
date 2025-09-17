@@ -83,7 +83,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "cursor-pointer relative flex hover:bg-gray-200 hover:text-primary select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
+      "text-xs cursor-pointer relative flex hover:bg-gray-200 hover:text-primary select-none items-center gap-2 rounded-sm px-2 py-1.5 outline-none transition-colors",
       inset && "pl-8",
       className
     )}
@@ -162,7 +162,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    className={cn("-mx-1 my-1 h-px border-t border-gray-200", className)}
     {...props}
   />
 ));
