@@ -1,4 +1,3 @@
-
 # GCP Setup Guide for Gmail SMTP OAuth Credentials
 
 Includes the common errors you encountered and how to fix them
@@ -9,7 +8,6 @@ Get the five values your app needs:
 ```ts
 const smtp_client_id: string = AppConfig.GMAIL.SMTP_CLIENT_ID;
 const smtp_client_secret: string = AppConfig.GMAIL.SMTP_CLIENT_SECRET;
-const smtp_redirect_url: string = AppConfig.GMAIL.SMTP_REDIRECT_URL;
 const smtp_refresh_token: string = AppConfig.GMAIL.SMTP_REFRESH_TOKEN;
 const EMAIL_ID = AppConfig.GMAIL.EMAIL_ID;
 ```
@@ -33,8 +31,6 @@ This doc only covers generating those credentials and resolving the exact errors
 2. Create a new project or pick an existing one.
 3. Go to **APIs & Services → Library** and enable **Gmail API**.
 
-No errors normally happen here.
-
 ---
 
 # Step 2 — configure OAuth consent screen
@@ -42,7 +38,7 @@ No errors normally happen here.
 1. Go to **APIs & Services → OAuth consent screen**.
 2. Choose **External**.
 3. Fill App name, user support email, developer contact email. Save.
-4. Important: under **Test users** add the Gmail address you will use to authorize and send from. Save.
+4. Important: under Audience > **Test users** add the Gmail address you will use to authorize and send from. Save.
 
 Why this matters
 If your app is in Testing mode and your Gmail is not added as a Test User you will get a 403 access_denied error. See troubleshooting below.
@@ -62,20 +58,6 @@ https://developers.google.com/oauthplayground
 
 5. Click Create and copy **Client ID** and **Client Secret**.
 
-Common error you saw and how to fix it
-**Error**
-
-```
-Error 400: redirect_uri_mismatch
-```
-
-**What it means**
-The redirect URI used by the OAuth flow does not exactly match one listed in the OAuth client settings. Google requires exact match.
-**Fix**
-
-- Edit the client in Cloud Console and add the redirect URI above exactly.
-- If you are using the OAuth Playground, use that exact URI. If you are using a custom redirect URL, add that specific URL instead. Save and retry.
-
 ---
 
 # Step 4 — use OAuth 2.0 Playground to generate tokens
@@ -84,9 +66,6 @@ The redirect URI used by the OAuth flow does not exactly match one listed in the
 2. Click the gear icon in the top right.
 3. Check **Use your own OAuth credentials**. Paste the Client ID and Client Secret you got in Step 3. Close the settings.
 4. In Step 1, expand **Gmail API v1** and check **[https://mail.google.com/](https://mail.google.com/)** only.
-
-   - Do not type "mail", "scope", or any other string. The exact scope must be the URL above.
-
 5. Click **Authorize APIs**. You will be redirected to Google sign in. Sign in with the Gmail account you added as a Test User.
 6. In Step 2, click **Exchange authorization code for tokens**. The Playground will return a JSON that contains `access_token`, `refresh_token`, `expires_in`, `scope`, etc.
 7. Copy the `refresh_token` value.
@@ -116,7 +95,6 @@ Common error you saw and fixes
 
   Cause: you supplied invalid scope strings such as `mail` or `full`.
   Fix: select only the exact scope `https://mail.google.com/` in OAuth Playground. Do not manually type other words.
-
 - **Error: access_denied / app not verified**
 
   ```
@@ -126,7 +104,6 @@ Common error you saw and fixes
 
   Cause: the OAuth app is in Testing mode and the signing Gmail is not a Test User.
   Fix: In the OAuth consent screen add your Gmail as a Test User. Save. Retry the authorize step with that same Gmail account.
-
 - **Error: redirect_uri_mismatch**
   See Step 3 fix. This one appears when the redirect in the auth request does not match exactly what you registered.
 
@@ -217,17 +194,14 @@ If you get an auth error, re-check scopes, test user, redirect URI, and that the
 
    - Cause: redirect URI in OAuth request not in your OAuth client authorized redirect URIs.
    - Fix: Add exact URI `https://developers.google.com/oauthplayground` or your app URL in the client settings.
-
 2. `access_denied` with message about app not verified and testing mode
 
    - Cause: app is in Testing mode and your Gmail is not a Test User.
    - Fix: Add your Gmail address under OAuth consent screen → Test users. Sign in with that account.
-
 3. `invalid_scope` listing `mail, scope, full`
 
    - Cause: invalid or mistyped scope values.
    - Fix: use the exact scope `https://mail.google.com/` only.
-
 4. No `refresh_token` or `refresh_token_expires_in` short lifetime
 
    - Cause: missing `access_type=offline` or app in testing state. Google can give short-lived refresh tokens for testing.

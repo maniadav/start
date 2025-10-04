@@ -20,7 +20,6 @@ export class AppConfig {
     EMAIL_ID: process.env.GOOGLE_SMTP_EMAIL_ID || "",
     SMTP_CLIENT_ID: process.env.GOOGLE_SMTP_CLIENT_ID || "",
     SMTP_CLIENT_SECRET: process.env.GOOGLE_SMTP_CLIENT_SECRET || "",
-    SMTP_REDIRECT_URL: process.env.GOOGLE_SMTP_REDIRECT_URI || "",
     SMTP_REFRESH_TOKEN: process.env.GOOGLE_SMTP_REFRESH_TOKEN || "",
   };
 
@@ -145,9 +144,6 @@ export class AppConfig {
     if (!this.GMAIL.SMTP_CLIENT_SECRET) {
       errors.push("GOOGLE_SMTP_CLIENT_SECRET is required for Gmail SMTP");
     }
-    if (!this.GMAIL.SMTP_REDIRECT_URL) {
-      errors.push("GOOGLE_SMTP_REDIRECT_URI is required for Gmail SMTP");
-    }
     if (!this.GMAIL.SMTP_REFRESH_TOKEN) {
       errors.push("GOOGLE_SMTP_REFRESH_TOKEN is required for Gmail SMTP");
     }
@@ -211,7 +207,6 @@ export class AppConfig {
         this.GMAIL.EMAIL_ID &&
         this.GMAIL.SMTP_CLIENT_ID &&
         this.GMAIL.SMTP_CLIENT_SECRET &&
-        this.GMAIL.SMTP_REDIRECT_URL &&
         this.GMAIL.SMTP_REFRESH_TOKEN
           ? "Configured"
           : "Not configured"
@@ -259,7 +254,6 @@ export class AppConfig {
       this.GMAIL.EMAIL_ID &&
       this.GMAIL.SMTP_CLIENT_ID &&
       this.GMAIL.SMTP_CLIENT_SECRET &&
-      this.GMAIL.SMTP_REDIRECT_URL &&
       this.GMAIL.SMTP_REFRESH_TOKEN
     );
   }
@@ -277,8 +271,6 @@ export class AppConfig {
     if (!this.GMAIL.SMTP_CLIENT_ID) missingFields.push("GOOGLE_SMTP_CLIENT_ID");
     if (!this.GMAIL.SMTP_CLIENT_SECRET)
       missingFields.push("GOOGLE_SMTP_CLIENT_SECRET");
-    if (!this.GMAIL.SMTP_REDIRECT_URL)
-      missingFields.push("GOOGLE_SMTP_REDIRECT_URI");
     if (!this.GMAIL.SMTP_REFRESH_TOKEN)
       missingFields.push("GOOGLE_SMTP_REFRESH_TOKEN");
 
