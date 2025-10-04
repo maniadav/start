@@ -31,7 +31,7 @@ export class AppConfig {
 
   // JWT Configuration
   static readonly JWT = {
-    SECRET: process.env.JWT_SECRET || "",
+    JWT_SECRET: process.env.JWT_SECRET || "",
     ACCESS_TOKEN_EXPIRY: process.env.JWT_ACCESS_TOKEN_EXPIRY || "15m",
     REFRESH_TOKEN_EXPIRY: process.env.JWT_REFRESH_TOKEN_EXPIRY || "7d",
     RESET_TOKEN_EXPIRY: process.env.JWT_RESET_TOKEN_EXPIRY || "1h",
@@ -130,7 +130,7 @@ export class AppConfig {
     }
 
     // Critical JWT configuration
-    if (!this.JWT.SECRET) {
+    if (!this.JWT.JWT_SECRET) {
       errors.push("JWT_SECRET is required for authentication");
     }
 
@@ -201,7 +201,9 @@ export class AppConfig {
     console.log(
       `   AWS S3: ${this.AWS.BUCKET_NAME ? "Configured" : "Not configured"}`
     );
-    console.log(`   JWT: ${this.JWT.SECRET ? "Configured" : "Not configured"}`);
+    console.log(
+      `   JWT: ${this.JWT.JWT_SECRET ? "Configured" : "Not configured"}`
+    );
     console.log(
       `   Gmail SMTP: ${
         this.GMAIL.EMAIL_ID &&

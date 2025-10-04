@@ -1,6 +1,7 @@
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import type { StringValue } from "ms";
+import AppConfig from "config/app.config";
 // Custom error classes for better error handling
 class TokenUtilsError extends Error {
   public statusCode: number;
@@ -18,8 +19,7 @@ class TokenUtilsError extends Error {
  * Token utility class for generating and verifying JWT tokens.
  */
 class TokenUtils {
-  private static readonly JWT_SECRET: Secret = // Use Secret for type safety
-    process.env.JWT_SECRET || "no@secretkey123@userstart";
+  private static readonly JWT_SECRET: Secret = AppConfig.JWT_SECRET; // Use Secret for type safety
 
   static generateToken(
     details: { role: string; email: string },
