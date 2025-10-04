@@ -19,7 +19,7 @@ class TokenUtilsError extends Error {
  * Token utility class for generating and verifying JWT tokens.
  */
 class TokenUtils {
-  private static readonly JWT_SECRET: Secret = AppConfig.JWT_SECRET; // Use Secret for type safety
+  private static readonly JWT_SECRET: Secret = AppConfig.JWT.JWT_SECRET; // Use Secret for type safety
 
   static generateToken(
     details: { role: string; email: string },
