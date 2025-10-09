@@ -21,7 +21,7 @@ export function generateVerificationEmailTemplate(
   data: VerificationEmailRequest,
   verificationToken: string
 ): EmailTemplate {
-  const baseUrl = AppConfig.SERVER.API_BASE_URL;
+  const baseUrl = AppConfig.SERVER.START_APP_BASE_URL;
   const verificationUrl = `${baseUrl}${PAGE_ROUTES.AUTH.VERIFY_ACCOUNT.path}?token=${verificationToken}`;
 
   // Dynamic content based on role
@@ -67,7 +67,20 @@ export function generateVerificationEmailTemplate(
         
         <div style="text-align: center; margin-bottom: 25px;">
           <p style="color: #666; margin-bottom: 20px;">Please click the button below to verify your account:</p>
-          <a href="${verificationUrl}" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Verify Account</a>
+          <table border="0" cellspacing="0" cellpadding="0" style="margin: 0 auto;">
+            <tr>
+              <td style="background-color: #007bff; border-radius: 5px;">
+                <a href="${verificationUrl}" target="_blank" style="background-color: #007bff; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold; font-size: 16px;">Verify Account</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 25px;">
+          <p style="color: #666; font-size: 13px; margin-bottom: 8px; text-align: center;">Or copy and paste this link in your browser:</p>
+          <p style="color: #007bff; font-size: 12px; word-break: break-all; margin: 0; text-align: center; padding: 0 10px;">
+            <a href="${verificationUrl}" target="_blank" rel="noopener" style="color: #007bff;">${verificationUrl}</a>
+          </p>
         </div>
         
         <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">

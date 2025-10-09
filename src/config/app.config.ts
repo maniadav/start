@@ -43,6 +43,7 @@ export class AppConfig {
     PORT: process.env.PORT || "3000",
     NODE_ENV: process.env.NODE_ENV || "development",
     API_BASE_URL: process.env.API_BASE_URL || "http://localhost:3000",
+    START_APP_BASE_URL: process.env.START_APP_BASE_URL || "",
   };
 
   // Email Configuration

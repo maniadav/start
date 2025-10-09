@@ -6,7 +6,6 @@ import OrganisationProfileModel from "@models/organisation.profile.model";
 import TokenModel from "@models/token.model";
 import { ProfileUtils } from "@utils/profile.utils";
 import { createAndSendVerificationEmail } from "@utils/backend.utils";
-import { ROLE } from "../../../../../../constants/role.constant";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import { handleApiError } from "@utils/errorHandler";
 
@@ -17,6 +16,7 @@ import { handleApiError } from "@utils/errorHandler";
  * - Organisation can send for observer
  * - Only sends for pending status profiles
  */
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { user_id: string } }
