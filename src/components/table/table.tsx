@@ -121,7 +121,7 @@ export function DataTable<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-24 text-center text-muted-foreground capitalize"
                 >
                   {"sorry no results found"}
                 </TableCell>

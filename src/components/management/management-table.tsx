@@ -11,7 +11,9 @@ import {
   Key,
   Trash2,
   Mail,
+  Copy,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import { Badge } from "@components/ui/badge";
 import {
   DropdownMenu,
@@ -58,6 +60,29 @@ export function ManagementTable({
             </Button>
           );
         },
+        cell: ({ row }) => {
+          const fullId = row.getValue("user_id") as string;
+          const shortId = fullId ? `...${fullId.slice(-4)}` : "N/A";
+          
+          const handleCopy = () => {
+            navigator.clipboard.writeText(fullId);
+            toast.success("ID copied to clipboard");
+          };
+
+          return (
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sm">{shortId}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="h-6 w-6 p-0 hover:bg-gray-100"
+              >
+                <Copy className="h-3 w-3 text-gray-500" />
+              </Button>
+            </div>
+          );
+        },
       },
     ];
 
@@ -66,6 +91,29 @@ export function ManagementTable({
       baseColumns.push({
         accessorKey: "organisation_id",
         header: "Organisation ID",
+        cell: ({ row }) => {
+          const fullId = row.getValue("organisation_id") as string;
+          const shortId = fullId ? `...${fullId.slice(-4)}` : "N/A";
+          
+          const handleCopy = () => {
+            navigator.clipboard.writeText(fullId);
+            toast.success("Organisation ID copied to clipboard");
+          };
+
+          return (
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sm">{shortId}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="h-6 w-6 p-0 hover:bg-gray-100"
+              >
+                <Copy className="h-3 w-3 text-gray-500" />
+              </Button>
+            </div>
+          );
+        },
       });
     }
 
@@ -88,7 +136,7 @@ export function ManagementTable({
         },
       },
       {
-        accessorKey: "joinedOn",
+        accessorKey: "joined_on",
         header: ({ column }) => {
           return (
             <Button
@@ -103,7 +151,7 @@ export function ManagementTable({
           );
         },
         cell: ({ row }) => {
-          const joinedOn = row.getValue("joinedOn");
+          const joinedOn = row.getValue("joined_on");
           return joinedOn
             ? new Date(joinedOn as string).toLocaleDateString()
             : "-";
@@ -200,10 +248,10 @@ export function ManagementTable({
                       email: item.email || "Unknown",
                     })
                   }
-                  className="text-red-600 focus:text-red-600"
+                  className="text-red-600 focus:text-red-600 capitalize"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete File
+                  Delete {forRole}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

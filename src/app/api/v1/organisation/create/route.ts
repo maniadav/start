@@ -59,6 +59,7 @@ export async function POST(request: Request) {
         role: "organisation", // Assuming organisation is a valid role
         email: email.toLowerCase(),
         password: hashedPassword,
+        status: "inactive",
       });
 
       user = await newUser.save();

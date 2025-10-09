@@ -61,7 +61,6 @@ export async function POST(req: Request) {
       user.password
     );
 
-    // Don't reveal whether the email exists or password is wrong
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
@@ -73,7 +72,7 @@ export async function POST(req: Request) {
     if (user.status === "inactive") {
       return NextResponse.json(
         { error: "Account is inactive" },
-        { status: 403 }
+        { status: HttpStatusCode.BadRequest }
       );
     }
 

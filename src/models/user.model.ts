@@ -37,7 +37,7 @@ const UserSchema = new Schema<IUser>(
     status: {
       type: String,
       enum: ["active", "inactive"],
-      default: "active",
+      default: "inactive",
     },
     created_at: {
       type: Date,

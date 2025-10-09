@@ -9,7 +9,6 @@ import startUtilityAPI from "@services/start.utility";
 
 const MemberProfileUpdate = () => {
   const { member } = useAuth();
-  console.log({ member });
 
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -175,7 +174,7 @@ const MemberProfileUpdate = () => {
                   name="email"
                   type="email"
                   className="bg-indigo-50 border border-primary/40 text-black text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 "
-                  placeholder={member?.profile?.email || "your.email@mail.com"}
+                  placeholder={member?.email || "your.email@mail.com"}
                   required
                 />
               </div>
