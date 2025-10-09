@@ -33,14 +33,17 @@ const ManagementActivationPopup = ({
     try {
       const response = await startUtilityAPI.auth.sendActivationMail(user_id);
 
-      if (response.data?.success) {
-        if (onSuccess) {
-          onSuccess();
-        }
+      if (response.success === true) {
         toast.success(`Activation email sent successfully to ${user_name}`);
+        // if (onSuccess) {
+        //   onSuccess();
+        // }
       } else {
+        console.error("Response success is not true:", response);
         throw new Error(
-          response.data?.message || "Failed to send activation email"
+          response.message ||
+            response.data?.message ||
+            "Failed to send activation email hihi"
         );
       }
     } catch (error: any) {
@@ -68,7 +71,6 @@ const ManagementActivationPopup = ({
             </p>
           </div>
         </div>
-
 
         {/* Information Message */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
