@@ -11,7 +11,7 @@ if (!MONGODB_URI) {
 }
 
 if (!MONGODB_DB_NAME) {
-  console.warn("⚠️ MONGODB_DB_NAME not specified, using default database from connection string");
+  console.warn("WARNING: MONGODB_DB_NAME not specified, using default database from connection string");
 }
 
 // Construct the full connection URI with database name
@@ -58,8 +58,8 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
-    console.log(`🔌 Connecting to MongoDB: ${CONNECTION_URI.replace(/\/\/.*@/, '//***:***@')}`); // Hide credentials in logs
-    console.log(`📊 Database: ${MONGODB_DB_NAME || 'default'}`);
+    console.log(`-Connecting to MongoDB: ${CONNECTION_URI.replace(/\/\/.*@/, '//***:***@')}`); // Hide credentials in logs
+    console.log(`-Database: ${MONGODB_DB_NAME || 'default'}`);
     
     const opts = {
       bufferCommands: false,
@@ -72,8 +72,8 @@ async function connectDB() {
     };
 
     cached.promise = mongoose.connect(CONNECTION_URI, opts).then((mongoose) => {
-      console.log(`✅ Connected to MongoDB successfully`);
-      console.log(`📊 Database name: ${mongoose.connection.db?.databaseName || 'unknown'}`);
+      console.log(`Connected to MongoDB successfully`);
+      console.log(`Database name: ${mongoose.connection.db?.databaseName || 'unknown'}`);
       return mongoose;
     });
   }

@@ -7,7 +7,7 @@ import { BASE_URL } from "@constants/config.constant";
 import Link from "next/link";
 import { PAGE_ROUTES } from "@constants/route.constant";
 import { useAuth } from "state/provider/AuthProvider";
-import { MemberProfile } from "@data/start.data";
+import { MemberProfile } from "@constants/management.constant";
 
 const ActionSection = () => {
   const { languageContent } = useLanguageProvider();

@@ -1,23 +1,13 @@
 import { IUser } from "../user.model";
 
 export const dummyUsers: Partial<IUser>[] = [
-  // 1 Admin User
   {
     role: "admin",
-    email: "admin@example.com",
-    password: "password",
-  },
-  // 2 Organisation Users
-  {
-    role: "organisation",
-    email: "organisation@example.com",
+    email: "startweb@bhismalab.org",
     password: "password",
   },
 ];
 
-// Total: 6 users (1 admin + 2 organisations + 3 observers)
-
-// Helper function to hash passwords (requires bcryptjs to be installed)
 export async function hashUserPasswords(): Promise<Partial<IUser>[]> {
   const bcrypt = require("bcryptjs");
   const hashedUsers = await Promise.all(

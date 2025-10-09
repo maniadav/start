@@ -174,3 +174,14 @@ export const DelayedGratificationContent: Task =
 
 export const PreferentialLookingContent: Task =
   TasksConstant.PreferentialLookingTask;
+
+export const TASK_TYPE = [
+  "BubblePoppingTask",
+  "DelayedGratificationTask",
+  "MotorFollowingTask",
+  "ButtonTask",
+  "SynchronyTask",
+  "LanguageSamplingTask",
+  "WheelTask",
+  "PreferentialLookingTask",
+] as const;

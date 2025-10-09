@@ -1,8 +1,8 @@
 import { PAGE_ROUTES } from "@constants/route.constant";
-import { MemberProfile } from "@data/start.data";
 import { getLocalStorageValue, removeLocalStorageValue } from "./localStorage";
 import { LOCALSTORAGE } from "@constants/storage.constant";
 import { UserRole, UserWithProfile } from "@type/management.types";
+import { MemberProfile } from "@constants/management.constant";
 
 export function redirectToDashboard(role: string, router: any) {
   if (role === MemberProfile.admin) {

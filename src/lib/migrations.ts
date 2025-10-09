@@ -63,13 +63,13 @@ export class MigrationManager {
     }
 
     if (await this.collectionExists(collectionName)) {
-      console.log(`📦 Creating backup of collection: ${collectionName}`);
+      console.log(`Creating backup of collection: ${collectionName}`);
       const backup = await mongoose.connection.db
         .collection(collectionName)
         .find({})
         .toArray();
       console.log(
-        `✅ Backed up ${backup.length} documents from ${collectionName}`
+        `Backed up ${backup.length} documents from ${collectionName}`
       );
       return backup;
     }
@@ -82,7 +82,7 @@ export class MigrationManager {
       description: "Initial schema setup and index creation",
       up: async () => {
         await connectDB();
-        console.log("🔍 Checking existing collections...");
+        console.log("Checking existing collections...");
         if (!mongoose.connection.db) {
           throw new Error("Database connection not established");
         }
@@ -100,24 +100,24 @@ export class MigrationManager {
           try {
             if (existingCollections.includes(name)) {
               console.log(
-                `📊 Collection '${name}' exists, ensuring indexes...`
+                `Collection '${name}' exists, ensuring indexes...`
               );
               await model.createIndexes();
-              console.log(`✅ Indexes verified for '${name}'`);
+              console.log(`Indexes verified for '${name}'`);
             } else {
               console.log(
-                `🆕 Creating new collection '${name}' with indexes...`
+                `Creating new collection '${name}' with indexes...`
               );
               await model.createIndexes();
-              console.log(`✅ Collection '${name}' created with indexes`);
+              console.log(`Collection '${name}' created with indexes`);
             }
           } catch (error) {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
-            console.warn(`⚠️ Error with ${name} indexes:`, errorMessage);
+            console.warn(`WARNING: Error with ${name} indexes:`, errorMessage);
           }
         }
-        console.log("✅ Initial schema setup completed");
+        console.log("Initial schema setup completed");
       },
       down: async () => {
         await connectDB();
@@ -130,7 +130,7 @@ export class MigrationManager {
             .dropCollection("organisationprofiles")
             .catch(() => {});
         }
-        console.log("⚠️ All collections dropped");
+        console.log("WARNING: All collections dropped");
       },
     },
 
@@ -140,7 +140,7 @@ export class MigrationManager {
       up: async () => {
         await connectDB();
 
-        console.log("🌱 Starting database seeding with dummy data...");
+        console.log("Starting database seeding with dummy data...");
 
         // Import dummy data
         const {
@@ -152,7 +152,7 @@ export class MigrationManager {
         } = await import("../models/dummyData");
 
         // Validate data consistency before seeding
-        console.log("🔍 Validating dummy data consistency...");
+        console.log("Validating dummy data consistency...");
         const isDataValid = validateDummyDataConsistency();
         if (!isDataValid) {
           throw new Error(
@@ -163,17 +163,17 @@ export class MigrationManager {
         // Check if data already exists
         const userCount = await User.countDocuments();
         if (userCount > 0) {
-          console.log("📊 Database already contains data, skipping seeding");
+          console.log("Database already contains data, skipping seeding");
           return;
         }
 
-        console.log("🔐 Creating users with hashed passwords...");
+        console.log("Creating users with hashed passwords...");
         const hashedUsers = await hashUserPasswords();
         const createdUsers = await User.insertMany(hashedUsers);
-        console.log(`✅ Created ${createdUsers.length} users`);
+        console.log(`Created ${createdUsers.length} users`);
 
         // Create admin profiles
-        console.log("👤 Creating admin profiles...");
+        console.log("Creating admin profiles...");
         const adminUsers = createdUsers.filter((u) => u.role === "admin");
 
         if (adminUsers.length !== dummyAdminProfiles.length) {
@@ -190,10 +190,9 @@ export class MigrationManager {
         const createdAdminProfiles = await AdminProfile.insertMany(
           adminProfileData
         );
-        console.log(`✅ Created ${createdAdminProfiles.length} admin profiles`);
+        console.log(`Created ${createdAdminProfiles.length} admin profiles`);
 
         // Create organisation profiles
-        console.log("🏢 Creating organisation profiles...");
         const orgUsers = createdUsers.filter((u) => u.role === "organisation");
 
         if (orgUsers.length !== dummyOrganisationProfiles.length) {
@@ -202,23 +201,29 @@ export class MigrationManager {
           );
         }
 
-        const orgProfileData = dummyOrganisationProfiles.map(
-          (profile, index) => ({
-            ...profile,
-            user_id: orgUsers[index]._id,
-          })
-        );
+        let createdOrgProfiles: any[] = [];
+        if (dummyOrganisationProfiles.length > 0) {
+          console.log("Creating organisation profiles...");
+          const orgProfileData = dummyOrganisationProfiles.map(
+            (profile, index) => ({
+              ...profile,
+              user_id: orgUsers[index]._id,
+            })
+          );
 
-        const createdOrgProfiles = await OrganisationProfile.insertMany(
-          orgProfileData
-        );
-        console.log(
-          `✅ Created ${createdOrgProfiles.length} organisation profiles`
-        );
+          createdOrgProfiles = await OrganisationProfile.insertMany(
+            orgProfileData
+          );
+          console.log(
+            `Created ${createdOrgProfiles.length} organisation profiles`
+          );
+        } else {
+          console.log("No organisation profiles to create (admin will set up organisations)");
+        }
 
-        console.log("🎉 Database seeding completed successfully!");
+        console.log("Database seeding completed successfully!");
         console.log(`
-        📈 Summary:
+        Summary:
         - Users: ${createdUsers.length}
         - Admin Profiles: ${createdAdminProfiles.length}  
         - Organisation Profiles: ${createdOrgProfiles.length}
@@ -227,14 +232,14 @@ export class MigrationManager {
       down: async () => {
         await connectDB();
 
-        console.log("🗑️ Removing all seeded data...");
+        console.log("Removing all seeded data...");
 
         // Remove in reverse order due to dependencies
         await OrganisationProfile.deleteMany({});
         await AdminProfile.deleteMany({});
         await User.deleteMany({});
 
-        console.log("✅ All seeded data removed");
+        console.log("All seeded data removed");
       },
     },
 
@@ -245,7 +250,7 @@ export class MigrationManager {
         await connectDB();
 
         console.log(
-          "🔄 Removing unique_id field from organisation_profiles..."
+          "Removing unique_id field from organisation_profiles..."
         );
 
         // Check if organisation_profiles collection exists
@@ -254,7 +259,7 @@ export class MigrationManager {
         );
         if (!collectionExists) {
           console.log(
-            "📊 organisation_profiles collection doesn't exist, skipping"
+            "organisation_profiles collection doesn't exist, skipping"
           );
           return;
         }
@@ -265,9 +270,9 @@ export class MigrationManager {
             await mongoose.connection.db
               .collection("organisation_profiles")
               .dropIndex("unique_id_1");
-            console.log("✅ Dropped unique_id index");
+            console.log("Dropped unique_id index");
           } catch (error) {
-            console.log("⚠️ unique_id index not found or already dropped");
+            console.log("WARNING: unique_id index not found or already dropped");
           }
 
           // Now remove unique_id field from all documents
@@ -276,22 +281,22 @@ export class MigrationManager {
             .updateMany({}, { $unset: { unique_id: "" } });
 
           console.log(
-            `✅ Removed unique_id field from ${result.modifiedCount} documents`
+            `Removed unique_id field from ${result.modifiedCount} documents`
           );
         }
 
-        console.log("✅ unique_id field removal completed");
+        console.log("unique_id field removal completed");
       },
       down: async () => {
         await connectDB();
 
         console.log(
-          "⚠️ Rollback: Adding back unique_id field is not recommended"
+          "WARNING: Rollback: Adding back unique_id field is not recommended"
         );
         console.log(
-          "⚠️ This would require regenerating unique IDs for all documents"
+          "WARNING: This would require regenerating unique IDs for all documents"
         );
-        console.log("⚠️ Rollback completed (no action taken)");
+        console.log("WARNING: Rollback completed (no action taken)");
       },
     },
 
@@ -302,7 +307,7 @@ export class MigrationManager {
         await connectDB();
 
         console.log(
-          "📧 Adding email field to OrganisationProfile collection..."
+          "Adding email field to OrganisationProfile collection..."
         );
 
         // Check if the collection exists
@@ -311,7 +316,7 @@ export class MigrationManager {
         );
         if (!collectionExists) {
           console.log(
-            "📊 organisation_profiles collection doesn't exist, skipping"
+            "organisation_profiles collection doesn't exist, skipping"
           );
           return;
         }
@@ -328,12 +333,12 @@ export class MigrationManager {
           .toArray();
 
         if (profilesWithoutEmail.length === 0) {
-          console.log("📊 All organisation profiles already have email field");
+          console.log("All organisation profiles already have email field");
           return;
         }
 
         console.log(
-          `📧 Found ${profilesWithoutEmail.length} profiles without email field`
+          `Found ${profilesWithoutEmail.length} profiles without email field`
         );
 
         // Update each profile by fetching email from associated user
@@ -350,13 +355,13 @@ export class MigrationManager {
                   { $set: { email: user.email } }
                 );
               console.log(
-                `✅ Updated profile ${profile._id} with email ${user.email}`
+                `Updated profile ${profile._id} with email ${user.email}`
               );
             } else {
-              console.log(`⚠️ No user found for profile ${profile._id}`);
+              console.log(`WARNING: No user found for profile ${profile._id}`);
             }
           } catch (error) {
-            console.log(`❌ Error updating profile ${profile._id}:`, error);
+            console.log(`ERROR: Error updating profile ${profile._id}:`, error);
           }
         }
 
@@ -365,22 +370,22 @@ export class MigrationManager {
           await db
             .collection("organisation_profiles")
             .createIndex({ email: 1 }, { unique: true });
-          console.log("✅ Created unique index on email field");
+          console.log("Created unique index on email field");
         } catch (error: any) {
           if (error.code === 85) {
-            console.log("📊 Email unique index already exists");
+            console.log("Email unique index already exists");
           } else {
-            console.log("⚠️ Error creating email unique index:", error.message);
+            console.log("WARNING: Error creating email unique index:", error.message);
           }
         }
 
-        console.log("✅ Email field addition completed");
+        console.log("Email field addition completed");
       },
       down: async () => {
         await connectDB();
 
         console.log(
-          "🔄 Removing email field from OrganisationProfile collection..."
+          "Removing email field from OrganisationProfile collection..."
         );
 
         const db = mongoose.connection.db;
@@ -391,12 +396,12 @@ export class MigrationManager {
         // Drop email index
         try {
           await db.collection("organisation_profiles").dropIndex("email_1");
-          console.log("✅ Dropped email index");
+          console.log("Dropped email index");
         } catch (error: any) {
           if (error.code === 27) {
-            console.log("📊 Email index doesn't exist, skipping drop");
+            console.log("Email index doesn't exist, skipping drop");
           } else {
-            console.log("⚠️ Error dropping email index:", error.message);
+            console.log("WARNING: Error dropping email index:", error.message);
           }
         }
 
@@ -406,7 +411,7 @@ export class MigrationManager {
           .updateMany({}, { $unset: { email: "" } });
 
         console.log(
-          `✅ Removed email field from ${result.modifiedCount} documents`
+          `Removed email field from ${result.modifiedCount} documents`
         );
       },
     },
@@ -421,22 +426,22 @@ export class MigrationManager {
     try {
       for (const migration of this.migrations) {
         console.log(
-          `🔄 Running migration ${migration.version}: ${migration.description}`
+          `Running migration ${migration.version}: ${migration.description}`
         );
 
         try {
           await migration.up();
           console.log(
-            `✅ Migration ${migration.version} completed successfully`
+            `Migration ${migration.version} completed successfully`
           );
         } catch (error) {
-          console.error(`❌ Migration ${migration.version} failed:`, error);
+          console.error(`ERROR: Migration ${migration.version} failed:`, error);
           throw error;
         }
       }
     } catch (error) {
       if (error instanceof Error && error.message.includes("EBADRESP")) {
-        console.error("❌ MongoDB connection failed. Please check:");
+        console.error("ERROR: MongoDB connection failed. Please check:");
         console.error("  - Your internet connection");
         console.error("  - MongoDB Atlas cluster status");
         console.error("  - IP whitelist settings in MongoDB Atlas");
