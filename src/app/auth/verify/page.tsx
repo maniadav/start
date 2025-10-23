@@ -206,7 +206,7 @@ export default function AccountVerificationPage() {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Verify Your Account
+            Verify Start Account
           </CardTitle>
           <CardDescription className="text-gray-600">
             Set your password to complete the account verification process

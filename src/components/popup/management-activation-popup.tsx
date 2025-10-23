@@ -74,9 +74,6 @@ const ManagementActivationPopup = ({
 
         {/* Information Message */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-          <h4 className="text-lg font-semibold text-yellow-700 mb-2">
-            Activation Email Details
-          </h4>
           <p className="text-yellow-700 font-medium">
             This will send a verification email to {user_name} ({user_email}) to
             activate their {role} account. The email will contain a verification

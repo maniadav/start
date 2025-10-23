@@ -22,7 +22,7 @@ export function generateVerificationEmailTemplate(
   verificationToken: string
 ): EmailTemplate {
   const baseUrl = AppConfig.SERVER.START_APP_BASE_URL;
-  const verificationUrl = `${baseUrl}${PAGE_ROUTES.AUTH.VERIFY_ACCOUNT.path}?token=${verificationToken}`;
+  const verificationUrl = `${baseUrl}/${PAGE_ROUTES.AUTH.VERIFY_ACCOUNT.path}?token=${verificationToken}`;
 
   // Dynamic content based on role
   const isObserver = data.role.toLowerCase() === "observer";
