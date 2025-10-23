@@ -29,49 +29,21 @@ export function UserNav() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="relative h-10 w-full justify-start px-2"
-        >
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {member.profile.name
-                .split(" ")
-                .map((n: any[]) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          {!collapsed && (
-            <div className="ml-2 flex flex-col items-start">
-              <p className="text-sm font-medium">{member.profile.name}</p>
-              <p className="text-xs text-muted-foreground">{member.email}</p>
-            </div>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56 py-2 px-1 flex flex-col gap-1 bg-white"
-        align="end"
-        forceMount
-      >
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col gap-1 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {member.profile.name}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {member.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleLogout()}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="w-full flex flex-row items-start justify-start">
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="bg-primary text-primary-foreground">
+          {member.profile.name
+            .split(" ")
+            .map((n: any[]) => n[0])
+            .join("")}
+        </AvatarFallback>
+      </Avatar>
+      {!collapsed && (
+        <div className="ml-2 flex flex-col items-start">
+          <p className="text-sm font-medium">{member.profile.name}</p>
+          <p className="text-xs text-muted-foreground">{member.email}</p>
+        </div>
+      )}
+    </div>
   );
 }
