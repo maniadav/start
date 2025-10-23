@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { TasksConstant } from "constants/tasks.constant";
 import TaskHome from "components/ui/TaskHome";
 import SuspenseWrapper from "components/wrapper/SuspenseWrapper"; // Import the wrapper component
 import MototFollowingTask from "./MototFollowingTask";

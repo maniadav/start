@@ -50,7 +50,7 @@ const Footer = () => {
             START
           </span>
 
-          <CacheResetButton />
+          {/* <CacheResetButton /> */}
           <span className="text-xs text-gray-500">
             Empowering Early Development
           </span>
