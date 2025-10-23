@@ -20,6 +20,39 @@ export const metadata: Metadata = {
     { rel: "icon", type: "image/png", url: `${BASE_URL}/icons/icon-512.png` },
     { rel: "apple-touch-icon", url: `${BASE_URL}/icons/icon-masked-512.png` },
   ],
+  keywords: [
+    "autism screening",
+    "early intervention",
+    "child development",
+    "survey",
+    "assessment",
+    "START Project",
+    "progressive web app",
+    "observer",
+    "organisation",
+    "health",
+    "psychology",
+    "neurodevelopmental",
+    "diagnosis",
+  ],
+  alternates: {
+    canonical: "https://startweb.vercel.app/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  authors: [{ name: "maniadav", url: "https://github.com/maniadav" }],
+  publisher: "maniadav",
 };
 
 export default function RootLayout({
