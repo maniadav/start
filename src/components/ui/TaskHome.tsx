@@ -20,7 +20,10 @@ const TaskHome = ({
         <div className="flex justify-between gap-12">
           <div className="flex flex-col justify-center ">
             <div className="w-auto flex flex-row gap-2">
-              <Link legacyBehavior href={PAGE_ROUTES.SURVEY.path}>
+              <Link
+                legacyBehavior
+                href={PAGE_ROUTES.MANAGEMENT.OBSERVER.SURVEY.path}
+              >
                 <a className="font-bold text-xl md:text-4xl text-primary">←</a>
               </Link>
               <h2 className="text-4xl font-bold text-gray-300 text-transparent bg-clip-text bg-primary">
