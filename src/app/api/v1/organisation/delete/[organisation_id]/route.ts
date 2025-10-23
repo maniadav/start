@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import OrganisationProfileModel from "@models/organisation.profile.model";
-import "@models/user.model"; // Import User model to register it with Mongoose
 import { ProfileUtils } from "@utils/profile.utils";
+import OrganisationProfileModel from "@models/organisation.profile.model";
 import UserModel from "@models/user.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import { handleApiError } from "@utils/errorHandler";
+import { MemberProfile } from "@constants/management.constant";
+import { MemberRole } from "@type/member.types";
 
 export async function DELETE(
   request: Request,
@@ -16,7 +17,6 @@ export async function DELETE(
 
     const { organisation_id } = params;
 
-    // Validate required fields
     if (!organisation_id) {
       return NextResponse.json(
         { error: "Organisation ID is required" },
@@ -26,7 +26,7 @@ export async function DELETE(
 
     const authHeader = request.headers.get("authorization");
     const { role } = await ProfileUtils.verifyProfile(authHeader || "", [
-      "admin",
+      MemberProfile.admin as MemberRole,
     ]);
 
     const existingOrgUser = await UserModel.findOneAndDelete({

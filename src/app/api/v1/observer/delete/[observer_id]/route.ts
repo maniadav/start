@@ -1,19 +1,13 @@
 import { NextResponse } from "next/server";
 import connectDB from "@lib/mongodb";
-import OrganisationProfileModel from "@models/organisation.profile.model";
 import UserModel from "@models/user.model";
 import { ProfileUtils } from "@utils/profile.utils";
 import ObserverProfileModel from "@models/observer.profile.model";
 import { HttpStatusCode } from "enums/HttpStatusCode";
 import { handleApiError } from "@utils/errorHandler";
+import { MemberProfile } from "@constants/management.constant";
+import { MemberRole } from "@type/member.types";
 
-/**
- * Deletes an observer and associated data
- *
- * @param request - The incoming request object
- * @param params - URL parameters containing user_id
- * @returns NextResponse with appropriate status and message
- */
 export async function DELETE(
   request: Request,
   { params }: { params: { observer_id: string } }
@@ -35,15 +29,15 @@ export async function DELETE(
     const authHeader = request.headers.get("authorization");
 
     const { role, user_id } = await ProfileUtils.verifyProfile(authHeader, [
-      "organisation",
-      "admin",
+      MemberProfile.organisation as MemberRole,
+      MemberProfile.admin as MemberRole,
     ]);
 
     let query = {};
 
-    if (role === "admin") {
+    if (role === MemberProfile.admin) {
       query = { user_id: observer_id };
-    } else if (role === "organisation") {
+    } else if (role === MemberProfile.organisation) {
       query = { user_id: observer_id, organisation_id: user_id };
     } else {
       return NextResponse.json(
@@ -69,19 +63,17 @@ export async function DELETE(
 
     // Delete the user account associated with this observer
     const existingOrgUser = await UserModel.findOneAndDelete({
-      _id: user_id,
+      _id: observer_id,
     });
 
     if (!existingOrgUser) {
-      // Observer profile was deleted but user record wasn't found
-      // This indicates data inconsistency but we can still return partial success
       return NextResponse.json(
         {
           message:
             "Observer profile deleted but user account not found. Data may be inconsistent.",
           partialSuccess: true,
         },
-        { status: 207 } // Multi-Status response
+        { status: 207 }
       );
     }
 
