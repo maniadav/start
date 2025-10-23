@@ -135,7 +135,7 @@ Create a `.env` file in your project root (if self-deploying) or securely share 
 ```env
 # AWS S3 Configuration
 AWS_ACCESS_KEY_ID=<your_bucket_user_access_key>
-AWS_SECRET_ACCESS_KEY=<your_bucket_user_secret_access_key>
+AWS_SECRET_ACCESS_KEY_ID=<your_bucket_user_secret_access_key>
 AWS_S3_BUCKET_NAME=<your_bucket_name>
 AWS_DEFAULT_REGION=<your_bucket_region>
 ```

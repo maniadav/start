@@ -12,8 +12,8 @@ export class AppConfig {
   static readonly AWS = {
     BUCKET_NAME: process.env.AWS_BUCKET_NAME || "",
     BUCKET_REGION: process.env.AWS_BUCKET_REGION || "",
-    ACCESS_KEY: process.env.AWS_ACCESS_KEY || "",
-    SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
+    ACCESS_KEY: process.env.AWS_ACCESS_KEY_ID || "",
+    SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY_ID || "",
   };
 
   static readonly GMAIL = {
@@ -109,12 +109,12 @@ export class AppConfig {
     }
     if (!this.AWS.ACCESS_KEY) {
       warnings.push(
-        "AWS_ACCESS_KEY not set - file upload functionality will be disabled"
+        "AWS_ACCESS_KEY_ID not set - file upload functionality will be disabled"
       );
     }
     if (!this.AWS.SECRET_ACCESS_KEY) {
       warnings.push(
-        "AWS_SECRET_ACCESS_KEY not set - file upload functionality will be disabled"
+        "AWS_SECRET_ACCESS_KEY_ID not set - file upload functionality will be disabled"
       );
     }
 
