@@ -110,7 +110,7 @@ const MemberProfileUpdate = () => {
 
               <div className="flex flex-col space-y-5 sm:ml-8">
                 <div className="overflow-hidden relative w-64 mt-4 mb-4">
-                  <label className="flex flex-row gap-2 items-center place-items-center py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-black rounded-lg border border-indigo-200 hover:bg-black focus:z-10 focus:ring-4 focus:ring-indigo-200">
+                  <label className="cursor-pointer flex flex-row gap-2 items-center place-items-center py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-black rounded-lg border border-indigo-200 hover:bg-black focus:z-10 focus:ring-4 focus:ring-indigo-200">
                     {/* <CommonIcon icon="material-symbols:upload-sharp" /> */}
                     <span className="text-base leading-normal">
                       Change Picture

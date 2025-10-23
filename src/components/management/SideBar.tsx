@@ -53,6 +53,11 @@ export function SideBar() {
       url: "/management/admin/files",
       icon: FileText,
     },
+    {
+      title: "Settings",
+      url: "/management/admin/settings",
+      icon: Settings,
+    },
   ];
 
   const orgAdminItems = [
@@ -77,6 +82,11 @@ export function SideBar() {
       url: "/management/organisation/files",
       icon: FileText,
     },
+    {
+      title: "Settings",
+      url: "/management/organisation/settings",
+      icon: Settings,
+    },
   ];
 
   const observerItems = [
@@ -89,11 +99,6 @@ export function SideBar() {
       title: "Dashboard",
       url: "/management/observer/dashboard",
       icon: LayoutDashboard,
-    },
-    {
-      title: "File Manager",
-      url: "/management/observer/files",
-      icon: FileText,
     },
     {
       title: "Child",

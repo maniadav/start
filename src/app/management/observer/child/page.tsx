@@ -36,6 +36,7 @@ const LoginPage = () => {
   const [data, setData] = useState<any>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const { member, user: childData } = useAuth();
+
   const [formData, setFormData] = useState<LoginDataType>({
     childId: childData?.childId || "",
     childName: childData?.childName || "",
@@ -43,7 +44,8 @@ const LoginPage = () => {
     childDob: childData?.childDob || "",
     observerId: member?.userId || "",
     childAddress: childData?.childAddress || "",
-    organisationId: member?.organisationId || childData?.organisationId || "",
+    organisationId:
+      member?.profile?.organisationId || childData?.organisationId || "",
   });
 
   const router = useRouter();
