@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import BubblePoppingTask from "./BubblePoppingTask";
+import TaskComponent from "./BubblePoppingTask";
 import { BubblePoppingContent as TaskContent } from "constants/tasks.constant";
 import FullScreenWrapper from "@components/wrapper/FullScreenWrapper";
 import TaskHome from "@components/ui/TaskHome";
@@ -14,22 +14,16 @@ const IndexPage = () => {
   };
 
   return (
-    <>
-      {survey ? (
-        <FullScreenWrapper isFullScreen={survey}>
-          <BubblePoppingTask isSurvey={true} />
-        </FullScreenWrapper>
-      ) : (
-        <div className="w-full h-full overflow-hidden">
-          <TaskHome
-            taskName={TaskContent.title}
-            taskMessage={TaskContent.taskMessage}
-            handleStartGame={() => handleStartGame()}
-          />
-          <BubblePoppingTask />
-        </div>
+    <FullScreenWrapper isFullScreen={survey}>
+      {!survey && (
+        <TaskHome
+          taskName={TaskContent.title}
+          taskMessage={TaskContent.taskMessage}
+          handleStartGame={(prev: boolean) => setSurvey(!prev)}
+        />
       )}
-    </>
+      <TaskComponent isSurvey={survey} />
+    </FullScreenWrapper>
   );
 };
 

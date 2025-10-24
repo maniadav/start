@@ -1,36 +1,27 @@
 "use client";
+"use client";
 import { useState } from "react";
-import TaskHome from "components/ui/TaskHome";
-import SuspenseWrapper from "components/wrapper/SuspenseWrapper"; // Import the wrapper component
-import MototFollowingTask from "./MototFollowingTask";
-import { MotorStateProvider } from "state/provider/MotorStateProvider";
+import TaskComponent from "./MototFollowingTask";
 import { MotorFollowingContent as TaskContent } from "constants/tasks.constant";
 import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
+import TaskHome from "components/ui/TaskHome";
+import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
+import { MotorStateProvider } from "state/provider/MotorStateProvider";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
-
-  const handleStartGame = () => {
-    setSurvey(!survey);
-  };
-
+  const handleStartGame = (prev: boolean) => setSurvey(!prev);
   return (
-    <>
-      {survey ? (
-        <FullScreenWrapper isFullScreen={survey}>
-          <MototFollowingTask isSurvey={true} />
-        </FullScreenWrapper>
-      ) : (
-        <div className="w-full h-full overflow-hidden">
-          <TaskHome
-            taskName={TaskContent.title}
-            taskMessage={TaskContent.taskMessage}
-            handleStartGame={() => handleStartGame()}
-          />
-          <MototFollowingTask />
-        </div>
+    <FullScreenWrapper isFullScreen={survey}>
+      {!survey && (
+        <TaskHome
+          taskName={TaskContent.title}
+          taskMessage={TaskContent.taskMessage}
+          handleStartGame={handleStartGame}
+        />
       )}
-    </>
+      <TaskComponent isSurvey={survey} />
+    </FullScreenWrapper>
   );
 };
 

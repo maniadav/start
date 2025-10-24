@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface FullScreenWrapperProps {
   isFullScreen: boolean;
@@ -15,7 +15,7 @@ const FullScreenWrapper: React.FC<FullScreenWrapperProps> = ({
     if (isFullScreen) {
       enterFullScreen();
     } else {
-      exitFullScreen(); 
+      exitFullScreen();
     }
   }, [isFullScreen]);
 
@@ -37,7 +37,7 @@ const FullScreenWrapper: React.FC<FullScreenWrapperProps> = ({
         }
       }
     } catch (error) {
-      console.error('Error trying to enter fullscreen mode:', error);
+      console.error("Error trying to enter fullscreen mode:", error);
     }
   };
 
@@ -58,14 +58,16 @@ const FullScreenWrapper: React.FC<FullScreenWrapperProps> = ({
         }
       }
     } catch (error) {
-      console.error('Error trying to exit fullscreen mode:', error);
+      console.error("Error trying to exit fullscreen mode:", error);
     }
   };
 
   return (
     <div
       ref={elementRef}
-      style={{ height: '100vh', width: '100vw', backgroundColor: '#f0f0f0' }}
+      className={
+        isFullScreen ? "w-screen h-screen overflow-hidden" : "h-full w-full"
+      }
     >
       {children}
     </div>

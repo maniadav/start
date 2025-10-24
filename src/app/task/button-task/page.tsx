@@ -1,37 +1,24 @@
 "use client";
 import { useState } from "react";
+import { ButtonContent as TaskContent } from "constants/tasks.constant";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 import TaskHome from "components/ui/TaskHome";
 import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
-import ButtonTask from "./ButtonTask";
-import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
-import { ButtonContent as TaskContent } from "constants/tasks.constant";
-
+import TaskComponent from "./ButtonTask";
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
-
-  const handleStartGame = () => {
-    setSurvey(!survey);
-  };
-
+  const handleStartGame = (prev: boolean) => setSurvey(!prev);
   return (
-    <>
-      {survey ? (
-        <div>
-          <FullScreenWrapper isFullScreen={survey}>
-            <ButtonTask isSurvey={true} />
-          </FullScreenWrapper>
-        </div>
-      ) : (
-        <div className="w-full h-full overflow-hidden">
-          <TaskHome
-            taskName={TaskContent.title}
-            taskMessage={TaskContent.taskMessage}
-            handleStartGame={() => handleStartGame()}
-          />
-          <ButtonTask />
-        </div>
+    <FullScreenWrapper isFullScreen={survey}>
+      {!survey && (
+        <TaskHome
+          taskName={TaskContent.title}
+          taskMessage={TaskContent.taskMessage}
+          handleStartGame={handleStartGame}
+        />
       )}
-    </>
+      <TaskComponent isSurvey={survey} />
+    </FullScreenWrapper>
   );
 };
 

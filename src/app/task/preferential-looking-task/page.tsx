@@ -1,37 +1,26 @@
 "use client";
-import React from "react";
 import { useState } from "react";
+import TaskComponent from "./PreferentialLookingTask";
+import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
+import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
 import TaskHome from "components/ui/TaskHome";
-import PreferentialLookingTask from "./PreferentialLookingTask";
 import SuspenseWrapper from "components/wrapper/SuspenseWrapper";
 import { PreferentialLookingStateProvider } from "state/provider/PreferentialLookingStateProvider";
-import FullScreenWrapper from "components/wrapper/FullScreenWrapper";
-import { PreferentialLookingContent as TaskContent } from "@constants/tasks.constant";
 
 const IndexPage = () => {
   const [survey, setSurvey] = useState<boolean>(false);
-
-  const handleStartGame = () => {
-    setSurvey(!survey);
-  };
-
+  const handleStartGame = (prev: boolean) => setSurvey(!prev);
   return (
-    <>
-      {survey ? (
-        <FullScreenWrapper isFullScreen={survey}>
-          <PreferentialLookingTask isSurvey={survey} />
-        </FullScreenWrapper>
-      ) : (
-        <div className="w-full h-full overflow-hidden">
-          <TaskHome
-            taskName={TaskContent.title}
-            taskMessage={TaskContent.taskMessage}
-            handleStartGame={() => handleStartGame()}
-          />
-          <PreferentialLookingTask />
-        </div>
+    <FullScreenWrapper isFullScreen={survey}>
+      {!survey && (
+        <TaskHome
+          taskName={TaskContent.title}
+          taskMessage={TaskContent.taskMessage}
+          handleStartGame={handleStartGame}
+        />
       )}
-    </>
+      <TaskComponent isSurvey={survey} />
+    </FullScreenWrapper>
   );
 };
 
